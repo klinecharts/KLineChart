@@ -71,23 +71,23 @@ export default class Event implements EventHandler {
     if (event.shiftKey) {
       switch (event.code) {
         case 'Equal': {
-          this._chart.getChartStore().getTimeScaleStore().zoom(0.5)
+          this._chart.getChartStore().timeScaleStore.zoom(0.5)
           break
         }
         case 'Minus': {
-          this._chart.getChartStore().getTimeScaleStore().zoom(-0.5)
+          this._chart.getChartStore().timeScaleStore.zoom(-0.5)
           break
         }
         case 'ArrowLeft': {
-          const timeScaleStore = this._chart.getChartStore().getTimeScaleStore()
+          const timeScaleStore = this._chart.getChartStore().timeScaleStore
           timeScaleStore.startScroll()
-          timeScaleStore.scroll(-3 * timeScaleStore.getBarSpace().bar)
+          timeScaleStore.scroll(-3 * timeScaleStore.garSpace.bar)
           break
         }
         case 'ArrowRight': {
-          const timeScaleStore = this._chart.getChartStore().getTimeScaleStore()
+          const timeScaleStore = this._chart.getChartStore().timeScaleStore
           timeScaleStore.startScroll()
-          timeScaleStore.scroll(3 * timeScaleStore.getBarSpace().bar)
+          timeScaleStore.scroll(3 * timeScaleStore.garSpace.bar)
           break
         }
         default: {
@@ -119,14 +119,14 @@ export default class Event implements EventHandler {
       const event = this._makeWidgetEvent(e, widget)
       const zoomScale = (scale - this._pinchScale) * 5
       this._pinchScale = scale
-      this._chart.getChartStore().getTimeScaleStore().zoom(zoomScale, { x: event.x, y: event.y })
+      this._chart.getChartStore().timeScaleStore.zoom(zoomScale, { x: event.x, y: event.y })
       return true
     }
     return false
   }
 
   mouseWheelHortEvent (_: MouseTouchEvent, distance: number): boolean {
-    const timeScaleStore = this._chart.getChartStore().getTimeScaleStore()
+    const timeScaleStore = this._chart.getChartStore().timeScaleStore
     timeScaleStore.startScroll()
     timeScaleStore.scroll(distance)
     return true
@@ -137,7 +137,7 @@ export default class Event implements EventHandler {
     const event = this._makeWidgetEvent(e, widget)
     const name = widget?.getName()
     if (name === WidgetNameConstants.MAIN) {
-      this._chart.getChartStore().getTimeScaleStore().zoom(scale, { x: event.x, y: event.y })
+      this._chart.getChartStore().timeScaleStore.zoom(scale, { x: event.x, y: event.y })
       return true
     }
     return false
@@ -157,7 +157,7 @@ export default class Event implements EventHandler {
           const range = (pane as DrawPane<YAxis>).getAxisComponent().getRange() ?? null
           this._prevYAxisRange = range === null ? range : { ...range }
           this._startScrollCoordinate = { x: event.x, y: event.y }
-          this._chart.getChartStore().getTimeScaleStore().startScroll()
+          this._chart.getChartStore().timeScaleStore.startScroll()
           return widget.dispatchEvent('mouseDownEvent', event)
         }
         case WidgetNameConstants.X_AXIS: {
@@ -202,20 +202,20 @@ export default class Event implements EventHandler {
           const consumed = widget.dispatchEvent('mouseMoveEvent', event)
           const chartStore = this._chart.getChartStore()
           let crosshair: Crosshair | undefined = { x: event.x, y: event.y, paneId: pane?.getId() }
-          if (consumed && chartStore.getTooltipStore().getActiveIcon() !== null) {
+          if (consumed && chartStore.tooltipStore.getActiveIcon() !== null) {
             crosshair = undefined
             if (widget !== null) {
               widget.getContainer().style.cursor = 'pointer'
             }
           }
-          this._chart.getChartStore().getTooltipStore().setCrosshair(crosshair)
+          this._chart.getChartStore().tooltipStore.setCrosshair(crosshair)
           return consumed
         }
         case WidgetNameConstants.SEPARATOR:
         case WidgetNameConstants.X_AXIS:
         case WidgetNameConstants.Y_AXIS: {
           const consumed = widget.dispatchEvent('mouseMoveEvent', event)
-          this._chart.getChartStore().getTooltipStore().setCrosshair()
+          this._chart.getChartStore().tooltipStore.setCrosshair()
           return consumed
         }
       }
@@ -270,9 +270,9 @@ export default class Event implements EventHandler {
               })
             }
             const distance = event.x - this._startScrollCoordinate.x
-            this._chart.getChartStore().getTimeScaleStore().scroll(distance)
+            this._chart.getChartStore().timeScaleStore.scroll(distance)
           }
-          this._chart.getChartStore().getTooltipStore().setCrosshair({ x: event.x, y: event.y, paneId: pane?.getId() })
+          this._chart.getChartStore().tooltipStore.setCrosshair({ x: event.x, y: event.y, paneId: pane?.getId() })
           return consumed
         }
         case WidgetNameConstants.X_AXIS: {
@@ -284,7 +284,7 @@ export default class Event implements EventHandler {
               if (Number.isFinite(scale)) {
                 const zoomScale = (scale - this._xAxisScale) * 10
                 this._xAxisScale = scale
-                this._chart.getChartStore().getTimeScaleStore().zoom(zoomScale, this._xAxisStartScaleCoordinate ?? undefined)
+                this._chart.getChartStore().timeScaleStore.zoom(zoomScale, this._xAxisStartScaleCoordinate ?? undefined)
               }
             }
           } else {
@@ -413,7 +413,7 @@ export default class Event implements EventHandler {
   }
 
   mouseLeaveEvent (): boolean {
-    this._chart.getChartStore().getTooltipStore().setCrosshair()
+    this._chart.getChartStore().tooltipStore.setCrosshair()
     return true
   }
 
@@ -425,7 +425,7 @@ export default class Event implements EventHandler {
       switch (name) {
         case WidgetNameConstants.MAIN: {
           const chartStore = this._chart.getChartStore()
-          const tooltipStore = chartStore.getTooltipStore()
+          const tooltipStore = chartStore.tooltipStore
           if (widget.dispatchEvent('mouseDownEvent', event)) {
             this._touchCancelCrosshair = true
             this._touchCoordinate = null
@@ -439,7 +439,7 @@ export default class Event implements EventHandler {
           }
           this._flingStartTime = new Date().getTime()
           this._startScrollCoordinate = { x: event.x, y: event.y }
-          chartStore.getTimeScaleStore().startScroll()
+          chartStore.timeScaleStore.startScroll()
           this._touchZoomed = false
           if (this._touchCoordinate !== null) {
             const xDif = event.x - this._touchCoordinate.x
@@ -475,7 +475,7 @@ export default class Event implements EventHandler {
       const event = this._makeWidgetEvent(e, widget)
       const name = widget.getName()
       const chartStore = this._chart.getChartStore()
-      const tooltipStore = chartStore.getTooltipStore()
+      const tooltipStore = chartStore.tooltipStore
       switch (name) {
         case WidgetNameConstants.MAIN: {
           if (widget.dispatchEvent('pressedMouseMoveEvent', event)) {
@@ -493,7 +493,7 @@ export default class Event implements EventHandler {
               Math.abs(this._startScrollCoordinate.x - event.x) > this._startScrollCoordinate.y - event.y
             ) {
               const distance = event.x - this._startScrollCoordinate.x
-              chartStore.getTimeScaleStore().scroll(distance)
+              chartStore.timeScaleStore.scroll(distance)
             }
           }
           return true
@@ -525,7 +525,7 @@ export default class Event implements EventHandler {
             const distance = event.x - this._startScrollCoordinate.x
             let v = distance / (time > 0 ? time : 1) * 20
             if (time < 200 && Math.abs(v) > 0) {
-              const timeScaleStore = this._chart.getChartStore().getTimeScaleStore()
+              const timeScaleStore = this._chart.getChartStore().timeScaleStore
               const flingScroll: (() => void) = () => {
                 this._flingScrollRequestId = requestAnimationFrame(() => {
                   timeScaleStore.startScroll()
@@ -567,7 +567,7 @@ export default class Event implements EventHandler {
       if (widget.getName() === WidgetNameConstants.MAIN) {
         const event = this._makeWidgetEvent(e, widget)
         const chartStore = this._chart.getChartStore()
-        const tooltipStore = chartStore.getTooltipStore()
+        const tooltipStore = chartStore.tooltipStore
         if (result) {
           this._touchCancelCrosshair = true
           this._touchCoordinate = null
@@ -598,7 +598,7 @@ export default class Event implements EventHandler {
     if (widget !== null && widget.getName() === WidgetNameConstants.MAIN) {
       const event = this._makeWidgetEvent(e, widget)
       this._touchCoordinate = { x: event.x, y: event.y }
-      this._chart.getChartStore().getTooltipStore().setCrosshair({ x: event.x, y: event.y, paneId: pane?.getId() })
+      this._chart.getChartStore().tooltipStore.setCrosshair({ x: event.x, y: event.y, paneId: pane?.getId() })
       return true
     }
     return false
@@ -607,7 +607,7 @@ export default class Event implements EventHandler {
   private _findWidgetByEvent (event: MouseTouchEvent): EventTriggerWidgetInfo {
     const { x, y } = event
     const separatorPanes = this._chart.getSeparatorPanes()
-    const separatorSize = this._chart.getChartStore().getStyles().separator.size
+    const separatorSize = this._chart.getChartStore().styles.separator.size
     for (const [, pane] of separatorPanes) {
       const bounding = pane.getBounding()
       const top = bounding.top - Math.round((REAL_SEPARATOR_HEIGHT - separatorSize) / 2)

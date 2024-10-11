@@ -88,7 +88,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
     let specifyMin = Number.MAX_SAFE_INTEGER
     let specifyMax = Number.MIN_SAFE_INTEGER
     let indicatorPrecision = Number.MAX_SAFE_INTEGER
-    const indicators = chartStore.getIndicatorStore().getInstanceByPaneId(paneId)
+    const indicators = chartStore.indicatorStore.getInstanceByPaneId(paneId)
     indicators.forEach(indicator => {
       if (!shouldOhlc) {
         shouldOhlc = indicator.shouldOhlc ?? false
@@ -105,7 +105,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
     let precision = 4
     const inCandle = this.isInCandle()
     if (inCandle) {
-      const { price: pricePrecision } = chartStore.getPrecision()
+      const { price: pricePrecision } = chartStore.precision
       if (indicatorPrecision !== Number.MAX_SAFE_INTEGER) {
         precision = Math.min(indicatorPrecision, pricePrecision)
       } else {
@@ -116,7 +116,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
         precision = indicatorPrecision
       }
     }
-    const visibleRangeDataList = chartStore.getVisibleRangeDataList()
+    const visibleRangeDataList = chartStore.visibleRangeDataList
     const candleStyles = chart.getStyles().candle
     const isArea = candleStyles.type === CandleType.Area
     const areaValueKey = candleStyles.area.value
@@ -169,8 +169,8 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
 
     const range = this.createRange?.({
       paneId,
-      kLineDataList: chartStore.getDataList(),
-      dataVisibleRange: chartStore.getTimeScaleStore().getVisibleRange(),
+      kLineDataList: chartStore.dataList,
+      dataVisibleRange: chartStore.timeScaleStore.visibleRange,
       indicators,
       defaultRange
     })
@@ -265,15 +265,15 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
     const pane = this.getParent()
     const height = pane.getYAxisWidget()?.getBounding().height ?? 0
     const chartStore = pane.getChart().getChartStore()
-    const customApi = chartStore.getCustomApi()
+    const customApi = chartStore.customApi
     const optimalTicks: AxisTick[] = []
-    const indicators = chartStore.getIndicatorStore().getInstanceByPaneId(pane.getId())
-    const thousandsSeparator = chartStore.getThousandsSeparator()
-    const decimalFoldThreshold = chartStore.getDecimalFoldThreshold()
+    const indicators = chartStore.indicatorStore.getInstanceByPaneId(pane.getId())
+    const thousandsSeparator = chartStore.thousandsSeparator
+    const decimalFoldThreshold = chartStore.decimalFoldThreshold
     let precision = 0
     let shouldFormatBigNumber = false
     if (this.isInCandle()) {
-      precision = chartStore.getPrecision().price
+      precision = chartStore.precision.price
     } else {
       indicators.forEach(indicator => {
         precision = Math.max(precision, indicator.precision)
@@ -282,7 +282,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
         }
       })
     }
-    const textHeight = chartStore.getStyles().xAxis.tickText.size
+    const textHeight = chartStore.styles.xAxis.tickText.size
     let validY = NaN
     ticks.forEach(({ value }) => {
       let v = this.displayValueToText(+value, precision)
@@ -318,7 +318,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
       return width
     }
     const chartStore = chart.getChartStore()
-    const customApi = chartStore.getCustomApi()
+    const customApi = chartStore.customApi
     let yAxisWidth = 0
     if (yAxisStyles.show) {
       if (yAxisStyles.axisLine.show) {
@@ -342,7 +342,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
       crosshairStyles.horizontal.show &&
       crosshairStyles.horizontal.text.show
     ) {
-      const indicators = chartStore.getIndicatorStore().getInstanceByPaneId(pane.getId())
+      const indicators = chartStore.indicatorStore.getInstanceByPaneId(pane.getId())
       let indicatorPrecision = 0
       let shouldFormatBigNumber = false
       indicators.forEach(indicator => {
@@ -353,7 +353,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
       })
       let precision = 2
       if (this.isInCandle()) {
-        const { price: pricePrecision } = chartStore.getPrecision()
+        const { price: pricePrecision } = chartStore.precision
         const lastValueMarkStyles = styles.indicator.lastValueMark
         if (lastValueMarkStyles.show && lastValueMarkStyles.text.show) {
           precision = Math.max(indicatorPrecision, pricePrecision)
@@ -367,7 +367,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
       if (shouldFormatBigNumber) {
         valueText = customApi.formatBigNumber(valueText)
       }
-      valueText = formatFoldDecimal(valueText, chartStore.getDecimalFoldThreshold())
+      valueText = formatFoldDecimal(valueText, chartStore.decimalFoldThreshold)
       crosshairVerticalTextWidth += (
         crosshairStyles.horizontal.text.paddingLeft +
         crosshairStyles.horizontal.text.paddingRight +

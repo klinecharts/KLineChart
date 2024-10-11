@@ -29,12 +29,12 @@ export default class IndicatorView extends CandleBarView {
     const pane = this.getWidget().getPane()
     const yAxis = pane.getAxisComponent()
     if (!yAxis.isInCandle()) {
-      const indicators = chartStore.getIndicatorStore().getInstanceByPaneId(pane.getId())
+      const indicators = chartStore.indicatorStore.getInstanceByPaneId(pane.getId())
       for (let i = 0; i < indicators.length; i++) {
         const indicator = indicators[i]
         if (indicator.shouldOhlc && indicator.visible) {
           const indicatorStyles = indicator.styles
-          const defaultStyles = chartStore.getStyles().indicator
+          const defaultStyles = chartStore.styles.indicator
           const upColor = formatValue(indicatorStyles, 'ohlc.upColor', defaultStyles.ohlc.upColor) as string
           const downColor = formatValue(indicatorStyles, 'ohlc.downColor', defaultStyles.ohlc.downColor) as string
           const noChangeColor = formatValue(indicatorStyles, 'ohlc.noChangeColor', defaultStyles.ohlc.noChangeColor) as string
@@ -67,11 +67,11 @@ export default class IndicatorView extends CandleBarView {
     const xAxis = chart.getXAxisPane().getAxisComponent()
     const yAxis = pane.getAxisComponent()
     const chartStore = chart.getChartStore()
-    const dataList = chartStore.getDataList()
-    const timeScaleStore = chartStore.getTimeScaleStore()
-    const visibleRange = timeScaleStore.getVisibleRange()
-    const indicators = chartStore.getIndicatorStore().getInstanceByPaneId(pane.getId())
-    const defaultStyles = chartStore.getStyles().indicator
+    const dataList = chartStore.dataList
+    const timeScaleStore = chartStore.timeScaleStore
+    const visibleRange = timeScaleStore.visibleRange
+    const indicators = chartStore.indicatorStore.getInstanceByPaneId(pane.getId())
+    const defaultStyles = chartStore.styles.indicator
     ctx.save()
     indicators.forEach(indicator => {
       if (indicator.visible) {
@@ -89,7 +89,7 @@ export default class IndicatorView extends CandleBarView {
             indicator,
             visibleRange,
             bounding,
-            barSpace: timeScaleStore.getBarSpace(),
+            barSpace: timeScaleStore.garSpace,
             defaultStyles,
             xAxis,
             yAxis

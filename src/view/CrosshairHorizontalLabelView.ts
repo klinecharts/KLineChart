@@ -34,8 +34,8 @@ export default class CrosshairHorizontalLabelView<C extends Axis = YAxis> extend
     const pane = widget.getPane()
     const bounding = widget.getBounding()
     const chartStore = widget.getPane().getChart().getChartStore()
-    const crosshair = chartStore.getTooltipStore().getCrosshair()
-    const styles = chartStore.getStyles().crosshair
+    const crosshair = chartStore.tooltipStore.getCrosshair()
+    const styles = chartStore.styles.crosshair
     if (isString(crosshair.paneId) && this.compare(crosshair, pane.getId())) {
       if (styles.show) {
         const directionStyles = this.getDirectionStyles(styles)
@@ -68,9 +68,9 @@ export default class CrosshairHorizontalLabelView<C extends Axis = YAxis> extend
     let precision = 0
     let shouldFormatBigNumber = false
     if (yAxis.isInCandle()) {
-      precision = chartStore.getPrecision().price
+      precision = chartStore.precision.price
     } else {
-      const indicators = chartStore.getIndicatorStore().getInstanceByPaneId(crosshair.paneId!)
+      const indicators = chartStore.indicatorStore.getInstanceByPaneId(crosshair.paneId!)
       indicators.forEach(indicator => {
         precision = Math.max(indicator.precision, precision)
         if (!shouldFormatBigNumber) {
@@ -88,9 +88,9 @@ export default class CrosshairHorizontalLabelView<C extends Axis = YAxis> extend
     )
 
     if (shouldFormatBigNumber) {
-      text = chartStore.getCustomApi().formatBigNumber(text)
+      text = chartStore.customApi.formatBigNumber(text)
     }
-    return formatFoldDecimal(formatThousands(text, chartStore.getThousandsSeparator()), chartStore.getDecimalFoldThreshold())
+    return formatFoldDecimal(formatThousands(text, chartStore.thousandsSeparator), chartStore.decimalFoldThreshold)
   }
 
   protected getTextAttrs (text: string, _textWidth: number, crosshair: Crosshair, bounding: Bounding, axis: Axis, _styles: StateTextStyle): TextAttrs {

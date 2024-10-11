@@ -37,13 +37,13 @@ import View from './View'
 export default class IndicatorTooltipView extends View<YAxis> {
   private readonly _boundIconClickEvent = (currentIcon: TooltipIcon) => () => {
     const pane = this.getWidget().getPane()
-    pane.getChart().getChartStore().getActionStore().execute(ActionType.OnTooltipIconClick, { ...currentIcon })
+    pane.getChart().getChartStore().actionStore.execute(ActionType.OnTooltipIconClick, { ...currentIcon })
     return true
   }
 
   private readonly _boundIconMouseMoveEvent = (currentIconInfo: TooltipIcon) => () => {
     const pane = this.getWidget().getPane()
-    const tooltipStore = pane.getChart().getChartStore().getTooltipStore()
+    const tooltipStore = pane.getChart().getChartStore().tooltipStore
     tooltipStore.setActiveIcon({ ...currentIconInfo })
     return true
   }
@@ -52,18 +52,18 @@ export default class IndicatorTooltipView extends View<YAxis> {
     const widget = this.getWidget()
     const pane = widget.getPane()
     const chartStore = pane.getChart().getChartStore()
-    const crosshair = chartStore.getTooltipStore().getCrosshair()
+    const crosshair = chartStore.tooltipStore.getCrosshair()
     if (isValid(crosshair.kLineData)) {
       const bounding = widget.getBounding()
-      const customApi = chartStore.getCustomApi()
-      const thousandsSeparator = chartStore.getThousandsSeparator()
-      const decimalFoldThreshold = chartStore.getDecimalFoldThreshold()
-      const indicators = chartStore.getIndicatorStore().getInstanceByPaneId(pane.getId())
-      const activeIcon = chartStore.getTooltipStore().getActiveIcon()
-      const defaultStyles = chartStore.getStyles().indicator
+      const customApi = chartStore.customApi
+      const thousandsSeparator = chartStore.thousandsSeparator
+      const decimalFoldThreshold = chartStore.decimalFoldThreshold
+      const indicators = chartStore.indicatorStore.getInstanceByPaneId(pane.getId())
+      const activeIcon = chartStore.tooltipStore.getActiveIcon()
+      const defaultStyles = chartStore.styles.indicator
       const { offsetLeft, offsetTop, offsetRight } = defaultStyles.tooltip
       this.drawIndicatorTooltip(
-        ctx, pane.getId(), chartStore.getDataList(),
+        ctx, pane.getId(), chartStore.dataList,
         crosshair, activeIcon, indicators, customApi,
         thousandsSeparator, decimalFoldThreshold,
         offsetLeft, offsetTop,
@@ -307,7 +307,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
       const { name: customName, calcParamsText: customCalcParamsText, legends: customLegends, icons: customIcons } = indicator.createTooltipDataSource({
         kLineDataList: dataList,
         indicator,
-        visibleRange: chartStore.getTimeScaleStore().getVisibleRange(),
+        visibleRange: chartStore.timeScaleStore.visibleRange,
         bounding: widget.getBounding(),
         crosshair,
         defaultStyles: styles,

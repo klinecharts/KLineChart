@@ -128,7 +128,9 @@ export default class ChartStore {
 
   constructor (chart: Chart, options?: Options) {
     this._chart = chart
-    this.setOptions(options)
+    if (isValid(options)) {
+      this.options = options
+    }
   }
 
   /**
@@ -141,7 +143,7 @@ export default class ChartStore {
       { x: 0, price: Number.MIN_SAFE_INTEGER },
       { x: 0, price: Number.MAX_SAFE_INTEGER },
     ]
-    const { realFrom, realTo } = this._timeScaleStore.getVisibleRange()
+    const { realFrom, realTo } = this._timeScaleStore.visibleRange
     for (let i = realFrom; i < realTo; i++) {
       const kLineData = this._dataList[i]
       const x = this._timeScaleStore.dataIndexToCoordinate(i)
@@ -150,25 +152,27 @@ export default class ChartStore {
         x,
         data: kLineData
       })
-      if (this._visibleRangeHighLowPrice[0].price < kLineData.high) {
-        this._visibleRangeHighLowPrice[0].price = kLineData.high
-        this._visibleRangeHighLowPrice[0].x = x
-      }
-      if (this._visibleRangeHighLowPrice[1].price > kLineData.low) {
-        this._visibleRangeHighLowPrice[1].price = kLineData.low
-        this._visibleRangeHighLowPrice[1].x = x
+      if (isValid(kLineData)) {
+        if (this._visibleRangeHighLowPrice[0].price < kLineData.high) {
+          this._visibleRangeHighLowPrice[0].price = kLineData.high
+          this._visibleRangeHighLowPrice[0].x = x
+        }
+        if (this._visibleRangeHighLowPrice[1].price > kLineData.low) {
+          this._visibleRangeHighLowPrice[1].price = kLineData.low
+          this._visibleRangeHighLowPrice[1].x = x
+        }
       }
     }
   }
 
-  setOptions (options?: Options): this {
+  set options (options: Options) {
     if (isValid(options)) {
       const { locale, timezone, styles, customApi, thousandsSeparator, decimalFoldThreshold } = options
       if (isString(locale)) {
         this._locale = locale
       }
       if (isString(timezone)) {
-        this._timeScaleStore.setTimezone(timezone)
+        this._timeScaleStore.timezone = timezone
       }
       if (isValid(styles)) {
         let ss: Nullable<DeepPartial<Styles>> = null
@@ -193,48 +197,46 @@ export default class ChartStore {
         this._decimalFoldThreshold = decimalFoldThreshold
       }
     }
-    return this
   }
 
-  getStyles (): Styles {
+  get styles (): Styles {
     return this._styles
   }
 
-  getLocale (): string {
+  get locale (): string {
     return this._locale
   }
 
-  getCustomApi (): CustomApi {
+  get customApi (): CustomApi {
     return this._customApi
   }
 
-  getThousandsSeparator (): string {
+  get thousandsSeparator (): string {
     return this._thousandsSeparator
   }
 
-  getDecimalFoldThreshold (): number {
+  get decimalFoldThreshold (): number {
     return this._decimalFoldThreshold
   }
 
-  getPrecision (): Precision {
+  get precision (): Precision {
     return this._precision
   }
 
-  setPrecision (precision: Precision): this {
+  set precision (precision: Precision) {
     this._precision = precision
     this._indicatorStore.synchronizeSeriesPrecision()
-    return this
   }
 
-  getDataList (): KLineData[] {
+  get dataList (): KLineData[] {
     return this._dataList
   }
 
-  getVisibleRangeDataList (): VisibleRangeData[] {
+  get visibleRangeDataList (): VisibleRangeData[] {
     return this._visibleRangeDataList
   }
 
-  getVisibleRangeHighLowPrice (): Array<{ price: number; x: number }> {
+  get visibleRangeHighLowPrice (): Array<{ price: number; x: number }> {
     return this._visibleRangeHighLowPrice
   }
 
@@ -283,9 +285,9 @@ export default class ChartStore {
       if (timestamp > lastDataTimestamp) {
         this._timeScaleStore.classifyTimeTicks([data], true)
         this._dataList.push(data)
-        let lastBarRightSideDiffBarCount = this._timeScaleStore.getLastBarRightSideDiffBarCount()
+        let lastBarRightSideDiffBarCount = this._timeScaleStore.lastBarRightSideDiffBarCount
         if (lastBarRightSideDiffBarCount < 0) {
-          this._timeScaleStore.setLastBarRightSideDiffBarCount(--lastBarRightSideDiffBarCount)
+          this._timeScaleStore.lastBarRightSideDiffBarCount = --lastBarRightSideDiffBarCount
         }
         dataLengthChange = 1
         success = true
@@ -307,7 +309,7 @@ export default class ChartStore {
     }
   }
 
-  setLoadMoreDataCallback (callback: LoadDataCallback): void {
+  set loadMoreDataCallback (callback: LoadDataCallback) {
     this._loadMoreDataCallback = callback
   }
 
@@ -342,27 +344,27 @@ export default class ChartStore {
     this._tooltipStore.clear()
   }
 
-  getTimeScaleStore (): TimeScaleStore {
+  get timeScaleStore (): TimeScaleStore {
     return this._timeScaleStore
   }
 
-  getIndicatorStore (): IndicatorStore {
+  get indicatorStore (): IndicatorStore {
     return this._indicatorStore
   }
 
-  getOverlayStore (): OverlayStore {
+  get overlayStore (): OverlayStore {
     return this._overlayStore
   }
 
-  getTooltipStore (): TooltipStore {
+  get tooltipStore (): TooltipStore {
     return this._tooltipStore
   }
 
-  getActionStore (): ActionStore {
+  get actionStore (): ActionStore {
     return this._actionStore
   }
 
-  getChart (): Chart {
+  get chart (): Chart {
     return this._chart
   }
 }
