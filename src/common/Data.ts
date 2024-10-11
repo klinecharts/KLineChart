@@ -25,7 +25,7 @@ export interface KLineData {
   [key: string]: unknown
 }
 
-export interface VisibleData {
+export interface VisibleRangeData {
   dataIndex: number
   x: number
   data: Nullable<KLineData>

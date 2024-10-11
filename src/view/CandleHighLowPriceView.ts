@@ -13,15 +13,15 @@
  */
 
 import type Coordinate from '../common/Coordinate'
-import type { VisibleData } from '../common/Data'
 import type { CandleHighLowPriceMarkStyle } from '../common/Styles'
 
-import ChildrenView from './ChildrenView'
+import View from './View'
+
+import type { YAxis } from '../component/YAxis'
 
 import { formatPrecision, formatThousands, formatFoldDecimal } from '../common/utils/format'
-import { isValid } from '../common/utils/typeChecks'
 
-export default class CandleHighLowPriceView extends ChildrenView {
+export default class CandleHighLowPriceView extends View<YAxis> {
   override drawImp (ctx: CanvasRenderingContext2D): void {
     const widget = this.getWidget()
     const pane = widget.getPane()
@@ -30,27 +30,14 @@ export default class CandleHighLowPriceView extends ChildrenView {
     const highPriceMarkStyles = priceMarkStyles.high
     const lowPriceMarkStyles = priceMarkStyles.low
     if (priceMarkStyles.show && (highPriceMarkStyles.show || lowPriceMarkStyles.show)) {
+      const highestLowestPrice = chartStore.getVisibleRangeHighLowPrice()
       const thousandsSeparator = chartStore.getThousandsSeparator()
       const decimalFoldThreshold = chartStore.getDecimalFoldThreshold()
       const precision = chartStore.getPrecision()
       const yAxis = pane.getAxisComponent()
-      let high = Number.MIN_SAFE_INTEGER
-      let highX = 0
-      let low = Number.MAX_SAFE_INTEGER
-      let lowX = 0
-      this.eachChildren((data: VisibleData) => {
-        const { data: kLineData, x } = data
-        if (isValid(kLineData)) {
-          if (high < kLineData.high) {
-            high = kLineData.high
-            highX = x
-          }
-          if (low > kLineData.low) {
-            low = kLineData.low
-            lowX = x
-          }
-        }
-      })
+
+      const { price: high, x: highX } = highestLowestPrice[0]
+      const { price: low, x: lowX } = highestLowestPrice[1]
       const highY = yAxis.convertToPixel(high)
       const lowY = yAxis.convertToPixel(low)
       if (highPriceMarkStyles.show && high !== Number.MIN_SAFE_INTEGER) {

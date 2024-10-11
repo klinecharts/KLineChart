@@ -116,12 +116,12 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
         precision = indicatorPrecision
       }
     }
-    const visibleDataList = chartStore.getVisibleDataList()
+    const visibleRangeDataList = chartStore.getVisibleRangeDataList()
     const candleStyles = chart.getStyles().candle
     const isArea = candleStyles.type === CandleType.Area
     const areaValueKey = candleStyles.area.value
     const shouldCompareHighLow = (inCandle && !isArea) || (!inCandle && shouldOhlc)
-    visibleDataList.forEach(({ dataIndex, data }) => {
+    visibleRangeDataList.forEach(({ dataIndex, data }) => {
       if (isValid(data)) {
         if (shouldCompareHighLow) {
           min = Math.min(min, data.low)
@@ -170,7 +170,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
     const range = this.createRange?.({
       paneId,
       kLineDataList: chartStore.getDataList(),
-      visibleDataRange: chartStore.getTimeScaleStore().getVisibleRange(),
+      dataVisibleRange: chartStore.getTimeScaleStore().getVisibleRange(),
       indicators,
       defaultRange
     })

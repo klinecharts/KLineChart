@@ -13,7 +13,7 @@
  */
 
 import type Nullable from '../common/Nullable'
-import type { VisibleData } from '../common/Data'
+import type { VisibleRangeData } from '../common/Data'
 import type BarSpace from '../common/BarSpace'
 import type { EventHandler } from '../common/SyntheticEvent'
 import { ActionType } from '../common/Action'
@@ -35,7 +35,7 @@ export interface CandleBarOptions {
 }
 
 export default class CandleBarView extends ChildrenView {
-  private readonly _boundCandleBarClickEvent = (data: VisibleData) => () => {
+  private readonly _boundCandleBarClickEvent = (data: VisibleRangeData) => () => {
     this.getWidget().getPane().getChart().getChartStore().getActionStore().execute(ActionType.OnCandleBarClick, data)
     return false
   }

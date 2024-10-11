@@ -13,7 +13,7 @@
  */
 
 import type Nullable from '../common/Nullable'
-import type { KLineData, VisibleData } from '../common/Data'
+import type { KLineData, VisibleRangeData } from '../common/Data'
 import type Precision from '../common/Precision'
 import type DeepPartial from '../common/DeepPartial'
 import { formatValue } from '../common/utils/format'
@@ -63,7 +63,9 @@ export default class ChartStore {
    */
   private _thousandsSeparator = ','
 
-  // Decimal fold threshold
+  /**
+   * Decimal fold threshold
+   */
   private _decimalFoldThreshold = 3
 
   /**
@@ -114,7 +116,15 @@ export default class ChartStore {
   /**
    * Visible data array
    */
-  private _visibleDataList: VisibleData[] = []
+  private _visibleRangeDataList: VisibleRangeData[] = []
+
+  /**
+   * Visible highest lowest price data
+   */
+  private _visibleRangeHighLowPrice = [
+    { x: 0, price: Number.MIN_SAFE_INTEGER },
+    { x: 0, price: Number.MAX_SAFE_INTEGER },
+  ]
 
   constructor (chart: Chart, options?: Options) {
     this._chart = chart
@@ -125,17 +135,29 @@ export default class ChartStore {
    * @description Adjust visible data
    * @return {*}
    */
-  adjustVisibleDataList (): void {
-    this._visibleDataList = []
+  adjustVisibleRangeDataList (): void {
+    this._visibleRangeDataList = []
+    this._visibleRangeHighLowPrice = [
+      { x: 0, price: Number.MIN_SAFE_INTEGER },
+      { x: 0, price: Number.MAX_SAFE_INTEGER },
+    ]
     const { realFrom, realTo } = this._timeScaleStore.getVisibleRange()
     for (let i = realFrom; i < realTo; i++) {
       const kLineData = this._dataList[i]
       const x = this._timeScaleStore.dataIndexToCoordinate(i)
-      this._visibleDataList.push({
+      this._visibleRangeDataList.push({
         dataIndex: i,
         x,
         data: kLineData
       })
+      if (this._visibleRangeHighLowPrice[0].price < kLineData.high) {
+        this._visibleRangeHighLowPrice[0].price = kLineData.high
+        this._visibleRangeHighLowPrice[0].x = x
+      }
+      if (this._visibleRangeHighLowPrice[1].price > kLineData.low) {
+        this._visibleRangeHighLowPrice[1].price = kLineData.low
+        this._visibleRangeHighLowPrice[1].x = x
+      }
     }
   }
 
@@ -208,13 +230,12 @@ export default class ChartStore {
     return this._dataList
   }
 
-  getVisibleFirstData (): Nullable<KLineData> {
-    const { from } = this._timeScaleStore.getVisibleRange()
-    return this._dataList[from] ?? null
+  getVisibleRangeDataList (): VisibleRangeData[] {
+    return this._visibleRangeDataList
   }
 
-  getVisibleDataList (): VisibleData[] {
-    return this._visibleDataList
+  getVisibleRangeHighLowPrice (): Array<{ price: number; x: number }> {
+    return this._visibleRangeHighLowPrice
   }
 
   addData (
@@ -312,7 +333,11 @@ export default class ChartStore {
     this._loadDataMore.forward = false
     this._loading = true
     this._dataList = []
-    this._visibleDataList = []
+    this._visibleRangeDataList = []
+    this._visibleRangeHighLowPrice = [
+      { x: 0, price: Number.MIN_SAFE_INTEGER },
+      { x: 0, price: Number.MAX_SAFE_INTEGER },
+    ]
     this._timeScaleStore.clear()
     this._tooltipStore.clear()
   }

@@ -54,7 +54,7 @@ export interface AxisCreateRangeParams {
   paneId: string
   kLineDataList: KLineData[]
   indicators: Indicator[]
-  visibleDataRange: VisibleRange
+  dataVisibleRange: VisibleRange
   defaultRange: AxisRange
 }
 

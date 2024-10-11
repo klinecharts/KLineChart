@@ -75,7 +75,7 @@ export default abstract class XAxisImp extends AxisImp implements XAxis {
     const chartStore = this.getParent().getChart().getChartStore()
     const timeScaleStore = chartStore.getTimeScaleStore()
     const formatDate = chartStore.getCustomApi().formatDate
-    const timeTickList = timeScaleStore.getVisibleTimeTickList()
+    const timeTickList = timeScaleStore.getVisibleRangeTimeTickList()
     const dateTimeFormat = timeScaleStore.getDateTimeFormat()
     const ticks = timeTickList.map(({ dataIndex, weight, timestamp }) => {
       let text = ''
