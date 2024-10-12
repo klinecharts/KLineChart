@@ -162,7 +162,9 @@ import StyleExplain from '../@views/styles/Explain.vue'
         borderRadius: 4,
         borderSize: 1,
         borderColor: '#f2f3f5',
-        color: '#FEFEFE'
+        color: '#FEFEFE',
+        //  the alpha (transparency) value applied when draw semi-transparent rectangles for tooltip
+        globalApha: 0.5
       },
       text: {
         size: 12,

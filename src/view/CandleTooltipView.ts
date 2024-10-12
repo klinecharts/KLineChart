@@ -19,7 +19,7 @@ import type Precision from '../common/Precision'
 import type Crosshair from '../common/Crosshair'
 import {
   type Styles, type CandleStyle, type TooltipLegend, type TooltipLegendChild, TooltipShowType, CandleTooltipRectPosition,
-  type CandleTooltipCustomCallbackData, PolygonType
+  type CandleTooltipCustomCallbackData, PolygonType, type CandleTooltipRectStyle
 } from '../common/Styles'
 import { formatPrecision, formatThousands, formatFoldDecimal } from '../common/utils/format'
 import { createFont } from '../common/utils/canvas'
@@ -60,6 +60,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
       const styles = chartStore.getStyles()
       const candleStyles = styles.candle
       const indicatorStyles = styles.indicator
+      const tooltipRectStyles = candleStyles.tooltip.rect
       if (
         candleStyles.tooltip.showType === TooltipShowType.Rect &&
         indicatorStyles.tooltip.showType === TooltipShowType.Rect
@@ -83,13 +84,13 @@ export default class CandleTooltipView extends IndicatorTooltipView {
         const top = this._drawCandleStandardTooltip(
           ctx, dataList, paneId, crosshair, activeIcon, precision,
           dateTimeFormat, locale, customApi, thousandsSeparator, decimalFoldThreshold,
-          offsetLeft, offsetTop, maxWidth, candleStyles
+          offsetLeft, offsetTop, maxWidth, candleStyles, tooltipRectStyles
         )
         this.drawIndicatorTooltip(
           ctx, paneId, dataList, crosshair,
           activeIcon, indicators, customApi,
           thousandsSeparator, decimalFoldThreshold,
-          offsetLeft, top, maxWidth, indicatorStyles
+          offsetLeft, top, maxWidth, indicatorStyles, tooltipRectStyles
         )
       } else if (
         candleStyles.tooltip.showType === TooltipShowType.Rect &&
@@ -101,7 +102,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
           ctx, paneId, dataList, crosshair,
           activeIcon, indicators, customApi,
           thousandsSeparator, decimalFoldThreshold,
-          offsetLeft, offsetTop, maxWidth, indicatorStyles
+          offsetLeft, offsetTop, maxWidth, indicatorStyles, tooltipRectStyles
         )
         const isDrawCandleTooltip = this.isDrawTooltip(crosshair, candleStyles.tooltip)
         this._drawRectTooltip(
@@ -117,7 +118,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
         const top = this._drawCandleStandardTooltip(
           ctx, dataList, paneId, crosshair, activeIcon, precision,
           dateTimeFormat, locale, customApi, thousandsSeparator, decimalFoldThreshold,
-          offsetLeft, offsetTop, maxWidth, candleStyles
+          offsetLeft, offsetTop, maxWidth, candleStyles, tooltipRectStyles
         )
         const isDrawIndicatorTooltip = this.isDrawTooltip(crosshair, indicatorStyles.tooltip)
         this._drawRectTooltip(
@@ -146,7 +147,8 @@ export default class CandleTooltipView extends IndicatorTooltipView {
     left: number,
     top: number,
     maxWidth: number,
-    styles: CandleStyle
+    styles: CandleStyle,
+    rectStyles: CandleTooltipRectStyle
   ): number {
     const tooltipStyles = styles.tooltip
     const tooltipTextStyles = tooltipStyles.text
@@ -160,6 +162,8 @@ export default class CandleTooltipView extends IndicatorTooltipView {
       )
 
       const [leftIcons, middleIcons, rightIcons] = this.classifyTooltipIcons(tooltipStyles.icons)
+
+      this.drawStandardTooltipRect(ctx, leftIcons, '', middleIcons, legends, rightIcons, coordinate, maxWidth, tooltipTextStyles, rectStyles)
 
       prevRowHeight = this.drawStandardTooltipIcons(
         ctx, activeTooltipIcon, leftIcons, coordinate,

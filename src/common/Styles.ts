@@ -76,6 +76,7 @@ export interface PolygonStyle {
 
 export interface RectStyle extends PolygonStyle {
   borderRadius: number
+  globalApha?: number
 }
 
 export interface TextStyle extends Padding {
