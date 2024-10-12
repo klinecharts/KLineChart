@@ -159,7 +159,7 @@ export default class SeparatorWidget extends Widget<SeparatorPane> {
     const bottomPane = pane.getBottomPane()
     if (bottomPane?.getOptions().dragEnabled ?? false) {
       const chart = pane.getChart()
-      const styles = chart.getStyles().separator
+      const styles = chart.getOptions().styles.separator
       this.getContainer().style.background = styles.activeBackgroundColor
       return true
     }
@@ -190,7 +190,7 @@ export default class SeparatorWidget extends Widget<SeparatorPane> {
 
   override updateImp (container: HTMLElement, _bounding: Bounding, level: UpdateLevel): void {
     if (level === UpdateLevel.All || level === UpdateLevel.Separator) {
-      const styles = this.getPane().getChart().getStyles().separator
+      const styles = this.getPane().getChart().getOptions().styles.separator
       container.style.top = `${-Math.floor((REAL_SEPARATOR_HEIGHT - styles.size) / 2)}px`
       container.style.height = `${REAL_SEPARATOR_HEIGHT}px`
     }

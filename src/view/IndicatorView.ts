@@ -34,7 +34,7 @@ export default class IndicatorView extends CandleBarView {
         const indicator = indicators[i]
         if (indicator.shouldOhlc && indicator.visible) {
           const indicatorStyles = indicator.styles
-          const defaultStyles = chartStore.getStyles().indicator
+          const defaultStyles = chartStore.getOptions().styles.indicator
           const upColor = formatValue(indicatorStyles, 'ohlc.upColor', defaultStyles.ohlc.upColor) as string
           const downColor = formatValue(indicatorStyles, 'ohlc.downColor', defaultStyles.ohlc.downColor) as string
           const noChangeColor = formatValue(indicatorStyles, 'ohlc.noChangeColor', defaultStyles.ohlc.noChangeColor) as string
@@ -68,10 +68,9 @@ export default class IndicatorView extends CandleBarView {
     const yAxis = pane.getAxisComponent()
     const chartStore = chart.getChartStore()
     const dataList = chartStore.getDataList()
-    const timeScaleStore = chartStore.getTimeScaleStore()
-    const visibleRange = timeScaleStore.getVisibleRange()
+    const visibleRange = chartStore.getVisibleRange()
     const indicators = chartStore.getIndicatorStore().getInstanceByPaneId(pane.getId())
-    const defaultStyles = chartStore.getStyles().indicator
+    const defaultStyles = chartStore.getOptions().styles.indicator
     ctx.save()
     indicators.forEach(indicator => {
       if (indicator.visible) {
@@ -89,7 +88,7 @@ export default class IndicatorView extends CandleBarView {
             indicator,
             visibleRange,
             bounding,
-            barSpace: timeScaleStore.getBarSpace(),
+            barSpace: chartStore.getBarSpace(),
             defaultStyles,
             xAxis,
             yAxis

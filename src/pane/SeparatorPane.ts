@@ -68,7 +68,7 @@ export default class SeparatorPane extends Pane {
   override getImage (_includeOverlay: boolean): HTMLCanvasElement {
     const { width, height } = this.getBounding()
 
-    const styles = this.getChart().getStyles().separator
+    const styles = this.getChart().getOptions().styles.separator
     const canvas = createDom('canvas', {
       width: `${width}px`,
       height: `${height}px`,
@@ -86,7 +86,7 @@ export default class SeparatorPane extends Pane {
 
   override updateImp (level: UpdateLevel, container: HTMLElement, bounding: Bounding): void {
     if (level === UpdateLevel.All || level === UpdateLevel.Separator) {
-      const styles = this.getChart().getStyles().separator
+      const styles = this.getChart().getOptions().styles.separator
       container.style.backgroundColor = styles.color
       container.style.height = `${bounding.height}px`
       container.style.marginLeft = `${bounding.left}px`

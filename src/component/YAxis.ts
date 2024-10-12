@@ -117,7 +117,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
       }
     }
     const visibleRangeDataList = chartStore.getVisibleRangeDataList()
-    const candleStyles = chart.getStyles().candle
+    const candleStyles = chart.getOptions().styles.candle
     const isArea = candleStyles.type === CandleType.Area
     const areaValueKey = candleStyles.area.value
     const shouldCompareHighLow = (inCandle && !isArea) || (!inCandle && shouldOhlc)
@@ -170,7 +170,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
     const range = this.createRange?.({
       paneId,
       kLineDataList: chartStore.getDataList(),
-      dataVisibleRange: chartStore.getTimeScaleStore().getVisibleRange(),
+      dataVisibleRange: chartStore.getVisibleRange(),
       indicators,
       defaultRange
     })
@@ -265,11 +265,9 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
     const pane = this.getParent()
     const height = pane.getYAxisWidget()?.getBounding().height ?? 0
     const chartStore = pane.getChart().getChartStore()
-    const customApi = chartStore.getCustomApi()
     const optimalTicks: AxisTick[] = []
     const indicators = chartStore.getIndicatorStore().getInstanceByPaneId(pane.getId())
-    const thousandsSeparator = chartStore.getThousandsSeparator()
-    const decimalFoldThreshold = chartStore.getDecimalFoldThreshold()
+    const { styles, customApi, thousandsSeparator, decimalFoldThreshold } = chartStore.getOptions()
     let precision = 0
     let shouldFormatBigNumber = false
     if (this.isInCandle()) {
@@ -282,7 +280,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
         }
       })
     }
-    const textHeight = chartStore.getStyles().xAxis.tickText.size
+    const textHeight = styles.xAxis.tickText.size
     let validY = NaN
     ticks.forEach(({ value }) => {
       let v = this.displayValueToText(+value, precision)
@@ -311,14 +309,15 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
   override getAutoSize (): number {
     const pane = this.getParent()
     const chart = pane.getChart()
-    const styles = chart.getStyles()
+    const chartOptions = chart.getOptions()
+    const styles = chartOptions.styles
     const yAxisStyles = styles.yAxis
     const width = yAxisStyles.size
     if (width !== 'auto') {
       return width
     }
     const chartStore = chart.getChartStore()
-    const customApi = chartStore.getCustomApi()
+    const customApi = chartOptions.customApi
     let yAxisWidth = 0
     if (yAxisStyles.show) {
       if (yAxisStyles.axisLine.show) {
@@ -367,7 +366,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
       if (shouldFormatBigNumber) {
         valueText = customApi.formatBigNumber(valueText)
       }
-      valueText = formatFoldDecimal(valueText, chartStore.getDecimalFoldThreshold())
+      valueText = formatFoldDecimal(valueText, chartStore.getOptions().decimalFoldThreshold)
       crosshairVerticalTextWidth += (
         crosshairStyles.horizontal.text.paddingLeft +
         crosshairStyles.horizontal.text.paddingRight +

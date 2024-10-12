@@ -26,13 +26,14 @@ export default class CandleHighLowPriceView extends View<YAxis> {
     const widget = this.getWidget()
     const pane = widget.getPane()
     const chartStore = pane.getChart().getChartStore()
-    const priceMarkStyles = chartStore.getStyles().candle.priceMark
+    const chartOptions = chartStore.getOptions()
+    const priceMarkStyles = chartOptions.styles.candle.priceMark
     const highPriceMarkStyles = priceMarkStyles.high
     const lowPriceMarkStyles = priceMarkStyles.low
     if (priceMarkStyles.show && (highPriceMarkStyles.show || lowPriceMarkStyles.show)) {
       const highestLowestPrice = chartStore.getVisibleRangeHighLowPrice()
-      const thousandsSeparator = chartStore.getThousandsSeparator()
-      const decimalFoldThreshold = chartStore.getDecimalFoldThreshold()
+      const thousandsSeparator = chartOptions.thousandsSeparator
+      const decimalFoldThreshold = chartOptions.decimalFoldThreshold
       const precision = chartStore.getPrecision()
       const yAxis = pane.getAxisComponent()
 

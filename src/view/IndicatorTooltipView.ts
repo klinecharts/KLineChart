@@ -55,12 +55,10 @@ export default class IndicatorTooltipView extends View<YAxis> {
     const crosshair = chartStore.getTooltipStore().getCrosshair()
     if (isValid(crosshair.kLineData)) {
       const bounding = widget.getBounding()
-      const customApi = chartStore.getCustomApi()
-      const thousandsSeparator = chartStore.getThousandsSeparator()
-      const decimalFoldThreshold = chartStore.getDecimalFoldThreshold()
+      const { styles, customApi, thousandsSeparator, decimalFoldThreshold } = chartStore.getOptions()
       const indicators = chartStore.getIndicatorStore().getInstanceByPaneId(pane.getId())
       const activeIcon = chartStore.getTooltipStore().getActiveIcon()
-      const defaultStyles = chartStore.getStyles().indicator
+      const defaultStyles = styles.indicator
       const { offsetLeft, offsetTop, offsetRight } = defaultStyles.tooltip
       this.drawIndicatorTooltip(
         ctx, pane.getId(), chartStore.getDataList(),
@@ -307,7 +305,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
       const { name: customName, calcParamsText: customCalcParamsText, legends: customLegends, icons: customIcons } = indicator.createTooltipDataSource({
         kLineDataList: dataList,
         indicator,
-        visibleRange: chartStore.getTimeScaleStore().getVisibleRange(),
+        visibleRange: chartStore.getVisibleRange(),
         bounding: widget.getBounding(),
         crosshair,
         defaultStyles: styles,

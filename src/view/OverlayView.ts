@@ -33,7 +33,7 @@ import { OVERLAY_FIGURE_KEY_PREFIX, OverlayMode, getAllOverlayFigureIgnoreEventT
 import type { ProgressOverlayInfo, EventOverlayInfo } from '../store/OverlayStore'
 import type OverlayStore from '../store/OverlayStore'
 import { EventOverlayInfoFigureType } from '../store/OverlayStore'
-import type TimeScaleStore from '../store/TimeScaleStore'
+import type ChartStore from '../store/ChartStore'
 
 import { PaneIdConstants } from '../pane/types'
 
@@ -169,7 +169,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
             if (figureType === EventOverlayInfoFigureType.Point) {
               overlay.eventPressedPointMove(point, figureIndex)
             } else {
-              overlay.eventPressedOtherMove(point, this.getWidget().getPane().getChart().getChartStore().getTimeScaleStore())
+              overlay.eventPressedOtherMove(point, this.getWidget().getPane().getChart().getChartStore())
             }
           }
         }
@@ -289,11 +289,11 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     const pane = this.getWidget().getPane()
     const chart = pane.getChart()
     const paneId = pane.getId()
-    const timeScaleStore = chart.getChartStore().getTimeScaleStore()
+    const chartStore = chart.getChartStore()
     if (this.coordinateToPointTimestampDataIndexFlag()) {
       const xAxis = chart.getXAxisPane().getAxisComponent()
       const dataIndex = xAxis.convertFromPixel(coordinate.x)
-      const timestamp = timeScaleStore.dataIndexToTimestamp(dataIndex) ?? undefined
+      const timestamp = chartStore.dataIndexToTimestamp(dataIndex) ?? undefined
       point.dataIndex = dataIndex
       point.timestamp = timestamp
     }
@@ -301,7 +301,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
       const yAxis = pane.getAxisComponent()
       let value = yAxis.convertFromPixel(coordinate.y)
       if (o.mode !== OverlayMode.Normal && paneId === PaneIdConstants.CANDLE && isNumber(point.dataIndex)) {
-        const kLineData = timeScaleStore.getDataByDataIndex(point.dataIndex)
+        const kLineData = chartStore.getDataByDataIndex(point.dataIndex)
         if (kLineData !== null) {
           const modeSensitivity = o.modeSensitivity
           if (value > kLineData.high) {
@@ -380,14 +380,16 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     const xAxis = chart.getXAxisPane().getAxisComponent()
     const bounding = widget.getBounding()
     const chartStore = chart.getChartStore()
-    const customApi = chartStore.getCustomApi()
-    const thousandsSeparator = chartStore.getThousandsSeparator()
-    const decimalFoldThreshold = chartStore.getDecimalFoldThreshold()
-    const timeScaleStore = chartStore.getTimeScaleStore()
-    const dateTimeFormat = timeScaleStore.getDateTimeFormat()
-    const barSpace = timeScaleStore.getBarSpace()
+    const {
+      styles,
+      customApi,
+      thousandsSeparator,
+      decimalFoldThreshold,
+    } = chartStore.getOptions()
+    const dateTimeFormat = chartStore.getDateTimeFormat()
+    const barSpace = chartStore.getBarSpace()
     const precision = chartStore.getPrecision()
-    const defaultStyles = chartStore.getStyles().overlay
+    const defaultStyles = styles.overlay
     const overlayStore = chartStore.getOverlayStore()
     const hoverInstanceInfo = overlayStore.getHoverInstanceInfo()
     const clickInstanceInfo = overlayStore.getClickInstanceInfo()
@@ -414,7 +416,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
           ctx, overlay, bounding, barSpace, overlayPrecision,
           dateTimeFormat, customApi, thousandsSeparator, decimalFoldThreshold,
           defaultStyles, xAxis, yAxis,
-          hoverInstanceInfo, clickInstanceInfo, timeScaleStore
+          hoverInstanceInfo, clickInstanceInfo, chartStore
         )
       }
     })
@@ -427,7 +429,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
           ctx, overlay, bounding, barSpace,
           overlayPrecision, dateTimeFormat, customApi, thousandsSeparator, decimalFoldThreshold,
           defaultStyles, xAxis, yAxis,
-          hoverInstanceInfo, clickInstanceInfo, timeScaleStore
+          hoverInstanceInfo, clickInstanceInfo, chartStore
         )
       }
     }
@@ -448,13 +450,13 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     yAxis: Nullable<YAxis>,
     hoverInstanceInfo: EventOverlayInfo,
     clickInstanceInfo: EventOverlayInfo,
-    timeScaleStore: TimeScaleStore
+    chartStore: ChartStore
   ): void {
     const { points } = overlay
     const coordinates = points.map(point => {
       let dataIndex = point.dataIndex
       if (isNumber(point.timestamp)) {
-        dataIndex = timeScaleStore.timestampToDataIndex(point.timestamp)
+        dataIndex = chartStore.timestampToDataIndex(point.timestamp)
       }
       const coordinate = { x: 0, y: 0 }
       if (isNumber(dataIndex)) {

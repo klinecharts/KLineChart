@@ -27,8 +27,8 @@ export default class IndicatorLastValueView extends View<YAxis> {
     const pane = widget.getPane()
     const bounding = widget.getBounding()
     const chartStore = pane.getChart().getChartStore()
-    const customApi = chartStore.getCustomApi()
-    const defaultStyles = chartStore.getStyles().indicator
+    const chartOptions = chartStore.getOptions()
+    const defaultStyles = chartOptions.styles.indicator
     const lastValueMarkStyles = defaultStyles.lastValueMark
     const lastValueMarkTextStyles = lastValueMarkStyles.text
     if (lastValueMarkStyles.show) {
@@ -37,8 +37,9 @@ export default class IndicatorLastValueView extends View<YAxis> {
       const dataList = chartStore.getDataList()
       const dataIndex = dataList.length - 1
       const indicators = chartStore.getIndicatorStore().getInstanceByPaneId(pane.getId())
-      const thousandsSeparator = chartStore.getThousandsSeparator()
-      const decimalFoldThreshold = chartStore.getDecimalFoldThreshold()
+      const customApi = chartOptions.customApi
+      const thousandsSeparator = chartOptions.thousandsSeparator
+      const decimalFoldThreshold = chartOptions.decimalFoldThreshold
       indicators.forEach(indicator => {
         const result = indicator.result
         const indicatorData = result[dataIndex] ?? result[dataIndex - 1]

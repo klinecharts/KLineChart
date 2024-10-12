@@ -50,14 +50,16 @@ export default class CandleTooltipView extends IndicatorTooltipView {
       const yAxisBounding = pane.getYAxisWidget()!.getBounding()
       const dataList = chartStore.getDataList()
       const precision = chartStore.getPrecision()
-      const locale = chartStore.getLocale()
-      const customApi = chartStore.getCustomApi()
-      const thousandsSeparator = chartStore.getThousandsSeparator()
-      const decimalFoldThreshold = chartStore.getDecimalFoldThreshold()
+      const {
+        styles,
+        locale,
+        thousandsSeparator,
+        decimalFoldThreshold,
+        customApi
+      } = chartStore.getOptions()
       const activeIcon = chartStore.getTooltipStore().getActiveIcon()
       const indicators = chartStore.getIndicatorStore().getInstanceByPaneId(pane.getId())
-      const dateTimeFormat = chartStore.getTimeScaleStore().getDateTimeFormat()
-      const styles = chartStore.getStyles()
+      const dateTimeFormat = chartStore.getDateTimeFormat()
       const candleStyles = styles.candle
       const indicatorStyles = styles.indicator
       if (
