@@ -21,8 +21,7 @@ export default [
       "file-progress/activate": 1,
       "@typescript-eslint/no-non-null-assertion": "off",
       "@typescript-eslint/class-methods-use-this": "off",
-      "@typescript-eslint/max-params": "off",
-      "accessor-pairs": "off"
+      "@typescript-eslint/max-params": "off"
     }
   }
 ]

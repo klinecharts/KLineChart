@@ -23,12 +23,12 @@ export default class CandleLastPriceView extends View {
     const pane = widget.getPane()
     const bounding = widget.getBounding()
     const chartStore = pane.getChart().getChartStore()
-    const priceMarkStyles = chartStore.styles.candle.priceMark
+    const priceMarkStyles = chartStore.getStyles().candle.priceMark
     const lastPriceMarkStyles = priceMarkStyles.last
     const lastPriceMarkLineStyles = lastPriceMarkStyles.line
     if (priceMarkStyles.show && lastPriceMarkStyles.show && lastPriceMarkLineStyles.show) {
       const yAxis = pane.getAxisComponent() as YAxis
-      const dataList = chartStore.dataList
+      const dataList = chartStore.getDataList()
       const data = dataList[dataList.length - 1]
       if (isValid(data)) {
         const { close, open } = data

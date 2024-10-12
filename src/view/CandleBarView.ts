@@ -36,7 +36,7 @@ export interface CandleBarOptions {
 
 export default class CandleBarView extends ChildrenView {
   private readonly _boundCandleBarClickEvent = (data: VisibleRangeData) => () => {
-    this.getWidget().getPane().getChart().getChartStore().actionStore.execute(ActionType.OnCandleBarClick, data)
+    this.getWidget().getPane().getChart().getChartStore().getActionStore().execute(ActionType.OnCandleBarClick, data)
     return false
   }
 
@@ -49,7 +49,7 @@ export default class CandleBarView extends ChildrenView {
       let ohlcSize = 0
       let halfOhlcSize = 0
       if (candleBarOptions.type === CandleType.Ohlc) {
-        const { gapBar } = chartStore.timeScaleStore.garSpace
+        const { gapBar } = chartStore.getTimeScaleStore().getBarSpace()
         ohlcSize = Math.min(Math.max(Math.round(gapBar * 0.2), 1), 8)
         if (ohlcSize > 2 && ohlcSize % 2 === 1) {
           ohlcSize--
@@ -157,7 +157,7 @@ export default class CandleBarView extends ChildrenView {
   }
 
   protected getCandleBarOptions (chartStore: ChartStore): Nullable<CandleBarOptions> {
-    const candleStyles = chartStore.styles.candle
+    const candleStyles = chartStore.getStyles().candle
     return {
       type: candleStyles.type as Exclude<CandleType, CandleType.Area>,
       styles: candleStyles.bar

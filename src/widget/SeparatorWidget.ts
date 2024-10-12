@@ -145,7 +145,7 @@ export default class SeparatorWidget extends Widget<SeparatorPane> {
           increasedPane.setOriginalBounding({ height: startDragIncreasedPaneHeight + diffHeight })
           const currentPane = this.getPane()
           const chart = currentPane.getChart()
-          chart.getChartStore().actionStore.execute(ActionType.OnPaneDrag, { paneId: currentPane.getId() })
+          chart.getChartStore().getActionStore().execute(ActionType.OnPaneDrag, { paneId: currentPane.getId() })
           chart.adjustPaneViewport(true, true, true, true, true)
         }
       }

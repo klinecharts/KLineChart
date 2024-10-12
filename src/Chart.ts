@@ -303,7 +303,7 @@ export default class ChartImp implements Chart {
 
   private _measurePaneHeight (): void {
     const totalHeight = this._chartBounding.height
-    const separatorSize = this._chartStore.styles.separator.size
+    const separatorSize = this._chartStore.getStyles().separator.size
     const xAxisHeight = this._xAxisPane.getAxisComponent().getAutoSize()
     let remainingHeight = totalHeight - xAxisHeight
     if (remainingHeight < 0) {
@@ -390,7 +390,7 @@ export default class ChartImp implements Chart {
 
   private _measurePaneWidth (): void {
     const totalWidth = this._chartBounding.width
-    const styles = this._chartStore.styles
+    const styles = this._chartStore.getStyles()
 
     let leftYAxisWidth = 0
     let leftYAxisOutside = true
@@ -429,7 +429,7 @@ export default class ChartImp implements Chart {
       mainRight = rightYAxisWidth
     }
 
-    this._chartStore.timeScaleStore.totalBarSpace = mainWidth
+    this._chartStore.getTimeScaleStore().setTotalBarSpace(mainWidth)
 
     const paneBounding = { width: totalWidth }
     const mainBounding = { width: mainWidth, left: mainLeft, right: mainRight }
@@ -545,13 +545,13 @@ export default class ChartImp implements Chart {
   }
 
   crosshairChange (crosshair: Crosshair): void {
-    const actionStore = this._chartStore.actionStore
+    const actionStore = this._chartStore.getActionStore()
     if (actionStore.has(ActionType.OnCrosshairChange)) {
       const indicatorData = {}
       this._drawPanes.forEach(pane => {
         const id = pane.getId()
         const paneIndicatorData = {}
-        const indicators = this._chartStore.indicatorStore.getInstanceByPaneId(id)
+        const indicators = this._chartStore.getIndicatorStore().getInstanceByPaneId(id)
         indicators.forEach(indicator => {
           const result = indicator.result
           paneIndicatorData[indicator.name] = result[crosshair.dataIndex ?? result.length - 1]
@@ -614,53 +614,53 @@ export default class ChartImp implements Chart {
   }
 
   setStyles (styles: string | DeepPartial<Styles>): void {
-    this._chartStore.options = { styles }
+    this._chartStore.setOptions({ styles })
     this.adjustPaneViewport(true, true, true, true, true)
   }
 
   getStyles (): Styles {
-    return this._chartStore.styles
+    return this._chartStore.getStyles()
   }
 
   setLocale (locale: string): void {
-    this._chartStore.options = { locale }
+    this._chartStore.setOptions({ locale })
     this.adjustPaneViewport(true, true, true, true, true)
   }
 
   getLocale (): string {
-    return this._chartStore.locale
+    return this._chartStore.getLocale()
   }
 
   setCustomApi (customApi: Partial<CustomApi>): void {
-    this._chartStore.options = { customApi }
+    this._chartStore.setOptions({ customApi })
     this.adjustPaneViewport(true, true, true, true, true)
   }
 
   setPriceVolumePrecision (pricePrecision: number, volumePrecision: number): void {
-    this._chartStore.precision = { price: pricePrecision, volume: volumePrecision }
+    this._chartStore.setPrecision({ price: pricePrecision, volume: volumePrecision })
   }
 
   getPriceVolumePrecision (): Precision {
-    return this._chartStore.precision
+    return this._chartStore.getPrecision()
   }
 
   setTimezone (timezone: string): void {
-    this._chartStore.options = { timezone }
+    this._chartStore.setOptions({ timezone })
     const axis = (this._xAxisPane.getAxisComponent() as unknown as AxisImp)
     axis.buildTicks(true)
     this._xAxisPane.update(UpdateLevel.Drawer)
   }
 
   getTimezone (): string {
-    return this._chartStore.timeScaleStore.timezone
+    return this._chartStore.getTimeScaleStore().getTimezone()
   }
 
   setOffsetRightDistance (distance: number): void {
-    this._chartStore.timeScaleStore.setOffsetRightDistance(distance, true)
+    this._chartStore.getTimeScaleStore().setOffsetRightDistance(distance, true)
   }
 
   getOffsetRightDistance (): number {
-    return this._chartStore.timeScaleStore.offsetRightDistance
+    return this._chartStore.getTimeScaleStore().getOffsetRightDistance()
   }
 
   setMaxOffsetLeftDistance (distance: number): void {
@@ -668,7 +668,7 @@ export default class ChartImp implements Chart {
       logWarn('setMaxOffsetLeftDistance', 'distance', 'distance must greater than zero!!!')
       return
     }
-    this._chartStore.timeScaleStore.maxOffsetLeftDistance = distance
+    this._chartStore.getTimeScaleStore().setMaxOffsetLeftDistance(distance)
   }
 
   setMaxOffsetRightDistance (distance: number): void {
@@ -676,7 +676,7 @@ export default class ChartImp implements Chart {
       logWarn('setMaxOffsetRightDistance', 'distance', 'distance must greater than zero!!!')
       return
     }
-    this._chartStore.timeScaleStore.maxOffsetRightDistance = distance
+    this._chartStore.getTimeScaleStore().setMaxOffsetRightDistance(distance)
   }
 
   setLeftMinVisibleBarCount (barCount: number): void {
@@ -684,7 +684,7 @@ export default class ChartImp implements Chart {
       logWarn('setLeftMinVisibleBarCount', 'barCount', 'barCount must greater than zero!!!')
       return
     }
-    this._chartStore.timeScaleStore.leftMinVisibleBarCount = Math.ceil(barCount)
+    this._chartStore.getTimeScaleStore().setLeftMinVisibleBarCount(Math.ceil(barCount))
   }
 
   setRightMinVisibleBarCount (barCount: number): void {
@@ -692,19 +692,19 @@ export default class ChartImp implements Chart {
       logWarn('setRightMinVisibleBarCount', 'barCount', 'barCount must greater than zero!!!')
       return
     }
-    this._chartStore.timeScaleStore.rightMinVisibleBarCount = Math.ceil(barCount)
+    this._chartStore.getTimeScaleStore().setRightMinVisibleBarCount(Math.ceil(barCount))
   }
 
   setBarSpace (space: number): void {
-    this._chartStore.timeScaleStore.setBarSpace(space)
+    this._chartStore.getTimeScaleStore().setBarSpace(space)
   }
 
   getBarSpace (): number {
-    return this._chartStore.timeScaleStore.garSpace.bar
+    return this._chartStore.getTimeScaleStore().getBarSpace().bar
   }
 
   getVisibleRange (): VisibleRange {
-    return this._chartStore.timeScaleStore.visibleRange
+    return this._chartStore.getTimeScaleStore().getVisibleRange()
   }
 
   clearData (): void {
@@ -712,7 +712,7 @@ export default class ChartImp implements Chart {
   }
 
   getDataList (): KLineData[] {
-    return this._chartStore.dataList
+    return this._chartStore.getDataList()
   }
 
   applyNewData (data: KLineData[], more?: boolean | Partial<LoadDataMore>): void {
@@ -734,7 +734,7 @@ export default class ChartImp implements Chart {
   }
 
   setLoadMoreDataCallback (cb: LoadDataCallback): void {
-    this._chartStore.loadMoreDataCallback = cb
+    this._chartStore.setLoadMoreDataCallback(cb)
   }
 
   createIndicator (value: string | IndicatorCreate, isStack?: boolean, paneOptions?: Nullable<PaneOptions>): Nullable<string> {
@@ -747,7 +747,7 @@ export default class ChartImp implements Chart {
     let paneId = paneOptions?.id
     const currentPane = this.getDrawPaneById(paneId ?? '')
     if (currentPane !== null) {
-      const result = this._chartStore.indicatorStore.addInstance(indicator, paneId ?? '', isStack ?? false)
+      const result = this._chartStore.getIndicatorStore().addInstance(indicator, paneId ?? '', isStack ?? false)
       if (result) {
         this._setPaneOptions(paneOptions ?? {}, (currentPane.getAxisComponent() as AxisImp).buildTicks(true) ?? false)
       }
@@ -756,7 +756,7 @@ export default class ChartImp implements Chart {
       const pane = this._createPane(IndicatorPane, paneId, paneOptions ?? {})
       const height = paneOptions?.height ?? PANE_DEFAULT_HEIGHT
       pane.setOriginalBounding({ height })
-      const result = this._chartStore.indicatorStore.addInstance(indicator, paneId, isStack ?? false)
+      const result = this._chartStore.getIndicatorStore().addInstance(indicator, paneId, isStack ?? false)
       if (result) {
         this.adjustPaneViewport(true, true, true, true, true)
       }
@@ -765,18 +765,18 @@ export default class ChartImp implements Chart {
   }
 
   overrideIndicator (override: IndicatorCreate): void {
-    const result = this._chartStore.indicatorStore.override(override)
+    const result = this._chartStore.getIndicatorStore().override(override)
     if (result) {
       this.adjustPaneViewport(false, false, true)
     }
   }
 
   getIndicators (filter?: IndicatorFilter): Map<string, Indicator[]> {
-    return this._chartStore.indicatorStore.getInstanceByFilter(filter ?? {})
+    return this._chartStore.getIndicatorStore().getInstanceByFilter(filter ?? {})
   }
 
   removeIndicator (filter?: IndicatorFilter): void {
-    const indicatorStore = this._chartStore.indicatorStore
+    const indicatorStore = this._chartStore.getIndicatorStore()
     const removed = indicatorStore.removeInstance(filter ?? {})
     if (removed) {
       let shouldMeasureHeight = false
@@ -853,7 +853,7 @@ export default class ChartImp implements Chart {
     } else {
       build(value as OverlayCreate)
     }
-    const ids = this._chartStore.overlayStore.addInstances(overlays, appointPaneFlags)
+    const ids = this._chartStore.getOverlayStore().addInstances(overlays, appointPaneFlags)
     if (isArray(value)) {
       return ids
     }
@@ -861,15 +861,15 @@ export default class ChartImp implements Chart {
   }
 
   getOverlays (filter?: OverlayFilter): Map<string, Overlay[]> {
-    return this._chartStore.overlayStore.getInstanceByFilter(filter ?? {})
+    return this._chartStore.getOverlayStore().getInstanceByFilter(filter ?? {})
   }
 
   overrideOverlay (override: Partial<OverlayCreate>): void {
-    this._chartStore.overlayStore.override(override)
+    this._chartStore.getOverlayStore().override(override)
   }
 
   removeOverlay (filter?: OverlayFilter): void {
-    this._chartStore.overlayStore.removeInstance(filter ?? {})
+    this._chartStore.getOverlayStore().removeInstance(filter ?? {})
   }
 
   setPaneOptions (options: PaneOptions): void {
@@ -877,24 +877,24 @@ export default class ChartImp implements Chart {
   }
 
   setZoomEnabled (enabled: boolean): void {
-    this._chartStore.timeScaleStore.zoomEnabled = enabled
+    this._chartStore.getTimeScaleStore().setZoomEnabled(enabled)
   }
 
   isZoomEnabled (): boolean {
-    return this._chartStore.timeScaleStore.zoomEnabled
+    return this._chartStore.getTimeScaleStore().getZoomEnabled()
   }
 
   setScrollEnabled (enabled: boolean): void {
-    this._chartStore.timeScaleStore.scrollEnabled = enabled
+    this._chartStore.getTimeScaleStore().setScrollEnabled(enabled)
   }
 
   isScrollEnabled (): boolean {
-    return this._chartStore.timeScaleStore.scrollEnabled
+    return this._chartStore.getTimeScaleStore().getScrollEnabled()
   }
 
   scrollByDistance (distance: number, animationDuration?: number): void {
     const duration = isNumber(animationDuration) && animationDuration > 0 ? animationDuration : 0
-    const timeScaleStore = this._chartStore.timeScaleStore
+    const timeScaleStore = this._chartStore.getTimeScaleStore()
     timeScaleStore.startScroll()
     if (duration > 0) {
       const animation = new Animation({ duration })
@@ -909,18 +909,18 @@ export default class ChartImp implements Chart {
   }
 
   scrollToRealTime (animationDuration?: number): void {
-    const timeScaleStore = this._chartStore.timeScaleStore
-    const { bar: barSpace } = timeScaleStore.garSpace
-    const difBarCount = timeScaleStore.lastBarRightSideDiffBarCount - timeScaleStore.initialOffsetRightDistance / barSpace
+    const timeScaleStore = this._chartStore.getTimeScaleStore()
+    const { bar: barSpace } = timeScaleStore.getBarSpace()
+    const difBarCount = timeScaleStore.getLastBarRightSideDiffBarCount() - timeScaleStore.getInitialOffsetRightDistance() / barSpace
     const distance = difBarCount * barSpace
     this.scrollByDistance(distance, animationDuration)
   }
 
   scrollToDataIndex (dataIndex: number, animationDuration?: number): void {
-    const timeScaleStore = this._chartStore.timeScaleStore
+    const timeScaleStore = this._chartStore.getTimeScaleStore()
     const distance = (
-      timeScaleStore.lastBarRightSideDiffBarCount + (this.getDataList().length - 1 - dataIndex)
-    ) * timeScaleStore.garSpace.bar
+      timeScaleStore.getLastBarRightSideDiffBarCount() + (this.getDataList().length - 1 - dataIndex)
+    ) * timeScaleStore.getBarSpace().bar
     this.scrollByDistance(distance, animationDuration)
   }
 
@@ -931,8 +931,8 @@ export default class ChartImp implements Chart {
 
   zoomAtCoordinate (scale: number, coordinate?: Coordinate, animationDuration?: number): void {
     const duration = isNumber(animationDuration) && animationDuration > 0 ? animationDuration : 0
-    const timeScaleStore = this._chartStore.timeScaleStore
-    const { bar: barSpace } = timeScaleStore.garSpace
+    const timeScaleStore = this._chartStore.getTimeScaleStore()
+    const { bar: barSpace } = timeScaleStore.getBarSpace()
     const scaleBarSpace = barSpace * scale
     const difSpace = scaleBarSpace - barSpace
     if (duration > 0) {
@@ -940,7 +940,7 @@ export default class ChartImp implements Chart {
       const animation = new Animation({ duration })
       animation.doFrame(frameTime => {
         const progressBarSpace = difSpace * (frameTime / duration)
-        const scale = (progressBarSpace - prevProgressBarSpace) / timeScaleStore.garSpace.bar * SCALE_MULTIPLIER
+        const scale = (progressBarSpace - prevProgressBarSpace) / timeScaleStore.getBarSpace().bar * SCALE_MULTIPLIER
         timeScaleStore.zoom(scale, coordinate)
         prevProgressBarSpace = progressBarSpace
       })
@@ -951,7 +951,7 @@ export default class ChartImp implements Chart {
   }
 
   zoomAtDataIndex (scale: number, dataIndex: number, animationDuration?: number): void {
-    const x = this._chartStore.timeScaleStore.dataIndexToCoordinate(dataIndex)
+    const x = this._chartStore.getTimeScaleStore().dataIndexToCoordinate(dataIndex)
     this.zoomAtCoordinate(scale, { x, y: 0 }, animationDuration)
   }
 
@@ -966,7 +966,7 @@ export default class ChartImp implements Chart {
     if (paneId !== PaneIdConstants.X_AXIS) {
       const pane = this.getDrawPaneById(paneId)
       if (pane !== null) {
-        const timeScaleStore = this._chartStore.timeScaleStore
+        const timeScaleStore = this._chartStore.getTimeScaleStore()
         const bounding = pane.getBounding()
         const ps = new Array<Partial<Point>>().concat(points)
         const xAxis = this._xAxisPane.getAxisComponent()
@@ -997,7 +997,7 @@ export default class ChartImp implements Chart {
     if (paneId !== PaneIdConstants.X_AXIS) {
       const pane = this.getDrawPaneById(paneId)
       if (pane !== null) {
-        const timeScaleStore = this._chartStore.timeScaleStore
+        const timeScaleStore = this._chartStore.getTimeScaleStore()
         const bounding = pane.getBounding()
         const cs = new Array<Partial<Coordinate>>().concat(coordinates)
         const xAxis = this._xAxisPane.getAxisComponent()
@@ -1025,18 +1025,18 @@ export default class ChartImp implements Chart {
       case ActionType.OnCrosshairChange: {
         const crosshair: Crosshair = { ...data }
         crosshair.paneId = crosshair.paneId ?? PaneIdConstants.CANDLE
-        this._chartStore.tooltipStore.setCrosshair(crosshair)
+        this._chartStore.getTooltipStore().setCrosshair(crosshair)
         break
       }
     }
   }
 
   subscribeAction (type: ActionType, callback: ActionCallback): void {
-    this._chartStore.actionStore.subscribe(type, callback)
+    this._chartStore.getActionStore().subscribe(type, callback)
   }
 
   unsubscribeAction (type: ActionType, callback?: ActionCallback): void {
-    this._chartStore.actionStore.unsubscribe(type, callback)
+    this._chartStore.getActionStore().unsubscribe(type, callback)
   }
 
   getConvertPictureUrl (includeOverlay?: boolean, type?: string, backgroundColor?: string): string {

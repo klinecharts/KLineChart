@@ -44,20 +44,20 @@ export default class CandleTooltipView extends IndicatorTooltipView {
     const pane = widget.getPane()
     const paneId = pane.getId()
     const chartStore = pane.getChart().getChartStore()
-    const crosshair = chartStore.tooltipStore.getCrosshair()
+    const crosshair = chartStore.getTooltipStore().getCrosshair()
     if (isValid(crosshair.kLineData)) {
       const bounding = widget.getBounding()
       const yAxisBounding = pane.getYAxisWidget()!.getBounding()
-      const dataList = chartStore.dataList
-      const precision = chartStore.precision
-      const locale = chartStore.locale
-      const customApi = chartStore.customApi
-      const thousandsSeparator = chartStore.thousandsSeparator
-      const decimalFoldThreshold = chartStore.decimalFoldThreshold
-      const activeIcon = chartStore.tooltipStore.getActiveIcon()
-      const indicators = chartStore.indicatorStore.getInstanceByPaneId(pane.getId())
-      const dateTimeFormat = chartStore.timeScaleStore.dateTimeFormat
-      const styles = chartStore.styles
+      const dataList = chartStore.getDataList()
+      const precision = chartStore.getPrecision()
+      const locale = chartStore.getLocale()
+      const customApi = chartStore.getCustomApi()
+      const thousandsSeparator = chartStore.getThousandsSeparator()
+      const decimalFoldThreshold = chartStore.getDecimalFoldThreshold()
+      const activeIcon = chartStore.getTooltipStore().getActiveIcon()
+      const indicators = chartStore.getIndicatorStore().getInstanceByPaneId(pane.getId())
+      const dateTimeFormat = chartStore.getTimeScaleStore().getDateTimeFormat()
+      const styles = chartStore.getStyles()
       const candleStyles = styles.candle
       const indicatorStyles = styles.indicator
       if (

@@ -196,7 +196,7 @@ export default class OverlayStore {
     })
     if (updatePaneIds.length > 0) {
       this._sort()
-      const chart = this._chartStore.chart
+      const chart = this._chartStore.getChart()
       updatePaneIds.forEach(paneId => {
         chart.updatePane(UpdateLevel.Overlay, paneId)
       })
@@ -205,7 +205,7 @@ export default class OverlayStore {
     return ids
   }
 
-  get progressInstanceInfo (): Nullable<ProgressOverlayInfo> {
+  getProgressInstanceInfo (): Nullable<ProgressOverlayInfo> {
     return this._progressInstanceInfo
   }
 
@@ -257,7 +257,7 @@ export default class OverlayStore {
       this._sort()
     }
     if (updatePaneIds.length > 0) {
-      const chart = this._chartStore.chart
+      const chart = this._chartStore.getChart()
       updatePaneIds.forEach(paneId => {
         chart.updatePane(UpdateLevel.Overlay, paneId)
       })
@@ -289,7 +289,7 @@ export default class OverlayStore {
       })
     })
     if (updatePaneIds.length > 0) {
-      const chart = this._chartStore.chart
+      const chart = this._chartStore.getChart()
       updatePaneIds.forEach(paneId => {
         chart.updatePane(UpdateLevel.Overlay, paneId)
       })
@@ -297,17 +297,17 @@ export default class OverlayStore {
     }
   }
 
-  set pressedInstanceInfo (info: EventOverlayInfo) {
+  setPressedInstanceInfo (info: EventOverlayInfo): void {
     this._pressedInstanceInfo = info
   }
 
-  get pressedInstanceInfo (): EventOverlayInfo {
+  getPressedInstanceInfo (): EventOverlayInfo {
     return this._pressedInstanceInfo
   }
 
   updatePointPosition (dataChangeLength: number, type?: LoadDataType): void {
     if (dataChangeLength > 0) {
-      const dataList = this._chartStore.dataList
+      const dataList = this._chartStore.getDataList()
       this._instances.forEach(overlays => {
         overlays.forEach(overlay => {
           const points = overlay.points
@@ -356,13 +356,13 @@ export default class OverlayStore {
           this._sort()
         }
         if (!ignoreUpdateFlag) {
-          this._chartStore.chart.updatePane(UpdateLevel.Overlay)
+          this._chartStore.getChart().updatePane(UpdateLevel.Overlay)
         }
       }
     }
   }
 
-  get hoverInstanceInfo (): EventOverlayInfo {
+  getHoverInstanceInfo (): EventOverlayInfo {
     return this._hoverInstanceInfo
   }
 
@@ -377,7 +377,7 @@ export default class OverlayStore {
       if (instance?.id !== infoInstance?.id) {
         instance?.onDeselected?.({ overlay: instance, figureKey, figureIndex, ...event })
         infoInstance?.onSelected?.({ overlay: infoInstance, figureKey: info.figureKey, figureIndex: info.figureIndex, ...event })
-        const chart = this._chartStore.chart
+        const chart = this._chartStore.getChart()
         chart.updatePane(UpdateLevel.Overlay, info.paneId)
         if (paneId !== info.paneId) {
           chart.updatePane(UpdateLevel.Overlay, paneId)
@@ -387,7 +387,7 @@ export default class OverlayStore {
     }
   }
 
-  get clickInstanceInfo (): EventOverlayInfo {
+  getClickInstanceInfo (): EventOverlayInfo {
     return this._clickInstanceInfo
   }
 

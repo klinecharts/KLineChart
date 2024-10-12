@@ -52,9 +52,9 @@ export default class IndicatorStore {
           type: loadDataType,
           indicator
         })
-        indicator.calcImp(this._chartStore.dataList).then(result => {
+        indicator.calcImp(this._chartStore.getDataList()).then(result => {
           if (result) {
-            this._chartStore.chart.adjustPaneViewport(false, true, true, true)
+            this._chartStore.getChart().adjustPaneViewport(false, true, true, true)
             indicator.onDataStateChange?.({
               state: IndicatorDataState.Ready,
               type: loadDataType,
@@ -164,7 +164,7 @@ export default class IndicatorStore {
   }
 
   synchronizeSeriesPrecision (indicator?: IndicatorImp): void {
-    const { price: pricePrecision, volume: volumePrecision } = this._chartStore.precision
+    const { price: pricePrecision, volume: volumePrecision } = this._chartStore.getPrecision()
     const synchronize: ((instance: IndicatorImp) => void) = instance => {
       switch (instance.series) {
         case IndicatorSeries.Price: {

@@ -41,12 +41,12 @@ export default class TooltipStore {
     * @param notInvalidate
     */
   setCrosshair (crosshair?: Crosshair, notInvalidate?: boolean): void {
-    const dataList = this._chartStore.dataList
+    const dataList = this._chartStore.getDataList()
     const cr = crosshair ?? {}
     let realDataIndex = 0
     let dataIndex = 0
     if (isNumber(cr.x)) {
-      realDataIndex = this._chartStore.timeScaleStore.coordinateToDataIndex(cr.x)
+      realDataIndex = this._chartStore.getTimeScaleStore().coordinateToDataIndex(cr.x)
       if (realDataIndex < 0) {
         dataIndex = 0
       } else if (realDataIndex > dataList.length - 1) {
@@ -59,18 +59,17 @@ export default class TooltipStore {
       dataIndex = realDataIndex
     }
     const kLineData: Nullable<KLineData> = dataList[dataIndex]
-    const realX = this._chartStore.timeScaleStore.dataIndexToCoordinate(realDataIndex)
+    const realX = this._chartStore.getTimeScaleStore().dataIndexToCoordinate(realDataIndex)
     const prevCrosshair = { x: this._crosshair.x, y: this._crosshair.y, paneId: this._crosshair.paneId }
     this._crosshair = { ...cr, realX, kLineData, realDataIndex, dataIndex }
     if (
       prevCrosshair.x !== cr.x || prevCrosshair.y !== cr.y || prevCrosshair.paneId !== cr.paneId
     ) {
-      const chart = this._chartStore.chart
       if (kLineData !== null) {
-        chart.crosshairChange(this._crosshair)
+        this._chartStore.getChart().crosshairChange(this._crosshair)
       }
       if (!(notInvalidate ?? false)) {
-        chart.updatePane(UpdateLevel.Overlay)
+        this._chartStore.getChart().updatePane(UpdateLevel.Overlay)
       }
     }
   }

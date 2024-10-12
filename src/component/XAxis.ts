@@ -52,7 +52,8 @@ export default abstract class XAxisImp extends AxisImp implements XAxis {
 
   protected override createRangeImp (): AxisRange {
     const chartStore = this.getParent().getChart().getChartStore()
-    const { from, to } = chartStore.timeScaleStore.visibleRange
+    const visibleDataRange = chartStore.getTimeScaleStore().getVisibleRange()
+    const { from, to } = visibleDataRange
     const af = from
     const at = to - 1
     const diff = to - from
@@ -72,10 +73,10 @@ export default abstract class XAxisImp extends AxisImp implements XAxis {
 
   protected override createTicksImp (): AxisTick[] {
     const chartStore = this.getParent().getChart().getChartStore()
-    const timeScaleStore = chartStore.timeScaleStore
-    const formatDate = chartStore.customApi.formatDate
-    const timeTickList = timeScaleStore.visibleRangeTimeTickList
-    const dateTimeFormat = timeScaleStore.dateTimeFormat
+    const timeScaleStore = chartStore.getTimeScaleStore()
+    const formatDate = chartStore.getCustomApi().formatDate
+    const timeTickList = timeScaleStore.getVisibleRangeTimeTickList()
+    const dateTimeFormat = timeScaleStore.getDateTimeFormat()
     const ticks = timeTickList.map(({ dataIndex, weight, timestamp }) => {
       let text = ''
       switch (weight) {
@@ -158,23 +159,23 @@ export default abstract class XAxisImp extends AxisImp implements XAxis {
   }
 
   convertTimestampFromPixel (pixel: number): Nullable<number> {
-    const timeScaleStore = this.getParent().getChart().getChartStore().timeScaleStore
+    const timeScaleStore = this.getParent().getChart().getChartStore().getTimeScaleStore()
     const dataIndex = timeScaleStore.coordinateToDataIndex(pixel)
     return timeScaleStore.dataIndexToTimestamp(dataIndex)
   }
 
   convertTimestampToPixel (timestamp: number): number {
-    const timeScaleStore = this.getParent().getChart().getChartStore().timeScaleStore
+    const timeScaleStore = this.getParent().getChart().getChartStore().getTimeScaleStore()
     const dataIndex = timeScaleStore.timestampToDataIndex(timestamp)
     return timeScaleStore.dataIndexToCoordinate(dataIndex)
   }
 
   convertFromPixel (pixel: number): number {
-    return this.getParent().getChart().getChartStore().timeScaleStore.coordinateToDataIndex(pixel)
+    return this.getParent().getChart().getChartStore().getTimeScaleStore().coordinateToDataIndex(pixel)
   }
 
   convertToPixel (value: number): number {
-    return this.getParent().getChart().getChartStore().timeScaleStore.dataIndexToCoordinate(value)
+    return this.getParent().getChart().getChartStore().getTimeScaleStore().dataIndexToCoordinate(value)
   }
 
   static extend (template: XAxisTemplate): XAxisConstructor {
