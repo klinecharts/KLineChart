@@ -259,27 +259,28 @@ export default class IndicatorTooltipView extends View<YAxis> {
   }
 
   protected drawStandardTooltipRect (
-    ctx: CanvasRenderingContext2D, 
+    ctx: CanvasRenderingContext2D,
     leftIcons: TooltipIconStyle[],
     name: string,
     middleIcons: TooltipIconStyle[],
     legends: TooltipLegend[],
     rightIcons: TooltipIconStyle[],
     coordinate: Coordinate, maxWidth: number, tooltipTextStyles: TooltipTextStyle, rectStyles: CandleTooltipRectStyle): void {
-    let rectWidth = 0;
-    let rectHeight = 0;
-    let elmWidth = 0;
-    let elmHeight = 0;
-    let positionX = 0;
+    let rectWidth = 0
+    let rectHeight = 0
+    let elmWidth = 0
+    let elmHeight = 0
+    let positionX = 0
 
-    function updateRectSize(width: number, height: number): void {
-      rectWidth = rectWidth + width > maxWidth ? rectWidth : rectWidth + width
+    function updateRectSize (width: number, height: number): void {
+      rectWidth = Math.max(rectWidth, positionX + width)
       rectHeight = Math.max(rectHeight, height)
-      if (positionX + width > maxWidth) {
+      if (rectWidth > maxWidth) {
         rectHeight += height
-        positionX = 0;
+        positionX = width
+        rectWidth -= width
       } else {
-        positionX += rectWidth
+        positionX += width
       }
     }
 
@@ -346,7 +347,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
         elmHeight = marginTop + paddingTop + size + paddingBottom + marginBottom
         updateRectSize(elmWidth, elmHeight)
       })
-    }    
+    }
 
     this.createFigure({
       name: 'rect',
@@ -363,7 +364,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
         borderSize: rectStyles.borderSize,
         borderRadius: rectStyles.borderRadius,
         globalAlpha: rectStyles.globalAlpha
-      },
+      }
     })?.draw(ctx)
   }
 
