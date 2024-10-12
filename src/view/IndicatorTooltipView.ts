@@ -15,7 +15,7 @@
 import type Nullable from '../common/Nullable'
 import type { KLineData } from '../common/Data'
 import type Crosshair from '../common/Crosshair'
-import { type IndicatorStyle, type TooltipStyle, type TooltipIconStyle, type TooltipTextStyle, type TooltipLegend, TooltipShowRule, type TooltipLegendChild, TooltipIconPosition } from '../common/Styles'
+import { type IndicatorStyle, type TooltipStyle, type TooltipIconStyle, type TooltipTextStyle, type TooltipLegend, TooltipShowRule, type TooltipLegendChild, TooltipIconPosition, PolygonType, type CandleTooltipRectStyle } from '../common/Styles'
 import { ActionType } from '../common/Action'
 import { formatPrecision, formatThousands, formatFoldDecimal } from '../common/utils/format'
 import { isValid, isObject, isString, isNumber, isFunction } from '../common/utils/typeChecks'
@@ -61,13 +61,14 @@ export default class IndicatorTooltipView extends View<YAxis> {
       const indicators = chartStore.getIndicatorStore().getInstanceByPaneId(pane.getId())
       const activeIcon = chartStore.getTooltipStore().getActiveIcon()
       const defaultStyles = chartStore.getStyles().indicator
+      const defaultTooltipRectStyles = chartStore.getStyles().candle.tooltip.rect;
       const { offsetLeft, offsetTop, offsetRight } = defaultStyles.tooltip
       this.drawIndicatorTooltip(
         ctx, pane.getId(), chartStore.getDataList(),
         crosshair, activeIcon, indicators, customApi,
         thousandsSeparator, decimalFoldThreshold,
         offsetLeft, offsetTop,
-        bounding.width - offsetRight, defaultStyles
+        bounding.width - offsetRight, defaultStyles, defaultTooltipRectStyles
       )
     }
   }
@@ -85,7 +86,8 @@ export default class IndicatorTooltipView extends View<YAxis> {
     left: number,
     top: number,
     maxWidth: number,
-    styles: IndicatorStyle
+    styles: IndicatorStyle,
+    defaultTooltipRectStyles: CandleTooltipRectStyle
   ): number {
     const tooltipStyles = styles.tooltip
     if (this.isDrawTooltip(crosshair, tooltipStyles)) {
@@ -98,6 +100,9 @@ export default class IndicatorTooltipView extends View<YAxis> {
         const legendValid = legends.length > 0
         if (nameValid || legendValid) {
           const [leftIcons, middleIcons, rightIcons] = this.classifyTooltipIcons(icons)
+
+          this.drawStandardTooltipRect(ctx, leftIcons, name, middleIcons, legends, rightIcons, coordinate, maxWidth, tooltipTextStyles, defaultTooltipRectStyles)
+
           prevRowHeight = this.drawStandardTooltipIcons(
             ctx, activeTooltipIcon, leftIcons,
             coordinate, paneId, indicator.name,
@@ -130,7 +135,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
           if (legendValid) {
             prevRowHeight = this.drawStandardTooltipLegends(
               ctx, legends, coordinate,
-              left, prevRowHeight, maxWidth, tooltipStyles.text
+              left, prevRowHeight, maxWidth, tooltipTextStyles
             )
           }
 
@@ -251,6 +256,115 @@ export default class IndicatorTooltipView extends View<YAxis> {
       })
     }
     return prevRowHeight
+  }
+
+  protected drawStandardTooltipRect (
+    ctx: CanvasRenderingContext2D, 
+    leftIcons: TooltipIconStyle[],
+    name: string,
+    middleIcons: TooltipIconStyle[],
+    legends: TooltipLegend[],
+    rightIcons: TooltipIconStyle[],
+    coordinate: Coordinate, maxWidth: number, tooltipTextStyles: TooltipTextStyle, rectStyles: CandleTooltipRectStyle): void {
+    let rectWidth = 0;
+    let rectHeight = 0;
+    let elmWidth = 0;
+    let elmHeight = 0;
+    let positionX = 0;
+
+    function updateRectSize(width: number, height: number): void {
+      rectWidth = rectWidth + width > maxWidth ? rectWidth : rectWidth + width
+      rectHeight = Math.max(rectHeight, height)
+      if (positionX + width > maxWidth) {
+        rectHeight += height
+        positionX = 0;
+      } else {
+        positionX += rectWidth
+      }
+    }
+
+    //  measure box left icons
+    if (leftIcons.length > 0) {
+      leftIcons.forEach(icon => {
+        const {
+          marginLeft = 0, marginTop = 0, marginRight = 0, marginBottom = 0,
+          paddingLeft = 0, paddingTop = 0, paddingRight = 0, paddingBottom = 0,
+          size, fontFamily, icon: text
+        } = icon
+        ctx.font = createFont(size, 'normal', fontFamily)
+        elmWidth = marginLeft + paddingLeft + ctx.measureText(text).width + paddingRight + marginRight
+        elmHeight = marginTop + paddingTop + size + paddingBottom + marginBottom
+        updateRectSize(elmWidth, elmHeight)
+      })
+    }
+
+    //  measure box name
+    if (name.length > 0) {
+      ctx.font = createFont(tooltipTextStyles.size, tooltipTextStyles.weight, tooltipTextStyles.family)
+      elmWidth = tooltipTextStyles.marginLeft + ctx.measureText(name).width + tooltipTextStyles.marginRight
+      elmHeight = tooltipTextStyles.marginTop + tooltipTextStyles.size + tooltipTextStyles.marginBottom
+      updateRectSize(elmWidth, elmHeight)
+    }
+
+    //  measure box middle icons
+    if (middleIcons.length > 0) {
+      middleIcons.forEach(icon => {
+        const {
+          marginLeft = 0, marginTop = 0, marginRight = 0, marginBottom = 0,
+          paddingLeft = 0, paddingTop = 0, paddingRight = 0, paddingBottom = 0,
+          size, fontFamily, icon: text
+        } = icon
+        ctx.font = createFont(size, 'normal', fontFamily)
+        elmWidth = (marginLeft + paddingLeft + ctx.measureText(text).width + paddingRight + marginRight)
+        elmHeight = marginTop + paddingTop + size + paddingBottom + marginBottom
+        updateRectSize(elmWidth, elmHeight)
+      })
+    }
+
+    //  measure box legends
+    if (legends.length > 0) {
+      ctx.font = createFont(tooltipTextStyles.size, tooltipTextStyles.weight, tooltipTextStyles.family)
+      legends.forEach(legend => {
+        const title = legend.title as TooltipLegendChild
+        const value = legend.value as TooltipLegendChild
+        elmWidth = tooltipTextStyles.marginLeft + ctx.measureText(title.text).width + ctx.measureText(value.text).width + tooltipTextStyles.marginRight
+        elmHeight = tooltipTextStyles.marginTop + tooltipTextStyles.size + tooltipTextStyles.marginBottom
+        updateRectSize(elmWidth, elmHeight)
+      })
+    }
+
+    //  measure box right icons
+    if (rightIcons.length > 0) {
+      rightIcons.forEach(icon => {
+        const {
+          marginLeft = 0, marginTop = 0, marginRight = 0, marginBottom = 0,
+          paddingLeft = 0, paddingTop = 0, paddingRight = 0, paddingBottom = 0,
+          size, fontFamily, icon: text
+        } = icon
+        ctx.font = createFont(size, 'normal', fontFamily)
+        elmWidth = (marginLeft + paddingLeft + ctx.measureText(text).width + paddingRight + marginRight)
+        elmHeight = marginTop + paddingTop + size + paddingBottom + marginBottom
+        updateRectSize(elmWidth, elmHeight)
+      })
+    }    
+
+    this.createFigure({
+      name: 'rect',
+      attrs: {
+        x: coordinate.x,
+        y: coordinate.y,
+        width: rectWidth,
+        height: rectHeight
+      },
+      styles: {
+        style: PolygonType.Fill,
+        color: rectStyles.color,
+        borderColor: rectStyles.borderColor,
+        borderSize: rectStyles.borderSize,
+        borderRadius: rectStyles.borderRadius,
+        globalAlpha: rectStyles.globalAlpha
+      },
+    })?.draw(ctx)
   }
 
   protected isDrawTooltip (crosshair: Crosshair, styles: TooltipStyle): boolean {

@@ -76,6 +76,7 @@ export interface PolygonStyle {
 
 export interface RectStyle extends PolygonStyle {
   borderRadius: number
+  globalAlpha?: number
 }
 
 export interface TextStyle extends Padding {
@@ -488,7 +489,8 @@ function getDefaultCandleStyle (): CandleStyle {
         borderRadius: 4,
         borderSize: 1,
         borderColor: '#F2F3F5',
-        color: '#FEFEFE'
+        color: '#FEFEFE',
+        globalAlpha: 0.5,
       },
       text: {
         size: 12,

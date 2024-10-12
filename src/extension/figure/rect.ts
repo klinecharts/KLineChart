@@ -58,8 +58,13 @@ export function drawRect (ctx: CanvasRenderingContext2D, attrs: RectAttrs | Rect
     borderColor = 'transparent',
     borderStyle = LineType.Solid,
     borderRadius: r = 0,
-    borderDashedValue = [2, 2]
+    borderDashedValue = [2, 2],
+    globalAlpha = 1,
   } = styles
+  //  modify the alpha value
+  if (globalAlpha !== 1) {
+    ctx.globalAlpha = globalAlpha
+  }
   // eslint-disable-next-line @typescript-eslint/unbound-method
   const draw = ctx.roundRect ?? ctx.rect
   const solid = (style === PolygonType.Fill || styles.style === PolygonType.StrokeFill) && (!isString(color) || !isTransparent(color))
@@ -95,6 +100,10 @@ export function drawRect (ctx: CanvasRenderingContext2D, attrs: RectAttrs | Rect
         }
       }
     })
+  }
+  //  reset the alpha value
+  if (globalAlpha !== 1) {
+    ctx.globalAlpha = 1
   }
 }
 
