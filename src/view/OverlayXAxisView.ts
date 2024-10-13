@@ -27,8 +27,8 @@ import type { YAxis } from '../component/YAxis'
 import type { OverlayPrecision, OverlayFigure, Overlay } from '../component/Overlay'
 import type OverlayImp from '../component/Overlay'
 
-import type { EventOverlayInfo, ProgressOverlayInfo } from '../store/OverlayStore'
-import type OverlayStore from '../store/OverlayStore'
+import type { EventOverlayInfo, ProgressOverlayInfo } from '../Store'
+import type ChartStore from '../Store'
 
 import OverlayYAxisView from './OverlayYAxisView'
 
@@ -41,12 +41,12 @@ export default class OverlayXAxisView extends OverlayYAxisView<XAxis> {
     return false
   }
 
-  override getCompleteOverlays (overlayStore: OverlayStore): OverlayImp[] {
-    return overlayStore.getInstanceByPaneId()
+  override getCompleteOverlays (chartStore: ChartStore): OverlayImp[] {
+    return chartStore.getOverlaysByPaneId()
   }
 
   override getProgressOverlay (info: ProgressOverlayInfo): OverlayImp {
-    return info.instance
+    return info.overlay
   }
 
   override getDefaultFigures (
@@ -60,10 +60,10 @@ export default class OverlayXAxisView extends OverlayYAxisView<XAxis> {
     _decimalFoldThreshold: number,
     _xAxis: Nullable<XAxis>,
     _yAxis: Nullable<YAxis>,
-    clickInstanceInfo: EventOverlayInfo
+    clickOverlayInfo: EventOverlayInfo
   ): OverlayFigure[] {
     const figures: OverlayFigure[] = []
-    if (overlay.needDefaultXAxisFigure && overlay.id === clickInstanceInfo.instance?.id) {
+    if (overlay.needDefaultXAxisFigure && overlay.id === clickOverlayInfo.overlay?.id) {
       let leftX = Number.MAX_SAFE_INTEGER
       let rightX = Number.MIN_SAFE_INTEGER
       coordinates.forEach((coordinate, index) => {

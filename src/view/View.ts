@@ -39,21 +39,21 @@ export default abstract class View<C extends Axis = Axis> extends Eventful {
 
   getWidget (): DrawWidget<DrawPane<C>> { return this._widget }
 
-  protected createFigure (figure: FigureCreate, eventHandler?: EventHandler): Nullable<Figure> {
-    const FigureClazz = getInnerFigureClass(figure.name)
+  protected createFigure (create: FigureCreate, eventHandler?: EventHandler): Nullable<Figure> {
+    const FigureClazz = getInnerFigureClass(create.name)
     if (FigureClazz !== null) {
-      const instance = new FigureClazz(figure)
+      const figure = new FigureClazz(create)
       if (isValid(eventHandler)) {
         for (const key in eventHandler) {
           // eslint-disable-next-line no-prototype-builtins
           if (eventHandler.hasOwnProperty(key)) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-            instance.registerEvent(key as EventName, eventHandler[key])
+            figure.registerEvent(key as EventName, eventHandler[key])
           }
         }
-        this.addChild(instance)
+        this.addChild(figure)
       }
-      return instance
+      return figure
     }
     return null
   }

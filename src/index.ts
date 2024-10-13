@@ -62,7 +62,7 @@ import { registerStyles } from './extension/styles/index'
 import { registerXAxis } from './extension/x-axis'
 import { registerYAxis } from './extension/y-axis'
 
-const instances = new Map<string, ChartImp>()
+const charts = new Map<string, ChartImp>()
 let chartBaseId = 1
 
 /**
@@ -91,7 +91,7 @@ function init (ds: HTMLElement | string, options?: Options): Nullable<Chart> {
     logError('', '', 'The chart cannot be initialized correctly. Please check the parameters. The chart container cannot be null and child elements need to be added!!!')
     return null
   }
-  let chart = instances.get(dom.id)
+  let chart = charts.get(dom.id)
   if (isValid(chart)) {
     logWarn('', '', 'The chart has been initialized on the dom！！！')
     return chart
@@ -100,7 +100,7 @@ function init (ds: HTMLElement | string, options?: Options): Nullable<Chart> {
   chart = new ChartImp(dom, options)
   chart.id = id
   dom.setAttribute('k-line-chart-id', id)
-  instances.set(id, chart)
+  charts.set(id, chart)
   return chart
 }
 
@@ -122,8 +122,8 @@ function dispose (dcs: HTMLElement | Chart | string): void {
     id = dom?.getAttribute('k-line-chart-id') ?? null
   }
   if (id !== null) {
-    instances.get(id)?.destroy()
-    instances.delete(id)
+    charts.get(id)?.destroy()
+    charts.delete(id)
   }
 }
 

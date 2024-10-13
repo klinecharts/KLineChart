@@ -36,7 +36,7 @@ import { logWarn } from './common/utils/logger'
 import { binarySearchNearest } from './common/utils/number'
 import { LoadDataType } from './common/LoadDataCallback'
 
-import ChartStore, { SCALE_MULTIPLIER } from './store/ChartStore'
+import ChartStore, { SCALE_MULTIPLIER } from './Store'
 
 import CandlePane from './pane/CandlePane'
 import IndicatorPane from './pane/IndicatorPane'
@@ -538,13 +538,12 @@ export default class ChartImp implements Chart {
   }
 
   crosshairChange (crosshair: Crosshair): void {
-    const actionStore = this._chartStore.getActionStore()
-    if (actionStore.has(ActionType.OnCrosshairChange)) {
+    if (this._chartStore.hasAction(ActionType.OnCrosshairChange)) {
       const indicatorData = {}
       this._drawPanes.forEach(pane => {
         const id = pane.getId()
         const paneIndicatorData = {}
-        const indicators = this._chartStore.getIndicatorStore().getInstanceByPaneId(id)
+        const indicators = this._chartStore.getIndicatorsByPaneId(id)
         indicators.forEach(indicator => {
           const result = indicator.result
           paneIndicatorData[indicator.name] = result[crosshair.dataIndex ?? result.length - 1]
@@ -552,7 +551,7 @@ export default class ChartImp implements Chart {
         indicatorData[id] = paneIndicatorData
       })
       if (isString(crosshair.paneId)) {
-        actionStore.execute(ActionType.OnCrosshairChange, {
+        this._chartStore.executeAction(ActionType.OnCrosshairChange, {
           ...crosshair,
           indicatorData
         })
@@ -717,7 +716,7 @@ export default class ChartImp implements Chart {
     let paneId = paneOptions?.id
     const currentPane = this.getDrawPaneById(paneId ?? '')
     if (currentPane !== null) {
-      const result = this._chartStore.getIndicatorStore().addInstance(indicator, paneId ?? '', isStack ?? false)
+      const result = this._chartStore.addIndicator(indicator, paneId ?? '', isStack ?? false)
       if (result) {
         this._setPaneOptions(paneOptions ?? {}, (currentPane.getAxisComponent() as AxisImp).buildTicks(true) ?? false)
       }
@@ -726,7 +725,7 @@ export default class ChartImp implements Chart {
       const pane = this._createPane(IndicatorPane, paneId, paneOptions ?? {})
       const height = paneOptions?.height ?? PANE_DEFAULT_HEIGHT
       pane.setOriginalBounding({ height })
-      const result = this._chartStore.getIndicatorStore().addInstance(indicator, paneId, isStack ?? false)
+      const result = this._chartStore.addIndicator(indicator, paneId, isStack ?? false)
       if (result) {
         this.adjustPaneViewport(true, true, true, true, true)
       }
@@ -735,19 +734,18 @@ export default class ChartImp implements Chart {
   }
 
   overrideIndicator (override: IndicatorCreate): void {
-    const result = this._chartStore.getIndicatorStore().override(override)
+    const result = this._chartStore.overrideIndicator(override)
     if (result) {
       this.adjustPaneViewport(false, false, true)
     }
   }
 
   getIndicators (filter?: IndicatorFilter): Map<string, Indicator[]> {
-    return this._chartStore.getIndicatorStore().getInstanceByFilter(filter ?? {})
+    return this._chartStore.getIndicatorsByFilter(filter ?? {})
   }
 
   removeIndicator (filter?: IndicatorFilter): void {
-    const indicatorStore = this._chartStore.getIndicatorStore()
-    const removed = indicatorStore.removeInstance(filter ?? {})
+    const removed = this._chartStore.removeIndicator(filter ?? {})
     if (removed) {
       let shouldMeasureHeight = false
       const paneIds: string[] = []
@@ -759,7 +757,7 @@ export default class ChartImp implements Chart {
       })
 
       paneIds.forEach(paneId => {
-        if (!indicatorStore.hasInstances(paneId)) {
+        if (!this._chartStore.hasIndicators(paneId)) {
           const index = this._drawPanes.findIndex(pane => pane.getId() === paneId)
           const pane = this._drawPanes[index]
           if (isValid(pane)) {
@@ -823,7 +821,7 @@ export default class ChartImp implements Chart {
     } else {
       build(value as OverlayCreate)
     }
-    const ids = this._chartStore.getOverlayStore().addInstances(overlays, appointPaneFlags)
+    const ids = this._chartStore.addOverlays(overlays, appointPaneFlags)
     if (isArray(value)) {
       return ids
     }
@@ -831,15 +829,15 @@ export default class ChartImp implements Chart {
   }
 
   getOverlays (filter?: OverlayFilter): Map<string, Overlay[]> {
-    return this._chartStore.getOverlayStore().getInstanceByFilter(filter ?? {})
+    return this._chartStore.getOverlaysByFilter(filter ?? {})
   }
 
   overrideOverlay (override: Partial<OverlayCreate>): void {
-    this._chartStore.getOverlayStore().override(override)
+    this._chartStore.overrideOverlay(override)
   }
 
   removeOverlay (filter?: OverlayFilter): void {
-    this._chartStore.getOverlayStore().removeInstance(filter ?? {})
+    this._chartStore.removeOverlay(filter ?? {})
   }
 
   setPaneOptions (options: PaneOptions): void {
@@ -989,18 +987,18 @@ export default class ChartImp implements Chart {
       case ActionType.OnCrosshairChange: {
         const crosshair: Crosshair = { ...data }
         crosshair.paneId = crosshair.paneId ?? PaneIdConstants.CANDLE
-        this._chartStore.getTooltipStore().setCrosshair(crosshair)
+        this._chartStore.setCrosshair(crosshair)
         break
       }
     }
   }
 
   subscribeAction (type: ActionType, callback: ActionCallback): void {
-    this._chartStore.getActionStore().subscribe(type, callback)
+    this._chartStore.subscribeAction(type, callback)
   }
 
   unsubscribeAction (type: ActionType, callback?: ActionCallback): void {
-    this._chartStore.getActionStore().unsubscribe(type, callback)
+    this._chartStore.unsubscribeAction(type, callback)
   }
 
   getConvertPictureUrl (includeOverlay?: boolean, type?: string, backgroundColor?: string): string {

@@ -88,7 +88,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
     let specifyMin = Number.MAX_SAFE_INTEGER
     let specifyMax = Number.MIN_SAFE_INTEGER
     let indicatorPrecision = Number.MAX_SAFE_INTEGER
-    const indicators = chartStore.getIndicatorStore().getInstanceByPaneId(paneId)
+    const indicators = chartStore.getIndicatorsByPaneId(paneId)
     indicators.forEach(indicator => {
       if (!shouldOhlc) {
         shouldOhlc = indicator.shouldOhlc ?? false
@@ -266,7 +266,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
     const height = pane.getYAxisWidget()?.getBounding().height ?? 0
     const chartStore = pane.getChart().getChartStore()
     const optimalTicks: AxisTick[] = []
-    const indicators = chartStore.getIndicatorStore().getInstanceByPaneId(pane.getId())
+    const indicators = chartStore.getIndicatorsByPaneId(pane.getId())
     const { styles, customApi, thousandsSeparator, decimalFoldThreshold } = chartStore.getOptions()
     let precision = 0
     let shouldFormatBigNumber = false
@@ -341,7 +341,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
       crosshairStyles.horizontal.show &&
       crosshairStyles.horizontal.text.show
     ) {
-      const indicators = chartStore.getIndicatorStore().getInstanceByPaneId(pane.getId())
+      const indicators = chartStore.getIndicatorsByPaneId(pane.getId())
       let indicatorPrecision = 0
       let shouldFormatBigNumber = false
       indicators.forEach(indicator => {

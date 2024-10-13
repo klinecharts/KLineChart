@@ -26,7 +26,7 @@ import { clone, isArray, isFunction, isNumber, isString, isValid, merge } from '
 
 import type { XAxis } from './XAxis'
 import type { YAxis } from './YAxis'
-import type ChartStore from '../store/ChartStore'
+import type ChartStore from '../Store'
 
 export enum OverlayMode {
   Normal = 'normal',

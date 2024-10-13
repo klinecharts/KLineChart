@@ -26,7 +26,7 @@ export enum ActionType {
   OnPaneDrag = 'onPaneDrag'
 }
 
-export default class Delegate {
+export default class Action {
   private _callbacks: ActionCallback[] = []
 
   subscribe (callback: ActionCallback): void {

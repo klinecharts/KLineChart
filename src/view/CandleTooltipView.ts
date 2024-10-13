@@ -34,7 +34,7 @@ import { AxisPosition } from '../component/Axis'
 
 import IndicatorTooltipView from './IndicatorTooltipView'
 
-import type { TooltipIcon } from '../store/TooltipStore'
+import type { TooltipIcon } from '../Store'
 
 import { i18n } from '../extension/i18n/index'
 
@@ -44,7 +44,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
     const pane = widget.getPane()
     const paneId = pane.getId()
     const chartStore = pane.getChart().getChartStore()
-    const crosshair = chartStore.getTooltipStore().getCrosshair()
+    const crosshair = chartStore.getCrosshair()
     if (isValid(crosshair.kLineData)) {
       const bounding = widget.getBounding()
       const yAxisBounding = pane.getYAxisWidget()!.getBounding()
@@ -57,8 +57,8 @@ export default class CandleTooltipView extends IndicatorTooltipView {
         decimalFoldThreshold,
         customApi
       } = chartStore.getOptions()
-      const activeIcon = chartStore.getTooltipStore().getActiveIcon()
-      const indicators = chartStore.getIndicatorStore().getInstanceByPaneId(pane.getId())
+      const activeIcon = chartStore.getActiveTooltipIcon()
+      const indicators = chartStore.getIndicatorsByPaneId(pane.getId())
       const dateTimeFormat = chartStore.getDateTimeFormat()
       const candleStyles = styles.candle
       const indicatorStyles = styles.indicator

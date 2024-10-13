@@ -22,7 +22,7 @@ import { FormatDateType } from '../Options'
 import type { Axis } from '../component/Axis'
 import type { XAxis } from '../component/XAxis'
 
-import type ChartStore from '../store/ChartStore'
+import type ChartStore from '../Store'
 
 import CrosshairHorizontalLabelView from './CrosshairHorizontalLabelView'
 import type { TextAttrs } from '../extension/figure/text'

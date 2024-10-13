@@ -18,7 +18,7 @@ import { formatValue } from '../common/utils/format'
 import { isNumber, isValid } from '../common/utils/typeChecks'
 import type Coordinate from '../common/Coordinate'
 
-import type ChartStore from '../store/ChartStore'
+import type ChartStore from '../Store'
 
 import { eachFigures, type IndicatorFigure, type IndicatorFigureAttrs, type IndicatorFigureStyle } from '../component/Indicator'
 
@@ -29,7 +29,7 @@ export default class IndicatorView extends CandleBarView {
     const pane = this.getWidget().getPane()
     const yAxis = pane.getAxisComponent()
     if (!yAxis.isInCandle()) {
-      const indicators = chartStore.getIndicatorStore().getInstanceByPaneId(pane.getId())
+      const indicators = chartStore.getIndicatorsByPaneId(pane.getId())
       for (let i = 0; i < indicators.length; i++) {
         const indicator = indicators[i]
         if (indicator.shouldOhlc && indicator.visible) {
@@ -69,7 +69,7 @@ export default class IndicatorView extends CandleBarView {
     const chartStore = chart.getChartStore()
     const dataList = chartStore.getDataList()
     const visibleRange = chartStore.getVisibleRange()
-    const indicators = chartStore.getIndicatorStore().getInstanceByPaneId(pane.getId())
+    const indicators = chartStore.getIndicatorsByPaneId(pane.getId())
     const defaultStyles = chartStore.getOptions().styles.indicator
     ctx.save()
     indicators.forEach(indicator => {

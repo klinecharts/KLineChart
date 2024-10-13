@@ -30,21 +30,19 @@ import type { Indicator, IndicatorFigure, IndicatorFigureStyle, IndicatorTooltip
 import type IndicatorImp from '../component/Indicator'
 import { eachFigures } from '../component/Indicator'
 
-import type { TooltipIcon } from '../store/TooltipStore'
+import type { TooltipIcon } from '../Store'
 
 import View from './View'
 
 export default class IndicatorTooltipView extends View<YAxis> {
   private readonly _boundIconClickEvent = (currentIcon: TooltipIcon) => () => {
     const pane = this.getWidget().getPane()
-    pane.getChart().getChartStore().getActionStore().execute(ActionType.OnTooltipIconClick, { ...currentIcon })
+    pane.getChart().getChartStore().executeAction(ActionType.OnTooltipIconClick, { ...currentIcon })
     return true
   }
 
   private readonly _boundIconMouseMoveEvent = (currentIconInfo: TooltipIcon) => () => {
-    const pane = this.getWidget().getPane()
-    const tooltipStore = pane.getChart().getChartStore().getTooltipStore()
-    tooltipStore.setActiveIcon({ ...currentIconInfo })
+    this.getWidget().getPane().getChart().getChartStore().setActiveTooltipIcon({ ...currentIconInfo })
     return true
   }
 
@@ -52,12 +50,12 @@ export default class IndicatorTooltipView extends View<YAxis> {
     const widget = this.getWidget()
     const pane = widget.getPane()
     const chartStore = pane.getChart().getChartStore()
-    const crosshair = chartStore.getTooltipStore().getCrosshair()
+    const crosshair = chartStore.getCrosshair()
     if (isValid(crosshair.kLineData)) {
       const bounding = widget.getBounding()
       const { styles, customApi, thousandsSeparator, decimalFoldThreshold } = chartStore.getOptions()
-      const indicators = chartStore.getIndicatorStore().getInstanceByPaneId(pane.getId())
-      const activeIcon = chartStore.getTooltipStore().getActiveIcon()
+      const indicators = chartStore.getIndicatorsByPaneId(pane.getId())
+      const activeIcon = chartStore.getActiveTooltipIcon()
       const defaultStyles = styles.indicator
       const { offsetLeft, offsetTop, offsetRight } = defaultStyles.tooltip
       this.drawIndicatorTooltip(

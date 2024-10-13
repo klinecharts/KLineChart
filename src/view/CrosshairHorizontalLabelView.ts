@@ -24,7 +24,7 @@ import type YAxis from '../component/YAxis'
 
 import type { TextAttrs } from '../extension/figure/text'
 
-import type ChartStore from '../store/ChartStore'
+import type ChartStore from '../Store'
 
 import View from './View'
 
@@ -34,7 +34,7 @@ export default class CrosshairHorizontalLabelView<C extends Axis = YAxis> extend
     const pane = widget.getPane()
     const bounding = widget.getBounding()
     const chartStore = widget.getPane().getChart().getChartStore()
-    const crosshair = chartStore.getTooltipStore().getCrosshair()
+    const crosshair = chartStore.getCrosshair()
     const styles = chartStore.getOptions().styles.crosshair
     if (isString(crosshair.paneId) && this.compare(crosshair, pane.getId())) {
       if (styles.show) {
@@ -70,7 +70,7 @@ export default class CrosshairHorizontalLabelView<C extends Axis = YAxis> extend
     if (yAxis.isInCandle()) {
       precision = chartStore.getPrecision().price
     } else {
-      const indicators = chartStore.getIndicatorStore().getInstanceByPaneId(crosshair.paneId!)
+      const indicators = chartStore.getIndicatorsByPaneId(crosshair.paneId!)
       indicators.forEach(indicator => {
         precision = Math.max(indicator.precision, precision)
         if (!shouldFormatBigNumber) {

@@ -19,7 +19,7 @@ import { isFunction, isString } from '../common/utils/typeChecks'
 import AxisImp, { type AxisTemplate, type Axis, type AxisRange, type AxisTick } from './Axis'
 
 import type DrawPane from '../pane/DrawPane'
-import { TimeWeightConstants } from '../store/ChartStore'
+import { TimeWeightConstants } from '../Store'
 import { FormatDateType } from '../Options'
 
 export type XAxisTemplate = Pick<AxisTemplate, 'name' | 'scrollZoomEnabled' | 'createTicks'>
