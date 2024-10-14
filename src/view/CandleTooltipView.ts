@@ -273,7 +273,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
       if (isDrawIndicatorTooltip) {
         ctx.font = createFont(indicatorTextSize, indicatorTextWeight, indicatorTextFamily)
         indicators.forEach(indicator => {
-          const tooltipDataLegends = this.getIndicatorTooltipData(dataList, crosshair, indicator, customApi, thousandsSeparator, decimalFoldThreshold, indicatorStyles).legends ?? []
+          const tooltipDataLegends = this.getIndicatorTooltipData(dataList, crosshair, indicator, customApi, thousandsSeparator, decimalFoldThreshold, indicatorStyles).legends
           indicatorLegendsArray.push(tooltipDataLegends)
           tooltipDataLegends.forEach(data => {
             const title = data.title as TooltipLegendChild
@@ -464,7 +464,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
       isFunction(tooltipStyles.custom)
         ? tooltipStyles.custom(data, styles)
         : tooltipStyles.custom
-    ) ?? []
+    )
     return legends.map(({ title, value }) => {
       let t: TooltipLegendChild = { text: '', color: '' }
       if (isObject(title)) {

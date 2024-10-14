@@ -42,13 +42,12 @@ export default class IndicatorLastValueView extends View<YAxis> {
       const decimalFoldThreshold = chartOptions.decimalFoldThreshold
       indicators.forEach(indicator => {
         const result = indicator.result
-        const indicatorData = result[dataIndex] ?? result[dataIndex - 1]
-        if (isValid(indicatorData) && indicator.visible) {
+        const data = result[dataIndex] ?? result[dataIndex - 1] ?? {}
+        if (isValid(data) && indicator.visible) {
           const precision = indicator.precision
           eachFigures(dataList, indicator, dataIndex, defaultStyles, (figure: IndicatorFigure, figureStyles: Required<IndicatorFigureStyle>) => {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-expect-error
-            const value = indicatorData[figure.key]
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+            const value = data[figure.key]
             if (isNumber(value)) {
               const y = yAxis.convertToNicePixel(value)
               let text = yAxis.displayValueToText(

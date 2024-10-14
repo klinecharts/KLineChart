@@ -92,7 +92,7 @@ export default class IndicatorView extends CandleBarView {
             defaultStyles,
             xAxis,
             yAxis
-          }) ?? false
+          })
           ctx.restore()
         }
         if (!isCover) {
@@ -111,14 +111,17 @@ export default class IndicatorView extends CandleBarView {
             const currentCoordinate = { x }
             const nextCoordinate = { x: nextX }
             indicator.figures.forEach(({ key }) => {
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
               const prevValue = prevData?.[key]
               if (isNumber(prevValue)) {
                 prevCoordinate[key] = yAxis.convertToPixel(prevValue)
               }
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
               const currentValue = currentData?.[key]
               if (isNumber(currentValue)) {
                 currentCoordinate[key] = yAxis.convertToPixel(currentValue)
               }
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
               const nextValue = nextData?.[key]
               if (isNumber(nextValue)) {
                 nextCoordinate[key] = yAxis.convertToPixel(nextValue)
@@ -126,6 +129,7 @@ export default class IndicatorView extends CandleBarView {
             })
             eachFigures(dataList, indicator, dataIndex, defaultStyles, (figure: IndicatorFigure, figureStyles: IndicatorFigureStyle, figureIndex: number) => {
               if (isValid(currentData?.[figure.key])) {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                 const valueY = currentCoordinate[figure.key]
                 let attrs = figure.attrs?.({
                   data: { prev: prevData, current: currentData, next: nextData },
@@ -138,6 +142,7 @@ export default class IndicatorView extends CandleBarView {
                 if (!isValid<IndicatorFigureAttrs>(attrs)) {
                   switch (figure.type) {
                     case 'circle': {
+                      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                       attrs = { x, y: valueY, r: Math.max(1, halfGapBar) }
                       break
                     }
@@ -153,6 +158,7 @@ export default class IndicatorView extends CandleBarView {
                       if (valueY > baseValueY) {
                         y = baseValueY
                       } else {
+                        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                         y = valueY
                       }
                       attrs = {
@@ -170,7 +176,9 @@ export default class IndicatorView extends CandleBarView {
                       if (isNumber(currentCoordinate[figure.key]) && isNumber(nextCoordinate[figure.key])) {
                         lines[figureIndex].push({
                           coordinates: [
+                            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                             { x: currentCoordinate.x, y: currentCoordinate[figure.key] },
+                            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                             { x: nextCoordinate.x, y: nextCoordinate[figure.key] }
                           ],
                           styles: figureStyles as unknown as SmoothLineStyle

@@ -30,7 +30,7 @@ export default class Action {
   private _callbacks: ActionCallback[] = []
 
   subscribe (callback: ActionCallback): void {
-    const index = this._callbacks.indexOf(callback) ?? -1
+    const index = this._callbacks.indexOf(callback)
     if (index < 0) {
       this._callbacks.push(callback)
     }
@@ -38,7 +38,7 @@ export default class Action {
 
   unsubscribe (callback?: ActionCallback): void {
     if (isFunction(callback)) {
-      const index = this._callbacks.indexOf(callback) ?? -1
+      const index = this._callbacks.indexOf(callback)
       if (index > -1) {
         this._callbacks.splice(index, 1)
       }

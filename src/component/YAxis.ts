@@ -40,7 +40,7 @@ export interface YAxis extends Axis, Required<YAxisTemplate> {
   convertToNicePixel: (value: number) => number
 }
 
-export type YAxisConstructor = new (parent: DrawPane<Axis>) => YAxis
+export type YAxisConstructor = new (parent: DrawPane) => YAxis
 
 export default abstract class YAxisImp extends AxisImp implements YAxis {
   reverse = false
@@ -59,7 +59,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
   realValueToValue: AxisValueToValueCallback = value => value
   displayValueToText: ((value: number, precision: number) => string) = (value, precision) => formatPrecision(value, precision)
 
-  constructor (parent: DrawPane<Axis>, yAxis: YAxisTemplate) {
+  constructor (parent: DrawPane, yAxis: YAxisTemplate) {
     super(parent)
     this.override(yAxis)
   }
@@ -91,7 +91,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
     const indicators = chartStore.getIndicatorsByPaneId(paneId)
     indicators.forEach(indicator => {
       if (!shouldOhlc) {
-        shouldOhlc = indicator.shouldOhlc ?? false
+        shouldOhlc = indicator.shouldOhlc
       }
       indicatorPrecision = Math.min(indicatorPrecision, indicator.precision)
       if (isNumber(indicator.minValue)) {
@@ -138,6 +138,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
       indicators.forEach(({ result, figures }) => {
         const data = result[dataIndex] ?? {}
         figures.forEach(figure => {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           const value = data[figure.key]
           if (isNumber(value)) {
             min = Math.min(min, value)
@@ -167,7 +168,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
       displayRange: defaultDiff
     }
 
-    const range = this.createRange?.({
+    const range = this.createRange({
       paneId,
       kLineDataList: chartStore.getDataList(),
       dataVisibleRange: chartStore.getVisibleRange(),
@@ -363,6 +364,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
         precision = indicatorPrecision
       }
       let valueText = formatPrecision(this.getRange().displayTo, precision)
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       if (shouldFormatBigNumber) {
         valueText = customApi.formatBigNumber(valueText)
       }
@@ -412,7 +414,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
 
   static extend (template: YAxisTemplate): YAxisConstructor {
     class Custom extends YAxisImp {
-      constructor (parent: DrawPane<Axis>) {
+      constructor (parent: DrawPane) {
         super(parent, template)
       }
     }

@@ -157,7 +157,7 @@ export default class SeparatorWidget extends Widget<SeparatorPane> {
   private _mouseEnterEvent (): boolean {
     const pane = this.getPane()
     const bottomPane = pane.getBottomPane()
-    if (bottomPane?.getOptions().dragEnabled ?? false) {
+    if (bottomPane.getOptions().dragEnabled) {
       const chart = pane.getChart()
       const styles = chart.getOptions().styles.separator
       this.getContainer().style.background = styles.activeBackgroundColor

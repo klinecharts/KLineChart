@@ -88,6 +88,7 @@ export default class CrosshairHorizontalLabelView<C extends Axis = YAxis> extend
     )
 
     const { customApi, thousandsSeparator, decimalFoldThreshold } = chartStore.getOptions()
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (shouldFormatBigNumber) {
       text = customApi.formatBigNumber(text)
     }

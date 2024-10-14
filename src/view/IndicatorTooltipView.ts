@@ -181,7 +181,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
           color, activeColor, size, fontFamily, icon: text,
           backgroundColor, activeBackgroundColor
         } = icon
-        const active = activeIcon?.paneId === paneId && activeIcon?.indicatorName === indicatorName && activeIcon?.iconId === icon.id
+        const active = activeIcon?.paneId === paneId && activeIcon.indicatorName === indicatorName && activeIcon.iconId === icon.id
         this.createFigure({
           name: 'text',
           attrs: { text, x: coordinate.x + marginLeft, y: coordinate.y + marginTop },
@@ -275,15 +275,16 @@ export default class IndicatorTooltipView extends View<YAxis> {
     const tooltipData: IndicatorTooltipData = { name, calcParamsText, legends: [], icons: tooltipStyles.icons }
 
     const dataIndex = crosshair.dataIndex!
-    const result = indicator.result ?? []
+    const result = indicator.result
 
     const legends: TooltipLegend[] = []
     if (indicator.visible) {
-      const indicatorData = result[dataIndex] ?? result[dataIndex - 1] ?? {}
+      const data = result[dataIndex] ?? result[dataIndex - 1] ?? {}
       eachFigures(dataList, indicator, dataIndex, styles, (figure: IndicatorFigure, figureStyles: Required<IndicatorFigureStyle>) => {
         if (isString(figure.title)) {
           const color = figureStyles.color
-          let value = indicatorData[figure.key]
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          let value = data[figure.key]
           if (isNumber(value)) {
             value = formatPrecision(value, indicator.precision)
             if (indicator.shouldFormatBigNumber) {

@@ -431,7 +431,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     const progressOverlayInfo = chartStore.getProgressOverlayInfo()
     if (progressOverlayInfo !== null) {
       const overlay = this.getProgressOverlay(progressOverlayInfo, paneId)
-      // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
+       
       if (isValid(overlay) && overlay.visible) {
         this._drawOverlay(
           ctx, overlay, bounding, barSpace,
@@ -516,6 +516,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
         const events = this._createFigureEvents(overlay, EventOverlayInfoFigureType.Other, figure.key ?? '', figureIndex, attrsIndex, ignoreEvent)
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         const ss = { ...defaultStyles[type], ...overlay.styles?.[type], ...styles }
         this.createFigure({
           name: type, attrs: ats, styles: ss

@@ -29,10 +29,10 @@ export interface XAxis extends Axis, Required<XAxisTemplate> {
   convertTimestampToPixel: (timestamp: number) => number
 }
 
-export type XAxisConstructor = new (parent: DrawPane<Axis>) => XAxis
+export type XAxisConstructor = new (parent: DrawPane) => XAxis
 
 export default abstract class XAxisImp extends AxisImp implements XAxis {
-  constructor (parent: DrawPane<Axis>, xAxis: XAxisTemplate) {
+  constructor (parent: DrawPane, xAxis: XAxisTemplate) {
     super(parent)
     this.override(xAxis)
   }
@@ -179,7 +179,7 @@ export default abstract class XAxisImp extends AxisImp implements XAxis {
 
   static extend (template: XAxisTemplate): XAxisConstructor {
     class Custom extends XAxisImp {
-      constructor (parent: DrawPane<Axis>) {
+      constructor (parent: DrawPane) {
         super(parent, template)
       }
     }
