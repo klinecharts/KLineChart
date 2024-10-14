@@ -38,7 +38,7 @@ const stopAndReverse: IndicatorTemplate<Sar> = {
         const { current } = data
         const sar = current.indicatorData?.sar ?? Number.MIN_SAFE_INTEGER
         const kLineData = current.kLineData!
-        const halfHL = (kLineData?.high + kLineData?.low) / 2
+        const halfHL = (kLineData.high + kLineData.low) / 2
         const color = sar < halfHL
           ? formatValue(indicator.styles, 'circles[0].upColor', (defaultStyles.circles)[0].upColor) as string
           : formatValue(indicator.styles, 'circles[0].downColor', (defaultStyles.circles)[0].downColor) as string

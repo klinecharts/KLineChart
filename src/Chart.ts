@@ -47,7 +47,7 @@ import SeparatorPane from './pane/SeparatorPane'
 import { type PaneOptions, PanePosition, PANE_DEFAULT_HEIGHT, PaneIdConstants, PaneState, PANE_MIN_HEIGHT } from './pane/types'
 
 import type AxisImp from './component/Axis'
-import { AxisPosition, type Axis } from './component/Axis'
+import { AxisPosition } from './component/Axis'
 
 import type { IndicatorFilter, Indicator, IndicatorCreate } from './component/Indicator'
 import type { OverlayFilter, Overlay, OverlayCreate } from './component/Overlay'
@@ -243,8 +243,8 @@ export default class ChartImp implements Chart {
           const p = this._drawPanes[i]
           const prevP = this._drawPanes[i - 1]
           if (
-            p?.getOptions().position === PanePosition.Bottom &&
-            prevP?.getOptions().position !== PanePosition.Bottom
+            p.getOptions().position === PanePosition.Bottom &&
+            prevP.getOptions().position !== PanePosition.Bottom
           ) {
             pane = new DrawPaneClass(this._chartContainer, p.getContainer(), this, id, options ?? {})
             index = i
@@ -393,7 +393,7 @@ export default class ChartImp implements Chart {
     this._drawPanes.forEach(pane => {
       if (pane.getId() !== PaneIdConstants.X_AXIS) {
         const yAxis = pane.getAxisComponent() as YAxis
-        const inside = yAxis.inside ?? false
+        const inside = yAxis.inside
         const yAxisWidth = yAxis.getAutoSize()
         if (yAxis.position === AxisPosition.Left) {
           leftYAxisWidth = Math.max(leftYAxisWidth, yAxisWidth)
@@ -412,11 +412,13 @@ export default class ChartImp implements Chart {
     let mainWidth = totalWidth
     let mainLeft = 0
     let mainRight = 0
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (leftYAxisOutside) {
       mainWidth -= leftYAxisWidth
       mainLeft = leftYAxisWidth
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (rightYAxisOutside) {
       mainWidth -= rightYAxisWidth
       mainRight = rightYAxisWidth
@@ -474,7 +476,7 @@ export default class ChartImp implements Chart {
     }
   }
 
-  getDrawPaneById (paneId: string): Nullable<DrawPane<Axis>> {
+  getDrawPaneById (paneId: string): Nullable<DrawPane> {
     if (paneId === PaneIdConstants.CANDLE) {
       return this._candlePane
     }
@@ -519,7 +521,7 @@ export default class ChartImp implements Chart {
     if (forceMeasureWidth) {
       this._measurePaneWidth()
     }
-    if (shouldUpdate ?? false) {
+    if (shouldUpdate) {
       (this._xAxisPane.getAxisComponent() as unknown as AxisImp).buildTicks(true)
       this.updatePane(UpdateLevel.All)
     }
@@ -718,7 +720,7 @@ export default class ChartImp implements Chart {
     if (currentPane !== null) {
       const result = this._chartStore.addIndicator(indicator, paneId ?? '', isStack ?? false)
       if (result) {
-        this._setPaneOptions(paneOptions ?? {}, (currentPane.getAxisComponent() as AxisImp).buildTicks(true) ?? false)
+        this._setPaneOptions(paneOptions ?? {}, (currentPane.getAxisComponent() as AxisImp).buildTicks(true))
       }
     } else {
       paneId ??= createId(PaneIdConstants.INDICATOR)
@@ -764,7 +766,7 @@ export default class ChartImp implements Chart {
             shouldMeasureHeight = true
             const separatorPane = this._separatorPanes.get(pane)
             if (isValid(separatorPane)) {
-              const topPane = separatorPane?.getTopPane()
+              const topPane = separatorPane.getTopPane()
               for (const item of this._separatorPanes) {
                 if (item[1].getTopPane().getId() === paneId) {
                   item[1].setTopPane(topPane)
@@ -941,10 +943,10 @@ export default class ChartImp implements Chart {
             dataIndex = this._chartStore.timestampToDataIndex(point.timestamp)
           }
           if (isNumber(dataIndex)) {
-            coordinate.x = xAxis?.convertToPixel(dataIndex)
+            coordinate.x = xAxis.convertToPixel(dataIndex)
           }
           if (isNumber(point.value)) {
-            const y = yAxis?.convertToPixel(point.value)
+            const y = yAxis.convertToPixel(point.value)
             coordinate.y = absolute ? bounding.top + y : y
           }
           return coordinate
@@ -967,7 +969,7 @@ export default class ChartImp implements Chart {
         points = cs.map(coordinate => {
           const point: Partial<Point> = {}
           if (isNumber(coordinate.x)) {
-            const dataIndex = xAxis?.convertFromPixel(coordinate.x) ?? -1
+            const dataIndex = xAxis.convertFromPixel(coordinate.x)
             point.dataIndex = dataIndex
             point.timestamp = this._chartStore.dataIndexToTimestamp(dataIndex) ?? undefined
           }

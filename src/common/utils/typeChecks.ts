@@ -19,7 +19,9 @@ export function merge (target: any, source: any): void {
   }
   for (const key in source) {
     if (Object.prototype.hasOwnProperty.call(source, key) as boolean) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
       const targetProp = target[key]
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
       const sourceProp = source[key]
       if (
         isObject(sourceProp) &&
@@ -27,7 +29,9 @@ export function merge (target: any, source: any): void {
       ) {
         merge(targetProp, sourceProp)
       } else {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         if (isValid(source[key])) {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
           target[key] = clone(source[key])
         }
       }
@@ -51,12 +55,15 @@ export function clone<T> (target: T): T {
     if (Object.prototype.hasOwnProperty.call(target, key) as boolean) {
       const v = target[key]
       if (isObject(v)) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         copy[key] = clone(v)
       } else {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         copy[key] = v
       }
     }
   }
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return copy
 }
 
@@ -64,6 +71,7 @@ export function isArray<T = unknown> (value: unknown): value is T[] {
   return Object.prototype.toString.call(value) === '[object Array]'
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
 export function isFunction<T = (...args: unknown[]) => unknown> (value: unknown): value is T {
   return typeof value === 'function'
 }

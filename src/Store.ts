@@ -453,6 +453,7 @@ export default class Store {
                   point.dataIndex = point.dataIndex + dataLengthChange
                 }
                 const data = this._dataList[point.dataIndex]
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
                 point.timestamp = data?.timestamp
               }
             })
@@ -838,7 +839,7 @@ export default class Store {
     }
     let zoomCoordinate: Nullable<Partial<Coordinate>> = coordinate ?? null
     if (!isNumber(zoomCoordinate?.x)) {
-      zoomCoordinate = { x: this._crosshair?.x ?? this._totalBarSpace / 2 }
+      zoomCoordinate = { x: this._crosshair.x ?? this._totalBarSpace / 2 }
     }
     const x = zoomCoordinate.x!
     const floatIndex = this.coordinateToFloatIndex(x)
@@ -900,7 +901,7 @@ export default class Store {
     if (
       prevCrosshair.x !== cr.x || prevCrosshair.y !== cr.y || prevCrosshair.paneId !== cr.paneId
     ) {
-      if (kLineData !== null) {
+      if (isValid(kLineData)) {
         this._chart.crosshairChange(this._crosshair)
       }
       if (!(notInvalidate ?? false)) {
@@ -1128,6 +1129,7 @@ export default class Store {
         }
       }
     })
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (sortFlag) {
       this._sortIndicators()
     }
@@ -1194,7 +1196,7 @@ export default class Store {
       if (isValid(create.id)) {
         let findOverlay: Nullable<OverlayImp> = null
         for (const [, overlays] of this._overlays) {
-          const overlay = overlays.find(o => o.id === overlay.id)
+          const overlay = overlays.find(o => o.id === create.id)
           if (isValid(overlay)) {
             findOverlay = overlay
             break
@@ -1208,6 +1210,7 @@ export default class Store {
       if (isValid(OverlayClazz)) {
         const id = create.id ?? createId(OVERLAY_ID_PREFIX)
         const overlay = new OverlayClazz()
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         const groupId = overlay.groupId ?? id
         create.id = id
         create.groupId = groupId
@@ -1289,6 +1292,7 @@ export default class Store {
       })
     })
 
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (sortFlag) {
       this._sortOverlays()
     }
@@ -1353,16 +1357,16 @@ export default class Store {
         let sortFlag = false
         if (overlay !== null) {
           sortFlag = true
-          if (isFunction(overlay?.onMouseLeave)) {
-            overlay?.onMouseLeave({ overlay, figureKey, figureIndex, ...event })
+          if (isFunction(overlay.onMouseLeave)) {
+            overlay.onMouseLeave({ overlay, figureKey, figureIndex, ...event })
             ignoreUpdateFlag = true
           }
         }
 
         if (infoOverlay !== null) {
           sortFlag = true
-          if (isFunction(infoOverlay?.onMouseEnter)) {
-            infoOverlay?.onMouseEnter({ overlay: infoOverlay, figureKey: info.figureKey, figureIndex: info.figureIndex, ...event })
+          if (isFunction(infoOverlay.onMouseEnter)) {
+            infoOverlay.onMouseEnter({ overlay: infoOverlay, figureKey: info.figureKey, figureIndex: info.figureIndex, ...event })
             ignoreUpdateFlag = true
           }
         }
@@ -1409,7 +1413,7 @@ export default class Store {
   }
 
   isOverlayDrawing (): boolean {
-    return this._progressOverlayInfo !== null && (this._progressOverlayInfo?.overlay.isDrawing() ?? false)
+    return this._progressOverlayInfo?.overlay.isDrawing() ?? false
   }
 
   clear (): void {

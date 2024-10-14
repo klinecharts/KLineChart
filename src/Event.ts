@@ -18,6 +18,7 @@ import type Coordinate from './common/Coordinate'
 import { UpdateLevel } from './common/Updater'
 import type Crosshair from './common/Crosshair'
 import { requestAnimationFrame, cancelAnimationFrame } from './common/utils/compatible'
+import { isValid } from './common/utils/typeChecks'
 
 import type { AxisRange } from './component/Axis'
 import type YAxis from './component/YAxis'
@@ -154,8 +155,8 @@ export default class Event implements EventHandler {
           return widget.dispatchEvent('mouseDownEvent', event)
         }
         case WidgetNameConstants.MAIN: {
-          const range = (pane as DrawPane<YAxis>).getAxisComponent().getRange() ?? null
-          this._prevYAxisRange = range === null ? range : { ...range }
+          const range = (pane as DrawPane<YAxis>).getAxisComponent().getRange()
+          this._prevYAxisRange = { ...range }
           this._startScrollCoordinate = { x: event.x, y: event.y }
           this._chart.getChartStore().startScroll()
           return widget.dispatchEvent('mouseDownEvent', event)
@@ -174,8 +175,8 @@ export default class Event implements EventHandler {
           if (consumed) {
             this._chart.updatePane(UpdateLevel.Overlay)
           }
-          const range = (pane as DrawPane<YAxis>).getAxisComponent().getRange() ?? null
-          this._prevYAxisRange = range === null ? range : { ...range }
+          const range = (pane as DrawPane<YAxis>).getAxisComponent().getRange()
+          this._prevYAxisRange = { ...range }
           this._yAxisStartScaleDistance = event.pageY
           return consumed
         }
@@ -204,9 +205,7 @@ export default class Event implements EventHandler {
           let crosshair: Crosshair | undefined = { x: event.x, y: event.y, paneId: pane?.getId() }
           if (consumed && chartStore.getActiveTooltipIcon() !== null) {
             crosshair = undefined
-            if (widget !== null) {
-              widget.getContainer().style.cursor = 'pointer'
-            }
+            widget.getContainer().style.cursor = 'pointer'
           }
           this._chart.getChartStore().setCrosshair(crosshair)
           return consumed
@@ -279,7 +278,7 @@ export default class Event implements EventHandler {
           const consumed = widget.dispatchEvent('pressedMouseMoveEvent', event)
           if (!consumed) {
             const xAxis = (pane as DrawPane<XAxis>).getAxisComponent()
-            if ((xAxis?.scrollZoomEnabled ?? true)) {
+            if ((xAxis.scrollZoomEnabled)) {
               const scale = this._xAxisStartScaleDistance / event.pageX
               if (Number.isFinite(scale)) {
                 const zoomScale = (scale - this._xAxisScale) * 10
@@ -632,7 +631,7 @@ export default class Event implements EventHandler {
     }
     let widget: Nullable<Widget> = null
     if (pane !== null) {
-      if (widget === null) {
+      if (!isValid(widget)) {
         const mainWidget = pane.getMainWidget()
         const mainBounding = mainWidget.getBounding()
         if (
@@ -642,7 +641,7 @@ export default class Event implements EventHandler {
           widget = mainWidget
         }
       }
-      if (widget === null) {
+      if (!isValid(widget)) {
         const yAxisWidget = pane.getYAxisWidget()
         if (yAxisWidget !== null) {
           const yAxisBounding = yAxisWidget.getBounding()

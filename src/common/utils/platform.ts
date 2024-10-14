@@ -16,13 +16,12 @@ export function isFF (): boolean {
   if (typeof window === 'undefined') {
     return false
   }
-  return (window.navigator.userAgent.toLowerCase().indexOf('firefox') ?? -1) > -1
+  return window.navigator.userAgent.toLowerCase().includes('firefox')
 }
 
 export function isIOS (): boolean {
   if (typeof window === 'undefined') {
     return false
   }
-  // eslint-disable-next-line @typescript-eslint/no-deprecated
-  return /iPhone|iPad|iPod/.test(window.navigator.platform)
+  return /iPhone|iPad|iPod|iOS/.test(window.navigator.userAgent)
 }
