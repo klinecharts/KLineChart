@@ -92,6 +92,7 @@ export function formatDateToDateTime (dateTimeFormat: Intl.DateTimeFormat, times
 
 export function formatDateToString (dateTimeFormat: Intl.DateTimeFormat, timestamp: number, format: string): string {
   const date = formatDateToDateTime(dateTimeFormat, timestamp)
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return format.replace(/YYYY|MM|DD|HH|mm|ss/g, key => date[key])
 }
 

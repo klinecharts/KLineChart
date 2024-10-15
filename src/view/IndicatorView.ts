@@ -13,14 +13,12 @@
  */
 
 import type Nullable from '../common/Nullable'
-import type { VisibleData } from '../common/Data'
-import type BarSpace from '../common/BarSpace'
 import { CandleType, type SmoothLineStyle } from '../common/Styles'
 import { formatValue } from '../common/utils/format'
 import { isNumber, isValid } from '../common/utils/typeChecks'
 import type Coordinate from '../common/Coordinate'
 
-import type ChartStore from '../store/ChartStore'
+import type ChartStore from '../Store'
 
 import { eachFigures, type IndicatorFigure, type IndicatorFigureAttrs, type IndicatorFigureStyle } from '../component/Indicator'
 
@@ -31,12 +29,12 @@ export default class IndicatorView extends CandleBarView {
     const pane = this.getWidget().getPane()
     const yAxis = pane.getAxisComponent()
     if (!yAxis.isInCandle()) {
-      const indicators = chartStore.getIndicatorStore().getInstanceByPaneId(pane.getId())
+      const indicators = chartStore.getIndicatorsByPaneId(pane.getId())
       for (let i = 0; i < indicators.length; i++) {
         const indicator = indicators[i]
         if (indicator.shouldOhlc && indicator.visible) {
           const indicatorStyles = indicator.styles
-          const defaultStyles = chartStore.getStyles().indicator
+          const defaultStyles = chartStore.getOptions().styles.indicator
           const upColor = formatValue(indicatorStyles, 'ohlc.upColor', defaultStyles.ohlc.upColor) as string
           const downColor = formatValue(indicatorStyles, 'ohlc.downColor', defaultStyles.ohlc.downColor) as string
           const noChangeColor = formatValue(indicatorStyles, 'ohlc.noChangeColor', defaultStyles.ohlc.noChangeColor) as string
@@ -70,10 +68,9 @@ export default class IndicatorView extends CandleBarView {
     const yAxis = pane.getAxisComponent()
     const chartStore = chart.getChartStore()
     const dataList = chartStore.getDataList()
-    const timeScaleStore = chartStore.getTimeScaleStore()
-    const visibleRange = timeScaleStore.getVisibleRange()
-    const indicators = chartStore.getIndicatorStore().getInstanceByPaneId(pane.getId())
-    const defaultStyles = chartStore.getStyles().indicator
+    const visibleRange = chartStore.getVisibleRange()
+    const indicators = chartStore.getIndicatorsByPaneId(pane.getId())
+    const defaultStyles = chartStore.getOptions().styles.indicator
     ctx.save()
     indicators.forEach(indicator => {
       if (indicator.visible) {
@@ -91,18 +88,18 @@ export default class IndicatorView extends CandleBarView {
             indicator,
             visibleRange,
             bounding,
-            barSpace: timeScaleStore.getBarSpace(),
+            barSpace: chartStore.getBarSpace(),
             defaultStyles,
             xAxis,
             yAxis
-          }) ?? false
+          })
           ctx.restore()
         }
         if (!isCover) {
           const result = indicator.result
           const lines: Array<Array<{ coordinates: Coordinate[], styles: SmoothLineStyle }>> = []
 
-          this.eachChildren((data: VisibleData, barSpace: BarSpace) => {
+          this.eachChildren((data, barSpace) => {
             const { halfGapBar } = barSpace
             const { dataIndex, x } = data
             const prevX = xAxis.convertToPixel(dataIndex - 1)
@@ -114,14 +111,17 @@ export default class IndicatorView extends CandleBarView {
             const currentCoordinate = { x }
             const nextCoordinate = { x: nextX }
             indicator.figures.forEach(({ key }) => {
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
               const prevValue = prevData?.[key]
               if (isNumber(prevValue)) {
                 prevCoordinate[key] = yAxis.convertToPixel(prevValue)
               }
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
               const currentValue = currentData?.[key]
               if (isNumber(currentValue)) {
                 currentCoordinate[key] = yAxis.convertToPixel(currentValue)
               }
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
               const nextValue = nextData?.[key]
               if (isNumber(nextValue)) {
                 nextCoordinate[key] = yAxis.convertToPixel(nextValue)
@@ -129,6 +129,7 @@ export default class IndicatorView extends CandleBarView {
             })
             eachFigures(dataList, indicator, dataIndex, defaultStyles, (figure: IndicatorFigure, figureStyles: IndicatorFigureStyle, figureIndex: number) => {
               if (isValid(currentData?.[figure.key])) {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                 const valueY = currentCoordinate[figure.key]
                 let attrs = figure.attrs?.({
                   data: { prev: prevData, current: currentData, next: nextData },
@@ -141,6 +142,7 @@ export default class IndicatorView extends CandleBarView {
                 if (!isValid<IndicatorFigureAttrs>(attrs)) {
                   switch (figure.type) {
                     case 'circle': {
+                      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                       attrs = { x, y: valueY, r: Math.max(1, halfGapBar) }
                       break
                     }
@@ -156,6 +158,7 @@ export default class IndicatorView extends CandleBarView {
                       if (valueY > baseValueY) {
                         y = baseValueY
                       } else {
+                        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                         y = valueY
                       }
                       attrs = {
@@ -173,7 +176,9 @@ export default class IndicatorView extends CandleBarView {
                       if (isNumber(currentCoordinate[figure.key]) && isNumber(nextCoordinate[figure.key])) {
                         lines[figureIndex].push({
                           coordinates: [
+                            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                             { x: currentCoordinate.x, y: currentCoordinate[figure.key] },
+                            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                             { x: nextCoordinate.x, y: nextCoordinate[figure.key] }
                           ],
                           styles: figureStyles as unknown as SmoothLineStyle

@@ -27,8 +27,8 @@ export default class IndicatorLastValueView extends View<YAxis> {
     const pane = widget.getPane()
     const bounding = widget.getBounding()
     const chartStore = pane.getChart().getChartStore()
-    const customApi = chartStore.getCustomApi()
-    const defaultStyles = chartStore.getStyles().indicator
+    const chartOptions = chartStore.getOptions()
+    const defaultStyles = chartOptions.styles.indicator
     const lastValueMarkStyles = defaultStyles.lastValueMark
     const lastValueMarkTextStyles = lastValueMarkStyles.text
     if (lastValueMarkStyles.show) {
@@ -36,18 +36,18 @@ export default class IndicatorLastValueView extends View<YAxis> {
       const yAxisRange = yAxis.getRange()
       const dataList = chartStore.getDataList()
       const dataIndex = dataList.length - 1
-      const indicators = chartStore.getIndicatorStore().getInstanceByPaneId(pane.getId())
-      const thousandsSeparator = chartStore.getThousandsSeparator()
-      const decimalFoldThreshold = chartStore.getDecimalFoldThreshold()
+      const indicators = chartStore.getIndicatorsByPaneId(pane.getId())
+      const customApi = chartOptions.customApi
+      const thousandsSeparator = chartOptions.thousandsSeparator
+      const decimalFoldThreshold = chartOptions.decimalFoldThreshold
       indicators.forEach(indicator => {
         const result = indicator.result
-        const indicatorData = result[dataIndex] ?? result[dataIndex - 1]
-        if (isValid(indicatorData) && indicator.visible) {
+        const data = result[dataIndex] ?? result[dataIndex - 1] ?? {}
+        if (isValid(data) && indicator.visible) {
           const precision = indicator.precision
           eachFigures(dataList, indicator, dataIndex, defaultStyles, (figure: IndicatorFigure, figureStyles: Required<IndicatorFigureStyle>) => {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-expect-error
-            const value = indicatorData[figure.key]
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+            const value = data[figure.key]
             if (isNumber(value)) {
               const y = yAxis.convertToNicePixel(value)
               let text = yAxis.displayValueToText(

@@ -19,7 +19,7 @@ import { isFunction, isString } from '../common/utils/typeChecks'
 import AxisImp, { type AxisTemplate, type Axis, type AxisRange, type AxisTick } from './Axis'
 
 import type DrawPane from '../pane/DrawPane'
-import { TimeWeightConstants } from '../store/TimeScaleStore'
+import { TimeWeightConstants } from '../Store'
 import { FormatDateType } from '../Options'
 
 export type XAxisTemplate = Pick<AxisTemplate, 'name' | 'scrollZoomEnabled' | 'createTicks'>
@@ -29,10 +29,10 @@ export interface XAxis extends Axis, Required<XAxisTemplate> {
   convertTimestampToPixel: (timestamp: number) => number
 }
 
-export type XAxisConstructor = new (parent: DrawPane<Axis>) => XAxis
+export type XAxisConstructor = new (parent: DrawPane) => XAxis
 
 export default abstract class XAxisImp extends AxisImp implements XAxis {
-  constructor (parent: DrawPane<Axis>, xAxis: XAxisTemplate) {
+  constructor (parent: DrawPane, xAxis: XAxisTemplate) {
     super(parent)
     this.override(xAxis)
   }
@@ -52,7 +52,7 @@ export default abstract class XAxisImp extends AxisImp implements XAxis {
 
   protected override createRangeImp (): AxisRange {
     const chartStore = this.getParent().getChart().getChartStore()
-    const visibleDataRange = chartStore.getTimeScaleStore().getVisibleRange()
+    const visibleDataRange = chartStore.getVisibleRange()
     const { from, to } = visibleDataRange
     const af = from
     const at = to - 1
@@ -73,10 +73,9 @@ export default abstract class XAxisImp extends AxisImp implements XAxis {
 
   protected override createTicksImp (): AxisTick[] {
     const chartStore = this.getParent().getChart().getChartStore()
-    const timeScaleStore = chartStore.getTimeScaleStore()
-    const formatDate = chartStore.getCustomApi().formatDate
-    const timeTickList = timeScaleStore.getVisibleTimeTickList()
-    const dateTimeFormat = timeScaleStore.getDateTimeFormat()
+    const formatDate = chartStore.getOptions().customApi.formatDate
+    const timeTickList = chartStore.getVisibleRangeTimeTickList()
+    const dateTimeFormat = chartStore.getDateTimeFormat()
     const ticks = timeTickList.map(({ dataIndex, weight, timestamp }) => {
       let text = ''
       switch (weight) {
@@ -119,7 +118,7 @@ export default abstract class XAxisImp extends AxisImp implements XAxis {
   }
 
   override getAutoSize (): number {
-    const styles = this.getParent().getChart().getStyles()
+    const styles = this.getParent().getChart().getOptions().styles
     const xAxisStyles = styles.xAxis
     const height = xAxisStyles.size
     if (height !== 'auto') {
@@ -159,28 +158,28 @@ export default abstract class XAxisImp extends AxisImp implements XAxis {
   }
 
   convertTimestampFromPixel (pixel: number): Nullable<number> {
-    const timeScaleStore = this.getParent().getChart().getChartStore().getTimeScaleStore()
-    const dataIndex = timeScaleStore.coordinateToDataIndex(pixel)
-    return timeScaleStore.dataIndexToTimestamp(dataIndex)
+    const chartStore = this.getParent().getChart().getChartStore()
+    const dataIndex = chartStore.coordinateToDataIndex(pixel)
+    return chartStore.dataIndexToTimestamp(dataIndex)
   }
 
   convertTimestampToPixel (timestamp: number): number {
-    const timeScaleStore = this.getParent().getChart().getChartStore().getTimeScaleStore()
-    const dataIndex = timeScaleStore.timestampToDataIndex(timestamp)
-    return timeScaleStore.dataIndexToCoordinate(dataIndex)
+    const chartStore = this.getParent().getChart().getChartStore()
+    const dataIndex = chartStore.timestampToDataIndex(timestamp)
+    return chartStore.dataIndexToCoordinate(dataIndex)
   }
 
   convertFromPixel (pixel: number): number {
-    return this.getParent().getChart().getChartStore().getTimeScaleStore().coordinateToDataIndex(pixel)
+    return this.getParent().getChart().getChartStore().coordinateToDataIndex(pixel)
   }
 
   convertToPixel (value: number): number {
-    return this.getParent().getChart().getChartStore().getTimeScaleStore().dataIndexToCoordinate(value)
+    return this.getParent().getChart().getChartStore().dataIndexToCoordinate(value)
   }
 
   static extend (template: XAxisTemplate): XAxisConstructor {
     class Custom extends XAxisImp {
-      constructor (parent: DrawPane<Axis>) {
+      constructor (parent: DrawPane) {
         super(parent, template)
       }
     }

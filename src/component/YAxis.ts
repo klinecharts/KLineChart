@@ -40,7 +40,7 @@ export interface YAxis extends Axis, Required<YAxisTemplate> {
   convertToNicePixel: (value: number) => number
 }
 
-export type YAxisConstructor = new (parent: DrawPane<Axis>) => YAxis
+export type YAxisConstructor = new (parent: DrawPane) => YAxis
 
 export default abstract class YAxisImp extends AxisImp implements YAxis {
   reverse = false
@@ -59,7 +59,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
   realValueToValue: AxisValueToValueCallback = value => value
   displayValueToText: ((value: number, precision: number) => string) = (value, precision) => formatPrecision(value, precision)
 
-  constructor (parent: DrawPane<Axis>, yAxis: YAxisTemplate) {
+  constructor (parent: DrawPane, yAxis: YAxisTemplate) {
     super(parent)
     this.override(yAxis)
   }
@@ -88,10 +88,10 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
     let specifyMin = Number.MAX_SAFE_INTEGER
     let specifyMax = Number.MIN_SAFE_INTEGER
     let indicatorPrecision = Number.MAX_SAFE_INTEGER
-    const indicators = chartStore.getIndicatorStore().getInstanceByPaneId(paneId)
+    const indicators = chartStore.getIndicatorsByPaneId(paneId)
     indicators.forEach(indicator => {
       if (!shouldOhlc) {
-        shouldOhlc = indicator.shouldOhlc ?? false
+        shouldOhlc = indicator.shouldOhlc
       }
       indicatorPrecision = Math.min(indicatorPrecision, indicator.precision)
       if (isNumber(indicator.minValue)) {
@@ -116,12 +116,12 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
         precision = indicatorPrecision
       }
     }
-    const visibleDataList = chartStore.getVisibleDataList()
-    const candleStyles = chart.getStyles().candle
+    const visibleRangeDataList = chartStore.getVisibleRangeDataList()
+    const candleStyles = chart.getOptions().styles.candle
     const isArea = candleStyles.type === CandleType.Area
     const areaValueKey = candleStyles.area.value
     const shouldCompareHighLow = (inCandle && !isArea) || (!inCandle && shouldOhlc)
-    visibleDataList.forEach(({ dataIndex, data }) => {
+    visibleRangeDataList.forEach(({ dataIndex, data }) => {
       if (isValid(data)) {
         if (shouldCompareHighLow) {
           min = Math.min(min, data.low)
@@ -138,6 +138,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
       indicators.forEach(({ result, figures }) => {
         const data = result[dataIndex] ?? {}
         figures.forEach(figure => {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           const value = data[figure.key]
           if (isNumber(value)) {
             min = Math.min(min, value)
@@ -167,10 +168,10 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
       displayRange: defaultDiff
     }
 
-    const range = this.createRange?.({
+    const range = this.createRange({
       paneId,
       kLineDataList: chartStore.getDataList(),
-      visibleDataRange: chartStore.getTimeScaleStore().getVisibleRange(),
+      dataVisibleRange: chartStore.getVisibleRange(),
       indicators,
       defaultRange
     })
@@ -265,11 +266,9 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
     const pane = this.getParent()
     const height = pane.getYAxisWidget()?.getBounding().height ?? 0
     const chartStore = pane.getChart().getChartStore()
-    const customApi = chartStore.getCustomApi()
     const optimalTicks: AxisTick[] = []
-    const indicators = chartStore.getIndicatorStore().getInstanceByPaneId(pane.getId())
-    const thousandsSeparator = chartStore.getThousandsSeparator()
-    const decimalFoldThreshold = chartStore.getDecimalFoldThreshold()
+    const indicators = chartStore.getIndicatorsByPaneId(pane.getId())
+    const { styles, customApi, thousandsSeparator, decimalFoldThreshold } = chartStore.getOptions()
     let precision = 0
     let shouldFormatBigNumber = false
     if (this.isInCandle()) {
@@ -282,7 +281,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
         }
       })
     }
-    const textHeight = chartStore.getStyles().xAxis.tickText.size
+    const textHeight = styles.xAxis.tickText.size
     let validY = NaN
     ticks.forEach(({ value }) => {
       let v = this.displayValueToText(+value, precision)
@@ -311,14 +310,15 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
   override getAutoSize (): number {
     const pane = this.getParent()
     const chart = pane.getChart()
-    const styles = chart.getStyles()
+    const chartOptions = chart.getOptions()
+    const styles = chartOptions.styles
     const yAxisStyles = styles.yAxis
     const width = yAxisStyles.size
     if (width !== 'auto') {
       return width
     }
     const chartStore = chart.getChartStore()
-    const customApi = chartStore.getCustomApi()
+    const customApi = chartOptions.customApi
     let yAxisWidth = 0
     if (yAxisStyles.show) {
       if (yAxisStyles.axisLine.show) {
@@ -342,7 +342,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
       crosshairStyles.horizontal.show &&
       crosshairStyles.horizontal.text.show
     ) {
-      const indicators = chartStore.getIndicatorStore().getInstanceByPaneId(pane.getId())
+      const indicators = chartStore.getIndicatorsByPaneId(pane.getId())
       let indicatorPrecision = 0
       let shouldFormatBigNumber = false
       indicators.forEach(indicator => {
@@ -364,10 +364,11 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
         precision = indicatorPrecision
       }
       let valueText = formatPrecision(this.getRange().displayTo, precision)
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       if (shouldFormatBigNumber) {
         valueText = customApi.formatBigNumber(valueText)
       }
-      valueText = formatFoldDecimal(valueText, chartStore.getDecimalFoldThreshold())
+      valueText = formatFoldDecimal(valueText, chartStore.getOptions().decimalFoldThreshold)
       crosshairVerticalTextWidth += (
         crosshairStyles.horizontal.text.paddingLeft +
         crosshairStyles.horizontal.text.paddingRight +
@@ -413,7 +414,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
 
   static extend (template: YAxisTemplate): YAxisConstructor {
     class Custom extends YAxisImp {
-      constructor (parent: DrawPane<Axis>) {
+      constructor (parent: DrawPane) {
         super(parent, template)
       }
     }

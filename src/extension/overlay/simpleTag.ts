@@ -60,7 +60,7 @@ const simpleTag: OverlayTemplate = {
     if (!isValid(text) && isNumber(overlay.points[0].value)) {
       text = formatPrecision(overlay.points[0].value, precision.price)
     }
-    return { type: 'text', attrs: { x, y: coordinates[0].y, text: text ?? '', align: textAlign, baseline: 'middle' } }
+    return { type: 'text', attrs: { x, y: coordinates[0].y, text, align: textAlign, baseline: 'middle' } }
   }
 }
 

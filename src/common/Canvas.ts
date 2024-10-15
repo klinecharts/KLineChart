@@ -67,7 +67,7 @@ export default class Canvas {
       if (result) {
         this._resizeObserver = new ResizeObserver((entries: ResizeObserverEntry[]) => {
           const entry = entries.find((entry: ResizeObserverEntry) => entry.target === this._element)
-          const size = entry?.devicePixelContentBoxSize?.[0]
+          const size = entry?.devicePixelContentBoxSize[0]
           if (isValid(size)) {
             this._nextPixelWidth = size.inlineSize
             this._nextPixelHeight = size.blockSize
@@ -136,8 +136,8 @@ export default class Canvas {
   }
 
   destroy (): void {
-    this._resizeObserver?.unobserve(this._element)
+    this._resizeObserver.unobserve(this._element)
     // eslint-disable-next-line @typescript-eslint/no-deprecated
-    this._mediaQueryList?.removeListener(this._mediaQueryListener)
+    this._mediaQueryList.removeListener(this._mediaQueryListener)
   }
 }

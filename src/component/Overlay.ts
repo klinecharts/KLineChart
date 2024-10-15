@@ -24,10 +24,9 @@ import type { OverlayStyle } from '../common/Styles'
 import type { MouseTouchEvent } from '../common/SyntheticEvent'
 import { clone, isArray, isFunction, isNumber, isString, isValid, merge } from '../common/utils/typeChecks'
 
-import type TimeScaleStore from '../store/TimeScaleStore'
-
 import type { XAxis } from './XAxis'
 import type { YAxis } from './YAxis'
+import type ChartStore from '../Store'
 
 export enum OverlayMode {
   Normal = 'normal',
@@ -479,7 +478,7 @@ export default class OverlayImp implements Overlay {
     this._prevPressedPoints = clone(this.points)
   }
 
-  eventPressedOtherMove (point: Partial<Point>, timeScaleStore: TimeScaleStore): void {
+  eventPressedOtherMove (point: Partial<Point>, chartStore: ChartStore): void {
     if (this._prevPressedPoint !== null) {
       let difDataIndex: Nullable<number> = null
       if (isNumber(point.dataIndex) && isNumber(this._prevPressedPoint.dataIndex)) {
@@ -491,12 +490,12 @@ export default class OverlayImp implements Overlay {
       }
       this.points = this._prevPressedPoints.map(p => {
         if (isNumber(p.timestamp)) {
-          p.dataIndex = timeScaleStore.timestampToDataIndex(p.timestamp)
+          p.dataIndex = chartStore.timestampToDataIndex(p.timestamp)
         }
         const newPoint = { ...p }
         if (isNumber(difDataIndex) && isNumber(p.dataIndex)) {
           newPoint.dataIndex = p.dataIndex + difDataIndex
-          newPoint.timestamp = timeScaleStore.dataIndexToTimestamp(newPoint.dataIndex) ?? undefined
+          newPoint.timestamp = chartStore.dataIndexToTimestamp(newPoint.dataIndex) ?? undefined
         }
         if (isNumber(difValue) && isNumber(p.value)) {
           newPoint.value = p.value + difValue

@@ -65,7 +65,7 @@ export function drawRect (ctx: CanvasRenderingContext2D, attrs: RectAttrs | Rect
   if (globalAlpha !== 1) {
     ctx.globalAlpha = globalAlpha
   }
-  // eslint-disable-next-line @typescript-eslint/unbound-method
+  // eslint-disable-next-line @typescript-eslint/unbound-method, @typescript-eslint/no-unnecessary-condition
   const draw = ctx.roundRect ?? ctx.rect
   const solid = (style === PolygonType.Fill || styles.style === PolygonType.StrokeFill) && (!isString(color) || !isTransparent(color))
   if (solid) {

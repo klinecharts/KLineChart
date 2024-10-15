@@ -54,7 +54,7 @@ export interface AxisCreateRangeParams {
   paneId: string
   kLineDataList: KLineData[]
   indicators: Indicator[]
-  visibleDataRange: VisibleRange
+  dataVisibleRange: VisibleRange
   defaultRange: AxisRange
 }
 
@@ -117,7 +117,7 @@ export default abstract class AxisImp implements Axis {
   scrollZoomEnabled = true
   createTicks: AxisCreateTicksCallback
 
-  private readonly _parent: DrawPane<Axis>
+  private readonly _parent: DrawPane
 
   private _range = getDefaultAxisRange()
   private _prevRange = getDefaultAxisRange()
@@ -125,11 +125,11 @@ export default abstract class AxisImp implements Axis {
 
   private _autoCalcTickFlag = true
 
-  constructor (parent: DrawPane<Axis>) {
+  constructor (parent: DrawPane) {
     this._parent = parent
   }
 
-  getParent (): DrawPane<Axis> { return this._parent }
+  getParent (): DrawPane { return this._parent }
 
   buildTicks (force: boolean): boolean {
     if (this._autoCalcTickFlag) {

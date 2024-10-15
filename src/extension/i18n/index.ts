@@ -31,6 +31,7 @@ function getSupportedLocales (): string[] {
 }
 
 function i18n (key: string, locale: string): string {
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   return locales[locale]?.[key] ?? key
 }
 

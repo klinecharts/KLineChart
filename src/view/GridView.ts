@@ -23,7 +23,7 @@ export default class GridView extends View {
     const chart = pane.getChart()
     const bounding = widget.getBounding()
 
-    const gridStyles = chart.getStyles().grid
+    const gridStyles = chart.getOptions().styles.grid
     const show = gridStyles.show
 
     if (show) {

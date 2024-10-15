@@ -248,7 +248,6 @@ export type IndicatorConstructor<D = unknown> = new () => IndicatorImp<D>
 
 export type EachFigureCallback<D> = (figure: IndicatorFigure<D>, figureStyles: IndicatorFigureStyle, index: number) => void
 
-// eslint-disable-next-line @typescript-eslint/max-params
 export function eachFigures<D = unknown> (
   kLineDataList: KLineData[],
   indicator: Indicator<D>,
@@ -382,6 +381,7 @@ export default class IndicatorImp<D = unknown> implements Indicator<D> {
     if (!isString(this.name)) {
       this.name = name ?? ''
     }
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     this.shortName = shortName ?? this.shortName ?? this.name
     if (isNumber(precision)) {
       this.precision = precision

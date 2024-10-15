@@ -13,13 +13,13 @@
  */
 
 import type Nullable from '../common/Nullable'
-import type { VisibleData } from '../common/Data'
+import type { VisibleRangeData } from '../common/Data'
 import type BarSpace from '../common/BarSpace'
 import type { EventHandler } from '../common/SyntheticEvent'
 import { ActionType } from '../common/Action'
 import { CandleType, type CandleBarColor, type RectStyle, PolygonType } from '../common/Styles'
 
-import type ChartStore from '../store/ChartStore'
+import type ChartStore from '../Store'
 
 import type { FigureCreate } from '../component/Figure'
 import type { RectAttrs } from '../extension/figure/rect'
@@ -35,8 +35,8 @@ export interface CandleBarOptions {
 }
 
 export default class CandleBarView extends ChildrenView {
-  private readonly _boundCandleBarClickEvent = (data: VisibleData) => () => {
-    this.getWidget().getPane().getChart().getChartStore().getActionStore().execute(ActionType.OnCandleBarClick, data)
+  private readonly _boundCandleBarClickEvent = (data: VisibleRangeData) => () => {
+    this.getWidget().getPane().getChart().getChartStore().executeAction(ActionType.OnCandleBarClick, data)
     return false
   }
 
@@ -49,7 +49,7 @@ export default class CandleBarView extends ChildrenView {
       let ohlcSize = 0
       let halfOhlcSize = 0
       if (candleBarOptions.type === CandleType.Ohlc) {
-        const { gapBar } = chartStore.getTimeScaleStore().getBarSpace()
+        const { gapBar } = chartStore.getBarSpace()
         ohlcSize = Math.min(Math.max(Math.round(gapBar * 0.2), 1), 8)
         if (ohlcSize > 2 && ohlcSize % 2 === 1) {
           ohlcSize--
@@ -157,7 +157,7 @@ export default class CandleBarView extends ChildrenView {
   }
 
   protected getCandleBarOptions (chartStore: ChartStore): Nullable<CandleBarOptions> {
-    const candleStyles = chartStore.getStyles().candle
+    const candleStyles = chartStore.getOptions().styles.candle
     return {
       type: candleStyles.type as Exclude<CandleType, CandleType.Area>,
       styles: candleStyles.bar

@@ -145,7 +145,7 @@ export default class SeparatorWidget extends Widget<SeparatorPane> {
           increasedPane.setOriginalBounding({ height: startDragIncreasedPaneHeight + diffHeight })
           const currentPane = this.getPane()
           const chart = currentPane.getChart()
-          chart.getChartStore().getActionStore().execute(ActionType.OnPaneDrag, { paneId: currentPane.getId() })
+          chart.getChartStore().executeAction(ActionType.OnPaneDrag, { paneId: currentPane.getId() })
           chart.adjustPaneViewport(true, true, true, true, true)
         }
       }
@@ -157,9 +157,9 @@ export default class SeparatorWidget extends Widget<SeparatorPane> {
   private _mouseEnterEvent (): boolean {
     const pane = this.getPane()
     const bottomPane = pane.getBottomPane()
-    if (bottomPane?.getOptions().dragEnabled ?? false) {
+    if (bottomPane.getOptions().dragEnabled) {
       const chart = pane.getChart()
-      const styles = chart.getStyles().separator
+      const styles = chart.getOptions().styles.separator
       this.getContainer().style.background = styles.activeBackgroundColor
       return true
     }
@@ -190,7 +190,7 @@ export default class SeparatorWidget extends Widget<SeparatorPane> {
 
   override updateImp (container: HTMLElement, _bounding: Bounding, level: UpdateLevel): void {
     if (level === UpdateLevel.All || level === UpdateLevel.Separator) {
-      const styles = this.getPane().getChart().getStyles().separator
+      const styles = this.getPane().getChart().getOptions().styles.separator
       container.style.top = `${-Math.floor((REAL_SEPARATOR_HEIGHT - styles.size) / 2)}px`
       container.style.height = `${REAL_SEPARATOR_HEIGHT}px`
     }

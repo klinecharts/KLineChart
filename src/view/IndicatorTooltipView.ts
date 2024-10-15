@@ -30,21 +30,19 @@ import type { Indicator, IndicatorFigure, IndicatorFigureStyle, IndicatorTooltip
 import type IndicatorImp from '../component/Indicator'
 import { eachFigures } from '../component/Indicator'
 
-import type { TooltipIcon } from '../store/TooltipStore'
+import type { TooltipIcon } from '../Store'
 
 import View from './View'
 
 export default class IndicatorTooltipView extends View<YAxis> {
   private readonly _boundIconClickEvent = (currentIcon: TooltipIcon) => () => {
     const pane = this.getWidget().getPane()
-    pane.getChart().getChartStore().getActionStore().execute(ActionType.OnTooltipIconClick, { ...currentIcon })
+    pane.getChart().getChartStore().executeAction(ActionType.OnTooltipIconClick, { ...currentIcon })
     return true
   }
 
   private readonly _boundIconMouseMoveEvent = (currentIconInfo: TooltipIcon) => () => {
-    const pane = this.getWidget().getPane()
-    const tooltipStore = pane.getChart().getChartStore().getTooltipStore()
-    tooltipStore.setActiveIcon({ ...currentIconInfo })
+    this.getWidget().getPane().getChart().getChartStore().setActiveTooltipIcon({ ...currentIconInfo })
     return true
   }
 
@@ -52,16 +50,14 @@ export default class IndicatorTooltipView extends View<YAxis> {
     const widget = this.getWidget()
     const pane = widget.getPane()
     const chartStore = pane.getChart().getChartStore()
-    const crosshair = chartStore.getTooltipStore().getCrosshair()
+    const crosshair = chartStore.getCrosshair()
     if (isValid(crosshair.kLineData)) {
       const bounding = widget.getBounding()
-      const customApi = chartStore.getCustomApi()
-      const thousandsSeparator = chartStore.getThousandsSeparator()
-      const decimalFoldThreshold = chartStore.getDecimalFoldThreshold()
-      const indicators = chartStore.getIndicatorStore().getInstanceByPaneId(pane.getId())
-      const activeIcon = chartStore.getTooltipStore().getActiveIcon()
-      const defaultStyles = chartStore.getStyles().indicator
-      const defaultTooltipRectStyles = chartStore.getStyles().candle.tooltip.rect;
+      const { styles, customApi, thousandsSeparator, decimalFoldThreshold } = chartStore.getOptions()
+      const indicators = chartStore.getIndicatorsByPaneId(pane.getId())
+      const activeIcon = chartStore.getActiveTooltipIcon()
+      const defaultStyles = styles.indicator
+      const defaultTooltipRectStyles = styles.candle.tooltip.rect;
       const { offsetLeft, offsetTop, offsetRight } = defaultStyles.tooltip
       this.drawIndicatorTooltip(
         ctx, pane.getId(), chartStore.getDataList(),
@@ -190,7 +186,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
           color, activeColor, size, fontFamily, icon: text,
           backgroundColor, activeBackgroundColor
         } = icon
-        const active = activeIcon?.paneId === paneId && activeIcon?.indicatorName === indicatorName && activeIcon?.iconId === icon.id
+        const active = activeIcon?.paneId === paneId && activeIcon.indicatorName === indicatorName && activeIcon.iconId === icon.id
         this.createFigure({
           name: 'text',
           attrs: { text, x: coordinate.x + marginLeft, y: coordinate.y + marginTop },
@@ -394,15 +390,16 @@ export default class IndicatorTooltipView extends View<YAxis> {
     const tooltipData: IndicatorTooltipData = { name, calcParamsText, legends: [], icons: tooltipStyles.icons }
 
     const dataIndex = crosshair.dataIndex!
-    const result = indicator.result ?? []
+    const result = indicator.result
 
     const legends: TooltipLegend[] = []
     if (indicator.visible) {
-      const indicatorData = result[dataIndex] ?? result[dataIndex - 1] ?? {}
+      const data = result[dataIndex] ?? result[dataIndex - 1] ?? {}
       eachFigures(dataList, indicator, dataIndex, styles, (figure: IndicatorFigure, figureStyles: Required<IndicatorFigureStyle>) => {
         if (isString(figure.title)) {
           const color = figureStyles.color
-          let value = indicatorData[figure.key]
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          let value = data[figure.key]
           if (isNumber(value)) {
             value = formatPrecision(value, indicator.precision)
             if (indicator.shouldFormatBigNumber) {
@@ -422,7 +419,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
       const { name: customName, calcParamsText: customCalcParamsText, legends: customLegends, icons: customIcons } = indicator.createTooltipDataSource({
         kLineDataList: dataList,
         indicator,
-        visibleRange: chartStore.getTimeScaleStore().getVisibleRange(),
+        visibleRange: chartStore.getVisibleRange(),
         bounding: widget.getBounding(),
         crosshair,
         defaultStyles: styles,

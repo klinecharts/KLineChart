@@ -34,7 +34,7 @@ import { AxisPosition } from '../component/Axis'
 
 import IndicatorTooltipView from './IndicatorTooltipView'
 
-import type { TooltipIcon } from '../store/TooltipStore'
+import type { TooltipIcon } from '../Store'
 
 import { i18n } from '../extension/i18n/index'
 
@@ -44,20 +44,22 @@ export default class CandleTooltipView extends IndicatorTooltipView {
     const pane = widget.getPane()
     const paneId = pane.getId()
     const chartStore = pane.getChart().getChartStore()
-    const crosshair = chartStore.getTooltipStore().getCrosshair()
+    const crosshair = chartStore.getCrosshair()
     if (isValid(crosshair.kLineData)) {
       const bounding = widget.getBounding()
       const yAxisBounding = pane.getYAxisWidget()!.getBounding()
       const dataList = chartStore.getDataList()
       const precision = chartStore.getPrecision()
-      const locale = chartStore.getLocale()
-      const customApi = chartStore.getCustomApi()
-      const thousandsSeparator = chartStore.getThousandsSeparator()
-      const decimalFoldThreshold = chartStore.getDecimalFoldThreshold()
-      const activeIcon = chartStore.getTooltipStore().getActiveIcon()
-      const indicators = chartStore.getIndicatorStore().getInstanceByPaneId(pane.getId())
-      const dateTimeFormat = chartStore.getTimeScaleStore().getDateTimeFormat()
-      const styles = chartStore.getStyles()
+      const {
+        styles,
+        locale,
+        thousandsSeparator,
+        decimalFoldThreshold,
+        customApi
+      } = chartStore.getOptions()
+      const activeIcon = chartStore.getActiveTooltipIcon()
+      const indicators = chartStore.getIndicatorsByPaneId(pane.getId())
+      const dateTimeFormat = chartStore.getDateTimeFormat()
       const candleStyles = styles.candle
       const indicatorStyles = styles.indicator
       const tooltipRectStyles = candleStyles.tooltip.rect
@@ -275,7 +277,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
       if (isDrawIndicatorTooltip) {
         ctx.font = createFont(indicatorTextSize, indicatorTextWeight, indicatorTextFamily)
         indicators.forEach(indicator => {
-          const tooltipDataLegends = this.getIndicatorTooltipData(dataList, crosshair, indicator, customApi, thousandsSeparator, decimalFoldThreshold, indicatorStyles).legends ?? []
+          const tooltipDataLegends = this.getIndicatorTooltipData(dataList, crosshair, indicator, customApi, thousandsSeparator, decimalFoldThreshold, indicatorStyles).legends
           indicatorLegendsArray.push(tooltipDataLegends)
           tooltipDataLegends.forEach(data => {
             const title = data.title as TooltipLegendChild
@@ -466,7 +468,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
       isFunction(tooltipStyles.custom)
         ? tooltipStyles.custom(data, styles)
         : tooltipStyles.custom
-    ) ?? []
+    )
     return legends.map(({ title, value }) => {
       let t: TooltipLegendChild = { text: '', color: '' }
       if (isObject(title)) {

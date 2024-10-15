@@ -74,7 +74,7 @@
     "cross-env": "^7.0.3",
     "dts-bundle-generator": "^9.5.1",
     "eslint": "^8.57.0",
-    "eslint-config-love": "^64.0.0",
+    "eslint-config-love": "^87.0.0",
     "eslint-plugin-file-progress": "^1.5.0",
     "fs-extra": "^11.2.0",
     "gh-pages": "^6.1.1",
