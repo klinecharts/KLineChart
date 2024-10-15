@@ -317,7 +317,11 @@ export default class Event implements EventHandler {
                 displayTo: newDisplayTo,
                 displayRange: newDisplayTo - newDisplayFrom
               })
-              this._chart.adjustPaneViewport(false, true, true, true)
+              this._chart.layout({
+                measureWidth: true,
+                update: true,
+                buildYAxisTick: true
+              })
             }
           } else {
             this._chart.updatePane(UpdateLevel.Overlay)
@@ -401,7 +405,11 @@ export default class Event implements EventHandler {
           const yAxis = (pane as DrawPane<YAxis>).getAxisComponent()
           if (!yAxis.getAutoCalcTickFlag()) {
             yAxis.setAutoCalcTickFlag(true)
-            this._chart.adjustPaneViewport(false, true, true, true)
+            this._chart.layout({
+              measureWidth: true,
+              update: true,
+              buildYAxisTick: true
+            })
             return true
           }
           break

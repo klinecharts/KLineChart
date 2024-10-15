@@ -469,7 +469,11 @@ export default class Store {
             this._addIndicatorCalcTask(paneId, indicator, type)
           })
         })
-        this._chart.adjustPaneViewport(false, true, true, true)
+        this._chart.layout({
+          measureWidth: true,
+          update: true,
+          buildYAxisTick: true
+        })
       }
     }
   }
@@ -710,7 +714,11 @@ export default class Store {
     adjustBeforeFunc?.()
     this._adjustVisibleRange()
     this.setCrosshair(this._crosshair, true)
-    this._chart.adjustPaneViewport(false, true, true, true)
+    this._chart.layout({
+      measureWidth: true,
+      update: true,
+      buildYAxisTick: true
+    })
   }
 
   setTotalBarSpace (totalSpace: number): void {
@@ -727,7 +735,11 @@ export default class Store {
     if (isUpdate ?? false) {
       this._adjustVisibleRange()
       this.setCrosshair(this._crosshair, true)
-      this._chart.adjustPaneViewport(false, true, true, true)
+      this._chart.layout({
+        measureWidth: true,
+        update: true,
+        buildYAxisTick: true
+      })
     }
     return this
   }
@@ -790,7 +802,11 @@ export default class Store {
     this._lastBarRightSideDiffBarCount = this._startLastBarRightSideDiffBarCount - distanceBarCount
     this._adjustVisibleRange()
     this.setCrosshair(this._crosshair, true)
-    this._chart.adjustPaneViewport(false, true, true, true)
+    this._chart.layout({
+      measureWidth: true,
+      update: true,
+      buildYAxisTick: true
+    })
     const realDistance = Math.round(
       prevLastBarRightSideDistance - this._lastBarRightSideDiffBarCount * this._barSpace
     )
@@ -973,7 +989,11 @@ export default class Store {
         })
         indicator.calcImp(this._dataList).then(result => {
           if (result) {
-            this._chart.adjustPaneViewport(false, true, true, true)
+            this._chart.layout({
+              measureWidth: true,
+              update: true,
+              buildYAxisTick: true
+            })
             indicator.onDataStateChange?.({
               state: IndicatorDataState.Ready,
               type: loadDataType,

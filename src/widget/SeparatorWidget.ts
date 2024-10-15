@@ -146,7 +146,13 @@ export default class SeparatorWidget extends Widget<SeparatorPane> {
           const currentPane = this.getPane()
           const chart = currentPane.getChart()
           chart.getChartStore().executeAction(ActionType.OnPaneDrag, { paneId: currentPane.getId() })
-          chart.adjustPaneViewport(true, true, true, true, true)
+          chart.layout({
+            measureHeight: true,
+            measureWidth: true,
+            update: true,
+            buildYAxisTick: true,
+            forceBuildAxisTick: true
+          })
         }
       }
     }
