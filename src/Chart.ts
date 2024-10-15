@@ -132,12 +132,22 @@ export default class ChartImp implements Chart {
   private _xAxisPane: XAxisPane
   private readonly _separatorPanes = new Map<DrawPane, SeparatorPane>()
 
+  private _layoutOptions = {
+    measureHeight: true,
+    measureWidth: true,
+    update: true,
+    buildYAxisTick: false,
+    forceBuildAxisTick: false
+  }
+
+  private _layoutPending = false
+
   constructor (container: HTMLElement, options?: Options) {
     this._initContainer(container)
     this._chartEvent = new Event(this._chartContainer, this)
     this._chartStore = new ChartStore(this, options)
     this._initPanes(options)
-    this.layout({ measureWidth: true, measureHeight: true, update: true })
+    this._layout()
   }
 
   private _initContainer (container: HTMLElement): void {
@@ -360,13 +370,34 @@ export default class ChartImp implements Chart {
     buildYAxisTick?: boolean
     forceBuildAxisTick?: boolean
   }): void {
-    const {
-      measureHeight = false,
-      measureWidth = false,
-      buildYAxisTick = false,
-      forceBuildAxisTick = false,
-      update = false
-    } = options
+    if (options.measureHeight ?? false) {
+      this._layoutOptions.measureHeight = options.measureHeight!
+    }
+    if (options.measureWidth ?? false) {
+      this._layoutOptions.measureWidth = options.measureWidth!
+    }
+    if (options.update ?? false) {
+      this._layoutOptions.update = options.update!
+    }
+    if (options.buildYAxisTick ?? false) {
+      this._layoutOptions.buildYAxisTick = options.buildYAxisTick!
+    }
+    if (options.buildYAxisTick ?? false) {
+      this._layoutOptions.forceBuildAxisTick = options.forceBuildAxisTick!
+    }
+    if (!this._layoutPending) {
+      this._layoutPending = true
+      Promise.resolve().then(_ => {
+        this._layout()
+        this._layoutPending = false
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      }).catch(_ => {
+      })
+    }
+  }
+
+  private _layout (): void {
+    const { measureHeight, measureWidth, update, buildYAxisTick, forceBuildAxisTick } = this._layoutOptions
     if (measureHeight) {
       const totalHeight = this._chartBounding.height
       const separatorSize = this._chartStore.getOptions().styles.separator.size
@@ -526,6 +557,13 @@ export default class ChartImp implements Chart {
     if (update) {
       (this._xAxisPane.getAxisComponent() as unknown as AxisImp).buildTicks(true)
       this.updatePane(UpdateLevel.All)
+    }
+    this._layoutOptions = {
+      measureHeight: false,
+      measureWidth: false,
+      update: false,
+      buildYAxisTick: false,
+      forceBuildAxisTick: false
     }
   }
 
