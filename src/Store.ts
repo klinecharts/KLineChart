@@ -250,7 +250,7 @@ export default class Store {
 
   /**
    * Actions
-   */
+   */ 
   private readonly _actions = new Map<ActionType, Action>()
 
   /**
@@ -263,6 +263,9 @@ export default class Store {
    */
   private readonly _taskScheduler = new TaskScheduler()
 
+  /**
+   * Overlay
+   */
   private readonly _overlays = new Map<string, OverlayImp[]>()
 
   /**
