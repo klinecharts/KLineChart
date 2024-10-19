@@ -136,8 +136,12 @@ export default class Canvas {
   }
 
   destroy (): void {
-    this._resizeObserver.unobserve(this._element)
-    // eslint-disable-next-line @typescript-eslint/no-deprecated
-    this._mediaQueryList.removeListener(this._mediaQueryListener)
+    if (isValid(this._resizeObserver)) {
+      this._resizeObserver.unobserve(this._element)
+    }
+    if (isValid(this._mediaQueryList)) {
+      // eslint-disable-next-line @typescript-eslint/no-deprecated
+      this._mediaQueryList.removeListener(this._mediaQueryListener)
+    }
   }
 }
