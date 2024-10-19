@@ -14,11 +14,6 @@
 
 import type { AxisCreate } from '../component/Axis'
 
-export const enum PanePosition {
-  Top = 'top',
-  Bottom = 'bottom'
-}
-
 export const enum PaneState {
   Normal = 'normal',
   Maximize = 'maximize',
@@ -30,7 +25,7 @@ export interface PaneOptions {
   height?: number
   minHeight?: number
   dragEnabled?: boolean
-  position?: PanePosition
+  order?: number
   state?: PaneState,
   axis?: Partial<AxisCreate>
 }

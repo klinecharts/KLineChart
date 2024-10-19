@@ -25,13 +25,12 @@ import type DrawWidget from '../widget/DrawWidget'
 import type YAxisWidget from '../widget/YAxisWidget'
 
 import Pane from './Pane'
-import { type PaneOptions, PANE_MIN_HEIGHT, PaneIdConstants, PaneState } from './types'
+import { type PaneOptions, PANE_DEFAULT_HEIGHT, PANE_MIN_HEIGHT, PaneIdConstants, PaneState } from './types'
 
 import type Chart from '../Chart'
 
 import { createDom } from '../common/utils/dom'
 import { getPixelRatio } from '../common/utils/canvas'
-import type PickPartial from '../common/PickPartial'
 import YAxisImp, { type YAxis } from '../component/YAxis'
 
 export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
@@ -40,9 +39,12 @@ export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
 
   private _axis: C
 
-  private readonly _options: PickPartial<DeepRequired<Omit<PaneOptions, 'id' | 'height'>>, 'position'> = {
+  private readonly _options: DeepRequired<PaneOptions> = {
+    id: '',
     minHeight: PANE_MIN_HEIGHT,
     dragEnabled: true,
+    order: 0,
+    height: PANE_DEFAULT_HEIGHT,
     state: PaneState.Normal,
     axis: { name: 'normal', scrollZoomEnabled: true }
   }
@@ -55,7 +57,7 @@ export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
     this.setOptions(options)
   }
 
-  setOptions (options: Omit<PaneOptions, 'id' | 'height'>): this {
+  setOptions (options: PaneOptions): this {
     const paneId = this.getId()
     let name = options.axis?.name ?? 'normal'
     if (paneId === PaneIdConstants.CANDLE) {
@@ -96,7 +98,7 @@ export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
     return this
   }
 
-  getOptions (): PickPartial<DeepRequired<Omit<PaneOptions, 'id' | 'height'>>, 'position'> { return this._options }
+  getOptions (): DeepRequired<PaneOptions> { return this._options }
 
   getAxisComponent (): C {
     return this._axis
