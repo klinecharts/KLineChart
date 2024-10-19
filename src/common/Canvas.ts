@@ -135,7 +135,11 @@ export default class Canvas {
   }
 
   destroy (): void {
-    this._resizeObserver?.unobserve(this._element)
-    this._mediaQueryList?.removeListener(this._mediaQueryListener)
+    if (isValid(this._resizeObserver)) {
+      this._resizeObserver.unobserve(this._element)
+    }
+    if (isValid(this._mediaQueryList)) {
+      this._mediaQueryList.removeListener(this._mediaQueryListener)
+    }
   }
 }
