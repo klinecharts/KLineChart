@@ -19,13 +19,12 @@ import type { KLineData } from './common/Data'
 import type Coordinate from './common/Coordinate'
 import type Point from './common/Point'
 import { UpdateLevel } from './common/Updater'
-import type { Styles } from './common/Styles'
 import type Crosshair from './common/Crosshair'
 import { ActionType, type ActionCallback } from './common/Action'
 import type { LoadDataCallback, LoadDataMore } from './common/LoadDataCallback'
 import type Precision from './common/Precision'
 import type VisibleRange from './common/VisibleRange'
-import { type CustomApi, type LayoutChild, LayoutChildType, type Options } from './Options'
+import { type LayoutChild, LayoutChildType, type Options, type OverrideOptions } from './Options'
 import Animation from './common/Animation'
 
 import { createId } from './common/utils/id'
@@ -72,8 +71,8 @@ export interface Chart {
   id: string
   getDom: (paneId?: string, position?: DomPosition) => Nullable<HTMLElement>
   getSize: (paneId?: string, position?: DomPosition) => Nullable<Bounding>
-  setOptions: (options: Options) => void
-  getOptions: () => Required<Omit<Options, 'layout'>> & { customApi: CustomApi, styles: Styles }
+  setOptions: (options: OverrideOptions) => void
+  getOptions: () => Options
   setPriceVolumePrecision: (pricePrecision: number, volumePrecision: number) => void
   getPriceVolumePrecision: () => Precision
   setOffsetRightDistance: (distance: number) => void
@@ -142,7 +141,7 @@ export default class ChartImp implements Chart {
 
   private _layoutPending = false
 
-  constructor (container: HTMLElement, options?: Options) {
+  constructor (container: HTMLElement, options?: OverrideOptions) {
     this._initContainer(container)
     this._chartEvent = new Event(this._chartContainer, this)
     this._chartStore = new ChartStore(this, options)
@@ -179,7 +178,7 @@ export default class ChartImp implements Chart {
     this._chartBounding.height = Math.floor(this._chartContainer.clientHeight)
   }
 
-  private _initPanes (options?: Options): void {
+  private _initPanes (options?: OverrideOptions): void {
     const layout = options?.layout ?? [{ type: LayoutChildType.Candle }]
     let candlePaneInitialized = false
     let xAxisPaneInitialized = false
@@ -624,7 +623,7 @@ export default class ChartImp implements Chart {
     return this._chartStore.getPrecision()
   }
 
-  setOptions (options: Options): void {
+  setOptions (options: OverrideOptions): void {
     this._chartStore.setOptions(options)
     const axis = (this._xAxisPane.getAxisComponent() as unknown as AxisImp)
     axis.buildTicks(true)
@@ -637,7 +636,7 @@ export default class ChartImp implements Chart {
     })
   }
 
-  getOptions (): Required<Omit<Options, 'layout'>> & { customApi: CustomApi, styles: Styles } {
+  getOptions (): Options {
     return this._chartStore.getOptions()
   }
 

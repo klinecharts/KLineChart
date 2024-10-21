@@ -16,9 +16,8 @@ import type Nullable from '../common/Nullable'
 import type Coordinate from '../common/Coordinate'
 import type Bounding from '../common/Bounding'
 import type BarSpace from '../common/BarSpace'
-import type { OverlayStyle } from '../common/Styles'
-import type { CustomApi } from '../Options'
-import { formatPrecision, formatThousands, formatFoldDecimal } from '../common/utils/format'
+import type { Options } from '../Options'
+import { formatPrecision } from '../common/utils/format'
 import { isNumber } from '../common/utils/typeChecks'
 
 import type { Axis } from '../component/Axis'
@@ -42,11 +41,7 @@ export default class OverlayYAxisView<C extends Axis = YAxis> extends OverlayVie
     coordinates: Coordinate[],
     bounding: Bounding,
     precision: OverlayPrecision,
-    dateTimeFormat: Intl.DateTimeFormat,
-    customApi: CustomApi,
-    thousandsSeparator: string,
-    decimalFoldThreshold: number,
-    defaultStyles: OverlayStyle,
+    options: Options,
     xAxis: Nullable<XAxis>,
     yAxis: Nullable<YAxis>,
     _hoverOverlayInfo: EventOverlayInfo,
@@ -55,8 +50,8 @@ export default class OverlayYAxisView<C extends Axis = YAxis> extends OverlayVie
     this.drawFigures(
       ctx,
       overlay,
-      this.getDefaultFigures(overlay, coordinates, bounding, precision, dateTimeFormat, customApi, thousandsSeparator, decimalFoldThreshold, xAxis, yAxis, clickOverlayInfo),
-      defaultStyles
+      this.getDefaultFigures(overlay, coordinates, bounding, precision, options, xAxis, yAxis, clickOverlayInfo),
+      options.styles.overlay
     )
   }
 
@@ -65,10 +60,7 @@ export default class OverlayYAxisView<C extends Axis = YAxis> extends OverlayVie
     coordinates: Coordinate[],
     bounding: Bounding,
     precision: OverlayPrecision,
-    _dateTimeFormat: Intl.DateTimeFormat,
-    _customApi: CustomApi,
-    thousandsSeparator: string,
-    decimalFoldThreshold: number,
+    options: Options,
     _xAxis: Nullable<XAxis>,
     yAxis: Nullable<YAxis>,
     clickOverlayInfo: EventOverlayInfo
@@ -91,12 +83,13 @@ export default class OverlayYAxisView<C extends Axis = YAxis> extends OverlayVie
         textAlign = 'right'
         x = bounding.width
       }
+      const { decimalFold, thousandsSeparator } = options
       coordinates.forEach((coordinate, index) => {
         const point = overlay.points[index]
         if (isNumber(point.value)) {
           topY = Math.min(topY, coordinate.y)
           bottomY = Math.max(bottomY, coordinate.y)
-          const text = formatFoldDecimal(formatThousands(formatPrecision(point.value, precision.price), thousandsSeparator), decimalFoldThreshold)
+          const text = decimalFold.format(thousandsSeparator.format(formatPrecision(point.value, precision.price)))
           figures.push({ type: 'text', attrs: { x, y: coordinate.y, text, align: textAlign, baseline: 'middle' }, ignoreEvent: true })
         }
       })
@@ -113,13 +106,10 @@ export default class OverlayYAxisView<C extends Axis = YAxis> extends OverlayVie
     bounding: Bounding,
     barSpace: BarSpace,
     precision: OverlayPrecision,
-    thousandsSeparator: string,
-    decimalFoldThreshold: number,
-    dateTimeFormat: Intl.DateTimeFormat,
-    defaultStyles: OverlayStyle,
+    options: Options,
     xAxis: Nullable<XAxis>,
     yAxis: Nullable<YAxis>
   ): OverlayFigure | OverlayFigure[] {
-    return overlay.createYAxisFigures?.({ overlay, coordinates, bounding, barSpace, precision, thousandsSeparator, decimalFoldThreshold, dateTimeFormat, defaultStyles, xAxis, yAxis }) ?? []
+    return overlay.createYAxisFigures?.({ overlay, coordinates, bounding, barSpace, precision, options, xAxis, yAxis }) ?? []
   }
 }

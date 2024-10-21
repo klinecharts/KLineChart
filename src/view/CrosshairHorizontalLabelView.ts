@@ -16,7 +16,6 @@ import type Bounding from '../common/Bounding'
 import type Crosshair from '../common/Crosshair'
 import type { CrosshairStyle, CrosshairDirectionStyle, StateTextStyle } from '../common/Styles'
 import { isString } from '../common/utils/typeChecks'
-import { formatThousands, formatFoldDecimal } from '../common/utils/format'
 import { createFont } from '../common/utils/canvas'
 
 import type { Axis } from '../component/Axis'
@@ -87,12 +86,12 @@ export default class CrosshairHorizontalLabelView<C extends Axis = YAxis> extend
       precision
     )
 
-    const { customApi, thousandsSeparator, decimalFoldThreshold } = chartStore.getOptions()
+    const { customApi, thousandsSeparator, decimalFold } = chartStore.getOptions()
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (shouldFormatBigNumber) {
       text = customApi.formatBigNumber(text)
     }
-    return formatFoldDecimal(formatThousands(text, thousandsSeparator), decimalFoldThreshold)
+    return decimalFold.format(thousandsSeparator.format(text))
   }
 
   protected getTextAttrs (text: string, _textWidth: number, crosshair: Crosshair, bounding: Bounding, axis: Axis, _styles: StateTextStyle): TextAttrs {

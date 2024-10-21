@@ -27,6 +27,7 @@ import { clone, isArray, isFunction, isNumber, isString, isValid, merge } from '
 import type { XAxis } from './XAxis'
 import type { YAxis } from './YAxis'
 import type ChartStore from '../Store'
+import type { Options } from '../Options'
 
 export enum OverlayMode {
   Normal = 'normal',
@@ -75,15 +76,12 @@ export interface OverlayPrecision extends Precision {
 }
 
 export interface OverlayCreateFiguresCallbackParams {
+  options: Options
   overlay: Overlay
   coordinates: Coordinate[]
   bounding: Bounding
   barSpace: BarSpace
   precision: OverlayPrecision
-  thousandsSeparator: string
-  decimalFoldThreshold: number
-  dateTimeFormat: Intl.DateTimeFormat
-  defaultStyles: OverlayStyle
   xAxis: Nullable<XAxis>
   yAxis: Nullable<YAxis>
 }

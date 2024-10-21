@@ -17,12 +17,12 @@ import type { KLineData } from '../common/Data'
 import type Crosshair from '../common/Crosshair'
 import { type IndicatorStyle, type TooltipStyle, type TooltipIconStyle, type TooltipTextStyle, type TooltipLegend, TooltipShowRule, type TooltipLegendChild, TooltipIconPosition } from '../common/Styles'
 import { ActionType } from '../common/Action'
-import { formatPrecision, formatThousands, formatFoldDecimal } from '../common/utils/format'
+import { formatPrecision } from '../common/utils/format'
 import { isValid, isObject, isString, isNumber, isFunction } from '../common/utils/typeChecks'
 import { createFont } from '../common/utils/canvas'
 import type Coordinate from '../common/Coordinate'
 
-import type { CustomApi } from '../Options'
+import type { Options } from '../Options'
 
 import type { YAxis } from '../component/YAxis'
 
@@ -53,16 +53,14 @@ export default class IndicatorTooltipView extends View<YAxis> {
     const crosshair = chartStore.getCrosshair()
     if (isValid(crosshair.kLineData)) {
       const bounding = widget.getBounding()
-      const { styles, customApi, thousandsSeparator, decimalFoldThreshold } = chartStore.getOptions()
+      const options = chartStore.getOptions()
       const indicators = chartStore.getIndicatorsByPaneId(pane.getId())
       const activeIcon = chartStore.getActiveTooltipIcon()
-      const defaultStyles = styles.indicator
+      const defaultStyles = options.styles.indicator
       const { offsetLeft, offsetTop, offsetRight } = defaultStyles.tooltip
       this.drawIndicatorTooltip(
         ctx, pane.getId(), chartStore.getDataList(),
-        crosshair, activeIcon, indicators, customApi,
-        thousandsSeparator, decimalFoldThreshold,
-        offsetLeft, offsetTop,
+        crosshair, activeIcon, indicators, options, offsetLeft, offsetTop,
         bounding.width - offsetRight, defaultStyles
       )
     }
@@ -75,9 +73,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
     crosshair: Crosshair,
     activeTooltipIcon: Nullable<TooltipIcon>,
     indicators: IndicatorImp[],
-    customApi: CustomApi,
-    thousandsSeparator: string,
-    decimalFoldThreshold: number,
+    options: Options,
     left: number,
     top: number,
     maxWidth: number,
@@ -89,7 +85,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
       indicators.forEach(indicator => {
         let prevRowHeight = 0
         const coordinate = { x: left, y: top }
-        const { name, calcParamsText, legends, icons } = this.getIndicatorTooltipData(dataList, crosshair, indicator, customApi, thousandsSeparator, decimalFoldThreshold, styles)
+        const { name, calcParamsText, legends, icons } = this.getIndicatorTooltipData(dataList, crosshair, indicator, options, styles)
         const nameValid = name.length > 0
         const legendValid = legends.length > 0
         if (nameValid || legendValid) {
@@ -259,9 +255,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
     dataList: KLineData[],
     crosshair: Crosshair,
     indicator: Indicator,
-    customApi: CustomApi,
-    thousandsSeparator: string,
-    decimalFoldThreshold: number,
+    options: Options,
     styles: IndicatorStyle
   ): IndicatorTooltipData {
     const tooltipStyles = styles.tooltip
@@ -277,6 +271,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
     const dataIndex = crosshair.dataIndex!
     const result = indicator.result
 
+    const { customApi, decimalFold, thousandsSeparator } = options
     const legends: TooltipLegend[] = []
     if (indicator.visible) {
       const data = result[dataIndex] ?? result[dataIndex - 1] ?? {}
@@ -291,7 +286,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
               value = customApi.formatBigNumber(value as string)
             }
           }
-          legends.push({ title: { text: figure.title, color }, value: { text: formatFoldDecimal(formatThousands((value ?? tooltipStyles.defaultValue) as string, thousandsSeparator), decimalFoldThreshold), color } })
+          legends.push({ title: { text: figure.title, color }, value: { text: decimalFold.format(thousandsSeparator.format((value ?? tooltipStyles.defaultValue) as string)), color } })
         }
       })
       tooltipData.legends = legends
@@ -336,7 +331,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
           } else {
             value.text = data.value
           }
-          value.text = formatFoldDecimal(formatThousands(value.text, thousandsSeparator), decimalFoldThreshold)
+          value.text = decimalFold.format(thousandsSeparator.format(value.text))
           optimizedLegends.push({ title, value })
         })
         tooltipData.legends = optimizedLegends

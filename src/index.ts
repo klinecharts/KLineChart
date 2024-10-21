@@ -41,7 +41,7 @@ import { ActionType } from './common/Action'
 import { IndicatorSeries } from './component/Indicator'
 import { OverlayMode } from './component/Overlay'
 
-import { type Options, FormatDateType } from './Options'
+import { FormatDateType, type OverrideOptions } from './Options'
 import ChartImp, { type Chart, DomPosition } from './Chart'
 
 import { checkCoordinateOnArc, drawArc } from './extension/figure/arc'
@@ -79,7 +79,7 @@ function version (): string {
  * @param options
  * @returns {Chart}
  */
-function init (ds: HTMLElement | string, options?: Options): Nullable<Chart> {
+function init (ds: HTMLElement | string, options?: OverrideOptions): Nullable<Chart> {
   logTag()
   let dom: Nullable<HTMLElement> = null
   if (isString(ds)) {

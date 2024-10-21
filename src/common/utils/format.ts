@@ -132,18 +132,45 @@ export function formatThousands (value: string | number, sign: string): string {
   return vl.replace(/(\d)(?=(\d{3})+$)/g, $1 => `${$1}${sign}`)
 }
 
-export function formatFoldDecimal (value: string | number, threshold: number): string {
+export function formatFoldDecimal (value: string | number, threshold: number, format: (count: number) => string): string {
   const vl = `${value}`
   const reg = new RegExp('\\.0{' + threshold + ',}[1-9][0-9]*$')
   if (reg.test(vl)) {
     const result = vl.split('.')
-    const v = result[result.length - 1]
+    const lastIndex = result.length - 1
+    const v = result[lastIndex]
     const match = v.match(/0*/)
     if (isValid(match)) {
       const count = match[0].length
-      result[result.length - 1] = v.replace(/0*/, `0{${count}}`)
+      result[lastIndex] = v.replace(/0*/, `0${format(count)}`)
       return result.join('.')
     }
   }
   return vl
+}
+
+export function formatFoldDecimalForCurlyBracket (value: string | number, threshold: number): string {
+  return formatFoldDecimal(value, threshold, count => `{${count}}`)
+}
+
+const subscriptNumbers = {
+  '0': '₀',
+  '1': '₁',
+  '2': '₂',
+  '3': '₃',
+  '4': '₄',
+  '5': '₅',
+  '6': '₆',
+  '7': '₇',
+  '8': '₈',
+  '9': '₉'
+}
+
+export function formatFoldDecimalForSubscript (value: string | number, threshold: number): string {
+  return formatFoldDecimal(value, threshold, count => {
+    return `${count}`.replace(/\d/, $1 => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+      return subscriptNumbers[$1] ?? ''
+    })
+  })
 }

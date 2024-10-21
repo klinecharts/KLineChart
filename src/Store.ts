@@ -24,7 +24,7 @@ import type BarSpace from './common/BarSpace';
 import type Precision from './common/Precision'
 import Action from './common/Action';
 import { ActionType, type ActionCallback } from './common/Action';
-import { formatValue, type DateTime, formatDateToDateTime } from './common/utils/format'
+import { formatValue, type DateTime, formatDateToDateTime, formatFoldDecimalForCurlyBracket, formatFoldDecimalForSubscript, formatDateToString, formatBigNumber, formatThousands } from './common/utils/format'
 import { getDefaultStyles, type Styles, type TooltipLegend } from './common/Styles'
 import { isArray, isString, isValid, isNumber, isBoolean, isFunction, merge } from './common/utils/typeChecks'
 import { createId } from './common/utils/id'
@@ -35,7 +35,7 @@ import { UpdateLevel } from './common/Updater'
 import type { MouseTouchEvent } from './common/SyntheticEvent'
 import { type LoadDataCallback, type LoadDataParams, LoadDataType } from './common/LoadDataCallback'
 
-import { getDefaultCustomApi, type CustomApi, defaultLocale, type Options } from './Options'
+import { type Options, DecimalFoldType, type OverrideOptions } from './Options'
 
 import { IndicatorDataState, type IndicatorCreate, type IndicatorFilter } from './component/Indicator'
 import type IndicatorImp from './component/Indicator'
@@ -122,10 +122,26 @@ export default class Store {
    */
   private readonly _options = {
     styles: getDefaultStyles(),
-    customApi: getDefaultCustomApi(),
-    locale: defaultLocale,
-    thousandsSeparator: ',',
-    decimalFoldThreshold: 3,
+    customApi: {
+      formatDate: (timestamp: number, format: string) => formatDateToString(this._dateTimeFormat, timestamp, format),
+      formatBigNumber
+    },
+    locale: 'en-US',
+    thousandsSeparator: {
+      sign: ',',
+      format: (value: string | number) => formatThousands(value, this._options.thousandsSeparator.sign)
+    },
+    decimalFold: {
+      type: DecimalFoldType.CurlyBracket,
+      threshold: 3,
+      format: (value: string | number) => {
+        const { type, threshold } = this._options.decimalFold
+        if (type === DecimalFoldType.CurlyBracket) {
+          return formatFoldDecimalForCurlyBracket(value, threshold)
+        }
+        return formatFoldDecimalForSubscript(value, threshold)
+      }
+    },
     timezone: 'auto'
   }
 
@@ -309,14 +325,14 @@ export default class Store {
     attrsIndex: -1
   }
 
-  constructor (chart: Chart, options?: Options) {
+  constructor (chart: Chart, options?: OverrideOptions) {
     this._chart = chart
     this._calcOptimalBarSpace()
     this._lastBarRightSideDiffBarCount = this._offsetRightDistance / this._barSpace
     this.setOptions(options)
   }
 
-  setOptions (options?: Options): void {
+  setOptions (options?: OverrideOptions): void {
     if (
       !isValid(this._dateTimeFormat) ||
       (isString(options?.timezone) && options.timezone !== this._options.timezone)
@@ -361,7 +377,7 @@ export default class Store {
     }
   }
 
-  getOptions (): Required<Omit<Options, 'layout'>> & { customApi: CustomApi, styles: Styles } {
+  getOptions (): Options {
     return this._options
   }
 
@@ -693,10 +709,6 @@ export default class Store {
         this._loadMoreDataCallback(params)
       }
     }
-  }
-
-  getDateTimeFormat (): Intl.DateTimeFormat {
-    return this._dateTimeFormat
   }
 
   getBarSpace (): BarSpace {

@@ -17,10 +17,9 @@ import type Coordinate from '../common/Coordinate'
 import type Bounding from '../common/Bounding'
 import type BarSpace from '../common/BarSpace'
 import type Precision from '../common/Precision'
-import type { OverlayStyle } from '../common/Styles'
 import { isNumber } from '../common/utils/typeChecks'
 
-import { type CustomApi, FormatDateType } from '../Options'
+import { FormatDateType, type Options } from '../Options'
 
 import type { XAxis } from '../component/XAxis'
 import type { YAxis } from '../component/YAxis'
@@ -54,10 +53,7 @@ export default class OverlayXAxisView extends OverlayYAxisView<XAxis> {
     coordinates: Coordinate[],
     bounding: Bounding,
     _precision: Precision,
-    dateTimeFormat: Intl.DateTimeFormat,
-    customApi: CustomApi,
-    _thousandsSeparator: string,
-    _decimalFoldThreshold: number,
+    options: Options,
     _xAxis: Nullable<XAxis>,
     _yAxis: Nullable<YAxis>,
     clickOverlayInfo: EventOverlayInfo
@@ -71,7 +67,7 @@ export default class OverlayXAxisView extends OverlayYAxisView<XAxis> {
         rightX = Math.max(rightX, coordinate.x)
         const point = overlay.points[index]
         if (isNumber(point.timestamp)) {
-          const text = customApi.formatDate(dateTimeFormat, point.timestamp, 'YYYY-MM-DD HH:mm', FormatDateType.Crosshair)
+          const text = options.customApi.formatDate(point.timestamp, 'YYYY-MM-DD HH:mm', FormatDateType.Crosshair)
           figures.push({ type: 'text', attrs: { x: coordinate.x, y: 0, text, align: 'center' }, ignoreEvent: true })
         }
       })
@@ -88,13 +84,10 @@ export default class OverlayXAxisView extends OverlayYAxisView<XAxis> {
     bounding: Bounding,
     barSpace: BarSpace,
     precision: OverlayPrecision,
-    thousandsSeparator: string,
-    decimalFoldThreshold: number,
-    dateTimeFormat: Intl.DateTimeFormat,
-    defaultStyles: OverlayStyle,
+    options: Options,
     xAxis: Nullable<XAxis>,
     yAxis: Nullable<YAxis>
   ): OverlayFigure | OverlayFigure[] {
-    return o.createXAxisFigures?.({ overlay: o, coordinates, bounding, barSpace, precision, thousandsSeparator, decimalFoldThreshold, dateTimeFormat, defaultStyles, xAxis, yAxis }) ?? []
+    return o.createXAxisFigures?.({ overlay: o, coordinates, bounding, barSpace, precision, options, xAxis, yAxis }) ?? []
   }
 }

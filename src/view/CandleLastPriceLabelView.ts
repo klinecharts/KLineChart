@@ -12,7 +12,6 @@
  * limitations under the License.
  */
 
-import { formatThousands, formatFoldDecimal } from '../common/utils/format'
 import { isValid } from '../common/utils/typeChecks'
 
 import View from './View'
@@ -25,8 +24,8 @@ export default class CandleLastPriceLabelView extends View {
     const pane = widget.getPane()
     const bounding = widget.getBounding()
     const chartStore = pane.getChart().getChartStore()
-    const chartOptions = chartStore.getOptions()
-    const priceMarkStyles = chartOptions.styles.candle.priceMark
+    const { styles, decimalFold, thousandsSeparator } = chartStore.getOptions()
+    const priceMarkStyles = styles.candle.priceMark
     const lastPriceMarkStyles = priceMarkStyles.last
     const lastPriceMarkTextStyles = lastPriceMarkStyles.text
     if (priceMarkStyles.show && lastPriceMarkStyles.show && lastPriceMarkTextStyles.show) {
@@ -53,7 +52,7 @@ export default class CandleLastPriceLabelView extends View {
           ),
           precision.price
         )
-        text = formatFoldDecimal(formatThousands(text, chartOptions.thousandsSeparator), chartOptions.decimalFoldThreshold)
+        text = decimalFold.format(thousandsSeparator.format(text))
         let x = 0
         let textAlgin: CanvasTextAlign = 'left'
         if (yAxis.isFromZero()) {

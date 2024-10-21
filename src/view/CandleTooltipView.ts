@@ -18,14 +18,14 @@ import type { KLineData } from '../common/Data'
 import type Precision from '../common/Precision'
 import type Crosshair from '../common/Crosshair'
 import {
-  type Styles, type CandleStyle, type TooltipLegend, type TooltipLegendChild, TooltipShowType, CandleTooltipRectPosition,
+  type CandleStyle, type TooltipLegend, type TooltipLegendChild, TooltipShowType, CandleTooltipRectPosition,
   type CandleTooltipCustomCallbackData, PolygonType
 } from '../common/Styles'
-import { formatPrecision, formatThousands, formatFoldDecimal } from '../common/utils/format'
+import { formatPrecision } from '../common/utils/format'
 import { createFont } from '../common/utils/canvas'
 import { isFunction, isObject, isValid } from '../common/utils/typeChecks'
 
-import { type CustomApi, FormatDateType } from '../Options'
+import { FormatDateType, type Options } from '../Options'
 
 import { PaneIdConstants } from '../pane/types'
 
@@ -50,18 +50,11 @@ export default class CandleTooltipView extends IndicatorTooltipView {
       const yAxisBounding = pane.getYAxisWidget()!.getBounding()
       const dataList = chartStore.getDataList()
       const precision = chartStore.getPrecision()
-      const {
-        styles,
-        locale,
-        thousandsSeparator,
-        decimalFoldThreshold,
-        customApi
-      } = chartStore.getOptions()
+      const options = chartStore.getOptions()
       const activeIcon = chartStore.getActiveTooltipIcon()
       const indicators = chartStore.getIndicatorsByPaneId(pane.getId())
-      const dateTimeFormat = chartStore.getDateTimeFormat()
-      const candleStyles = styles.candle
-      const indicatorStyles = styles.indicator
+      const candleStyles = options.styles.candle
+      const indicatorStyles = options.styles.indicator
       if (
         candleStyles.tooltip.showType === TooltipShowType.Rect &&
         indicatorStyles.tooltip.showType === TooltipShowType.Rect
@@ -71,10 +64,9 @@ export default class CandleTooltipView extends IndicatorTooltipView {
         this._drawRectTooltip(
           ctx, dataList, indicators,
           bounding, yAxisBounding,
-          crosshair, precision,
-          dateTimeFormat, locale, customApi, thousandsSeparator, decimalFoldThreshold,
+          crosshair, precision, options,
           isDrawCandleTooltip, isDrawIndicatorTooltip,
-          candleStyles.tooltip.offsetTop, styles
+          candleStyles.tooltip.offsetTop
         )
       } else if (
         candleStyles.tooltip.showType === TooltipShowType.Standard &&
@@ -84,13 +76,11 @@ export default class CandleTooltipView extends IndicatorTooltipView {
         const maxWidth = bounding.width - offsetRight
         const top = this._drawCandleStandardTooltip(
           ctx, dataList, paneId, crosshair, activeIcon, precision,
-          dateTimeFormat, locale, customApi, thousandsSeparator, decimalFoldThreshold,
-          offsetLeft, offsetTop, maxWidth, candleStyles
+          options, offsetLeft, offsetTop, maxWidth, candleStyles
         )
         this.drawIndicatorTooltip(
           ctx, paneId, dataList, crosshair,
-          activeIcon, indicators, customApi,
-          thousandsSeparator, decimalFoldThreshold,
+          activeIcon, indicators, options,
           offsetLeft, top, maxWidth, indicatorStyles
         )
       } else if (
@@ -101,33 +91,27 @@ export default class CandleTooltipView extends IndicatorTooltipView {
         const maxWidth = bounding.width - offsetRight
         const top = this.drawIndicatorTooltip(
           ctx, paneId, dataList, crosshair,
-          activeIcon, indicators, customApi,
-          thousandsSeparator, decimalFoldThreshold,
+          activeIcon, indicators, options,
           offsetLeft, offsetTop, maxWidth, indicatorStyles
         )
         const isDrawCandleTooltip = this.isDrawTooltip(crosshair, candleStyles.tooltip)
         this._drawRectTooltip(
           ctx, dataList, indicators,
-          bounding, yAxisBounding,
-          crosshair, precision, dateTimeFormat,
-          locale, customApi, thousandsSeparator, decimalFoldThreshold,
-          isDrawCandleTooltip, false, top, styles
+          bounding, yAxisBounding, crosshair, precision,
+          options, isDrawCandleTooltip, false, top
         )
       } else {
         const { offsetLeft, offsetTop, offsetRight } = candleStyles.tooltip
         const maxWidth = bounding.width - offsetRight
         const top = this._drawCandleStandardTooltip(
           ctx, dataList, paneId, crosshair, activeIcon, precision,
-          dateTimeFormat, locale, customApi, thousandsSeparator, decimalFoldThreshold,
-          offsetLeft, offsetTop, maxWidth, candleStyles
+          options, offsetLeft, offsetTop, maxWidth, candleStyles
         )
         const isDrawIndicatorTooltip = this.isDrawTooltip(crosshair, indicatorStyles.tooltip)
         this._drawRectTooltip(
-          ctx, dataList, indicators,
-          bounding, yAxisBounding,
-          crosshair, precision, dateTimeFormat,
-          locale, customApi, thousandsSeparator, decimalFoldThreshold,
-          false, isDrawIndicatorTooltip, top, styles
+          ctx, dataList, indicators, bounding,
+          yAxisBounding, crosshair, precision,
+          options, false, isDrawIndicatorTooltip, top
         )
       }
     }
@@ -140,11 +124,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
     crosshair: Crosshair,
     activeTooltipIcon: Nullable<TooltipIcon>,
     precision: Precision,
-    dateTimeFormat: Intl.DateTimeFormat,
-    locale: string,
-    customApi: CustomApi,
-    thousandsSeparator: string,
-    decimalFoldThreshold: number,
+    options: Options,
     left: number,
     top: number,
     maxWidth: number,
@@ -158,7 +138,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
       const dataIndex = crosshair.dataIndex ?? 0
       const legends = this._getCandleTooltipLegends(
         { prev: dataList[dataIndex - 1] ?? null, current: crosshair.kLineData!, next: dataList[dataIndex + 1] ?? null },
-        precision, dateTimeFormat, locale, customApi, thousandsSeparator, decimalFoldThreshold, styles
+        precision, options, styles
       )
 
       const [leftIcons, middleIcons, rightIcons] = this.classifyTooltipIcons(tooltipStyles.icons)
@@ -196,25 +176,20 @@ export default class CandleTooltipView extends IndicatorTooltipView {
     yAxisBounding: Bounding,
     crosshair: Crosshair,
     precision: Precision,
-    dateTimeFormat: Intl.DateTimeFormat,
-    locale: string,
-    customApi: CustomApi,
-    thousandsSeparator: string,
-    decimalFoldThreshold: number,
+    options: Options,
     isDrawCandleTooltip: boolean,
     isDrawIndicatorTooltip: boolean,
-    top: number,
-    styles: Styles
+    top: number
   ): void {
-    const candleStyles = styles.candle
-    const indicatorStyles = styles.indicator
+    const candleStyles = options.styles.candle
+    const indicatorStyles = options.styles.indicator
     const candleTooltipStyles = candleStyles.tooltip
     const indicatorTooltipStyles = indicatorStyles.tooltip
     if (isDrawCandleTooltip || isDrawIndicatorTooltip) {
       const dataIndex = crosshair.dataIndex ?? 0
       const candleLegends = this._getCandleTooltipLegends(
         { prev: dataList[dataIndex - 1] ?? null, current: crosshair.kLineData!, next: dataList[dataIndex + 1] ?? null },
-        precision, dateTimeFormat, locale, customApi, thousandsSeparator, decimalFoldThreshold, candleStyles
+        precision, options, candleStyles
       )
 
       const { offsetLeft, offsetTop, offsetRight, offsetBottom } = candleTooltipStyles
@@ -273,7 +248,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
       if (isDrawIndicatorTooltip) {
         ctx.font = createFont(indicatorTextSize, indicatorTextWeight, indicatorTextFamily)
         indicators.forEach(indicator => {
-          const tooltipDataLegends = this.getIndicatorTooltipData(dataList, crosshair, indicator, customApi, thousandsSeparator, decimalFoldThreshold, indicatorStyles).legends
+          const tooltipDataLegends = this.getIndicatorTooltipData(dataList, crosshair, indicator, options, indicatorStyles).legends
           indicatorLegendsArray.push(tooltipDataLegends)
           tooltipDataLegends.forEach(data => {
             const title = data.title as TooltipLegendChild
@@ -431,13 +406,10 @@ export default class CandleTooltipView extends IndicatorTooltipView {
   private _getCandleTooltipLegends (
     data: CandleTooltipCustomCallbackData,
     precision: Precision,
-    dateTimeFormat: Intl.DateTimeFormat,
-    locale: string,
-    customApi: CustomApi,
-    thousandsSeparator: string,
-    decimalFoldThreshold: number,
+    options: Options,
     styles: CandleStyle
   ): TooltipLegend[] {
+    const { customApi, decimalFold, thousandsSeparator, locale } = options
     const tooltipStyles = styles.tooltip
     const textColor = tooltipStyles.text.color
     const current = data.current
@@ -445,20 +417,18 @@ export default class CandleTooltipView extends IndicatorTooltipView {
     const changeValue = current.close - prevClose
     const { price: pricePrecision, volume: volumePrecision } = precision
     const mapping = {
-      '{time}': customApi.formatDate(dateTimeFormat, current.timestamp, 'YYYY-MM-DD HH:mm', FormatDateType.Tooltip),
-      '{open}': formatFoldDecimal(formatThousands(formatPrecision(current.open, pricePrecision), thousandsSeparator), decimalFoldThreshold),
-      '{high}': formatFoldDecimal(formatThousands(formatPrecision(current.high, pricePrecision), thousandsSeparator), decimalFoldThreshold),
-      '{low}': formatFoldDecimal(formatThousands(formatPrecision(current.low, pricePrecision), thousandsSeparator), decimalFoldThreshold),
-      '{close}': formatFoldDecimal(formatThousands(formatPrecision(current.close, pricePrecision), thousandsSeparator), decimalFoldThreshold),
-      '{volume}': formatFoldDecimal(formatThousands(
-        customApi.formatBigNumber(formatPrecision(current.volume ?? tooltipStyles.defaultValue, volumePrecision)),
-        thousandsSeparator
-      ), decimalFoldThreshold),
-      '{turnover}': formatFoldDecimal(formatThousands(
-        formatPrecision(current.turnover ?? tooltipStyles.defaultValue, pricePrecision),
-        thousandsSeparator
-      ), decimalFoldThreshold),
-      '{change}': prevClose === 0 ? tooltipStyles.defaultValue : `${formatThousands(formatPrecision(changeValue / prevClose * 100), thousandsSeparator)}%`
+      '{time}': customApi.formatDate(current.timestamp, 'YYYY-MM-DD HH:mm', FormatDateType.Tooltip),
+      '{open}': decimalFold.format(thousandsSeparator.format(formatPrecision(current.open, pricePrecision))),
+      '{high}': decimalFold.format(thousandsSeparator.format(formatPrecision(current.high, pricePrecision))),
+      '{low}': decimalFold.format(thousandsSeparator.format(formatPrecision(current.low, pricePrecision))),
+      '{close}': decimalFold.format(thousandsSeparator.format(formatPrecision(current.close, pricePrecision))),
+      '{volume}': decimalFold.format(thousandsSeparator.format(
+        customApi.formatBigNumber(formatPrecision(current.volume ?? tooltipStyles.defaultValue, volumePrecision))
+      )),
+      '{turnover}': decimalFold.format(thousandsSeparator.format(
+        formatPrecision(current.turnover ?? tooltipStyles.defaultValue, pricePrecision)
+      )),
+      '{change}': prevClose === 0 ? tooltipStyles.defaultValue : `${thousandsSeparator.format(formatPrecision(changeValue / prevClose * 100))}%`
     }
     const legends = (
       isFunction(tooltipStyles.custom)

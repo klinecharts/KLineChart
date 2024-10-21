@@ -21,7 +21,7 @@ import type { OverlayStyle } from '../common/Styles'
 import type { EventHandler, EventName, MouseTouchEvent, MouseTouchEventCallback } from '../common/SyntheticEvent'
 import { isBoolean, isNumber, isValid } from '../common/utils/typeChecks'
 
-import type { CustomApi } from '../Options'
+import type { Options } from '../Options'
 
 import type { Axis } from '../component/Axis'
 import type { XAxis } from '../component/XAxis'
@@ -389,16 +389,9 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     const xAxis = chart.getXAxisPane().getAxisComponent()
     const bounding = widget.getBounding()
     const chartStore = chart.getChartStore()
-    const {
-      styles,
-      customApi,
-      thousandsSeparator,
-      decimalFoldThreshold,
-    } = chartStore.getOptions()
-    const dateTimeFormat = chartStore.getDateTimeFormat()
+    const options = chartStore.getOptions()
     const barSpace = chartStore.getBarSpace()
     const precision = chartStore.getPrecision()
-    const defaultStyles = styles.overlay
     const hoverOverlayInfo = chartStore.getHoverOverlayInfo()
     const clickOverlayInfo = chartStore.getClickOverlayInfo()
     const overlays = this.getCompleteOverlays(chartStore, paneId)
@@ -421,9 +414,8 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     overlays.forEach(overlay => {
       if (overlay.visible) {
         this._drawOverlay(
-          ctx, overlay, bounding, barSpace, overlayPrecision,
-          dateTimeFormat, customApi, thousandsSeparator, decimalFoldThreshold,
-          defaultStyles, xAxis, yAxis,
+          ctx, overlay, bounding, barSpace,
+          overlayPrecision, options, xAxis, yAxis,
           hoverOverlayInfo, clickOverlayInfo, chartStore
         )
       }
@@ -435,8 +427,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
       if (isValid(overlay) && overlay.visible) {
         this._drawOverlay(
           ctx, overlay, bounding, barSpace,
-          overlayPrecision, dateTimeFormat, customApi, thousandsSeparator, decimalFoldThreshold,
-          defaultStyles, xAxis, yAxis,
+          overlayPrecision, options, xAxis, yAxis,
           hoverOverlayInfo, clickOverlayInfo, chartStore
         )
       }
@@ -449,11 +440,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     bounding: Bounding,
     barSpace: BarSpace,
     precision: OverlayPrecision,
-    dateTimeFormat: Intl.DateTimeFormat,
-    customApi: CustomApi,
-    thousandsSeparator: string,
-    decimalFoldThreshold: number,
-    defaultStyles: OverlayStyle,
+    options: Options,
     xAxis: Nullable<XAxis>,
     yAxis: Nullable<YAxis>,
     hoverOverlayInfo: EventOverlayInfo,
@@ -478,14 +465,14 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     if (coordinates.length > 0) {
       const figures = new Array<OverlayFigure>().concat(
         this.getFigures(
-          overlay, coordinates, bounding, barSpace, precision, thousandsSeparator, decimalFoldThreshold, dateTimeFormat, defaultStyles, xAxis, yAxis
+          overlay, coordinates, bounding, barSpace, precision, options, xAxis, yAxis
         )
       )
       this.drawFigures(
         ctx,
         overlay,
         figures,
-        defaultStyles
+        options.styles.overlay
       )
     }
     this.drawDefaultFigures(
@@ -494,11 +481,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
       coordinates,
       bounding,
       precision,
-      dateTimeFormat,
-      customApi,
-      thousandsSeparator,
-      decimalFoldThreshold,
-      defaultStyles,
+      options,
       xAxis,
       yAxis,
       hoverOverlayInfo,
@@ -542,14 +525,11 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     bounding: Bounding,
     barSpace: BarSpace,
     precision: OverlayPrecision,
-    thousandsSeparator: string,
-    decimalFoldThreshold: number,
-    dateTimeFormat: Intl.DateTimeFormat,
-    defaultStyles: OverlayStyle,
+    options: Options,
     xAxis: Nullable<XAxis>,
     yAxis: Nullable<YAxis>
   ): OverlayFigure | OverlayFigure[] {
-    return o.createPointFigures?.({ overlay: o, coordinates, bounding, barSpace, precision, thousandsSeparator, decimalFoldThreshold, dateTimeFormat, defaultStyles, xAxis, yAxis }) ?? []
+    return o.createPointFigures?.({ overlay: o, coordinates, bounding, barSpace, precision, options, xAxis, yAxis }) ?? []
   }
 
   protected drawDefaultFigures (
@@ -558,11 +538,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     coordinates: Coordinate[],
     _bounding: Bounding,
     _precision: OverlayPrecision,
-    _dateTimeFormat: Intl.DateTimeFormat,
-    _customApi: CustomApi,
-    _thousandsSeparator: string,
-    _drawDefaultFigures: number,
-    defaultStyles: OverlayStyle,
+    options: Options,
     _xAxis: Nullable<XAxis>,
     _yAxis: Nullable<YAxis>,
     hoverOverlayInfo: EventOverlayInfo,
@@ -573,6 +549,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
         (hoverOverlayInfo.overlay?.id === overlay.id && hoverOverlayInfo.figureType !== EventOverlayInfoFigureType.None) ||
         (clickOverlayInfo.overlay?.id === overlay.id && clickOverlayInfo.figureType !== EventOverlayInfoFigureType.None)
       ) {
+        const defaultStyles = options.styles.overlay
         const styles = overlay.styles
         const pointStyles = { ...defaultStyles.point, ...styles?.point }
         coordinates.forEach(({ x, y }, index) => {

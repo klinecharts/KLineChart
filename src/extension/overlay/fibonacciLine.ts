@@ -12,7 +12,6 @@
  * limitations under the License.
  */
 
-import { formatThousands, formatFoldDecimal } from '../../common/utils/format'
 import { isNumber } from '../../common/utils/typeChecks'
 
 import type { OverlayTemplate } from '../../component/Overlay'
@@ -26,7 +25,7 @@ const fibonacciLine: OverlayTemplate = {
   needDefaultPointFigure: true,
   needDefaultXAxisFigure: true,
   needDefaultYAxisFigure: true,
-  createPointFigures: ({ coordinates, bounding, overlay, precision, thousandsSeparator, decimalFoldThreshold, yAxis }) => {
+  createPointFigures: ({ coordinates, bounding, overlay, precision, options, yAxis }) => {
     const points = overlay.points
     if (coordinates.length > 0) {
       const currentPrecision = (yAxis?.isInCandle() ?? true) ? precision.price : precision.excludePriceVolumeMax
@@ -35,12 +34,13 @@ const fibonacciLine: OverlayTemplate = {
       const startX = 0
       const endX = bounding.width
       if (coordinates.length > 1 && isNumber(points[0].value) && isNumber(points[1].value)) {
+        const { decimalFold, thousandsSeparator } = options
         const percents = [1, 0.786, 0.618, 0.5, 0.382, 0.236, 0]
         const yDif = coordinates[0].y - coordinates[1].y
         const valueDif = points[0].value - points[1].value
         percents.forEach(percent => {
           const y = coordinates[1].y + yDif * percent
-          const value = formatFoldDecimal(formatThousands(((points[1].value ?? 0) + valueDif * percent).toFixed(currentPrecision), thousandsSeparator), decimalFoldThreshold)
+          const value = decimalFold.format(thousandsSeparator.format(((points[1].value ?? 0) + valueDif * percent).toFixed(currentPrecision)))
           lines.push({ coordinates: [{ x: startX, y }, { x: endX, y }] })
           texts.push({
             x: startX,
