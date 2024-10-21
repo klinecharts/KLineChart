@@ -60,7 +60,6 @@
   "devDependencies": {
     "@babel/standalone": "^7.24.4",
     "@rollup/plugin-commonjs": "^25.0.7",
-    "@rollup/plugin-eslint": "^9.0.5",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-replace": "^5.0.5",
     "@rollup/plugin-terser": "^0.4.4",
@@ -73,8 +72,8 @@
     "codesandbox": "^2.2.3",
     "cross-env": "^7.0.3",
     "dts-bundle-generator": "^9.5.1",
-    "eslint": "^8.57.0",
-    "eslint-config-love": "^87.0.0",
+    "eslint": "^9.13.0",
+    "eslint-config-love": "^89.0.1",
     "eslint-plugin-file-progress": "^1.5.0",
     "fs-extra": "^11.2.0",
     "gh-pages": "^6.1.1",
