@@ -8,9 +8,9 @@
  * -------------------------------------------------------------------------- */
 
  :root {
-  --vp-c-indigo-1: #1677FF;
-  --vp-c-indigo-2: #3086ff;
-  --vp-c-indigo-3: #4995ff;
+  --vp-c-indigo-1: #E6AC00;
+  --vp-c-indigo-2: #d6ac2e;
+  --vp-c-indigo-3: #c9aa4e;
 
   --vp-c-text-1: rgb(40, 42, 43);
   --vp-c-text-2: rgba(40, 42, 43, .72);
@@ -37,19 +37,8 @@
   --vp-code-line-height: 1.6;
   --vp-code-font-size: 1em;
 
-  --vp-home-hero-name-color: transparent;
-  --vp-home-hero-name-background: -webkit-linear-gradient(
-    145deg,
-    var(--custom-green) 26%,
-    var(--custom-red)
-  );
-
-  --vp-home-hero-image-background-image: linear-gradient(
-    -45deg,
-    rgba(45, 192, 142, 0.3),
-    rgba(249, 40, 85, 0.3)
-  );
-  --vp-home-hero-image-filter: blur(40px);
+  --vp-home-hero-bg: linear-gradient(180deg, rgba(238, 238, 238, 0) 0%, rgba(234, 204, 117, 0.2) 52%, rgba(230, 172, 0, 0) 100%);
+  --vp-c-bg-soft: #FAFAFA;
 }
 
 .dark {
@@ -60,21 +49,69 @@
   --vp-c-bg: #121212;
   --vp-c-divider: #232525;
   --vp-c-gutter: var(--vp-c-divider);
+
+  --vp-home-hero-bg: linear-gradient(180deg, rgba(238, 238, 238, 0) 0%, rgba(234, 204, 117, 0.15) 52%, rgba(230, 172, 0, 0) 100%);
+  --vp-c-bg-soft: rgba(250, 250, 250, 0.05);
 }
 
 body {
   font-size: 14px;
 }
 
+.VPFeatures .VPFeature {
+  background-color: transparent;
+  border: none;
+}
+
+.VPFeatures .VPFeature .box {
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+
+.VPFeatures .VPFeature .VPImage {
+  margin-bottom: 0;
+  width: 40px;
+  height: 40px;
+}
+
+.VPFeatures .VPFeature .title {
+  padding: 8px 0;
+  line-height: normal;
+}
+
+.VPFeatures .VPFeature .details {
+  padding: 0;
+  font-weight: normal;
+}
+
 @media (min-width: 640px) {
-  :root {
-    --vp-home-hero-image-filter: blur(60px);
+  .VPFeatures .VPFeature .title {
+    font-size: 18px;
+    line-height: normal;
+    padding: 12px 0;
+  }
+
+  .VPFeatures .VPFeature .VPImage {
+    margin-bottom: 0;
+    width: 48px;
+    height: 48px;
+  }
+
+  .VPFeatures .VPFeature .box {
+    padding-top: 24px;
+    padding-bottom: 24px;
   }
 }
 
 @media (min-width: 960px) {
-  :root {
-    --vp-home-hero-image-filter: blur(80px);
+  .VPFeatures .VPFeature .title {
+    font-size: 20px;
+    padding: 16px 0;
+  }
+  
+  .VPFeatures .VPFeature .details {
+    font-size: 16px;
+    line-height: 26px;
   }
 }
 

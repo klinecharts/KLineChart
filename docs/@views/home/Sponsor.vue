@@ -1,9 +1,24 @@
 <script setup>
   import { ref } from 'vue'
+  import Section from './Section.vue';
 
   import { useData } from 'vitepress'
 
-  import sponsors from './index.json'
+  const sponsors = [
+    {
+      "name": "Northstar",
+      "logo": "/images/sponsors/Northstar.png",
+      "website": "https://www.quantit.tech",
+      "amount": 600
+    },
+    {
+      "name": "flameOnYou",
+      "text": "flameOnYou",
+      "logo": "/images/sponsors/flameOnYou.jpg",
+      "website": "https://github.com/flameOnYou",
+      "amount": 1600
+    }
+  ]
 
   sponsors.sort((s1, s2) => s2.amount - s1.amount)
 
@@ -28,9 +43,10 @@
 </script>
 
 <template>
-  <section class="home-section sponsor-section">
-    <div class="home-section-content sponsor">
-      <h2>{{ lang === 'zh-CN' ? '赞助商' : 'Sponsors' }}</h2>
+  <Section
+    :title="lang === 'zh-CN' ? '赞助商' : 'Sponsors'"
+    :subTitle="lang === 'zh-CN' ? '维护这样一个图表和开发新功能需要巨大精力，只有在我们的赞助者慷慨的财务支持下才得以持续。' : 'Maintaining such a chart and developing new features requires tremendous effort, which can only be sustained with the generous financial support of our sponsors.'">
+    <div class="sponsor">
       <div class="sponsor-grid sponsor-top-grid">
         <a class="sponsor-grid-item item-no1" :href="sponsors[0].website" target="_blank" rel="noreferrer">
           <img class="image" :src="sponsors[0].logo"/>
@@ -68,42 +84,12 @@
         </a>
       </div>
     </div>
-  </section>
+  </Section>
 </template>
 
 <style scoped>
-  .home-section {
-    border-top: 1px solid var(--vp-c-gutter);
-    padding: 60px 24px;
-    text-align: center;
-  }
-
-  .home-section .home-section-content {
-    margin: 0 auto;
-    max-width: 1152px;
-  }
-
-  @media (min-width: 640px) {
-    .home-section {
-      padding: 60px 48px
-    }
-  }
-
-  @media (min-width: 960px) {
-    .home-section{
-      padding: 60px 64px
-    }
-  }
-
-  .sponsor-section {
-    margin-top: 100px;
-  }
-
-  .sponsor h2 {
-    font-size: 26px;
-    text-align: center;
-    font-weight: 600;
-    padding-bottom: 34px;
+  .sponsor {
+    width: 100%;
   }
 
   .sponsor h4 {
@@ -137,19 +123,6 @@
     font-weight: bold;
     padding-left: 12px;
   }
-
-  /* .dark .sponsor .sponsor-grid .sponsor-grid-item .image {
-    filter: grayscale(1) invert(1);
-  } */
-
-  .dark .sponsor .sponsor-grid .sponsor-grid-item:hover {
-    background-color: var(--vp-c-neutral);
-    color: rgba(0, 0, 0, 0.6)!important;
-  }
-
-  /* .dark .sponsor-grid .sponsor-grid-item:hover .image {
-    filter: grayscale(0) invert(0);
-  } */
 
   .sponsor-top-grid .item-no1 {
     height: 160px;
@@ -190,7 +163,7 @@
     display: flex;
     flex-direction: row;
     justify-content: center;
-    padding-top: 26px;
+    padding-top: 30px;
     font-size: 14px;
     color: var(--vp-c-indigo-1);
     font-weight: bold;
@@ -200,13 +173,13 @@
     padding: 8px 22px;
     border-radius: 99px;
     transition: all .25s ease-in;
-    text-decoration: underline;
-  }
-
-  .sponsor-become a:hover {
     background-color: var(--vp-c-indigo-1);
     color: white;
     text-decoration: none;
+  }
+
+  .sponsor-become a:hover {
+    background-color: var(--vp-c-indigo-2);
   }
 
   @media (min-width: 640px) {
