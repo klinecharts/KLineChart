@@ -169,10 +169,8 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
     }
 
     const range = this.createRange({
+      chart,
       paneId,
-      kLineDataList: chartStore.getDataList(),
-      dataVisibleRange: chartStore.getVisibleRange(),
-      indicators,
       defaultRange
     })
     let realFrom = range.realFrom

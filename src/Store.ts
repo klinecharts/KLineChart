@@ -1263,7 +1263,7 @@ export default class Store {
           this._overlays.get(paneId)?.push(overlay)
         }
         if (overlay.isStart()) {
-          overlay.onDrawStart?.(({ overlay }))
+          overlay.onDrawStart?.(({ overlay, chart: this._chart }))
         }
         return id
       }
@@ -1345,7 +1345,7 @@ export default class Store {
     filterMap.forEach((overlays, paneId) => {
       const paneOverlays = this.getOverlaysByPaneId(paneId)
       overlays.forEach(overlay => {
-        overlay.onRemoved?.({ overlay })
+        overlay.onRemoved?.({ overlay, chart: this._chart })
         if (!updatePaneIds.includes(paneId)) {
           updatePaneIds.push(paneId)
         }
@@ -1393,7 +1393,7 @@ export default class Store {
         if (overlay !== null) {
           sortFlag = true
           if (isFunction(overlay.onMouseLeave)) {
-            overlay.onMouseLeave({ overlay, figureKey, figureIndex, ...event })
+            overlay.onMouseLeave({ chart: this._chart, overlay, figureKey, figureIndex, ...event })
             ignoreUpdateFlag = true
           }
         }
@@ -1401,7 +1401,7 @@ export default class Store {
         if (infoOverlay !== null) {
           sortFlag = true
           if (isFunction(infoOverlay.onMouseEnter)) {
-            infoOverlay.onMouseEnter({ overlay: infoOverlay, figureKey: info.figureKey, figureIndex: info.figureIndex, ...event })
+            infoOverlay.onMouseEnter({ chart: this._chart, overlay: infoOverlay, figureKey: info.figureKey, figureIndex: info.figureIndex, ...event })
             ignoreUpdateFlag = true
           }
         }
@@ -1423,13 +1423,13 @@ export default class Store {
     const { paneId, overlay, figureType, figureKey, figureIndex } = this._clickOverlayInfo
     const infoOverlay = info.overlay
     if (!(infoOverlay?.isDrawing() ?? false)) {
-      infoOverlay?.onClick?.({ overlay: infoOverlay, figureKey: info.figureKey, figureIndex: info.figureIndex, ...event })
+      infoOverlay?.onClick?.({ chart: this._chart, overlay: infoOverlay, figureKey: info.figureKey, figureIndex: info.figureIndex, ...event })
     }
     if (overlay?.id !== infoOverlay?.id || figureType !== info.figureType || figureIndex !== info.figureIndex) {
       this._clickOverlayInfo = info
       if (overlay?.id !== infoOverlay?.id) {
-        overlay?.onDeselected?.({ overlay, figureKey, figureIndex, ...event })
-        infoOverlay?.onSelected?.({ overlay: infoOverlay, figureKey: info.figureKey, figureIndex: info.figureIndex, ...event })
+        overlay?.onDeselected?.({ chart: this._chart, overlay, figureKey, figureIndex, ...event })
+        infoOverlay?.onSelected?.({ chart: this._chart, overlay: infoOverlay, figureKey: info.figureKey, figureIndex: info.figureIndex, ...event })
         this._chart.updatePane(UpdateLevel.Overlay, info.paneId)
         if (paneId !== info.paneId) {
           this._chart.updatePane(UpdateLevel.Overlay, paneId)

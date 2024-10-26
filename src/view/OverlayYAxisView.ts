@@ -15,20 +15,22 @@
 import type Nullable from '../common/Nullable'
 import type Coordinate from '../common/Coordinate'
 import type Bounding from '../common/Bounding'
-import type BarSpace from '../common/BarSpace'
 import type { Options } from '../Options'
 import { formatPrecision } from '../common/utils/format'
 import { isNumber } from '../common/utils/typeChecks'
+import type Precision from '../common/Precision'
 
 import type { Axis } from '../component/Axis'
 import type { XAxis } from '../component/XAxis'
 import type { YAxis } from '../component/YAxis'
-import type { OverlayPrecision, OverlayFigure, Overlay } from '../component/Overlay'
+import type { OverlayFigure, Overlay } from '../component/Overlay'
 import type OverlayImp from '../component/Overlay'
 
 import type { EventOverlayInfo } from '../Store'
 
 import OverlayView from './OverlayView'
+
+import type { Chart } from '../Chart'
 
 export default class OverlayYAxisView<C extends Axis = YAxis> extends OverlayView<C> {
   override coordinateToPointTimestampDataIndexFlag (): boolean {
@@ -40,7 +42,7 @@ export default class OverlayYAxisView<C extends Axis = YAxis> extends OverlayVie
     overlay: OverlayImp,
     coordinates: Coordinate[],
     bounding: Bounding,
-    precision: OverlayPrecision,
+    precision: Precision,
     options: Options,
     xAxis: Nullable<XAxis>,
     yAxis: Nullable<YAxis>,
@@ -59,7 +61,7 @@ export default class OverlayYAxisView<C extends Axis = YAxis> extends OverlayVie
     overlay: Overlay,
     coordinates: Coordinate[],
     bounding: Bounding,
-    precision: OverlayPrecision,
+    precision: Precision,
     options: Options,
     _xAxis: Nullable<XAxis>,
     yAxis: Nullable<YAxis>,
@@ -101,15 +103,13 @@ export default class OverlayYAxisView<C extends Axis = YAxis> extends OverlayVie
   }
 
   override getFigures (
+    chart: Chart,
     overlay: Overlay,
     coordinates: Coordinate[],
     bounding: Bounding,
-    barSpace: BarSpace,
-    precision: OverlayPrecision,
-    options: Options,
     xAxis: Nullable<XAxis>,
     yAxis: Nullable<YAxis>
   ): OverlayFigure | OverlayFigure[] {
-    return overlay.createYAxisFigures?.({ overlay, coordinates, bounding, barSpace, precision, options, xAxis, yAxis }) ?? []
+    return overlay.createYAxisFigures?.({ chart, overlay, coordinates, bounding, xAxis, yAxis }) ?? []
   }
 }

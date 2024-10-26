@@ -295,14 +295,12 @@ export default class IndicatorTooltipView extends View<YAxis> {
     if (isFunction(indicator.createTooltipDataSource)) {
       const widget = this.getWidget()
       const pane = widget.getPane()
-      const chartStore = pane.getChart().getChartStore()
+      const chart = pane.getChart()
       const { name: customName, calcParamsText: customCalcParamsText, legends: customLegends, icons: customIcons } = indicator.createTooltipDataSource({
-        kLineDataList: dataList,
+        chart,
         indicator,
-        visibleRange: chartStore.getVisibleRange(),
         bounding: widget.getBounding(),
         crosshair,
-        defaultStyles: styles,
         xAxis: pane.getChart().getXAxisPane().getAxisComponent(),
         yAxis: pane.getAxisComponent()
       })

@@ -38,7 +38,7 @@ const simpleTag: OverlayTemplate = {
       ignoreEvent: true
     }
   },
-  createYAxisFigures: ({ overlay, coordinates, bounding, yAxis, precision }) => {
+  createYAxisFigures: ({ chart, overlay, coordinates, bounding, yAxis }) => {
     const isFromZero = yAxis?.isFromZero() ?? false
     let textAlign: CanvasTextAlign = 'left'
     let x = 0
@@ -58,7 +58,7 @@ const simpleTag: OverlayTemplate = {
       }
     }
     if (!isValid(text) && isNumber(overlay.points[0].value)) {
-      text = formatPrecision(overlay.points[0].value, precision.price)
+      text = formatPrecision(overlay.points[0].value, chart.getPriceVolumePrecision().price)
     }
     return { type: 'text', attrs: { x, y: coordinates[0].y, text, align: textAlign, baseline: 'middle' } }
   }

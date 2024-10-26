@@ -47,6 +47,7 @@ import { type PaneOptions, PANE_DEFAULT_HEIGHT, PaneIdConstants, PaneState, PANE
 
 import type AxisImp from './component/Axis'
 import { AxisPosition } from './component/Axis'
+import type { YAxis } from './component/YAxis'
 
 import type { IndicatorFilter, Indicator, IndicatorCreate } from './component/Indicator'
 import type { OverlayFilter, Overlay, OverlayCreate } from './component/Overlay'
@@ -54,7 +55,6 @@ import type { OverlayFilter, Overlay, OverlayCreate } from './component/Overlay'
 import { getIndicatorClass } from './extension/indicator/index'
 
 import Event from './Event'
-import type { YAxis } from './component/YAxis'
 
 export enum DomPosition {
   Root = 'root',

@@ -15,7 +15,6 @@
 import type Nullable from '../common/Nullable'
 import type Coordinate from '../common/Coordinate'
 import type Bounding from '../common/Bounding'
-import type BarSpace from '../common/BarSpace'
 import type Precision from '../common/Precision'
 import { isNumber } from '../common/utils/typeChecks'
 
@@ -23,13 +22,14 @@ import { FormatDateType, type Options } from '../Options'
 
 import type { XAxis } from '../component/XAxis'
 import type { YAxis } from '../component/YAxis'
-import type { OverlayPrecision, OverlayFigure, Overlay } from '../component/Overlay'
+import type { OverlayFigure, Overlay } from '../component/Overlay'
 import type OverlayImp from '../component/Overlay'
 
 import type { EventOverlayInfo, ProgressOverlayInfo } from '../Store'
 import type ChartStore from '../Store'
 
 import OverlayYAxisView from './OverlayYAxisView'
+import type { Chart } from '../Chart'
 
 export default class OverlayXAxisView extends OverlayYAxisView<XAxis> {
   override coordinateToPointTimestampDataIndexFlag (): boolean {
@@ -79,15 +79,13 @@ export default class OverlayXAxisView extends OverlayYAxisView<XAxis> {
   }
 
   override getFigures (
+    chart: Chart,
     o: Overlay,
     coordinates: Coordinate[],
     bounding: Bounding,
-    barSpace: BarSpace,
-    precision: OverlayPrecision,
-    options: Options,
     xAxis: Nullable<XAxis>,
     yAxis: Nullable<YAxis>
   ): OverlayFigure | OverlayFigure[] {
-    return o.createXAxisFigures?.({ overlay: o, coordinates, bounding, barSpace, precision, options, xAxis, yAxis }) ?? []
+    return o.createXAxisFigures?.({ chart, overlay: o, coordinates, bounding, xAxis, yAxis }) ?? []
   }
 }

@@ -16,7 +16,6 @@ import type Nullable from '../common/Nullable'
 import type ExcludePickPartial from '../common/ExcludePickPartial'
 import type { KLineData } from '../common/Data'
 import type Bounding from '../common/Bounding'
-import type VisibleRange from '../common/VisibleRange'
 import type BarSpace from '../common/BarSpace'
 import type Crosshair from '../common/Crosshair'
 import type { IndicatorStyle, IndicatorPolygonStyle, SmoothLineStyle, RectStyle, TextStyle, TooltipIconStyle, LineStyle, LineType, TooltipLegend } from '../common/Styles'
@@ -31,6 +30,7 @@ import type { ArcAttrs } from '../extension/figure/arc'
 import type { RectAttrs } from '../extension/figure/rect'
 import type { TextAttrs } from '../extension/figure/text'
 import type { LoadDataType } from '../common/LoadDataCallback'
+import type { Chart } from '../Chart'
 
 export enum IndicatorSeries {
   Normal = 'normal',
@@ -90,12 +90,10 @@ export interface IndicatorTooltipData {
 }
 
 export interface IndicatorCreateTooltipDataSourceParams<D> {
-  kLineDataList: KLineData[]
+  chart: Chart
   indicator: Indicator<D>
-  visibleRange: VisibleRange
   bounding: Bounding
   crosshair: Crosshair
-  defaultStyles: IndicatorStyle
   xAxis: XAxis
   yAxis: YAxis
 }
@@ -104,12 +102,9 @@ export type IndicatorCreateTooltipDataSourceCallback<D> = (params: IndicatorCrea
 
 export interface IndicatorDrawParams<D> {
   ctx: CanvasRenderingContext2D
-  kLineDataList: KLineData[]
+  chart: Chart
   indicator: Indicator<D>
-  visibleRange: VisibleRange
   bounding: Bounding
-  barSpace: BarSpace
-  defaultStyles: IndicatorStyle
   xAxis: XAxis
   yAxis: YAxis
 }

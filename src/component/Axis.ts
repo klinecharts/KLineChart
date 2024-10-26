@@ -17,8 +17,7 @@ import type VisibleRange from '../common/VisibleRange'
 import type DrawPane from '../pane/DrawPane'
 
 import type Bounding from '../common/Bounding'
-import type { KLineData } from '../common/Data'
-import type { Indicator } from './Indicator'
+import type { Chart } from '../Chart'
 
 export interface AxisTick {
   coord: number
@@ -51,10 +50,8 @@ export interface AxisValueToValueParams {
 export type AxisValueToValueCallback = (value: number, params: AxisValueToValueParams) => number
 
 export interface AxisCreateRangeParams {
+  chart: Chart
   paneId: string
-  kLineDataList: KLineData[]
-  indicators: Indicator[]
-  dataVisibleRange: VisibleRange
   defaultRange: AxisRange
 }
 

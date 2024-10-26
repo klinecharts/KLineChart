@@ -68,7 +68,6 @@ export default class IndicatorView extends CandleBarView {
     const yAxis = pane.getAxisComponent()
     const chartStore = chart.getChartStore()
     const dataList = chartStore.getDataList()
-    const visibleRange = chartStore.getVisibleRange()
     const indicators = chartStore.getIndicatorsByPaneId(pane.getId())
     const defaultStyles = chartStore.getOptions().styles.indicator
     ctx.save()
@@ -84,12 +83,9 @@ export default class IndicatorView extends CandleBarView {
           ctx.save()
           isCover = indicator.draw({
             ctx,
-            kLineDataList: dataList,
+            chart,
             indicator,
-            visibleRange,
             bounding,
-            barSpace: chartStore.getBarSpace(),
-            defaultStyles,
             xAxis,
             yAxis
           })
