@@ -17,10 +17,10 @@ const { lang } = useData()
         {{ lang === 'zh-CN' ? '简单易用，轻量流畅，适用场景丰富的 Web 前端金融图表。' : 'Easy to use, lightweight and smooth, suitable for web front-end financial chart with rich scenarios.' }}
       </p>
       <div class="actions">
-        <a class="action brand" :href="lang === 'zh-CN' ? '/guide/quick-start' : '/en-US/guide/quick-start'">{{ lang === 'zh-CN' ? '快速开始' : 'Getting Started' }}</a>
-        <a class="action alt" href="https://github.com/klinecharts/KLineChart">
-          <svg width="14px" height="14px" viewBox="0 0 64 64"><path fill="currentColor" d="M32 0C14 0 0 14 0 32c0 21 19 30 22 30c2 0 2-1 2-2v-5c-7 2-10-2-11-5c0 0 0-1-2-3c-1-1-5-3-1-3c3 0 5 4 5 4c3 4 7 3 9 2c0-2 2-4 2-4c-8-1-14-4-14-15q0-6 3-9s-2-4 0-9c0 0 5 0 9 4c3-2 13-2 16 0c4-4 9-4 9-4c2 7 0 9 0 9q3 3 3 9c0 11-7 14-14 15c1 1 2 3 2 6v8c0 1 0 2 2 2c3 0 22-9 22-30C64 14 50 0 32 0"/></svg>
-          &nbsp;Github
+        <a class="action brand" rel="noreferrer" :href="lang === 'zh-CN' ? '/guide/quick-start' : '/en-US/guide/quick-start'">{{ lang === 'zh-CN' ? '快速开始' : 'Getting Started' }}</a>
+        <a class="action alt" rel="noreferrer" href="https://github.com/klinecharts/KLineChart">
+          <svg viewBox="0 0 64 64"><path fill="currentColor" d="M32 0C14 0 0 14 0 32c0 21 19 30 22 30c2 0 2-1 2-2v-5c-7 2-10-2-11-5c0 0 0-1-2-3c-1-1-5-3-1-3c3 0 5 4 5 4c3 4 7 3 9 2c0-2 2-4 2-4c-8-1-14-4-14-15q0-6 3-9s-2-4 0-9c0 0 5 0 9 4c3-2 13-2 16 0c4-4 9-4 9-4c2 7 0 9 0 9q3 3 3 9c0 11-7 14-14 15c1 1 2 3 2 6v8c0 1 0 2 2 2c3 0 22-9 22-30C64 14 50 0 32 0"/></svg>
+          &nbsp;&nbsp;Github
         </a>
       </div>
     </div>
@@ -129,6 +129,11 @@ const { lang } = useData()
   color: var(--vp-c-indigo-2);
 }
 
+.action.alt svg {
+  width: 14px;
+  height: 14px;
+}
+
 @media (min-width: 640px) {
   .hero {
     padding: calc(var(--vp-nav-height) + var(--vp-layout-top-height, 0px) + 80px) 48px 64px;
@@ -162,6 +167,11 @@ const { lang } = useData()
   }
   .action {
     padding: 6px 20px;
+  }
+
+  .action.alt svg {
+    width: 16px;
+    height: 16px;
   }
 }
 

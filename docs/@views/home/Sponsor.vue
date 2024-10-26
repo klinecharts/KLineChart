@@ -80,6 +80,10 @@
       </div>
       <div class="sponsor-become">
         <a target="_blank" rel="noreferrer" href="./sponsor.html">
+          <svg width="18" height="18" viewBox="0 0 24 24">
+            <path fill="currentColor" d="m12 21l-1.45-1.3q-2.525-2.275-4.175-3.925T3.75 12.812T2.388 10.4T2 8.15Q2 5.8 3.575 4.225T7.5 2.65q1.3 0 2.475.55T12 4.75q.85-1 2.025-1.55t2.475-.55q2.35 0 3.925 1.575T22 8.15q0 1.15-.387 2.25t-1.363 2.412t-2.625 2.963T13.45 19.7z"/>
+          </svg>
+          &nbsp;
           {{ lang === 'zh-CN' ? '成为赞助商' : 'Become a sponsor' }}
         </a>
       </div>
@@ -170,6 +174,9 @@
   }
 
   .sponsor-become a {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
     padding: 8px 22px;
     border-radius: 99px;
     transition: all .25s ease-in;

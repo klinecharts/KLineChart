@@ -87,7 +87,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-<div id="container" style="position: relative;width: 100%;">
+<div id="container" style="position: relative;width: 100%;" :style="{ 'height': props.height }">
   <Loading v-if="loading"/>
 </div>
 </template>

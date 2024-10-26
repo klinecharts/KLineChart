@@ -29,7 +29,7 @@ const zhItems = [
   },
   {
     q: "想创建一个内置技术指标之外的指标，怎么办？",
-    a: `图表支持自定义技术指标，详情参阅<a href="/guide/indicator" style="cursor:pointer;color:var(--vp-c-indigo-1)">技术指标</a>。`,
+    a: `图表支持自定义技术指标，详情参阅<a rel="noreferrer" href="/guide/indicator" style="cursor:pointer;color:var(--vp-c-indigo-1)">技术指标</a>。`,
     collapsed: true
   },
   {
@@ -62,7 +62,7 @@ const enItems = [
   },
   {
     q: "What if I want to create an indicator other than the built-in technical indicator?",
-    a: `Chart support custom technical indicators, see <a href="/en-US/guide/indicator" style="cursor:pointer;color:var(--vp-c-indigo-1)">indicators</a> for details.`,
+    a: `Chart support custom technical indicators, see <a rel="noreferrer" href="/en-US/guide/indicator" style="cursor:pointer;color:var(--vp-c-indigo-1)">indicators</a> for details.`,
     collapsed: true
   },
   {

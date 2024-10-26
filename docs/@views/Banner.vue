@@ -1,7 +1,7 @@
 <template>
   <div class="banner" role="banner" v-if="isVisible">
-    <span v-if="lang === 'zh-CN'">💼&nbsp;&nbsp;作者正在寻找一份web前端开发的工作，如果觉得合适，可以联系作者&nbsp;<strong>微信(274082897)</strong>&nbsp;或者&nbsp;<strong>邮箱(hu_li888@foxmail.com)</strong>&nbsp;。</span>
-    <span v-else>💼  The author is looking for a job in web front-end development and if you think the author is suitable, you can contact the author <strong>WeChat(274082897)</strong> or <strong>Email(hu_li888@foxmail.com)</strong> .</span>
+    <span v-if="lang === 'zh-CN'">🎉&nbsp;🎉&nbsp;🎉&nbsp;&nbsp;新版本即将发布，旧版文档请访问 <strong><a target="_blank" href="https://v9.klinecharts.com">这里</a></strong>。</span>
+    <span v-else>🎉&nbsp;🎉&nbsp;🎉&nbsp;&nbsp;The new version is about to be released, please visit <strong><a target="_blank" href="https://v9.klinecharts.com">here</a></strong> for the old version document.</span>
     <button class="banner-close" @click.prevent="closeBanner">
       <span class="close">&times;</span>
     </button>
@@ -46,14 +46,14 @@ onMounted(() => {
   background: var(--vp-c-bg);
   overflow: hidden;
   margin: 0;
-  color: #F92855;
+  color: var(--vp-c-indigo-1);
   font-size: 14px;
   border-bottom: solid 1px var(--vp-c-gutter);
 }
 
 .banner-close {
   position: absolute;
-  right: 16px;
+  right: 32px;
   color: var(--vp-c-text-1);
   font-size: 20px;
   font-weight: bold;

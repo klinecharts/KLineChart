@@ -3,21 +3,6 @@ title: Highly customizable professional lightweight financial chart
 # https://vitepress.dev/reference/default-theme-home-page
 layout: home
 
-# hero:
-#   name: KLineChart
-#   text: Highly customizable professional lightweight financial chart
-#   tagline: Easy to use, lightweight and smooth, suitable for web front-end financial chart with rich scenarios.
-#   image:
-#     src: /images/logo_hero.svg
-#     alt: KLineChart
-#   actions:
-#     - theme: brand
-#       text: Getting Started
-#       link: /en-US/guide/quick-start
-#     - theme: alt
-#       text: View on Github
-#       link: https://github.com/klinecharts/KLineChart
-
 features:
   - icon:
       light: /images/box_light.png
