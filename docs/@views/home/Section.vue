@@ -26,7 +26,7 @@ const props = defineProps(['title', 'subTitle'])
   align-items: center;
   width: 100%;
   max-width: 1152px;
-  padding: 0 32px;
+  padding: 0 6px;
 }
 
 .title {
@@ -53,6 +53,10 @@ const props = defineProps(['title', 'subTitle'])
     padding: 150px 48px 0 48px;
   }
 
+  .content {
+    padding: 0 32px;
+  }
+
   .title {
     font-size: 36px;
     line-height: 42px;
@@ -66,7 +70,7 @@ const props = defineProps(['title', 'subTitle'])
   }
 }
 
-@media (min-width: 960) {
+@media (min-width: 960px) {
   .section {
     padding: 150px 64px 0 64px;
   }

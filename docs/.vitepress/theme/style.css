@@ -64,8 +64,7 @@ body {
 }
 
 .VPFeatures .VPFeature .box {
-  padding-top: 12px;
-  padding-bottom: 12px;
+  padding: 12px 8px;
 }
 
 .VPFeatures .VPFeature .VPImage {
@@ -98,8 +97,7 @@ body {
   }
 
   .VPFeatures .VPFeature .box {
-    padding-top: 24px;
-    padding-bottom: 24px;
+    padding: 24px;
   }
 }
 
