@@ -48,11 +48,11 @@
     :subTitle="lang === 'zh-CN' ? '维护这样一个图表和开发新功能需要巨大精力，只有在我们的赞助者慷慨的财务支持下才得以持续。' : 'Maintaining such a chart and developing new features requires tremendous effort, which can only be sustained with the generous financial support of our sponsors.'">
     <div class="sponsor">
       <div class="sponsor-grid sponsor-top-grid">
-        <a class="sponsor-grid-item item-no1" :href="sponsors[0].website" target="_blank" rel="noreferrer">
+        <a class="sponsor-grid-item item-no2-no3" :href="sponsors[0].website" target="_blank" rel="noreferrer">
           <img class="image" :src="sponsors[0].logo"/>
           <span class="text" v-if="!!sponsors[0].text">{{ sponsors[0].text }}</span>
         </a>
-        <a class="sponsor-grid-item item-no1" :href="sponsors[1].website" target="_blank" rel="noreferrer">
+        <a class="sponsor-grid-item item-no2-no3" :href="sponsors[1].website" target="_blank" rel="noreferrer">
           <img class="image" :src="sponsors[1].logo"/>
           <span class="text" v-if="!!sponsors[1].text">{{ sponsors[1].text }}</span>
         </a>
@@ -106,7 +106,7 @@
   .sponsor-grid {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
+    gap: 12px;
   }
 
   .sponsor-grid-item {
@@ -116,7 +116,7 @@
     width: 100%;
     color: var(--vp-c-text-2)!important;
     background-color: var(--vp-c-bg-soft);
-    border-radius: 4px;
+    border-radius: 8px;
     transition: background-color .2s;
     cursor: pointer;
     color: inherit;
@@ -129,7 +129,7 @@
   }
 
   .sponsor-top-grid .item-no1 {
-    height: 160px;
+    height: 200px;
     font-size: 16px;
   }
 
@@ -190,6 +190,9 @@
   }
 
   @media (min-width: 640px) {
+    .sponsor-grid {
+      gap: 20px;
+    }
     .sponsor-platinum-grid .item {
       width: calc((100% - 12px) / 3);
     }
@@ -201,7 +204,12 @@
 
   @media (min-width: 960px) {
     .sponsor-top-grid .item-no2-no3 {
-      width: calc((100% - 6px) / 2);
+      width: calc((100% - 20px) / 2);
+      height: 200px;
+    }
+
+    .sponsor-top-grid .item-no2-no3 .image {
+      height: 72px;
     }
 
     .sponsor-platinum-grid .item {

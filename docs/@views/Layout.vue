@@ -48,9 +48,9 @@ provide('toggle-appearance', async ({ clientX: x, clientY: y }) => {
 
 <template>
   <DefaultTheme.Layout>
-    <!-- <template #layout-top>
+    <template #layout-top>
       <Banner/>
-    </template> -->
+    </template>
     <template #home-hero-before>
       <HomeHero/>
     </template>

@@ -136,6 +136,7 @@ watch(lang, (newLang) => {
   width: 100%;
   background-color: var(--vp-c-bg-soft);
   padding: 16px 26px;
+  border-radius: 8px;
   color: var(--vp-c-text-1);
 }
 

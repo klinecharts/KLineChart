@@ -1,7 +1,7 @@
 <template>
-  <div class="banner" role="banner" v-if="isVisible">
-    <span v-if="lang === 'zh-CN'">🎉&nbsp;🎉&nbsp;🎉&nbsp;&nbsp;新版本即将发布，旧版文档请访问 <strong><a target="_blank" href="https://v9.klinecharts.com">这里</a></strong>。</span>
-    <span v-else>🎉&nbsp;🎉&nbsp;🎉&nbsp;&nbsp;The new version is about to be released, please visit <strong><a target="_blank" href="https://v9.klinecharts.com">here</a></strong> for the old version document.</span>
+  <div class="banner" :class="{ 'top': y === 0 }" role="banner" v-if="isVisible">
+    <span v-if="lang === 'zh-CN'">🎉&nbsp;🎉&nbsp;🎉&nbsp;&nbsp;新版本即将发布。9.x 版本请访问 <strong><a target="_blank" href="https://v9.klinecharts.com">文档</a></strong>。</span>
+    <span v-else>🎉&nbsp;🎉&nbsp;🎉&nbsp;&nbsp;The new version is about to be released. Version 9.x please visit <strong><a target="_blank" href="https://v9.klinecharts.com">document</a></strong>.</span>
     <button class="banner-close" @click.prevent="closeBanner">
       <span class="close">&times;</span>
     </button>
@@ -10,7 +10,10 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { useWindowScroll } from '@vueuse/core'
 import { useData } from 'vitepress'
+
+const { y } = useWindowScroll()
 
 const isVisible = ref(true)
 
@@ -42,13 +45,18 @@ onMounted(() => {
   z-index: 61;
   width: 100%;
   height: 100%;
-  height: 50px;
-  background: var(--vp-c-bg);
+  height: var(--vp-layout-top-height);
+  background-color: var(--vp-c-bg);
   overflow: hidden;
   margin: 0;
   color: var(--vp-c-indigo-1);
   font-size: 14px;
   border-bottom: solid 1px var(--vp-c-gutter);
+  transition: background-color 0.15s;
+}
+
+.banner.top {
+   background-color: transparent;
 }
 
 .banner-close {
@@ -76,19 +84,6 @@ onMounted(() => {
 
 <style>
 html.banner-fixed {
-  --vp-layout-top-height: 50px;
-}
-html.banner-fixed .VPNav,
-html.banner-fixed .VPSidebar {
-  top: 50px;
-}
-html.banner-fixed {
-  margin-top: 52px;
-}
-@media (max-width: 960px) {
-  html.banner-fixed .VPNav,
-  html.banner-fixed .VPSidebar {
-    top: 0;
-  }
+  --vp-layout-top-height: 50px
 }
 </style>

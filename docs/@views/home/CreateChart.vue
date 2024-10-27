@@ -37,7 +37,7 @@ fetch('/data/kline.json').then(res => {
         </CodeHighlight>
       </div>
       <div class="chart-container">
-        <span class="title" style="height: 58px;">
+        <span class="title">
           <span class="address">
             <svg
               width="14"
@@ -48,7 +48,7 @@ fetch('/data/kline.json').then(res => {
             &nbsp;https://klinecharts.com/sample/basic
           </span>
         </span>
-        <Chart :js="code" height="360px"/>
+        <Chart :js="code" height="324px"/>
       </div>
     </div>
   </Section>
@@ -71,10 +71,10 @@ fetch('/data/kline.json').then(res => {
   display: flex;
   flex-direction: row;
   align-items: center;
-  border-top-left-radius: 12px;
-  border-top-right-radius: 12px;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
   padding: 0 20px;
-  height: 46px;
+  height: 52px;
   color: var(--vp-c-text-2);
   background-color: var(--vp-c-bg-soft);
   border-bottom: solid 1px var(--vp-c-gutter);
@@ -86,10 +86,9 @@ fetch('/data/kline.json').then(res => {
 
 .chart-container {
   width: 100%;
-  border-radius: 12px;
+  border-radius: 8px;
   border: solid 1px var(--vp-c-gutter);
   background-color: var(--vp-code-block-bg);
-  padding-bottom: 6px;
 }
 
 .address {

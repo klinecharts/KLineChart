@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, onUnmounted, watch, defineProps } from 'vue'
+import { ref, onMounted, onUnmounted, watch } from 'vue'
 import { useData } from 'vitepress';
 
 import { transform } from '@babel/standalone'

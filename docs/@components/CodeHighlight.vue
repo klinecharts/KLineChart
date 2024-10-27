@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref, defineProps } from 'vue'
+import { onMounted, ref } from 'vue'
 import { codeToHtml } from 'shiki'
 
 const props = defineProps(['code', 'width'])
@@ -31,7 +31,7 @@ onMounted(async () => {
 .code-highlight {
   display: flex;
   flex-direction: column;
-  border-radius: 12px;
+  border-radius: 8px;
   border: solid 1px var(--vp-c-gutter);
   background-color: var(--vp-code-block-bg)!important;
 }
