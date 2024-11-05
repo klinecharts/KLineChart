@@ -67,8 +67,8 @@ export function getTextRect (attrs: TextAttrs, styles: Partial<TextStyle>): Rect
 export function checkCoordinateOnText (coordinate: Coordinate, attrs: TextAttrs | TextAttrs[], styles: Partial<TextStyle>): boolean {
   let texts: TextAttrs[] = []
   texts = texts.concat(attrs)
-  for (let i = 0; i < texts.length; i++) {
-    const { x, y, width, height } = getTextRect(texts[i], styles)
+  for (const text of texts) {
+    const { x, y, width, height } = getTextRect(text, styles)
     if (
       coordinate.x >= x &&
       coordinate.x <= x + width &&

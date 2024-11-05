@@ -278,7 +278,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
       eachFigures(dataList, indicator, dataIndex, styles, (figure: IndicatorFigure, figureStyles: Required<IndicatorFigureStyle>) => {
         if (isString(figure.title)) {
           const color = figureStyles.color
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment  -- ignore
           let value = data[figure.key]
           if (isNumber(value)) {
             value = formatPrecision(value, indicator.precision)

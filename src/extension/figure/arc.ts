@@ -23,8 +23,7 @@ import type { CircleAttrs } from './circle'
 export function checkCoordinateOnArc (coordinate: Coordinate, attrs: ArcAttrs | ArcAttrs[]): boolean {
   let arcs: ArcAttrs[] = []
   arcs = arcs.concat(attrs)
-  for (let i = 0; i < arcs.length; i++) {
-    const arc = arcs[i]
+  for (const arc of arcs) {
     if (Math.abs(getDistance(coordinate, arc) - arc.r) < DEVIATION) {
       const { r, startAngle, endAngle } = arc
       const startCoordinateX = r * Math.cos(startAngle) + arc.x

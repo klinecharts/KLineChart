@@ -23,8 +23,8 @@ export function checkCoordinateOnCircle (coordinate: Coordinate, attrs: CircleAt
   let circles: CircleAttrs[] = []
   circles = circles.concat(attrs)
 
-  for (let i = 0; i < circles.length; i++) {
-    const { x, y, r } = circles[i]
+  for (const circle of circles) {
+    const { x, y, r } = circle
     const difX = coordinate.x - x
     const difY = coordinate.y - y
     if (!(difX * difX + difY * difY > r * r)) {

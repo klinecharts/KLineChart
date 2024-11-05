@@ -626,8 +626,7 @@ export default class Event implements EventHandler {
     const drawPanes = this._chart.getDrawPanes()
 
     let pane: Nullable<DrawPane> = null
-    for (let i = 0; i < drawPanes.length; i++) {
-      const p = drawPanes[i]
+    for (const p of drawPanes) {
       const bounding = p.getBounding()
       if (
         x >= bounding.left && x <= bounding.left + bounding.width &&

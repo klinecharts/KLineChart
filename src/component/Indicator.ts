@@ -267,7 +267,7 @@ export function eachFigures<D = unknown> (
   let barCount = 0
   let lineCount = 0
 
-  // eslint-disable-next-line @typescript-eslint/init-declarations
+  // eslint-disable-next-line @typescript-eslint/init-declarations  -- ignore
   let defaultFigureStyles
   let figureIndex = 0
   figures.forEach(figure => {
@@ -301,7 +301,7 @@ export function eachFigures<D = unknown> (
         next: { kLineData: kLineDataList[dataIndex + 1], indicatorData: result[dataIndex + 1] }
       }
       const ss = figure.styles?.(cbData, indicator, defaultStyles)
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument -- ignore
       eachFigureCallback(figure, { ...defaultFigureStyles, ...ss }, figureIndex)
     }
   })
@@ -376,7 +376,7 @@ export default class IndicatorImp<D = unknown> implements Indicator<D> {
     if (!isString(this.name)) {
       this.name = name ?? ''
     }
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition  -- ignore
     this.shortName = shortName ?? this.shortName ?? this.name
     if (isNumber(precision)) {
       this.precision = precision

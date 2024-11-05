@@ -20,12 +20,8 @@ const percentage: AxisTemplate = {
   name: 'percentage',
   minSpan: () => Math.pow(10, -2),
   displayValueToText: value => `${formatPrecision(value, 2)}%`,
-  valueToRealValue: (value, { range }) => {
-    return (value - range.from) / range.range * range.realRange + range.realFrom
-  },
-  realValueToValue: (value, { range }) => {
-    return (value - range.realFrom) / range.realRange * range.range + range.from
-  },
+  valueToRealValue: (value, { range }) => (value - range.from) / range.range * range.realRange + range.realFrom,
+  realValueToValue: (value, { range }) => (value - range.realFrom) / range.realRange * range.range + range.from,
   createRange: ({ chart, defaultRange }) => {
     const kLineDataList = chart.getDataList()
     const visibleRange = chart.getVisibleRange()

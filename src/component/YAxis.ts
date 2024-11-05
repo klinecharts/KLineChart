@@ -138,7 +138,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
       indicators.forEach(({ result, figures }) => {
         const data = result[dataIndex] ?? {}
         figures.forEach(figure => {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- ignore
           const value = data[figure.key]
           if (isNumber(value)) {
             min = Math.min(min, value)
@@ -360,7 +360,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
         precision = indicatorPrecision
       }
       let valueText = formatPrecision(this.getRange().displayTo, precision)
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- ignore
       if (shouldFormatBigNumber) {
         valueText = customApi.formatBigNumber(valueText)
       }

@@ -26,8 +26,7 @@ const simpleTag: OverlayTemplate = {
   styles: {
     line: { style: LineType.Dashed }
   },
-  createPointFigures: ({ bounding, coordinates }) => {
-    return {
+  createPointFigures: ({ bounding, coordinates }) => ({
       type: 'line',
       attrs: {
         coordinates: [
@@ -36,8 +35,7 @@ const simpleTag: OverlayTemplate = {
         ]
       },
       ignoreEvent: true
-    }
-  },
+    }),
   createYAxisFigures: ({ chart, overlay, coordinates, bounding, yAxis }) => {
     const isFromZero = yAxis?.isFromZero() ?? false
     let textAlign: CanvasTextAlign = 'left'

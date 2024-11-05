@@ -476,14 +476,14 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
   protected drawFigures (ctx: CanvasRenderingContext2D, overlay: OverlayImp, figures: OverlayFigure[], defaultStyles: OverlayStyle): void {
     figures.forEach((figure, figureIndex) => {
       const { type, styles, attrs, ignoreEvent } = figure
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- ignore
       // @ts-expect-error
       const attrsArray = [].concat(attrs)
       attrsArray.forEach((ats, attrsIndex) => {
         const events = this._createFigureEvents(overlay, EventOverlayInfoFigureType.Other, figure.key ?? '', figureIndex, attrsIndex, ignoreEvent)
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- ignore
         // @ts-expect-error
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- ignore
         const ss = { ...defaultStyles[type], ...overlay.styles?.[type], ...styles }
         this.createFigure({
           name: type, attrs: ats, styles: ss

@@ -23,8 +23,8 @@ export function checkCoordinateOnLine (coordinate: Coordinate, attrs: LineAttrs 
   let lines: LineAttrs[] = []
   lines = lines.concat(attrs)
 
-  for (let i = 0; i < lines.length; i++) {
-    const { coordinates } = lines[i]
+  for (const line of lines) {
+    const { coordinates } = line
     if (coordinates.length > 1) {
       for (let i = 1; i < coordinates.length; i++) {
         const prevCoordinate = coordinates[i - 1]

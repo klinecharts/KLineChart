@@ -79,7 +79,7 @@ export default class Canvas {
         this._resizeObserver.observe(this._element, { box: 'device-pixel-content-box' })
       } else {
         this._mediaQueryList = window.matchMedia(`(resolution: ${getPixelRatio(this._element)}dppx)`)
-        // eslint-disable-next-line @typescript-eslint/no-deprecated
+        // eslint-disable-next-line @typescript-eslint/no-deprecated -- ignore
         this._mediaQueryList.addListener(this._mediaQueryListener)
       }
     }).catch(_ => false)
@@ -140,7 +140,7 @@ export default class Canvas {
       this._resizeObserver.unobserve(this._element)
     }
     if (isValid(this._mediaQueryList)) {
-      // eslint-disable-next-line @typescript-eslint/no-deprecated
+      // eslint-disable-next-line @typescript-eslint/no-deprecated -- ignore
       this._mediaQueryList.removeListener(this._mediaQueryListener)
     }
   }

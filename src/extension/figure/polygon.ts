@@ -22,9 +22,9 @@ import type { FigureTemplate } from '../../component/Figure'
 export function checkCoordinateOnPolygon (coordinate: Coordinate, attrs: PolygonAttrs | PolygonAttrs[]): boolean {
   let polygons: PolygonAttrs[] = []
   polygons = polygons.concat(attrs)
-  for (let i = 0; i < polygons.length; i++) {
+  for (const polygon of polygons) {
     let on = false
-    const { coordinates } = polygons[i]
+    const { coordinates } = polygon
     for (let i = 0, j = coordinates.length - 1; i < coordinates.length; j = i++) {
       if (
         (coordinates[i].y > coordinate.y) !== (coordinates[j].y > coordinate.y) &&

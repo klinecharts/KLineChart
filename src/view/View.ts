@@ -45,9 +45,9 @@ export default abstract class View<C extends Axis = Axis> extends Eventful {
       const figure = new FigureClazz(create)
       if (isValid(eventHandler)) {
         for (const key in eventHandler) {
-          // eslint-disable-next-line no-prototype-builtins
+          // eslint-disable-next-line no-prototype-builtins -- ignore
           if (eventHandler.hasOwnProperty(key)) {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument -- ignore
             figure.registerEvent(key as EventName, eventHandler[key])
           }
         }

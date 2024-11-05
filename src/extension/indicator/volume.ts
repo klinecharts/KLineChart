@@ -62,9 +62,7 @@ const volume: IndicatorTemplate<Vol> = {
     getVolumeFigure()
   ],
   regenerateFigures: (params: unknown[]) => {
-    const figures: Array<IndicatorFigure<Vol>> = params.map((p: number, i: number) => {
-      return { key: `ma${i + 1}`, title: `MA${p}: `, type: 'line' }
-    })
+    const figures: Array<IndicatorFigure<Vol>> = params.map((p: number, i: number) => ({ key: `ma${i + 1}`, title: `MA${p}: `, type: 'line' }))
     figures.push(getVolumeFigure())
     return figures
   },

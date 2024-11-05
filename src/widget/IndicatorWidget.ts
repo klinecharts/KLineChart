@@ -60,8 +60,9 @@ export default class IndicatorWidget extends DrawWidget<DrawPane<YAxis>> {
     return new IndicatorTooltipView(this)
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  protected updateMainContent (_ctx: CanvasRenderingContext2D): void {}
+  protected updateMainContent (_ctx: CanvasRenderingContext2D): void {
+    // to do it
+  }
 
   override updateOverlay (ctx: CanvasRenderingContext2D): void {
     if (this.getPane().getOptions().state !== PaneState.Minimize) {

@@ -12,16 +12,16 @@
  * limitations under the License.
  */
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- ignore
 export function merge (target: any, source: any): void {
   if ((!isObject(target) && !isObject(source))) {
     return
   }
   for (const key in source) {
     if (Object.prototype.hasOwnProperty.call(source, key) as boolean) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access -- ignore
       const targetProp = target[key]
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access -- ignore
       const sourceProp = source[key]
       if (
         isObject(sourceProp) &&
@@ -29,9 +29,9 @@ export function merge (target: any, source: any): void {
       ) {
         merge(targetProp, sourceProp)
       } else {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- ignore
         if (isValid(source[key])) {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access -- ignore
           target[key] = clone(source[key])
         }
       }
@@ -44,7 +44,7 @@ export function clone<T> (target: T): T {
     return target
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- ignore
   let copy: any = null
   if (isArray(target)) {
     copy = []
@@ -55,15 +55,15 @@ export function clone<T> (target: T): T {
     if (Object.prototype.hasOwnProperty.call(target, key) as boolean) {
       const v = target[key]
       if (isObject(v)) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- ignore
         copy[key] = clone(v)
       } else {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- ignore
         copy[key] = v
       }
     }
   }
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return -- ignore
   return copy
 }
 
@@ -71,7 +71,7 @@ export function isArray<T = unknown> (value: unknown): value is T[] {
   return Object.prototype.toString.call(value) === '[object Array]'
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
+// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters -- ignore
 export function isFunction<T = (...args: unknown[]) => unknown> (value: unknown): value is T {
   return typeof value === 'function'
 }

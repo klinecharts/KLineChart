@@ -162,7 +162,7 @@ export default class ChartImp implements Chart {
       userSelect: 'none',
       webkitUserSelect: 'none',
       overflow: 'hidden',
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- ignore
       // @ts-expect-error
       msUserSelect: 'none',
       MozUserSelect: 'none',
@@ -405,8 +405,8 @@ export default class ChartImp implements Chart {
       Promise.resolve().then(_ => {
         this._layout()
         this._layoutPending = false
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
       }).catch(_ => {
+        // to do it
       })
     }
   }
@@ -492,13 +492,13 @@ export default class ChartImp implements Chart {
       let mainWidth = totalWidth
       let mainLeft = 0
       let mainRight = 0
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- ignore
       if (leftYAxisOutside) {
         mainWidth -= leftYAxisWidth
         mainLeft = leftYAxisWidth
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- ignore
       if (rightYAxisOutside) {
         mainWidth -= rightYAxisWidth
         mainRight = rightYAxisWidth
@@ -876,8 +876,7 @@ export default class ChartImp implements Chart {
     let shouldMeasureHeight = false
     let shouldLayout = false
     const validId = isValid(options.id)
-    for (let i = 0; i < this._drawPanes.length; i++) {
-      const currentPane = this._drawPanes[i]
+    for (const currentPane of this._drawPanes) {
       const currentPaneId = currentPane.getId()
       if ((validId && options.id === currentPaneId) || !validId) {
         if (currentPaneId !== PaneIdConstants.X_AXIS) {

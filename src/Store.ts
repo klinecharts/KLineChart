@@ -472,7 +472,7 @@ export default class Store {
                   point.dataIndex = point.dataIndex + dataLengthChange
                 }
                 const data = this._dataList[point.dataIndex]
-                // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- ignore
                 point.timestamp = data?.timestamp
               }
             })
@@ -596,8 +596,7 @@ export default class Store {
       }
     })
     this._visibleRangeTimeTickList = []
-    for (let i = 0; i < tickList.length; i++) {
-      const tick = tickList[i]
+    for (const tick of tickList) {
       if (tick.dataIndex >= this._visibleRange.from && tick.dataIndex <= this._visibleRange.to) {
         this._visibleRangeTimeTickList.push(tick)
       }
@@ -1058,11 +1057,7 @@ export default class Store {
   }
 
   getIndicatorsByFilter (filter: IndicatorFilter): Map<string, IndicatorImp[]> {
-    const find: ((indicators: IndicatorImp[], name?: string) => IndicatorImp[]) = (indicators, name) => {
-      return indicators.filter(indicator => {
-        return !isValid(name) || indicator.name === name
-      })
-    }
+    const find: ((indicators: IndicatorImp[], name?: string) => IndicatorImp[]) = (indicators, name) => indicators.filter(indicator => (!isValid(name) || indicator.name === name))
     const { paneId, name } = filter
     const map = new Map<string, IndicatorImp[]>()
     if (isValid(paneId)) {
@@ -1164,7 +1159,7 @@ export default class Store {
         }
       }
     })
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- ignore
     if (sortFlag) {
       this._sortIndicators()
     }
@@ -1173,8 +1168,7 @@ export default class Store {
 
   getOverlaysByFilter (filter: OverlayFilter): Map<string, OverlayImp[]> {
     const { id, groupId, paneId, name } = filter
-    const find: ((overlays: OverlayImp[]) => OverlayImp[]) = (overlays) => {
-      return overlays.filter(overlay => {
+    const find: ((overlays: OverlayImp[]) => OverlayImp[]) = (overlays) => overlays.filter(overlay => {
         if (isValid(id)) {
           return overlay.id === id
         } else {
@@ -1184,7 +1178,6 @@ export default class Store {
         }
         return !isValid(name) || overlay.name === name
       })
-    }
 
     const map = new Map<string, OverlayImp[]>()
     if (isValid(paneId)) {
@@ -1245,7 +1238,7 @@ export default class Store {
       if (isValid(OverlayClazz)) {
         const id = create.id ?? createId(OVERLAY_ID_PREFIX)
         const overlay = new OverlayClazz()
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- ignore
         const groupId = overlay.groupId ?? id
         create.id = id
         create.groupId = groupId
@@ -1327,7 +1320,7 @@ export default class Store {
       })
     })
 
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- ignore
     if (sortFlag) {
       this._sortOverlays()
     }

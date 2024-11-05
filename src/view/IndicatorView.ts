@@ -30,8 +30,7 @@ export default class IndicatorView extends CandleBarView {
     const yAxis = pane.getAxisComponent()
     if (!yAxis.isInCandle()) {
       const indicators = chartStore.getIndicatorsByPaneId(pane.getId())
-      for (let i = 0; i < indicators.length; i++) {
-        const indicator = indicators[i]
+      for (const indicator of indicators) {
         if (indicator.shouldOhlc && indicator.visible) {
           const indicatorStyles = indicator.styles
           const defaultStyles = chartStore.getOptions().styles.indicator
@@ -107,17 +106,17 @@ export default class IndicatorView extends CandleBarView {
             const currentCoordinate = { x }
             const nextCoordinate = { x: nextX }
             indicator.figures.forEach(({ key }) => {
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- ignore
               const prevValue = prevData?.[key]
               if (isNumber(prevValue)) {
                 prevCoordinate[key] = yAxis.convertToPixel(prevValue)
               }
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- ignore
               const currentValue = currentData?.[key]
               if (isNumber(currentValue)) {
                 currentCoordinate[key] = yAxis.convertToPixel(currentValue)
               }
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- ignore
               const nextValue = nextData?.[key]
               if (isNumber(nextValue)) {
                 nextCoordinate[key] = yAxis.convertToPixel(nextValue)
@@ -125,7 +124,7 @@ export default class IndicatorView extends CandleBarView {
             })
             eachFigures(dataList, indicator, dataIndex, defaultStyles, (figure: IndicatorFigure, figureStyles: IndicatorFigureStyle, figureIndex: number) => {
               if (isValid(currentData?.[figure.key])) {
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- ignore
                 const valueY = currentCoordinate[figure.key]
                 let attrs = figure.attrs?.({
                   data: { prev: prevData, current: currentData, next: nextData },
@@ -138,7 +137,7 @@ export default class IndicatorView extends CandleBarView {
                 if (!isValid<IndicatorFigureAttrs>(attrs)) {
                   switch (figure.type) {
                     case 'circle': {
-                      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- ignore
                       attrs = { x, y: valueY, r: Math.max(1, halfGapBar) }
                       break
                     }
@@ -154,7 +153,7 @@ export default class IndicatorView extends CandleBarView {
                       if (valueY > baseValueY) {
                         y = baseValueY
                       } else {
-                        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- ignore
                         y = valueY
                       }
                       attrs = {
@@ -172,9 +171,9 @@ export default class IndicatorView extends CandleBarView {
                       if (isNumber(currentCoordinate[figure.key]) && isNumber(nextCoordinate[figure.key])) {
                         lines[figureIndex].push({
                           coordinates: [
-                            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- ignore
                             { x: currentCoordinate.x, y: currentCoordinate[figure.key] },
-                            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- ignore
                             { x: nextCoordinate.x, y: nextCoordinate[figure.key] }
                           ],
                           styles: figureStyles as unknown as SmoothLineStyle

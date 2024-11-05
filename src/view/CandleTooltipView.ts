@@ -451,7 +451,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
         v.text = value
         v.color = textColor
       }
-      const match = v.text.match(/{(\S*)}/)
+      const match = /{(\S*)}/.exec(v.text)
       if (match !== null && match.length > 1) {
         const key = `{${match[1]}}`
         v.text = v.text.replace(key, (mapping[key] ?? tooltipStyles.defaultValue) as string)

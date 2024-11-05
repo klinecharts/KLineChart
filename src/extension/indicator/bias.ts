@@ -34,11 +34,7 @@ const bias: IndicatorTemplate<Bias> = {
     { key: 'bias2', title: 'BIAS12: ', type: 'line' },
     { key: 'bias3', title: 'BIAS24: ', type: 'line' }
   ],
-  regenerateFigures: (params: unknown[]) => {
-    return params.map((p: number, i: number) => {
-      return { key: `bias${i + 1}`, title: `BIAS${p}: `, type: 'line' }
-    })
-  },
+  regenerateFigures: (params: unknown[]) => params.map((p: number, i: number) => ({ key: `bias${i + 1}`, title: `BIAS${p}: `, type: 'line' })),
   calc: (dataList: KLineData[], indicator: Indicator<Bias>) => {
     const { calcParams, figures } = indicator
     const params = calcParams as number[]

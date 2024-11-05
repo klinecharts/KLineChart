@@ -44,19 +44,20 @@
     "build-cjs": "cross-env NODE_ENV=production node scripts/build-cjs.js",
     "build-umd:dev": "cross-env NODE_ENV=development node scripts/build-umd.js",
     "build-umd:prod": "cross-env NODE_ENV=production node scripts/build-umd.js",
-    "build-umd": "npm run build-umd:dev && npm run build-umd:prod",
-    "build-core": "npm run build-esm && npm run build-cjs && npm run build-umd",
+    "build-umd": "pnpm build-umd:dev && pnpm build-umd:prod",
+    "build-core": "pnpm build-esm && pnpm build-cjs && pnpm build-umd",
     "build-dts": "dts-bundle-generator --no-banner true --fail-on-class true --umd-module-name klinecharts -o dist/index.d.ts src/index.ts",
-    "build": "npm run clean && npm run build-core && npm run build-dts",
+    "build": "pnpm clean && pnpm build-core && pnpm build-dts",
     "prepare": "husky install",
-    "docs:dev": "npm run dev --prefix docs",
-    "docs:build": "npm run build --prefix docs",
-    "docs:preview": "npm run preview --prefix docs",
-    "docs:deploy": "npm run docs:build && gh-pages -d website"
+    "docs:dev": "pnpm -F=docs dev",
+    "docs:build": "pnpm -F=docs build",
+    "docs:preview": "pnpm -F=docs preview",
+    "docs:deploy": "pnpm docs:build && gh-pages -d website"
   },
   "engines": {
     "node": ">=0.10.0"
   },
+  "packageManager": "pnpm@9.12.3",
   "devDependencies": {
     "@babel/standalone": "^7.24.4",
     "@rollup/plugin-commonjs": "^25.0.7",
@@ -73,7 +74,7 @@
     "cross-env": "^7.0.3",
     "dts-bundle-generator": "^9.5.1",
     "eslint": "^9.13.0",
-    "eslint-config-love": "^89.0.1",
+    "eslint-config-love": "^97.0.0",
     "eslint-plugin-file-progress": "^1.5.0",
     "fs-extra": "^11.2.0",
     "gh-pages": "^6.1.1",
@@ -84,6 +85,6 @@
     "shiki": "^1.22.1",
     "tslib": "^2.6.2",
     "typescript": "^5.5.4",
-    "vitepress": "^1.4.1"
+    "vitepress": "^1.5.0"
   }
 }

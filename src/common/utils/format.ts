@@ -92,7 +92,7 @@ export function formatDateToDateTime (dateTimeFormat: Intl.DateTimeFormat, times
 
 export function formatDateToString (dateTimeFormat: Intl.DateTimeFormat, timestamp: number, format: string): string {
   const date = formatDateToDateTime(dateTimeFormat, timestamp)
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return -- ignore
   return format.replace(/YYYY|MM|DD|HH|mm|ss/g, key => date[key])
 }
 
@@ -139,7 +139,7 @@ export function formatFoldDecimal (value: string | number, threshold: number, fo
     const result = vl.split('.')
     const lastIndex = result.length - 1
     const v = result[lastIndex]
-    const match = v.match(/0*/)
+    const match = /0*/.exec(v)
     if (isValid(match)) {
       const count = match[0].length
       result[lastIndex] = v.replace(/0*/, `0${format(count)}`)
@@ -167,10 +167,8 @@ const subscriptNumbers = {
 }
 
 export function formatFoldDecimalForSubscript (value: string | number, threshold: number): string {
-  return formatFoldDecimal(value, threshold, count => {
-    return `${count}`.replace(/\d/, $1 => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      return subscriptNumbers[$1] ?? ''
-    })
-  })
+  return formatFoldDecimal(value, threshold, count => `${count}`.replace(/\d/, $1 => 
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return -- ignore
+       subscriptNumbers[$1] ?? ''
+    ))
 }

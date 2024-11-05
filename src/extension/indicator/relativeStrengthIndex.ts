@@ -34,12 +34,10 @@ const relativeStrengthIndex: IndicatorTemplate<Rsi> = {
     { key: 'rsi2', title: 'RSI2: ', type: 'line' },
     { key: 'rsi3', title: 'RSI3: ', type: 'line' }
   ],
-  regenerateFigures: (params: unknown[]) => {
-    return params.map((_: unknown, index: number) => {
+  regenerateFigures: (params: unknown[]) => params.map((_: unknown, index: number) => {
       const num = index + 1
       return { key: `rsi${num}`, title: `RSI${num}: `, type: 'line' }
-    })
-  },
+    }),
   calc: (dataList: KLineData[], indicator: Indicator<Rsi>) => {
     const { calcParams, figures } = indicator
     const params = calcParams as number[]

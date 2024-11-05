@@ -22,8 +22,7 @@ import { type FigureTemplate, DEVIATION } from '../../component/Figure'
 export function checkCoordinateOnRect (coordinate: Coordinate, attrs: RectAttrs | RectAttrs[]): boolean {
   let rects: RectAttrs[] = []
   rects = rects.concat(attrs)
-  for (let i = 0; i < rects.length; i++) {
-    const rect = rects[i]
+  for (const rect of rects) {
     let x = rect.x
     let width = rect.width
     if (width < DEVIATION * 2) {
@@ -60,7 +59,7 @@ export function drawRect (ctx: CanvasRenderingContext2D, attrs: RectAttrs | Rect
     borderRadius: r = 0,
     borderDashedValue = [2, 2]
   } = styles
-  // eslint-disable-next-line @typescript-eslint/unbound-method, @typescript-eslint/no-unnecessary-condition
+  // eslint-disable-next-line @typescript-eslint/unbound-method, @typescript-eslint/no-unnecessary-condition -- ignore
   const draw = ctx.roundRect ?? ctx.rect
   const solid = (style === PolygonType.Fill || styles.style === PolygonType.StrokeFill) && (!isString(color) || !isTransparent(color))
   if (solid) {
