@@ -34,7 +34,7 @@ export default class CrosshairHorizontalLabelView<C extends Axis = YAxis> extend
     const bounding = widget.getBounding()
     const chartStore = widget.getPane().getChart().getChartStore()
     const crosshair = chartStore.getCrosshair()
-    const styles = chartStore.getOptions().styles.crosshair
+    const styles = chartStore.getStyles().crosshair
     if (isString(crosshair.paneId) && this.compare(crosshair, pane.getId())) {
       if (styles.show) {
         const directionStyles = this.getDirectionStyles(styles)
@@ -86,12 +86,11 @@ export default class CrosshairHorizontalLabelView<C extends Axis = YAxis> extend
       precision
     )
 
-    const { customApi, thousandsSeparator, decimalFold } = chartStore.getOptions()
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- ignore
     if (shouldFormatBigNumber) {
-      text = customApi.formatBigNumber(text)
+      text = chartStore.getCustomApi().formatBigNumber(text)
     }
-    return decimalFold.format(thousandsSeparator.format(text))
+    return chartStore.getDecimalFold().format(chartStore.getThousandsSeparator().format(text))
   }
 
   protected getTextAttrs (text: string, _textWidth: number, crosshair: Crosshair, bounding: Bounding, axis: Axis, _styles: StateTextStyle): TextAttrs {

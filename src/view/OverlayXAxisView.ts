@@ -14,22 +14,18 @@
 
 import type Nullable from '../common/Nullable'
 import type Coordinate from '../common/Coordinate'
-import type Bounding from '../common/Bounding'
-import type Precision from '../common/Precision'
+
 import { isNumber } from '../common/utils/typeChecks'
 
-import { FormatDateType, type Options } from '../Options'
+import { FormatDateType } from '../Options'
 
 import type { XAxis } from '../component/XAxis'
 import type { YAxis } from '../component/YAxis'
 import type { OverlayFigure, Overlay } from '../component/Overlay'
 import type OverlayImp from '../component/Overlay'
 
-import type { EventOverlayInfo, ProgressOverlayInfo } from '../Store'
-import type ChartStore from '../Store'
 
 import OverlayYAxisView from './OverlayYAxisView'
-import type { Chart } from '../Chart'
 
 export default class OverlayXAxisView extends OverlayYAxisView<XAxis> {
   override coordinateToPointTimestampDataIndexFlag (): boolean {
@@ -40,25 +36,23 @@ export default class OverlayXAxisView extends OverlayYAxisView<XAxis> {
     return false
   }
 
-  override getCompleteOverlays (chartStore: ChartStore): OverlayImp[] {
-    return chartStore.getOverlaysByPaneId()
+  override getCompleteOverlays (): OverlayImp[] {
+    return this.getWidget().getPane().getChart().getChartStore().getOverlaysByPaneId()
   }
 
-  override getProgressOverlay (info: ProgressOverlayInfo): OverlayImp {
-    return info.overlay
+  override getProgressOverlay (): Nullable<OverlayImp> {
+    return this.getWidget().getPane().getChart().getChartStore().getProgressOverlayInfo()?.overlay ?? null
   }
 
   override getDefaultFigures (
     overlay: Overlay,
     coordinates: Coordinate[],
-    bounding: Bounding,
-    _precision: Precision,
-    options: Options,
-    _xAxis: Nullable<XAxis>,
-    _yAxis: Nullable<YAxis>,
-    clickOverlayInfo: EventOverlayInfo
   ): OverlayFigure[] {
     const figures: OverlayFigure[] = []
+    const widget = this.getWidget()
+    const pane = widget.getPane()
+    const chartStore = pane.getChart().getChartStore()
+    const clickOverlayInfo = chartStore.getClickOverlayInfo()
     if (overlay.needDefaultXAxisFigure && overlay.id === clickOverlayInfo.overlay?.id) {
       let leftX = Number.MAX_SAFE_INTEGER
       let rightX = Number.MIN_SAFE_INTEGER
@@ -67,25 +61,27 @@ export default class OverlayXAxisView extends OverlayYAxisView<XAxis> {
         rightX = Math.max(rightX, coordinate.x)
         const point = overlay.points[index]
         if (isNumber(point.timestamp)) {
-          const text = options.customApi.formatDate(point.timestamp, 'YYYY-MM-DD HH:mm', FormatDateType.Crosshair)
+          const text = chartStore.getCustomApi().formatDate(point.timestamp, 'YYYY-MM-DD HH:mm', FormatDateType.Crosshair)
           figures.push({ type: 'text', attrs: { x: coordinate.x, y: 0, text, align: 'center' }, ignoreEvent: true })
         }
       })
       if (coordinates.length > 1) {
-        figures.unshift({ type: 'rect', attrs: { x: leftX, y: 0, width: rightX - leftX, height: bounding.height }, ignoreEvent: true })
+        figures.unshift({ type: 'rect', attrs: { x: leftX, y: 0, width: rightX - leftX, height: widget.getBounding().height }, ignoreEvent: true })
       }
     }
     return figures
   }
 
   override getFigures (
-    chart: Chart,
     o: Overlay,
     coordinates: Coordinate[],
-    bounding: Bounding,
-    xAxis: Nullable<XAxis>,
-    yAxis: Nullable<YAxis>
   ): OverlayFigure | OverlayFigure[] {
+    const widget = this.getWidget()
+    const pane = widget.getPane()
+    const chart = pane.getChart()
+    const yAxis = pane.getAxisComponent() as unknown as Nullable<YAxis>
+    const xAxis = chart.getXAxisPane().getAxisComponent()
+    const bounding = widget.getBounding()
     return o.createXAxisFigures?.({ chart, overlay: o, coordinates, bounding, xAxis, yAxis }) ?? []
   }
 }

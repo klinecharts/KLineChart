@@ -15,22 +15,16 @@
 import type Nullable from '../common/Nullable'
 import type Coordinate from '../common/Coordinate'
 import type Point from '../common/Point'
-import type Bounding from '../common/Bounding'
-import type { OverlayStyle } from '../common/Styles'
 import type { EventHandler, EventName, MouseTouchEvent, MouseTouchEventCallback } from '../common/SyntheticEvent'
 import { isBoolean, isNumber, isValid } from '../common/utils/typeChecks'
 
-import type { Options } from '../Options'
 
 import type { Axis } from '../component/Axis'
-import type { XAxis } from '../component/XAxis'
 import type { YAxis } from '../component/YAxis'
 import type { OverlayFigure, OverlayFigureIgnoreEventType, Overlay } from '../component/Overlay'
 import type OverlayImp from '../component/Overlay'
 import { OVERLAY_FIGURE_KEY_PREFIX, OverlayMode, getAllOverlayFigureIgnoreEventTypes } from '../component/Overlay'
 
-import type { ProgressOverlayInfo, EventOverlayInfo } from '../Store'
-import type ChartStore from '../Store'
 import { EventOverlayInfoFigureType } from '../Store'
 
 import { PaneIdConstants } from '../pane/types'
@@ -39,8 +33,6 @@ import type DrawWidget from '../widget/DrawWidget'
 import type DrawPane from '../pane/DrawPane'
 
 import View from './View'
-import type { Chart } from '../Chart'
-import type Precision from '../common/Precision'
 
 export default class OverlayView<C extends Axis = YAxis> extends View<C> {
   constructor (widget: DrawWidget<DrawPane<C>>) {
@@ -383,55 +375,28 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
   }
 
   override drawImp (ctx: CanvasRenderingContext2D): void {
-    const widget = this.getWidget()
-    const pane = widget.getPane()
-    const paneId = pane.getId()
-    const chart = pane.getChart()
-    const yAxis = pane.getAxisComponent() as unknown as Nullable<YAxis>
-    const xAxis = chart.getXAxisPane().getAxisComponent()
-    const bounding = widget.getBounding()
-    const chartStore = chart.getChartStore()
-    const options = chartStore.getOptions()
-    const precision = chartStore.getPrecision()
-    const hoverOverlayInfo = chartStore.getHoverOverlayInfo()
-    const clickOverlayInfo = chartStore.getClickOverlayInfo()
-    const overlays = this.getCompleteOverlays(chartStore, paneId)
+    const overlays = this.getCompleteOverlays()
     overlays.forEach(overlay => {
       if (overlay.visible) {
-        this._drawOverlay(
-          ctx, overlay, bounding,
-          precision, options, xAxis, yAxis,
-          hoverOverlayInfo, clickOverlayInfo, chartStore
-        )
+        this._drawOverlay(ctx, overlay)
       }
     })
-    const progressOverlayInfo = chartStore.getProgressOverlayInfo()
-    if (progressOverlayInfo !== null) {
-      const overlay = this.getProgressOverlay(progressOverlayInfo, paneId)
-       
-      if (isValid(overlay) && overlay.visible) {
-        this._drawOverlay(
-          ctx, overlay, bounding,
-          precision, options, xAxis, yAxis,
-          hoverOverlayInfo, clickOverlayInfo, chartStore
-        )
-      }
+    const progressOverlay = this.getProgressOverlay()
+    if (isValid(progressOverlay) && progressOverlay.visible) {
+      this._drawOverlay(ctx, progressOverlay)
     }
   }
 
   private _drawOverlay (
     ctx: CanvasRenderingContext2D,
-    overlay: OverlayImp,
-    bounding: Bounding,
-    precision: Precision,
-    options: Options,
-    xAxis: Nullable<XAxis>,
-    yAxis: Nullable<YAxis>,
-    hoverOverlayInfo: EventOverlayInfo,
-    clickOverlayInfo: EventOverlayInfo,
-    chartStore: ChartStore
+    overlay: OverlayImp
   ): void {
     const { points } = overlay
+    const pane = this.getWidget().getPane()
+    const chart = pane.getChart()
+    const chartStore = chart.getChartStore()
+    const yAxis = pane.getAxisComponent() as unknown as Nullable<YAxis>
+    const xAxis = chart.getXAxisPane().getAxisComponent()
     const coordinates = points.map(point => {
       let dataIndex = point.dataIndex
       if (isNumber(point.timestamp)) {
@@ -439,7 +404,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
       }
       const coordinate = { x: 0, y: 0 }
       if (isNumber(dataIndex)) {
-        coordinate.x = xAxis?.convertToPixel(dataIndex) ?? 0
+        coordinate.x = xAxis.convertToPixel(dataIndex)
       }
       if (isNumber(point.value)) {
         coordinate.y = yAxis?.convertToPixel(point.value) ?? 0
@@ -447,33 +412,22 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
       return coordinate
     })
     if (coordinates.length > 0) {
-      const figures = new Array<OverlayFigure>().concat(
-        this.getFigures(
-          chartStore.getChart(), overlay, coordinates, bounding, xAxis, yAxis
-        )
-      )
+      const figures = new Array<OverlayFigure>().concat(this.getFigures(overlay, coordinates))
       this.drawFigures(
         ctx,
         overlay,
-        figures,
-        options.styles.overlay
+        figures
       )
     }
     this.drawDefaultFigures(
       ctx,
       overlay,
       coordinates,
-      bounding,
-      precision,
-      options,
-      xAxis,
-      yAxis,
-      hoverOverlayInfo,
-      clickOverlayInfo
     )
   }
 
-  protected drawFigures (ctx: CanvasRenderingContext2D, overlay: OverlayImp, figures: OverlayFigure[], defaultStyles: OverlayStyle): void {
+  protected drawFigures (ctx: CanvasRenderingContext2D, overlay: OverlayImp, figures: OverlayFigure[]): void {
+    const defaultStyles = this.getWidget().getPane().getChart().getStyles().overlay
     figures.forEach((figure, figureIndex) => {
       const { type, styles, attrs, ignoreEvent } = figure
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- ignore
@@ -492,25 +446,30 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     })
   }
 
-  protected getCompleteOverlays (chartStore: ChartStore, paneId: string): OverlayImp[] {
-    return chartStore.getOverlaysByPaneId(paneId)
+  protected getCompleteOverlays (): OverlayImp[] {
+    const pane = this.getWidget().getPane()
+    return pane.getChart().getChartStore().getOverlaysByPaneId(pane.getId())
   }
 
-  protected getProgressOverlay (info: ProgressOverlayInfo, paneId: string): Nullable<OverlayImp> {
-    if (info.paneId === paneId) {
+  protected getProgressOverlay (): Nullable<OverlayImp> {
+    const pane = this.getWidget().getPane()
+    const info = pane.getChart().getChartStore().getProgressOverlayInfo()
+    if (isValid(info) && info.paneId === pane.getId()) {
       return info.overlay
     }
     return null
   }
 
   protected getFigures (
-    chart: Chart,
     o: Overlay,
-    coordinates: Coordinate[],
-    bounding: Bounding,
-    xAxis: Nullable<XAxis>,
-    yAxis: Nullable<YAxis>
+    coordinates: Coordinate[]
   ): OverlayFigure | OverlayFigure[] {
+    const widget = this.getWidget()
+    const pane = widget.getPane()
+    const chart = pane.getChart()
+    const yAxis = pane.getAxisComponent() as unknown as Nullable<YAxis>
+    const xAxis = chart.getXAxisPane().getAxisComponent()
+    const bounding = widget.getBounding()
     return o.createPointFigures?.({ chart, overlay: o, coordinates, bounding, xAxis, yAxis }) ?? []
   }
 
@@ -518,20 +477,16 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     ctx: CanvasRenderingContext2D,
     overlay: OverlayImp,
     coordinates: Coordinate[],
-    _bounding: Bounding,
-    _precision: Precision,
-    options: Options,
-    _xAxis: Nullable<XAxis>,
-    _yAxis: Nullable<YAxis>,
-    hoverOverlayInfo: EventOverlayInfo,
-    clickOverlayInfo: EventOverlayInfo
   ): void {
     if (overlay.needDefaultPointFigure) {
+      const chartStore = this.getWidget().getPane().getChart().getChartStore()
+      const hoverOverlayInfo = chartStore.getHoverOverlayInfo()
+      const clickOverlayInfo = chartStore.getClickOverlayInfo()
       if (
         (hoverOverlayInfo.overlay?.id === overlay.id && hoverOverlayInfo.figureType !== EventOverlayInfoFigureType.None) ||
         (clickOverlayInfo.overlay?.id === overlay.id && clickOverlayInfo.figureType !== EventOverlayInfoFigureType.None)
       ) {
-        const defaultStyles = options.styles.overlay
+        const defaultStyles = chartStore.getStyles().overlay
         const styles = overlay.styles
         const pointStyles = { ...defaultStyles.point, ...styles?.point }
         coordinates.forEach(({ x, y }, index) => {

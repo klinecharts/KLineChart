@@ -117,7 +117,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
       }
     }
     const visibleRangeDataList = chartStore.getVisibleRangeDataList()
-    const candleStyles = chart.getOptions().styles.candle
+    const candleStyles = chart.getStyles().candle
     const isArea = candleStyles.type === CandleType.Area
     const areaValueKey = candleStyles.area.value
     const shouldCompareHighLow = (inCandle && !isArea) || (!inCandle && shouldOhlc)
@@ -266,7 +266,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
     const chartStore = pane.getChart().getChartStore()
     const optimalTicks: AxisTick[] = []
     const indicators = chartStore.getIndicatorsByPaneId(pane.getId())
-    const { styles, customApi, thousandsSeparator, decimalFold } = chartStore.getOptions()
+    const styles = chartStore.getStyles()
     let precision = 0
     let shouldFormatBigNumber = false
     if (this.isInCandle()) {
@@ -279,6 +279,9 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
         }
       })
     }
+    const customApi = chartStore.getCustomApi()
+    const thousandsSeparator = chartStore.getThousandsSeparator()
+    const decimalFold = chartStore.getDecimalFold()
     const textHeight = styles.xAxis.tickText.size
     let validY = NaN
     ticks.forEach(({ value }) => {
@@ -309,7 +312,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
     const pane = this.getParent()
     const chart = pane.getChart()
     const chartStore = chart.getChartStore()
-    const { customApi, decimalFold, styles } = chartStore.getOptions()
+    const styles = chartStore.getStyles()
     const yAxisStyles = styles.yAxis
     const width = yAxisStyles.size
     if (width !== 'auto') {
@@ -362,9 +365,9 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
       let valueText = formatPrecision(this.getRange().displayTo, precision)
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- ignore
       if (shouldFormatBigNumber) {
-        valueText = customApi.formatBigNumber(valueText)
+        valueText = chartStore.getCustomApi().formatBigNumber(valueText)
       }
-      valueText = decimalFold.format(valueText)
+      valueText = chartStore.getDecimalFold().format(valueText)
       crosshairVerticalTextWidth += (
         crosshairStyles.horizontal.text.paddingLeft +
         crosshairStyles.horizontal.text.paddingRight +

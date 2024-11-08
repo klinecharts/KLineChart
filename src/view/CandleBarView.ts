@@ -19,8 +19,6 @@ import type { EventHandler } from '../common/SyntheticEvent'
 import { ActionType } from '../common/Action'
 import { CandleType, type CandleBarColor, type RectStyle, PolygonType } from '../common/Styles'
 
-import type ChartStore from '../Store'
-
 import type { FigureCreate } from '../component/Figure'
 import type { RectAttrs } from '../extension/figure/rect'
 
@@ -36,7 +34,7 @@ export interface CandleBarOptions {
 
 export default class CandleBarView extends ChildrenView {
   private readonly _boundCandleBarClickEvent = (data: VisibleRangeData) => () => {
-    this.getWidget().getPane().getChart().getChartStore().executeAction(ActionType.OnCandleBarClick, data)
+    this.getWidget().getPane().getChart().executeAction(ActionType.OnCandleBarClick, data)
     return false
   }
 
@@ -44,7 +42,7 @@ export default class CandleBarView extends ChildrenView {
     const pane = this.getWidget().getPane()
     const isMain = pane.getId() === PaneIdConstants.CANDLE
     const chartStore = pane.getChart().getChartStore()
-    const candleBarOptions = this.getCandleBarOptions(chartStore)
+    const candleBarOptions = this.getCandleBarOptions()
     if (candleBarOptions !== null) {
       let ohlcSize = 0
       let halfOhlcSize = 0
@@ -156,8 +154,8 @@ export default class CandleBarView extends ChildrenView {
     }
   }
 
-  protected getCandleBarOptions (chartStore: ChartStore): Nullable<CandleBarOptions> {
-    const candleStyles = chartStore.getOptions().styles.candle
+  protected getCandleBarOptions (): Nullable<CandleBarOptions> {
+    const candleStyles = this.getWidget().getPane().getChart().getStyles().candle
     return {
       type: candleStyles.type as Exclude<CandleType, CandleType.Area>,
       styles: candleStyles.bar

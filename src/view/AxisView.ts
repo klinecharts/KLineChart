@@ -28,7 +28,7 @@ export default abstract class AxisView<C extends Axis = Axis> extends View<C> {
     const pane = widget.getPane()
     const bounding = widget.getBounding()
     const axis = pane.getAxisComponent()
-    const styles: AxisStyle = this.getAxisStyles(pane.getChart().getOptions().styles)
+    const styles: AxisStyle = this.getAxisStyles(pane.getChart().getStyles())
     if (styles.show) {
       if (styles.axisLine.show) {
         this.createFigure({

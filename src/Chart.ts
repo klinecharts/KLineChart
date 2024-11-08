@@ -24,7 +24,7 @@ import { ActionType, type ActionCallback } from './common/Action'
 import type { LoadDataCallback, LoadDataMore } from './common/LoadDataCallback'
 import type Precision from './common/Precision'
 import type VisibleRange from './common/VisibleRange'
-import { type LayoutChild, LayoutChildType, type Options, type OverrideOptions } from './Options'
+import { type CustomApi, type DecimalFold, type LayoutChild, LayoutChildType, type Options, type ThousandsSeparator } from './Options'
 import Animation from './common/Animation'
 
 import { createId } from './common/utils/id'
@@ -35,7 +35,7 @@ import { logWarn } from './common/utils/logger'
 import { binarySearchNearest } from './common/utils/number'
 import { LoadDataType } from './common/LoadDataCallback'
 
-import ChartStore, { SCALE_MULTIPLIER } from './Store'
+import ChartStore, { SCALE_MULTIPLIER, type Store } from './Store'
 
 import CandlePane from './pane/CandlePane'
 import IndicatorPane from './pane/IndicatorPane'
@@ -55,6 +55,8 @@ import type { OverlayFilter, Overlay, OverlayCreate } from './component/Overlay'
 import { getIndicatorClass } from './extension/indicator/index'
 
 import Event from './Event'
+import type DeepPartial from './common/DeepPartial'
+import type { Styles } from './common/Styles'
 
 export enum DomPosition {
   Root = 'root',
@@ -67,41 +69,17 @@ export interface ConvertFinder {
   absolute?: boolean
 }
 
-export interface Chart {
+export interface Chart extends Store {
   id: string
   getDom: (paneId?: string, position?: DomPosition) => Nullable<HTMLElement>
   getSize: (paneId?: string, position?: DomPosition) => Nullable<Bounding>
-  setOptions: (options: OverrideOptions) => void
-  getOptions: () => Options
-  setPriceVolumePrecision: (pricePrecision: number, volumePrecision: number) => void
-  getPriceVolumePrecision: () => Precision
-  setOffsetRightDistance: (distance: number) => void
-  getOffsetRightDistance: () => number
-  setMaxOffsetLeftDistance: (distance: number) => void
-  setMaxOffsetRightDistance: (distance: number) => void
-  setLeftMinVisibleBarCount: (barCount: number) => void
-  setRightMinVisibleBarCount: (barCount: number) => void
-  setBarSpace: (space: number) => void
-  getBarSpace: () => number
-  getVisibleRange: () => VisibleRange
-  clearData: () => void
-  getDataList: () => KLineData[]
   applyNewData: (dataList: KLineData[], more?: boolean | Partial<LoadDataMore>) => void
   updateData: (data: KLineData) => void
-  setLoadMoreDataCallback: (cb: LoadDataCallback) => void
   createIndicator: (value: string | IndicatorCreate, isStack?: boolean, paneOptions?: PaneOptions) => Nullable<string>
-  overrideIndicator: (override: IndicatorCreate) => void
   getIndicators: (filter?: IndicatorFilter) => Map<string, Indicator[]>
-  removeIndicator: (filter?: IndicatorFilter) => void
   createOverlay: (value: string | OverlayCreate | Array<string | OverlayCreate>) => Nullable<string> | Array<Nullable<string>>
   getOverlays: (filter?: OverlayFilter) => Map<string, Overlay[]>
-  overrideOverlay: (override: Partial<OverlayCreate>) => void
-  removeOverlay: (filter?: OverlayFilter) => void
   setPaneOptions: (options: PaneOptions) => void
-  setZoomEnabled: (enabled: boolean) => void
-  isZoomEnabled: () => boolean
-  setScrollEnabled: (enabled: boolean) => void
-  isScrollEnabled: () => boolean
   scrollByDistance: (distance: number, animationDuration?: number) => void
   scrollToRealTime: (animationDuration?: number) => void
   scrollToDataIndex: (dataIndex: number, animationDuration?: number) => void
@@ -136,12 +114,12 @@ export default class ChartImp implements Chart {
     measureWidth: true,
     update: true,
     buildYAxisTick: false,
-    forceBuildAxisTick: false
+    forceBuildYAxisTick: false,
   }
 
   private _layoutPending = false
 
-  constructor (container: HTMLElement, options?: OverrideOptions) {
+  constructor (container: HTMLElement, options?: Options) {
     this._initContainer(container)
     this._chartEvent = new Event(this._chartContainer, this)
     this._chartStore = new ChartStore(this, options)
@@ -178,7 +156,7 @@ export default class ChartImp implements Chart {
     this._chartBounding.height = Math.floor(this._chartContainer.clientHeight)
   }
 
-  private _initPanes (options?: OverrideOptions): void {
+  private _initPanes (options?: Options): void {
     const layout = options?.layout ?? [{ type: LayoutChildType.Candle }]
     let candlePaneInitialized = false
     let xAxisPaneInitialized = false
@@ -383,7 +361,7 @@ export default class ChartImp implements Chart {
     measureWidth?: boolean
     update?: boolean
     buildYAxisTick?: boolean
-    forceBuildAxisTick?: boolean
+    forceBuildYAxisTick?: boolean
   }): void {
     if (options.measureHeight ?? false) {
       this._layoutOptions.measureHeight = options.measureHeight!
@@ -398,7 +376,7 @@ export default class ChartImp implements Chart {
       this._layoutOptions.buildYAxisTick = options.buildYAxisTick!
     }
     if (options.buildYAxisTick ?? false) {
-      this._layoutOptions.forceBuildAxisTick = options.forceBuildAxisTick!
+      this._layoutOptions.forceBuildYAxisTick = options.forceBuildYAxisTick!
     }
     if (!this._layoutPending) {
       this._layoutPending = true
@@ -412,10 +390,10 @@ export default class ChartImp implements Chart {
   }
 
   private _layout (): void {
-    const { measureHeight, measureWidth, update, buildYAxisTick, forceBuildAxisTick } = this._layoutOptions
+    const { measureHeight, measureWidth, update, buildYAxisTick, forceBuildYAxisTick } = this._layoutOptions
     if (measureHeight) {
       const totalHeight = this._chartBounding.height
-      const separatorSize = this._chartStore.getOptions().styles.separator.size
+      const separatorSize = this.getStyles().separator.size
       const xAxisHeight = this._xAxisPane.getAxisComponent().getAutoSize()
       let remainingHeight = totalHeight - xAxisHeight
       if (remainingHeight < 0) {
@@ -453,9 +431,9 @@ export default class ChartImp implements Chart {
       })
     }
     let forceMeasureWidth = measureWidth
-    if (buildYAxisTick || forceBuildAxisTick) {
+    if (buildYAxisTick || forceBuildYAxisTick) {
       this._drawPanes.forEach(pane => {
-        const success = (pane.getAxisComponent() as AxisImp).buildTicks(forceBuildAxisTick)
+        const success = (pane.getAxisComponent() as AxisImp).buildTicks(forceBuildYAxisTick)
         if (!forceMeasureWidth) {
           forceMeasureWidth = success
         }
@@ -463,7 +441,7 @@ export default class ChartImp implements Chart {
     }
     if (forceMeasureWidth) {
       const totalWidth = this._chartBounding.width
-      const styles = this._chartStore.getOptions().styles
+      const styles = this.getStyles()
 
       let leftYAxisWidth = 0
       let leftYAxisOutside = true
@@ -531,7 +509,7 @@ export default class ChartImp implements Chart {
       measureWidth: false,
       update: false,
       buildYAxisTick: false,
-      forceBuildAxisTick: false
+      forceBuildYAxisTick: false
     }
   }
 
@@ -615,29 +593,71 @@ export default class ChartImp implements Chart {
     return null
   }
 
-  setPriceVolumePrecision (pricePrecision: number, volumePrecision: number): void {
-    this._chartStore.setPrecision({ price: pricePrecision, volume: volumePrecision })
+  setPrecision (precision: Partial<Precision>): void {
+    this._chartStore.setPrecision(precision)
   }
 
-  getPriceVolumePrecision (): Precision {
+  getPrecision (): Precision {
     return this._chartStore.getPrecision()
   }
 
-  setOptions (options: OverrideOptions): void {
-    this._chartStore.setOptions(options)
-    const axis = (this._xAxisPane.getAxisComponent() as unknown as AxisImp)
-    axis.buildTicks(true)
+  setStyles (value: string | DeepPartial<Styles>): void {
+    this._setOptions(() => {
+      this._chartStore.setStyles(value)
+    })
+  }
+
+  getStyles (): Styles { return this._chartStore.getStyles() }
+
+  setCustomApi (api: Partial<CustomApi>): void {
+    this._setOptions(() => {
+      this._chartStore.setCustomApi(api)
+    })
+  }
+
+  getCustomApi (): CustomApi { return this._chartStore.getCustomApi() }
+
+  setLocale (locale: string): void {
+    this._setOptions(() => {
+      this._chartStore.setLocale(locale)
+    })
+  }
+
+  getLocale (): string { return this._chartStore.getLocale() }
+
+  setTimezone (timezone: string): void {
+    this._setOptions(() => {
+      this._chartStore.setTimezone(timezone)
+    })
+  }
+
+  getTimezone (): string { return this._chartStore.getTimezone() }
+
+  setThousandsSeparator (thousandsSeparator: Partial<ThousandsSeparator>): void {
+    this._setOptions(() => {
+      this._chartStore.setThousandsSeparator(thousandsSeparator)
+    })
+  }
+
+  getThousandsSeparator (): ThousandsSeparator { return this._chartStore.getThousandsSeparator() }
+
+  setDecimalFold (decimalFold: Partial<DecimalFold>): void {
+    this._setOptions(() => {
+      this._chartStore.setDecimalFold(decimalFold)
+    })
+  }
+
+  getDecimalFold (): DecimalFold { return this._chartStore.getDecimalFold() }
+
+  _setOptions (fuc: () => void): void {
+    fuc()
     this.layout({
       measureHeight: true,
       measureWidth: true,
       update: true,
       buildYAxisTick: true,
-      forceBuildAxisTick: true
+      forceBuildYAxisTick: true
     })
-  }
-
-  getOptions (): Options {
-    return this._chartStore.getOptions()
   }
 
   setOffsetRightDistance (distance: number): void {
@@ -693,7 +713,7 @@ export default class ChartImp implements Chart {
   }
 
   clearData (): void {
-    this._chartStore.clear()
+    this._chartStore.clearData()
   }
 
   getDataList (): KLineData[] {
@@ -747,25 +767,22 @@ export default class ChartImp implements Chart {
         measureWidth: true,
         update: true,
         buildYAxisTick: true,
-        forceBuildAxisTick: true
+        forceBuildYAxisTick: true
       })
     }
 
     return options.id
   }
 
-  overrideIndicator (override: IndicatorCreate): void {
-    const result = this._chartStore.overrideIndicator(override)
-    if (result) {
-      this.layout({ update: true })
-    }
+  overrideIndicator (override: IndicatorCreate): boolean {
+    return this._chartStore.overrideIndicator(override)
   }
 
   getIndicators (filter?: IndicatorFilter): Map<string, Indicator[]> {
     return this._chartStore.getIndicatorsByFilter(filter ?? {})
   }
 
-  removeIndicator (filter?: IndicatorFilter): void {
+  removeIndicator (filter?: IndicatorFilter): boolean {
     const removed = this._chartStore.removeIndicator(filter ?? {})
     if (removed) {
       let shouldMeasureHeight = false
@@ -819,9 +836,10 @@ export default class ChartImp implements Chart {
         measureWidth: true,
         update: true,
         buildYAxisTick: true,
-        forceBuildAxisTick: true
+        forceBuildYAxisTick: true
       })
     }
+    return removed
   }
 
   createOverlay (value: string | OverlayCreate | Array<string | OverlayCreate>): Nullable<string> | Array<Nullable<string>> {
@@ -864,12 +882,12 @@ export default class ChartImp implements Chart {
     return this._chartStore.getOverlaysByFilter(filter ?? {})
   }
 
-  overrideOverlay (override: Partial<OverlayCreate>): void {
-    this._chartStore.overrideOverlay(override)
+  overrideOverlay (override: Partial<OverlayCreate>): boolean {
+    return this._chartStore.overrideOverlay(override)
   }
 
-  removeOverlay (filter?: OverlayFilter): void {
-    this._chartStore.removeOverlay(filter ?? {})
+  removeOverlay (filter?: OverlayFilter): boolean {
+    return this._chartStore.removeOverlay(filter ?? {})
   }
 
   setPaneOptions (options: PaneOptions): void {
@@ -984,7 +1002,7 @@ export default class ChartImp implements Chart {
         measureWidth: true,
         update: true,
         buildYAxisTick: true,
-        forceBuildAxisTick: true
+        forceBuildYAxisTick: true
       })
     }
   }
@@ -994,7 +1012,7 @@ export default class ChartImp implements Chart {
   }
 
   isZoomEnabled (): boolean {
-    return this._chartStore.getZoomEnabled()
+    return this._chartStore.isZoomEnabled()
   }
 
   setScrollEnabled (enabled: boolean): void {
@@ -1002,7 +1020,7 @@ export default class ChartImp implements Chart {
   }
 
   isScrollEnabled (): boolean {
-    return this._chartStore.getScrollEnabled()
+    return this._chartStore.isScrollEnabled()
   }
 
   scrollByDistance (distance: number, animationDuration?: number): void {
@@ -1188,7 +1206,8 @@ export default class ChartImp implements Chart {
       measureWidth: true,
       update: true,
       buildYAxisTick: true,
-      forceBuildAxisTick: true
+      forceBuildYAxisTick: true,
+
     })
   }
 

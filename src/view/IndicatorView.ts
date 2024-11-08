@@ -18,22 +18,21 @@ import { formatValue } from '../common/utils/format'
 import { isNumber, isValid } from '../common/utils/typeChecks'
 import type Coordinate from '../common/Coordinate'
 
-import type ChartStore from '../Store'
-
 import { eachFigures, type IndicatorFigure, type IndicatorFigureAttrs, type IndicatorFigureStyle } from '../component/Indicator'
 
 import CandleBarView, { type CandleBarOptions } from './CandleBarView'
 
 export default class IndicatorView extends CandleBarView {
-  override getCandleBarOptions (chartStore: ChartStore): Nullable<CandleBarOptions> {
+  override getCandleBarOptions (): Nullable<CandleBarOptions> {
     const pane = this.getWidget().getPane()
     const yAxis = pane.getAxisComponent()
     if (!yAxis.isInCandle()) {
+      const chartStore = pane.getChart().getChartStore()
       const indicators = chartStore.getIndicatorsByPaneId(pane.getId())
       for (const indicator of indicators) {
         if (indicator.shouldOhlc && indicator.visible) {
           const indicatorStyles = indicator.styles
-          const defaultStyles = chartStore.getOptions().styles.indicator
+          const defaultStyles = chartStore.getStyles().indicator
           const upColor = formatValue(indicatorStyles, 'ohlc.upColor', defaultStyles.ohlc.upColor) as string
           const downColor = formatValue(indicatorStyles, 'ohlc.downColor', defaultStyles.ohlc.downColor) as string
           const noChangeColor = formatValue(indicatorStyles, 'ohlc.noChangeColor', defaultStyles.ohlc.noChangeColor) as string
@@ -68,7 +67,7 @@ export default class IndicatorView extends CandleBarView {
     const chartStore = chart.getChartStore()
     const dataList = chartStore.getDataList()
     const indicators = chartStore.getIndicatorsByPaneId(pane.getId())
-    const defaultStyles = chartStore.getOptions().styles.indicator
+    const defaultStyles = chartStore.getStyles().indicator
     ctx.save()
     indicators.forEach(indicator => {
       if (indicator.visible) {

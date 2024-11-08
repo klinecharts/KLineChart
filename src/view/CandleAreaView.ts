@@ -53,7 +53,7 @@ export default class CandleAreaView extends ChildrenView {
     const lastDataIndex = dataList.length - 1
     const bounding = widget.getBounding()
     const yAxis = pane.getAxisComponent()
-    const styles = chart.getOptions().styles.candle.area
+    const styles = chart.getStyles().candle.area
     const coordinates: Coordinate[] = []
     let minY = Number.MAX_SAFE_INTEGER
     let areaStartX: number = Number.MIN_SAFE_INTEGER

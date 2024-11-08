@@ -35,7 +35,7 @@ import { UpdateLevel } from './common/Updater'
 import type { MouseTouchEvent } from './common/SyntheticEvent'
 import { type LoadDataCallback, type LoadDataParams, LoadDataType } from './common/LoadDataCallback'
 
-import { type Options, DecimalFoldType, type OverrideOptions } from './Options'
+import { type Options, DecimalFoldType, type CustomApi, type ThousandsSeparator, type DecimalFold } from './Options'
 
 import { IndicatorDataState, type IndicatorCreate, type IndicatorFilter } from './component/Indicator'
 import type IndicatorImp from './component/Indicator'
@@ -111,44 +111,94 @@ const BAR_GAP_RATIO = 0.2
 
 export const SCALE_MULTIPLIER = 10
 
-export default class Store {
+export interface Store<B = number> {
+  setStyles: (value: string | DeepPartial<Styles>) => void
+  getStyles: () => Styles
+  setCustomApi: (api: Partial<CustomApi>) => void
+  getCustomApi: () => CustomApi
+  setLocale: (locale: string) => void
+  getLocale: () => string
+  setTimezone: (timezone: string) => void
+  getTimezone: () => string
+  setThousandsSeparator: (thousandsSeparator: Partial<ThousandsSeparator>) => void
+  getThousandsSeparator: () => ThousandsSeparator
+  setDecimalFold: (decimalFold: Partial<DecimalFold>) => void
+  getDecimalFold: () => DecimalFold
+  getPrecision: () => Precision
+  setPrecision: (precision: Partial<Precision>) => void
+  getDataList: () => KLineData[]
+  setOffsetRightDistance: (distance: number) => void
+  getOffsetRightDistance: () => number
+  setMaxOffsetLeftDistance: (distance: number) => void
+  setMaxOffsetRightDistance: (distance: number) => void
+  setLeftMinVisibleBarCount: (barCount: number) => void
+  setRightMinVisibleBarCount: (barCount: number) => void
+  setBarSpace: (space: number) => void
+  getBarSpace: () => B
+  getVisibleRange: () => VisibleRange
+  setLoadMoreDataCallback: (callback: LoadDataCallback) => void
+  overrideIndicator: (override: IndicatorCreate) => boolean
+  removeIndicator: (filter?: IndicatorFilter) => boolean
+  overrideOverlay: (override: Partial<OverlayCreate>) => boolean
+  removeOverlay: (filter?: OverlayFilter) => boolean
+  setZoomEnabled: (enabled: boolean) => void
+  isZoomEnabled: () => boolean
+  setScrollEnabled: (enabled: boolean) => void
+  isScrollEnabled: () => boolean
+  clearData: () => void
+}
+
+export default class StoreImp implements Store<BarSpace> {
   /**
    * Internal chart
    */
   private readonly _chart: Chart
 
   /**
-   * Chart options
+   * Styles
    */
-  private readonly _options = {
-    styles: getDefaultStyles(),
-    customApi: {
-      formatDate: (timestamp: number, format: string) => formatDateToString(this._dateTimeFormat, timestamp, format),
-      formatBigNumber
-    },
-    locale: 'en-US',
-    thousandsSeparator: {
-      sign: ',',
-      format: (value: string | number) => formatThousands(value, this._options.thousandsSeparator.sign)
-    },
-    decimalFold: {
-      type: DecimalFoldType.CurlyBracket,
-      threshold: 3,
-      format: (value: string | number) => {
-        const { type, threshold } = this._options.decimalFold
-        if (type === DecimalFoldType.CurlyBracket) {
-          return formatFoldDecimalForCurlyBracket(value, threshold)
-        }
-        return formatFoldDecimalForSubscript(value, threshold)
+  private readonly _styles = getDefaultStyles()
+
+  /**
+   * Custom api
+   */
+  private readonly _customApi = {
+    formatDate: (timestamp: number, format: string) => formatDateToString(this._dateTimeFormat, timestamp, format),
+    formatBigNumber
+  }
+
+  /**
+   * Locale
+   */
+  private _locale = 'en-US'
+
+  /**
+   * Thousands separator
+   */
+  private readonly _thousandsSeparator = {
+    sign: ',',
+    format: (value: string | number) => formatThousands(value, this._thousandsSeparator.sign)
+  }
+
+  /**
+   * Decimal fold
+   */
+  private readonly _decimalFold = {
+    type: DecimalFoldType.CurlyBracket,
+    threshold: 3,
+    format: (value: string | number) => {
+      const { type, threshold } = this._decimalFold
+      if (type === DecimalFoldType.CurlyBracket) {
+        return formatFoldDecimalForCurlyBracket(value, threshold)
       }
-    },
-    timezone: 'auto'
+      return formatFoldDecimalForSubscript(value, threshold)
+    }
   }
 
   /**
    * Price and volume precision
    */
-  private _precision = { price: 2, volume: 0 }
+  private readonly _precision = { price: 2, volume: 0 }
 
   /**
    * Data source
@@ -325,33 +375,75 @@ export default class Store {
     attrsIndex: -1
   }
 
-  constructor (chart: Chart, options?: OverrideOptions) {
+  constructor (chart: Chart, options?: Options) {
     this._chart = chart
     this._calcOptimalBarSpace()
     this._lastBarRightSideDiffBarCount = this._offsetRightDistance / this._barSpace
-    this.setOptions(options)
+    if (isValid(options)) {
+      const { styles, locale, timezone, customApi, thousandsSeparator, decimalFold } = options
+      this.setStyles(styles ?? '')
+      if (isString(locale)) {
+        this.setLocale(locale)
+      }
+      this.setTimezone(timezone ?? '')
+      if (isValid(customApi)) {
+        this.setCustomApi(customApi)
+      }
+      if (isValid(thousandsSeparator)) {
+        this.setThousandsSeparator(thousandsSeparator)
+      }
+      if (isValid(decimalFold)) {
+        this.setDecimalFold(decimalFold)
+      }
+    }
   }
 
-  setOptions (options?: OverrideOptions): void {
+  setStyles (value: string | DeepPartial<Styles>): void {
+    let styles: Nullable<DeepPartial<Styles>> = null
+    if (isString(styles)) {
+      styles = getStyles(styles)
+    } else {
+      styles = value as DeepPartial<Styles>
+    }
+    merge(this._styles, styles)
+    // `candle.tooltip.custom` should override
+    if (isArray(styles?.candle?.tooltip?.custom)) {
+      this._styles.candle.tooltip.custom = styles.candle.tooltip.custom as TooltipLegend[]
+    }
+  }
+
+  getStyles (): Styles { return this._styles }
+
+  setCustomApi (api: Partial<CustomApi>): void {
+    merge(this._customApi, api)
+  }
+
+  getCustomApi (): CustomApi { return this._customApi }
+
+  setLocale (locale: string): void { this._locale = locale }
+
+  getLocale (): string { return this._locale }
+
+  setTimezone (timezone: string): void {
     if (
       !isValid(this._dateTimeFormat) ||
-      (isString(options?.timezone) && options.timezone !== this._options.timezone)
+      (this.getTimezone() !== timezone)
     ) {
-      const dateTimeFormatOptions: Intl.DateTimeFormatOptions = {
+      const options: Intl.DateTimeFormatOptions = {
         hour12: false,
         year: 'numeric',
         month: '2-digit',
         day: '2-digit',
         hour: '2-digit',
         minute: '2-digit',
-        second: '2-digit'
+        second: '2-digit',
       }
-      if (isString(options?.timezone) && options.timezone !== 'auto') {
-        dateTimeFormatOptions.timeZone = options.timezone
+      if (timezone.length > 0) {
+        options.timeZone = timezone
       }
       let dateTimeFormat: Nullable<Intl.DateTimeFormat> = null
       try {
-        dateTimeFormat = new Intl.DateTimeFormat('en', dateTimeFormatOptions)
+        dateTimeFormat = new Intl.DateTimeFormat('en', options)
       } catch (e) {
         logWarn('', '', 'Timezone is error!!!')
       }
@@ -361,34 +453,27 @@ export default class Store {
         this._dateTimeFormat = dateTimeFormat
       }
     }
-    merge(this._options, options)
-    const styles = options?.styles
-    if (isValid(styles)) {
-      let ss: Nullable<DeepPartial<Styles>> = null
-      if (isString(styles)) {
-        ss = getStyles(styles)
-      } else {
-        ss = styles
-      }
-      // `candle.tooltip.custom` should override
-      if (isArray(ss?.candle?.tooltip?.custom)) {
-        this._options.styles.candle.tooltip.custom = ss.candle.tooltip.custom as TooltipLegend[]
-      }
-    }
   }
 
-  getOptions (): Options {
-    return this._options
+  getTimezone (): string { return this._dateTimeFormat.resolvedOptions().timeZone }
+
+  setThousandsSeparator (thousandsSeparator: Partial<ThousandsSeparator>): void {
+    merge(this._thousandsSeparator, thousandsSeparator)
   }
+
+  getThousandsSeparator (): ThousandsSeparator { return this._thousandsSeparator }
+
+  setDecimalFold (decimalFold: Partial<DecimalFold>): void { merge(this._decimalFold, decimalFold) }
+
+  getDecimalFold (): DecimalFold { return this._decimalFold }
 
   getPrecision (): Precision {
     return this._precision
   }
 
-  setPrecision (precision: Precision): this {
-    this._precision = precision
+  setPrecision (precision: Partial<Precision>): void {
+    merge(this._precision, precision)
     this._synchronizeIndicatorSeriesPrecision()
-    return this
   }
 
   getDataList (): KLineData[] {
@@ -415,7 +500,7 @@ export default class Store {
       dataLengthChange = data.length
       switch (type) {
         case LoadDataType.Init: {
-          this.clear()
+          this.clearData()
           this._dataList = data
           this._loadDataMore.backward = more?.forward ?? false
           this._loadDataMore.forward = more?.forward ?? false
@@ -549,7 +634,7 @@ export default class Store {
   }
 
   private _adjustVisibleRangeTimeTickList (): void {
-    const tickTextStyles = this._options.styles.xAxis.tickText
+    const tickTextStyles = this._styles.xAxis.tickText
     const width = Math.max(
       Math.ceil(this._totalBarSpace / 10),
       calcTextWidth('0000-00-00 00:00', tickTextStyles.size, tickTextStyles.weight, tickTextStyles.family)
@@ -770,33 +855,28 @@ export default class Store {
     return this._lastBarRightSideDiffBarCount
   }
 
-  setLastBarRightSideDiffBarCount (barCount: number): this {
+  setLastBarRightSideDiffBarCount (barCount: number): void {
     this._lastBarRightSideDiffBarCount = barCount
-    return this
   }
 
-  setMaxOffsetLeftDistance (distance: number): this {
+  setMaxOffsetLeftDistance (distance: number): void {
     this._scrollLimitRole = ScrollLimitRole.Distance
     this._maxOffsetDistance.left = distance
-    return this
   }
 
-  setMaxOffsetRightDistance (distance: number): this {
+  setMaxOffsetRightDistance (distance: number): void {
     this._scrollLimitRole = ScrollLimitRole.Distance
     this._maxOffsetDistance.right = distance
-    return this
   }
 
-  setLeftMinVisibleBarCount (barCount: number): this {
+  setLeftMinVisibleBarCount (barCount: number): void {
     this._scrollLimitRole = ScrollLimitRole.BarCount
     this._minVisibleBarCount.left = barCount
-    return this
   }
 
-  setRightMinVisibleBarCount (barCount: number): this {
+  setRightMinVisibleBarCount (barCount: number): void {
     this._scrollLimitRole = ScrollLimitRole.BarCount
     this._minVisibleBarCount.right = barCount
-    return this
   }
 
   getVisibleRange (): VisibleRange {
@@ -884,21 +964,19 @@ export default class Store {
     }
   }
 
-  setZoomEnabled (enabled: boolean): this {
+  setZoomEnabled (enabled: boolean): void {
     this._zoomEnabled = enabled
-    return this
   }
 
-  getZoomEnabled (): boolean {
+  isZoomEnabled (): boolean {
     return this._zoomEnabled
   }
 
-  setScrollEnabled (enabled: boolean): this {
+  setScrollEnabled (enabled: boolean): void {
     this._scrollEnabled = enabled
-    return this
   }
 
-  getScrollEnabled (): boolean {
+  isScrollEnabled (): boolean {
     return this._scrollEnabled
   }
 
@@ -1163,7 +1241,12 @@ export default class Store {
     if (sortFlag) {
       this._sortIndicators()
     }
-    return updateFlag
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- ignore
+    if (updateFlag) {
+      this._chart.layout({ update: true })
+      return true
+    }
+    return false
   }
 
   getOverlaysByFilter (filter: OverlayFilter): Map<string, OverlayImp[]> {
@@ -1300,7 +1383,7 @@ export default class Store {
     }
   }
 
-  overrideOverlay (create: Partial<OverlayCreate>): void {
+  overrideOverlay (create: Partial<OverlayCreate>): boolean {
     let sortFlag = false
 
     const updatePaneIds: string[] = []
@@ -1329,10 +1412,12 @@ export default class Store {
         this._chart.updatePane(UpdateLevel.Overlay, paneId)
       })
       this._chart.updatePane(UpdateLevel.Overlay, PaneIdConstants.X_AXIS)
+      return true
     }
+    return false
   }
 
-  removeOverlay (filter: OverlayFilter): void {
+  removeOverlay (filter: OverlayFilter): boolean {
     const updatePaneIds: string[] = []
     const filterMap = this.getOverlaysByFilter(filter)
     filterMap.forEach((overlays, paneId) => {
@@ -1360,7 +1445,9 @@ export default class Store {
         this._chart.updatePane(UpdateLevel.Overlay, paneId)
       })
       this._chart.updatePane(UpdateLevel.Overlay, PaneIdConstants.X_AXIS)
+      return true
     }
+    return false
   }
 
   setPressedOverlayInfo (info: EventOverlayInfo): void {
@@ -1444,7 +1531,7 @@ export default class Store {
     return this._progressOverlayInfo?.overlay.isDrawing() ?? false
   }
 
-  clear (): void {
+  clearData (): void {
     this._loadDataMore.backward = false
     this._loadDataMore.forward = false
     this._loading = true

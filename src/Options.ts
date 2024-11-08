@@ -75,15 +75,11 @@ export interface ThousandsSeparator {
 }
 
 export interface Options {
-  locale: string
-  timezone: string
-  styles: Styles
-  customApi: CustomApi
-  thousandsSeparator: ThousandsSeparator
-  decimalFold: DecimalFold
-}
-
-export type OverrideOptions = DeepPartial<Omit<Options, 'styles'>> & {
-  layout?: LayoutChild[]
+  locale?: string
+  timezone?: string
   styles?: string | DeepPartial<Styles>
+  customApi?: Partial<CustomApi>
+  thousandsSeparator?: Partial<ThousandsSeparator>
+  decimalFold?: Partial<DecimalFold>
+  layout?: LayoutChild[]
 }

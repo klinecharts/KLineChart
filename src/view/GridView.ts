@@ -23,13 +23,13 @@ export default class GridView extends View {
     const chart = pane.getChart()
     const bounding = widget.getBounding()
 
-    const gridStyles = chart.getOptions().styles.grid
-    const show = gridStyles.show
+    const styles = chart.getStyles().grid
+    const show = styles.show
 
     if (show) {
       ctx.save()
       ctx.globalCompositeOperation = 'destination-over'
-      const horizontalStyles = gridStyles.horizontal
+      const horizontalStyles = styles.horizontal
       const horizontalShow = horizontalStyles.show
       if (horizontalShow) {
         const yAxis = pane.getAxisComponent()
@@ -45,7 +45,7 @@ export default class GridView extends View {
           styles: horizontalStyles
         })?.draw(ctx)
       }
-      const verticalStyles = gridStyles.vertical
+      const verticalStyles = styles.vertical
       const verticalShow = verticalStyles.show
       if (verticalShow) {
         const xAxis = chart.getXAxisPane().getAxisComponent()

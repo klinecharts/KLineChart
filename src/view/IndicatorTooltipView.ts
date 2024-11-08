@@ -12,22 +12,17 @@
  * limitations under the License.
  */
 
-import type Nullable from '../common/Nullable'
-import type { KLineData } from '../common/Data'
 import type Crosshair from '../common/Crosshair'
-import { type IndicatorStyle, type TooltipStyle, type TooltipIconStyle, type TooltipTextStyle, type TooltipLegend, TooltipShowRule, type TooltipLegendChild, TooltipIconPosition } from '../common/Styles'
+import { type TooltipStyle, type TooltipIconStyle, type TooltipTextStyle, type TooltipLegend, TooltipShowRule, type TooltipLegendChild, TooltipIconPosition } from '../common/Styles'
 import { ActionType } from '../common/Action'
 import { formatPrecision } from '../common/utils/format'
 import { isValid, isObject, isString, isNumber, isFunction } from '../common/utils/typeChecks'
 import { createFont } from '../common/utils/canvas'
 import type Coordinate from '../common/Coordinate'
 
-import type { Options } from '../Options'
-
 import type { YAxis } from '../component/YAxis'
 
 import type { Indicator, IndicatorFigure, IndicatorFigureStyle, IndicatorTooltipData } from '../component/Indicator'
-import type IndicatorImp from '../component/Indicator'
 import { eachFigures } from '../component/Indicator'
 
 import type { TooltipIcon } from '../Store'
@@ -53,46 +48,38 @@ export default class IndicatorTooltipView extends View<YAxis> {
     const crosshair = chartStore.getCrosshair()
     if (isValid(crosshair.kLineData)) {
       const bounding = widget.getBounding()
-      const options = chartStore.getOptions()
-      const indicators = chartStore.getIndicatorsByPaneId(pane.getId())
-      const activeIcon = chartStore.getActiveTooltipIcon()
-      const defaultStyles = options.styles.indicator
-      const { offsetLeft, offsetTop, offsetRight } = defaultStyles.tooltip
+      const { offsetLeft, offsetTop, offsetRight } = chartStore.getStyles().indicator.tooltip
       this.drawIndicatorTooltip(
-        ctx, pane.getId(), chartStore.getDataList(),
-        crosshair, activeIcon, indicators, options, offsetLeft, offsetTop,
-        bounding.width - offsetRight, defaultStyles
+        ctx, offsetLeft, offsetTop,
+        bounding.width - offsetRight,
       )
     }
   }
 
   protected drawIndicatorTooltip (
     ctx: CanvasRenderingContext2D,
-    paneId: string,
-    dataList: KLineData[],
-    crosshair: Crosshair,
-    activeTooltipIcon: Nullable<TooltipIcon>,
-    indicators: IndicatorImp[],
-    options: Options,
     left: number,
     top: number,
     maxWidth: number,
-    styles: IndicatorStyle
   ): number {
+    const pane = this.getWidget().getPane()
+    const chartStore = pane.getChart().getChartStore()
+    const styles = chartStore.getStyles().indicator
     const tooltipStyles = styles.tooltip
-    if (this.isDrawTooltip(crosshair, tooltipStyles)) {
+    if (this.isDrawTooltip(chartStore.getCrosshair(), tooltipStyles)) {
+      const indicators = chartStore.getIndicatorsByPaneId(pane.getId())
       const tooltipTextStyles = tooltipStyles.text
       indicators.forEach(indicator => {
         let prevRowHeight = 0
         const coordinate = { x: left, y: top }
-        const { name, calcParamsText, legends, icons } = this.getIndicatorTooltipData(dataList, crosshair, indicator, options, styles)
+        const { name, calcParamsText, legends, icons } = this.getIndicatorTooltipData(indicator)
         const nameValid = name.length > 0
         const legendValid = legends.length > 0
         if (nameValid || legendValid) {
           const [leftIcons, middleIcons, rightIcons] = this.classifyTooltipIcons(icons)
           prevRowHeight = this.drawStandardTooltipIcons(
-            ctx, activeTooltipIcon, leftIcons,
-            coordinate, paneId, indicator.name,
+            ctx, leftIcons,
+            coordinate, indicator.name,
             left, prevRowHeight, maxWidth
           )
 
@@ -114,8 +101,8 @@ export default class IndicatorTooltipView extends View<YAxis> {
           }
 
           prevRowHeight = this.drawStandardTooltipIcons(
-            ctx, activeTooltipIcon, middleIcons,
-            coordinate, paneId, indicator.name,
+            ctx, middleIcons,
+            coordinate, indicator.name,
             left, prevRowHeight, maxWidth
           )
 
@@ -128,8 +115,8 @@ export default class IndicatorTooltipView extends View<YAxis> {
 
           // draw right icons
           prevRowHeight = this.drawStandardTooltipIcons(
-            ctx, activeTooltipIcon, rightIcons,
-            coordinate, paneId, indicator.name,
+            ctx, rightIcons,
+            coordinate, indicator.name,
             left, prevRowHeight, maxWidth
           )
           top = coordinate.y + prevRowHeight
@@ -141,10 +128,8 @@ export default class IndicatorTooltipView extends View<YAxis> {
 
   protected drawStandardTooltipIcons (
     ctx: CanvasRenderingContext2D,
-    activeIcon: Nullable<TooltipIcon>,
     icons: TooltipIconStyle[],
     coordinate: Coordinate,
-    paneId: string,
     indicatorName: string,
     left: number,
     prevRowHeight: number,
@@ -170,6 +155,10 @@ export default class IndicatorTooltipView extends View<YAxis> {
       } else {
         prevRowHeight = Math.max(prevRowHeight, height)
       }
+      const pane = this.getWidget().getPane()
+      const paneId = pane.getId()
+      const activeIcon = pane.getChart().getChartStore().getActiveTooltipIcon()
+      
       icons.forEach(icon => {
         const {
           marginLeft = 0, marginTop = 0, marginRight = 0,
@@ -251,13 +240,9 @@ export default class IndicatorTooltipView extends View<YAxis> {
       (showRule === TooltipShowRule.FollowCross && isString(crosshair.paneId))
   }
 
-  protected getIndicatorTooltipData (
-    dataList: KLineData[],
-    crosshair: Crosshair,
-    indicator: Indicator,
-    options: Options,
-    styles: IndicatorStyle
-  ): IndicatorTooltipData {
+  protected getIndicatorTooltipData (indicator: Indicator): IndicatorTooltipData {
+    const chartStore = this.getWidget().getPane().getChart().getChartStore()
+    const styles = chartStore.getStyles().indicator
     const tooltipStyles = styles.tooltip
     const name = tooltipStyles.showName ? indicator.shortName : ''
     let calcParamsText = ''
@@ -268,14 +253,16 @@ export default class IndicatorTooltipView extends View<YAxis> {
 
     const tooltipData: IndicatorTooltipData = { name, calcParamsText, legends: [], icons: tooltipStyles.icons }
 
-    const dataIndex = crosshair.dataIndex!
+    const dataIndex = chartStore.getCrosshair().dataIndex!
     const result = indicator.result
 
-    const { customApi, decimalFold, thousandsSeparator } = options
+    const customApi = chartStore.getCustomApi()
+    const decimalFold = chartStore.getDecimalFold()
+    const thousandsSeparator = chartStore.getThousandsSeparator()
     const legends: TooltipLegend[] = []
     if (indicator.visible) {
       const data = result[dataIndex] ?? result[dataIndex - 1] ?? {}
-      eachFigures(dataList, indicator, dataIndex, styles, (figure: IndicatorFigure, figureStyles: Required<IndicatorFigureStyle>) => {
+      eachFigures(chartStore.getDataList(), indicator, dataIndex, styles, (figure: IndicatorFigure, figureStyles: Required<IndicatorFigureStyle>) => {
         if (isString(figure.title)) {
           const color = figureStyles.color
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment  -- ignore
@@ -299,8 +286,8 @@ export default class IndicatorTooltipView extends View<YAxis> {
       const { name: customName, calcParamsText: customCalcParamsText, legends: customLegends, icons: customIcons } = indicator.createTooltipDataSource({
         chart,
         indicator,
+        crosshair: chartStore.getCrosshair(),
         bounding: widget.getBounding(),
-        crosshair,
         xAxis: pane.getChart().getXAxisPane().getAxisComponent(),
         yAxis: pane.getAxisComponent()
       })

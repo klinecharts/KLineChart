@@ -24,8 +24,7 @@ export default class CandleLastPriceLabelView extends View {
     const pane = widget.getPane()
     const bounding = widget.getBounding()
     const chartStore = pane.getChart().getChartStore()
-    const { styles, decimalFold, thousandsSeparator } = chartStore.getOptions()
-    const priceMarkStyles = styles.candle.priceMark
+    const priceMarkStyles = chartStore.getStyles().candle.priceMark
     const lastPriceMarkStyles = priceMarkStyles.last
     const lastPriceMarkTextStyles = lastPriceMarkStyles.text
     if (priceMarkStyles.show && lastPriceMarkStyles.show && lastPriceMarkTextStyles.show) {
@@ -52,7 +51,7 @@ export default class CandleLastPriceLabelView extends View {
           ),
           precision.price
         )
-        text = decimalFold.format(thousandsSeparator.format(text))
+        text = chartStore.getDecimalFold().format(chartStore.getThousandsSeparator().format(text))
         let x = 0
         let textAlgin: CanvasTextAlign = 'left'
         if (yAxis.isFromZero()) {

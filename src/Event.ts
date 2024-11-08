@@ -611,7 +611,7 @@ export default class Event implements EventHandler {
   private _findWidgetByEvent (event: MouseTouchEvent): EventTriggerWidgetInfo {
     const { x, y } = event
     const separatorPanes = this._chart.getSeparatorPanes()
-    const separatorSize = this._chart.getChartStore().getOptions().styles.separator.size
+    const separatorSize = this._chart.getStyles().separator.size
     for (const [, pane] of separatorPanes) {
       const bounding = pane.getBounding()
       const top = bounding.top - Math.round((REAL_SEPARATOR_HEIGHT - separatorSize) / 2)

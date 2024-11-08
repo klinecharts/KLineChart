@@ -73,7 +73,7 @@ export default abstract class XAxisImp extends AxisImp implements XAxis {
 
   protected override createTicksImp (): AxisTick[] {
     const chartStore = this.getParent().getChart().getChartStore()
-    const formatDate = chartStore.getOptions().customApi.formatDate
+    const formatDate = chartStore.getCustomApi().formatDate
     const timeTickList = chartStore.getVisibleRangeTimeTickList()
     const ticks = timeTickList.map(({ dataIndex, weight, timestamp }) => {
       let text = ''
@@ -117,7 +117,7 @@ export default abstract class XAxisImp extends AxisImp implements XAxis {
   }
 
   override getAutoSize (): number {
-    const styles = this.getParent().getChart().getOptions().styles
+    const styles = this.getParent().getChart().getStyles()
     const xAxisStyles = styles.xAxis
     const height = xAxisStyles.size
     if (height !== 'auto') {
