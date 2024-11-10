@@ -32,27 +32,31 @@ onMounted(() => {
 </script>
 <style scoped>
 .banner {
+  --padding: 26px;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
   position: fixed;
-  padding: 0 12px;
+  padding: 0 var(--padding);
   top: 0;
   bottom: 0;
   left: 0;
   right: 0;
   z-index: 61;
   width: 100%;
-  height: 100%;
   height: var(--vp-layout-top-height);
   background-color: var(--vp-c-bg);
   overflow: hidden;
   margin: 0;
   color: var(--vp-c-indigo-1);
-  font-size: 14px;
+  font-size: 12px;
   border-bottom: solid 1px var(--vp-c-gutter);
   transition: background-color 0.15s;
+}
+
+.banner span {
+  line-height: normal;
 }
 
 .banner.top {
@@ -61,7 +65,7 @@ onMounted(() => {
 
 .banner-close {
   position: absolute;
-  right: 32px;
+  right: calc(var(--padding) - 8px);
   color: var(--vp-c-text-1);
   font-size: 20px;
   font-weight: bold;
@@ -75,9 +79,9 @@ onMounted(() => {
   font-weight: 500;
 }
 
-@media (max-width: 767px) {
+@media (min-width: 640px) {
   .banner {
-    font-size: 12px;
+    font-size: 14px;
   }
 }
 </style>

@@ -1,11 +1,14 @@
 
 {
-  "name": "klinecharts-docs",
+  "name": "docs",
   "type": "module",
   "private": false,
   "scripts": {
     "dev": "vitepress dev",
     "build": "vitepress build",
     "preview": "vitepress preview"
+  },
+  "dependencies": {
+    "klinecharts": "workspace:*"
   }
 }

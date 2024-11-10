@@ -7,7 +7,14 @@
  * Colors
  * -------------------------------------------------------------------------- */
 
- :root {
+@font-face {
+  font-family: "SourceCode";
+  src: url("/fonts/SourceCode.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+}
+
+:root {
   --vp-c-indigo-1: #E6AC00;
   --vp-c-indigo-2: #d6ac2e;
   --vp-c-indigo-3: #c9aa4e;
@@ -32,10 +39,9 @@
   --vp-button-brand-active-border: var(--vp-c-indigo-2);
   --vp-button-brand-active-bg: var(--vp-button-brand-bg);
 
-  --vp-custom-block-font-size: 13px;
-  --vp-custom-block-code-font-size: 12px;
-  --vp-code-line-height: 1.6;
-  --vp-code-font-size: 1em;
+  --vp-code-font-size: 14px;
+  --vp-font-family-mono: SourceCode, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --vp-font-family-base: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Arial", "sans-serif";
 
   --vp-home-hero-bg: linear-gradient(180deg, rgba(238, 238, 238, 0) 0%, rgba(234, 204, 117, 0.2) 52%, rgba(230, 172, 0, 0) 100%);
   --vp-c-bg-soft: #FAFAFA;
@@ -55,7 +61,8 @@
 }
 
 body {
-  font-size: 14px;
+  font-feature-settings: normal;
+  font-variation-settings: normal;
 }
 
 .VPFeatures .VPFeature {
@@ -125,5 +132,9 @@ body {
 
 .vp-code-group .tabs label svg {
   margin-right: 8px;
+}
+
+.vp-doc :not(pre) > code {
+  padding: 2px 6px;
 }
 

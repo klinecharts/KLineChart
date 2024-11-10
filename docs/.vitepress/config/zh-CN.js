@@ -9,11 +9,18 @@ export default defineConfig({
   themeConfig: {
     nav: [
       {
-        text: '文档',
+        text: '指南',
         link: '/guide/introduction',
         activeMatch: 'guide'
       },
-      { text: '示例', link: '/sample/basic', activeMatch: 'sample' },
+      {
+        text: 'API',
+        activeMatch: 'api',
+        items: [
+          { text: '图表API', link: '/api/chart/init' },
+          { text: '实例API', link: '/api/instance/init' }
+        ]
+      },
       { text: '预览', link: 'https://preview.klinecharts.com' },
       { text: '定制', link: '/customize' },
       { text: '赞助', link: '/sponsor' },
@@ -99,6 +106,24 @@ export default defineConfig({
             
           ]
         }
+      ],
+      '/api/chart/': [
+        { text: 'init', link: '/api/chart/init' },
+        { text: 'dispose', link: '/api/chart/dispose' },
+        { text: 'version', link: '/api/chart/version' },
+        { text: 'registerLocale', link: '/api/chart/registerLocale' },
+        { text: 'getSupportedLocales', link: '/api/chart/getSupportedLocales' },
+        { text: 'registerStyles', link: '/api/chart/registerStyles' },
+        { text: 'registerFigure', link: '/api/chart/registerFigure' },
+        { text: 'getSupportedFigures', link: '/api/chart/getSupportedFigures' },
+        { text: 'getFigureClass', link: '/api/chart/getFigureClass' },
+        { text: 'registerIndicator', link: '/api/chart/registerIndicator' },
+        { text: 'getSupportedIndicators', link: '/api/chart/getSupportedIndicators' },
+        { text: 'registerOverlay', link: '/api/chart/registerOverlay' },
+        { text: 'getSupportedOverlays', link: '/api/chart/getSupportedOverlays' },
+        { text: 'getOverlayClass', link: '/api/chart/getOverlayClass' },
+        { text: 'registerXAxis', link: '/api/chart/registerXAxis' },
+        { text: 'registerYAxis', link: '/api/chart/registerYAxis' }
       ],
       '/sample/': [
         { text: '基础展示', link: '/sample/basic' },

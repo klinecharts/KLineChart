@@ -177,7 +177,7 @@ const { lang } = useData()
 
 @media (min-width: 960px) {
   .hero {
-    padding: calc(var(--vp-nav-height) + var(--vp-layout-top-height, 0px) + 80px) 64px 100px 64px;
+    padding: calc(var(--vp-nav-height) + var(--vp-layout-top-height, 0px) + 100px) 64px 100px 64px;
   }
   .element.left {
     top: 150px;

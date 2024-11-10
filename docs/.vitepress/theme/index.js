@@ -1,5 +1,5 @@
 // https://vitepress.dev/guide/custom-theme
-import Theme from 'vitepress/theme'
+import Theme from 'vitepress/theme-without-fonts'
 
 import Layout from '../../@views/Layout.vue'
 
@@ -12,6 +12,5 @@ export default {
   Layout: Layout,
   enhanceApp({ app }) {
     app.component('Badge', Badge)
-    // ...
   }
 }

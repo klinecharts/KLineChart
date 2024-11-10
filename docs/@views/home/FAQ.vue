@@ -81,7 +81,7 @@ watch(lang, (newLang) => {
 
 <template>
   <Section
-    title="FAQ"
+    :title="lang === 'zh-CN' ? '常见问题' : 'FAQ'"
     :subTitle="lang === 'zh-CN' ? '开发过程遇到的问题，大多都可以从以下内容中找到答案。' : 'Most of the problems encountered during the development process can be answered from the following content.'">
     <ul class="faq">
       <li class="item" v-for="item in items">
@@ -156,6 +156,7 @@ watch(lang, (newLang) => {
   font-size: 14px;
   padding-top: 12px;
   color: var(--vp-c-text-2);
+  word-break: break-word;
 }
 
 .icon {

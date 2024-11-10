@@ -5,7 +5,7 @@ import { nextTick, provide } from 'vue'
 
 import Banner from './Banner.vue'
 import HomeHero from './home/Hero.vue'
-import HomeCreateChart from './home/CreateChart.vue'
+import HomeCreateChart from './home/create-chart/index.vue'
 import HomeFAQ from './home/FAQ.vue'
 import HomeSponsor from './home/Sponsor.vue'
 import NotFound from './NotFound.vue'
