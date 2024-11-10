@@ -56,7 +56,7 @@ const simpleTag: OverlayTemplate = {
       }
     }
     if (!isValid(text) && isNumber(overlay.points[0].value)) {
-      text = formatPrecision(overlay.points[0].value, chart.getPriceVolumePrecision().price)
+      text = formatPrecision(overlay.points[0].value, chart.getPrecision().price)
     }
     return { type: 'text', attrs: { x, y: coordinates[0].y, text, align: textAlign, baseline: 'middle' } }
   }

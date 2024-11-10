@@ -23,14 +23,13 @@ const priceLine: OverlayTemplate = {
   createPointFigures: ({ chart, coordinates, bounding, overlay, yAxis }) => {
     let precision = 0
     if (yAxis?.isInCandle() ?? true) {
-      precision = chart.getPriceVolumePrecision().price
+      precision = chart.getPrecision().price
     } else {
       const indicators = chart.getIndicators({ paneId: overlay.paneId }).get(overlay.paneId) ?? []
       indicators.forEach(indicator => {
         precision = Math.max(precision, indicator.precision)
       })
     }
-    const { decimalFold, thousandsSeparator } = chart.getOptions()
     const { value = 0 } = (overlay.points)[0]
     return [
       {
@@ -43,7 +42,7 @@ const priceLine: OverlayTemplate = {
         attrs: {
           x: coordinates[0].x,
           y: coordinates[0].y,
-          text: decimalFold.format(thousandsSeparator.format(value.toFixed(precision))),
+          text: chart.getDecimalFold().format(chart.getThousandsSeparator().format(value.toFixed(precision))),
           baseline: 'bottom'
         }
       }

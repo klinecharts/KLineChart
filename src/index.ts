@@ -41,18 +41,18 @@ import { ActionType } from './common/Action'
 import { IndicatorSeries } from './component/Indicator'
 import { OverlayMode } from './component/Overlay'
 
-import { FormatDateType, type OverrideOptions } from './Options'
+import { FormatDateType, type Options } from './Options'
 import ChartImp, { type Chart, DomPosition } from './Chart'
 
-import { checkCoordinateOnArc, drawArc } from './extension/figure/arc'
-import { checkCoordinateOnCircle, drawCircle } from './extension/figure/circle'
+import { checkCoordinateOnArc } from './extension/figure/arc'
+import { checkCoordinateOnCircle } from './extension/figure/circle'
 import {
-  checkCoordinateOnLine, drawLine,
+  checkCoordinateOnLine,
   getLinearYFromSlopeIntercept, getLinearSlopeIntercept, getLinearYFromCoordinates
 } from './extension/figure/line'
-import { checkCoordinateOnPolygon, drawPolygon } from './extension/figure/polygon'
-import { checkCoordinateOnRect, drawRect } from './extension/figure/rect'
-import { checkCoordinateOnText, drawText } from './extension/figure/text'
+import { checkCoordinateOnPolygon } from './extension/figure/polygon'
+import { checkCoordinateOnRect } from './extension/figure/rect'
+import { checkCoordinateOnText } from './extension/figure/text'
 
 import { registerFigure, getSupportedFigures, getFigureClass } from './extension/figure/index'
 import { registerIndicator, getSupportedIndicators } from './extension/indicator/index'
@@ -79,7 +79,7 @@ function version (): string {
  * @param options
  * @returns {Chart}
  */
-function init (ds: HTMLElement | string, options?: OverrideOptions): Nullable<Chart> {
+function init (ds: HTMLElement | string, options?: Options): Nullable<Chart> {
   logTag()
   let dom: Nullable<HTMLElement> = null
   if (isString(ds)) {
@@ -152,13 +152,7 @@ const utils = {
   checkCoordinateOnLine,
   checkCoordinateOnPolygon,
   checkCoordinateOnRect,
-  checkCoordinateOnText,
-  drawArc,
-  drawCircle,
-  drawLine,
-  drawPolygon,
-  drawRect,
-  drawText
+  checkCoordinateOnText
 }
 
 export {

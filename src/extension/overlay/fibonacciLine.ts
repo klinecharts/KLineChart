@@ -31,7 +31,7 @@ const fibonacciLine: OverlayTemplate = {
     if (coordinates.length > 0) {
       let precision = 0
       if (yAxis?.isInCandle() ?? true) {
-        precision = chart.getPriceVolumePrecision().price
+        precision = chart.getPrecision().price
       } else {
         const indicators = chart.getIndicators({ paneId: overlay.paneId }).get(overlay.paneId) ?? []
         indicators.forEach(indicator => {
@@ -43,13 +43,12 @@ const fibonacciLine: OverlayTemplate = {
       const startX = 0
       const endX = bounding.width
       if (coordinates.length > 1 && isNumber(points[0].value) && isNumber(points[1].value)) {
-        const { decimalFold, thousandsSeparator } = chart.getOptions()
         const percents = [1, 0.786, 0.618, 0.5, 0.382, 0.236, 0]
         const yDif = coordinates[0].y - coordinates[1].y
         const valueDif = points[0].value - points[1].value
         percents.forEach(percent => {
           const y = coordinates[1].y + yDif * percent
-          const value = decimalFold.format(thousandsSeparator.format(((points[1].value ?? 0) + valueDif * percent).toFixed(precision)))
+          const value = chart.getDecimalFold().format(chart.getThousandsSeparator().format(((points[1].value ?? 0) + valueDif * percent).toFixed(precision)))
           lines.push({ coordinates: [{ x: startX, y }, { x: endX, y }] })
           texts.push({
             x: startX,

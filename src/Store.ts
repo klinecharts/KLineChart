@@ -46,7 +46,7 @@ import type OverlayImp from './component/Overlay';
 import { type OverlayCreate, OVERLAY_ID_PREFIX, type OverlayFilter } from './component/Overlay'
 import { getOverlayInnerClass } from './extension/overlay/index'
 
-import { getStyles } from './extension/styles/index'
+import { getStyles as getExtensionStyles } from './extension/styles/index'
 
 import { PaneIdConstants } from './pane/types'
 
@@ -379,31 +379,31 @@ export default class StoreImp implements Store<BarSpace> {
     this._chart = chart
     this._calcOptimalBarSpace()
     this._lastBarRightSideDiffBarCount = this._offsetRightDistance / this._barSpace
-    if (isValid(options)) {
-      const { styles, locale, timezone, customApi, thousandsSeparator, decimalFold } = options
-      this.setStyles(styles ?? '')
-      if (isString(locale)) {
-        this.setLocale(locale)
-      }
-      this.setTimezone(timezone ?? '')
-      if (isValid(customApi)) {
-        this.setCustomApi(customApi)
-      }
-      if (isValid(thousandsSeparator)) {
-        this.setThousandsSeparator(thousandsSeparator)
-      }
-      if (isValid(decimalFold)) {
-        this.setDecimalFold(decimalFold)
-      }
+    const { styles, locale, timezone, customApi, thousandsSeparator, decimalFold } = options ?? {}
+    if (isValid(styles)) {
+      this.setStyles(styles)
+    }
+    if (isString(locale)) {
+      this.setLocale(locale)
+    }
+    this.setTimezone(timezone ?? '')
+    if (isValid(customApi)) {
+      this.setCustomApi(customApi)
+    }
+    if (isValid(thousandsSeparator)) {
+      this.setThousandsSeparator(thousandsSeparator)
+    }
+    if (isValid(decimalFold)) {
+      this.setDecimalFold(decimalFold)
     }
   }
 
   setStyles (value: string | DeepPartial<Styles>): void {
     let styles: Nullable<DeepPartial<Styles>> = null
-    if (isString(styles)) {
-      styles = getStyles(styles)
+    if (isString(value)) {
+      styles = getExtensionStyles(value)
     } else {
-      styles = value as DeepPartial<Styles>
+      styles = value
     }
     merge(this._styles, styles)
     // `candle.tooltip.custom` should override
@@ -605,7 +605,6 @@ export default class StoreImp implements Store<BarSpace> {
     } else {
       this._timeTicks.clear()
     }
-
     for (let i = 0; i < newDataList.length; i++) {
       const kLineData = newDataList[i]
       let weight = TimeWeightConstants.Second
