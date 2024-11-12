@@ -262,7 +262,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
     const legends: TooltipLegend[] = []
     if (indicator.visible) {
       const data = result[dataIndex] ?? result[dataIndex - 1] ?? {}
-      eachFigures(chartStore.getDataList(), indicator, dataIndex, styles, (figure: IndicatorFigure, figureStyles: Required<IndicatorFigureStyle>) => {
+      eachFigures(indicator, dataIndex, styles, (figure: IndicatorFigure, figureStyles: Required<IndicatorFigureStyle>) => {
         if (isString(figure.title)) {
           const color = figureStyles.color
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment  -- ignore

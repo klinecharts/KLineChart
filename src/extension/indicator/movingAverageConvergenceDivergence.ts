@@ -13,11 +13,11 @@
  */
 
 import type { KLineData } from '../../common/Data'
-import { type IndicatorStyle, PolygonType } from '../../common/Styles'
+import { PolygonType } from '../../common/Styles'
 
 import { formatValue } from '../../common/utils/format'
 
-import type { Indicator, IndicatorTemplate, IndicatorFigureStylesCallbackData } from '../../component/Indicator'
+import type { Indicator, IndicatorTemplate } from '../../component/Indicator'
 
 interface Macd {
   dif?: number
@@ -45,17 +45,17 @@ const movingAverageConvergenceDivergence: IndicatorTemplate<Macd> = {
       title: 'MACD: ',
       type: 'bar',
       baseValue: 0,
-      styles: (data: IndicatorFigureStylesCallbackData<Macd>, indicator: Indicator, defaultStyles: IndicatorStyle) => {
+      styles: ({ data, indicator, defaultStyles }) => {
         const { prev, current } = data
-        const prevMacd = prev.indicatorData?.macd ?? Number.MIN_SAFE_INTEGER
-        const currentMacd = current.indicatorData?.macd ?? Number.MIN_SAFE_INTEGER
+        const prevMacd = prev?.macd ?? Number.MIN_SAFE_INTEGER
+        const currentMacd = current?.macd ?? Number.MIN_SAFE_INTEGER
         let color = ''
         if (currentMacd > 0) {
-          color = formatValue(indicator.styles, 'bars[0].upColor', (defaultStyles.bars)[0].upColor) as string
+          color = formatValue(indicator.styles, 'bars[0].upColor', (defaultStyles!.bars)[0].upColor) as string
         } else if (currentMacd < 0) {
-          color = formatValue(indicator.styles, 'bars[0].downColor', (defaultStyles.bars)[0].downColor) as string
+          color = formatValue(indicator.styles, 'bars[0].downColor', (defaultStyles!.bars)[0].downColor) as string
         } else {
-          color = formatValue(indicator.styles, 'bars[0].noChangeColor', (defaultStyles.bars)[0].noChangeColor) as string
+          color = formatValue(indicator.styles, 'bars[0].noChangeColor', (defaultStyles!.bars)[0].noChangeColor) as string
         }
         const style = prevMacd < currentMacd ? PolygonType.Stroke : PolygonType.Fill
         return { style, color, borderColor: color }

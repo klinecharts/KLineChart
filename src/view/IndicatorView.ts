@@ -65,7 +65,6 @@ export default class IndicatorView extends CandleBarView {
     const xAxis = chart.getXAxisPane().getAxisComponent()
     const yAxis = pane.getAxisComponent()
     const chartStore = chart.getChartStore()
-    const dataList = chartStore.getDataList()
     const indicators = chartStore.getIndicatorsByPaneId(pane.getId())
     const defaultStyles = chartStore.getStyles().indicator
     ctx.save()
@@ -121,7 +120,7 @@ export default class IndicatorView extends CandleBarView {
                 nextCoordinate[key] = yAxis.convertToPixel(nextValue)
               }
             })
-            eachFigures(dataList, indicator, dataIndex, defaultStyles, (figure: IndicatorFigure, figureStyles: IndicatorFigureStyle, figureIndex: number) => {
+            eachFigures(indicator, dataIndex, defaultStyles, (figure: IndicatorFigure, figureStyles: IndicatorFigureStyle, figureIndex: number) => {
               if (isValid(currentData?.[figure.key])) {
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- ignore
                 const valueY = currentCoordinate[figure.key]

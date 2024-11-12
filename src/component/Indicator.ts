@@ -48,28 +48,23 @@ export interface IndicatorFigureCallbackBrother<PCN> {
   next: PCN
 }
 
-export type IndicatorFigureAttrsCallbackCoordinate<D> = IndicatorFigureCallbackBrother<Record<keyof D, number> & { x: number }>
-
-export type IndicatorFigureAttrsCallbackData<D> = IndicatorFigureCallbackBrother<D>
-
 export interface IndicatorFigureAttrsCallbackParams<D> {
-  data: IndicatorFigureAttrsCallbackData<Nullable<D>>
-  coordinate: IndicatorFigureAttrsCallbackCoordinate<D>
+  data: IndicatorFigureCallbackBrother<Nullable<D>>
+  coordinate: IndicatorFigureCallbackBrother<Record<keyof D, number> & { x: number }>
   bounding: Bounding
   barSpace: BarSpace
   xAxis: XAxis
   yAxis: YAxis
 }
 
-export interface IndicatorFigureStylesCallbackDataChild<D> {
-  kLineData?: KLineData
-  indicatorData?: D
+export interface IndicatorFigureStylesCallbackParams<D> {
+  data: IndicatorFigureCallbackBrother<Nullable<D>>
+  indicator: Indicator<D>
+  defaultStyles?: IndicatorStyle
 }
 
-export type IndicatorFigureStylesCallbackData<D> = IndicatorFigureCallbackBrother<IndicatorFigureStylesCallbackDataChild<D>>
-
 export type IndicatorFigureAttrsCallback<D> = (params: IndicatorFigureAttrsCallbackParams<D>) => IndicatorFigureAttrs
-export type IndicatorFigureStylesCallback<D> = (data: IndicatorFigureStylesCallbackData<D>, indicator: Indicator<D>, defaultStyles: IndicatorStyle) => IndicatorFigureStyle
+export type IndicatorFigureStylesCallback<D> = (params: IndicatorFigureStylesCallbackParams<D>) => IndicatorFigureStyle
 
 export interface IndicatorFigure<D = unknown> {
   key: string
@@ -244,7 +239,6 @@ export type IndicatorConstructor<D = unknown> = new () => IndicatorImp<D>
 export type EachFigureCallback<D> = (figure: IndicatorFigure<D>, figureStyles: IndicatorFigureStyle, index: number) => void
 
 export function eachFigures<D = unknown> (
-  kLineDataList: KLineData[],
   indicator: Indicator<D>,
   dataIndex: number,
   defaultStyles: IndicatorStyle,
@@ -294,13 +288,16 @@ export function eachFigures<D = unknown> (
       }
       default: { break }
     }
-    if (isValid(defaultFigureStyles)) {
-      const cbData = {
-        prev: { kLineData: kLineDataList[dataIndex - 1], indicatorData: result[dataIndex - 1] },
-        current: { kLineData: kLineDataList[dataIndex], indicatorData: result[dataIndex] },
-        next: { kLineData: kLineDataList[dataIndex + 1], indicatorData: result[dataIndex + 1] }
-      }
-      const ss = figure.styles?.(cbData, indicator, defaultStyles)
+    if (isValid(figure.type)) {
+      const ss = figure.styles?.({
+        data: {
+          prev: result[dataIndex - 1],
+          current: result[dataIndex],
+          next: result[dataIndex + 1]
+        },
+        indicator,
+        defaultStyles
+      })
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument -- ignore
       eachFigureCallback(figure, { ...defaultFigureStyles, ...ss }, figureIndex)
     }

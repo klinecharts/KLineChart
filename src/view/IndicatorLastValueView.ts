@@ -43,7 +43,7 @@ export default class IndicatorLastValueView extends View<YAxis> {
         const data = result[dataIndex] ?? result[dataIndex - 1] ?? {}
         if (isValid(data) && indicator.visible) {
           const precision = indicator.precision
-          eachFigures(dataList, indicator, dataIndex, defaultStyles, (figure: IndicatorFigure, figureStyles: Required<IndicatorFigureStyle>) => {
+          eachFigures(indicator, dataIndex, defaultStyles, (figure: IndicatorFigure, figureStyles: Required<IndicatorFigureStyle>) => {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- ignore
             const value = data[figure.key]
             if (isNumber(value)) {
