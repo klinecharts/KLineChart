@@ -96,7 +96,7 @@ onUnmounted(() => {
   <div class="content">
     <div class="content-item chart-preview-code" :class="{ 'hidden-chart': props.hiddenChart }" v-html="codeHtml"/>
     <div
-      v-if="props.hideChart"
+      v-if="!props.hideChart"
       ref="chartContainer"
       class="content-item chart">
       <Loading v-if="loading"/>

@@ -1,0 +1,11 @@
+<script setup>
+import ChartPreview from '../../../../@components/ChartPreview.vue';
+import { data } from './index.data'
+</script>
+
+<template>
+  <ChartPreview
+    title="setlocal-extension-chart"
+    chartId="setlocal-extension-chart"
+    :code="data.js"/>
+</template>

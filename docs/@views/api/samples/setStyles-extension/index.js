@@ -13,10 +13,8 @@ registerStyles('customTheme', {
   }
 });
 
-const chart = init(
-  'init-options-styles-extension-chart',
-  { styles: 'customTheme' }
-);
+const chart = init('setstyles-extension-chart');
+chart.setStyles('customTheme');
 
 fetch('/datas/kline.json')
   .then(res => res.json())
