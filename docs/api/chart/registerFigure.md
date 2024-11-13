@@ -1,16 +1,9 @@
 ---
-aside: false
+outline: deep
 ---
 
 # registerFigure(figure)
 `registerFigure` 用于自定义基础图形。
-
-<!--@include: @/@views/api/chart/registerFigure/api.md-->
-
-- [参考](#reference)
-- [用法](#usage)
-  - [将自定义基础图形用于自定义指标中](#usage-custom-indicator)
-  - [将自定义基础图形用于自定义覆盖物中](#usage-custom-overlay)
 
 ## 参考 {#reference}
 <!--@include: @/@views/api/chart/registerFigure/reference.md-->

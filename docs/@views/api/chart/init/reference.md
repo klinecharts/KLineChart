@@ -25,7 +25,7 @@
     styles?: string | object
     timezone?: string
     customApi?: {
-      formatDate?: (dateTimeFormat: Intl.DateTimeFormat, timestamp: number, format: string, type: number) => string
+      formatDate?: (timestamp: number, format: string, type: number) => string
       formatBigNumber?: (value: string | number) => string
     }
     thousandsSeparator?: string

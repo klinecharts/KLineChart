@@ -1,16 +1,9 @@
 ---
-aside: false
+outline: deep
 ---
 
 # registerLocale(locale, locales)
 `registerLocale` 用于扩展多语言。
-
-<!--@include: @/@views/api/chart/registerLocale/api.md-->
-
-- [参考](#reference)
-- [用法](#usage)
-  - [在初始化图表的时候使用扩展的语言](#init-local)
-  - [使用实例方法 `setLocale` 设置扩展的语言](#setlocale)
 
 ## 参考 {#reference}
 <!--@include: @/@views/api/chart/registerLocale/reference.md-->

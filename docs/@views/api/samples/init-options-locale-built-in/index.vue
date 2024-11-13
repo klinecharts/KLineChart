@@ -5,7 +5,6 @@ import { data } from './index.data'
 
 <template>
   <ChartPreview
-    title="init-options-locale-built-in-chart"
     chartId="init-options-locale-built-in-chart"
     :code="data.js"/>
 </template>

@@ -146,11 +146,21 @@ export default defineConfig({
       pattern: 'https://github.com/klinecharts/KLineChart/edit/main/docs/:path',
       text: '在 GitHub 上编辑此页面'
     },
-    lastUpdatedText: '最后更新时间',
+    lastUpdated: {
+      text: '最后更新于',
+      formatOptions: {
+        dateStyle: 'short',
+        timeStyle: 'medium'
+      }
+    },
     sidebarMenuLabel: '菜单',
     darkModeSwitchLabel: '主题',
-    outlineTitle: '本页目录',
+    outline: {
+      label: '页面导航'
+    },
     returnToTopLabel: '返回顶部',
+    lightModeSwitchTitle: '切换到浅色模式',
+    darkModeSwitchTitle: '切换到深色模式'
   }
 })
 

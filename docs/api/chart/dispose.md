@@ -1,15 +1,9 @@
 ---
-aside: false
+outline: deep
 ---
 
 # dispose(dcs)
 `dispose` 用于销毁一个图表。
-
-<!--@include: @/@views/api/chart/dispose/api.md-->
-
-- [参考](#reference)
-- [用法](#usage)
-  - [销毁一个图表](#dispose)
 
 ## 参考 {#reference}
 <!--@include: @/@views/api/chart/dispose/reference.md-->

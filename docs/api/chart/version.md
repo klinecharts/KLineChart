@@ -1,11 +1,9 @@
 ---
-aside: false
+outline: deep
 ---
 
 # version(dcs)
-`version` 用于图表的版本。
-
-<!--@include: @/@views/api/chart/version/api.md-->
+`version` 获取图表的版本。
 
 ## 参考 {#reference}
 <!--@include: @/@views/api/chart/version/reference.md-->

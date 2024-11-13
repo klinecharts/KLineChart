@@ -5,7 +5,6 @@ import { data } from './index.data'
 
 <template>
   <ChartPreview
-    title="dispose-chart"
     chartId="dispose-chart"
     :hiddenChart="true"
     :code="data.js"/>

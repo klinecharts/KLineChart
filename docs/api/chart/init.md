@@ -1,29 +1,13 @@
 ---
-aside: false
+outline: deep
 ---
 
 # init(ds, options?)
 `init` 用于初始化一个图表。
 
-<!--@include: @/@views/api/chart/init/api.md-->
-
 ::: tip 提示
 调用时，需要等待容器 `dom` 准备完成之后。
 :::
-
-- [参考](#reference)
-- [用法](#usage)
-  - [使用 `options.layout` 在初始化的时候创建好指标](#init-layout-basic)
-  - [使用 `options.layout` 在初始化的时候改变时间轴默认位置](#init-layout-order)
-  - [使用 `options.locale` 使用内置的语言在初始化的时候设置图表语言](#init-locale-built-in)
-  - [使用 `options.locale` 和 `klinecharts.registerLocale` 在初始化的时候设置自定义语言](#init-locale-extension)
-  - [使用 `options.timezone` 在初始化的时候设置时区](#init-timezone)
-  - [使用 `options.styles` 使用内置样式模版在初始化的时候设置图表样式](#init-styles-built-in)
-  - [使用 `options.styles` 直接使用样式配置在初始化的时候设置图表样式](#init-styles-object)
-  - [使用 `options.styles` 和 `klinecharts.registerStyles` 在初始化的时候设置图表样式](#init-styles-extension)
-  - [使用 `options.customApi` 改变图表上的时间和超大数据显示](#init-customapi)
-  - [使用 `options.thousandsSeparator` 改变千分符显示](#init-thousandsseparator)
-  - [使用 `options.decimalFold` 改变小数 0 折叠显示](#init-decimalfold)
 
 ## 参考 {#reference}
 <!--@include: @/@views/api/chart/init/reference.md-->

@@ -5,7 +5,6 @@ import { data } from './index.data'
 
 <template>
   <ChartPreview
-    title="init-options-customapi"
     chartId="init-options-customapi-chart"
     :code="data.js"/>
 </template>
