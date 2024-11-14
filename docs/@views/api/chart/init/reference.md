@@ -4,32 +4,43 @@
   options?: {
     layout?: Array<{
       type: 'candle' | 'indicator' | 'xAxis'
-      content: Array<Indicator | string>
-      options: {
+      content?: Array<Indicator | string>
+      options?: {
         id?: string
         height?: number
         minHeight?: number
         dragEnabled?: boolean
-        position?: 'top' | 'bottom'
-        gap?: {
-          top?: number
-          bottom?: number
-        }
-        axisOptions?: {
-          name?: string
+        order?: number
+        state?: 'normal' | 'maximize' | 'minimize'
+        axis?: {
+          name: string
+          reverse?: boolean
+          inside?: boolean
+          position?: 'left' | 'right'
           scrollZoomEnabled?: boolean
+          gap?: {
+            top?: number
+            bottom?: number
+          }
         }
       }
     }>
     locale?: string
-    styles?: string | object
+    styles?: string | Styles
     timezone?: string
     customApi?: {
       formatDate?: (timestamp: number, format: string, type: number) => string
       formatBigNumber?: (value: string | number) => string
     }
-    thousandsSeparator?: string
-    decimalFoldThreshold?: number
+    thousandsSeparator?: {
+      sign?: string
+      format: (value: number | string) => string
+    }
+    decimalFold?: {
+      type?: 'curlyBracket' | 'subscript'
+      threshold?: number
+      format?: (value: number | string) => string
+    }
   }
 ) => Chart
 ```

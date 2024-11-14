@@ -7,7 +7,7 @@ const props = defineProps(['title', 'subTitle'])
   <section class="section">
     <div class="content">
       <h2 class="title">{{ props.title }}</h2>
-      <h3 class="sub-title">{{ props.subTitle }}</h3>
+      <p class="sub-title">{{ props.subTitle }}</p>
       <slot></slot>
     </div>
   </section>

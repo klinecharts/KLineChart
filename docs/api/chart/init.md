@@ -15,7 +15,25 @@ outline: deep
 ### 参数
 - `ds` 容器，可以是dom元素或者元素id。
 - `options` 可选配置项。
-  - `layout` 自定义布局， `content` 中的内容和 `options` 参考实例方法 [createIndicator](./instance-api#createindicator-value-isstack-paneoptions-callback) 中的入参 `value` 和 `options` 。
+  - `layout` 自定义布局，是一个数组。
+    - `type` 窗口类型，支持 `candle` ，`indicator` 和 `xAxis` 。
+    - `content` 窗口内容，仅仅支持指标。
+    - `options` 窗口配置。
+      - `id` 窗口id。
+      - `height` 高度。
+      - `minHeight` 最小高度。
+      - `dragEnabled` 是否可以拖拽调整高度。
+      - `order` 顺序。
+      - `state` 状态，支持 `normal` ， `maximize` 和 `minimize` 。
+      - `axis` 坐标轴配置。
+        - `name` 坐标轴名称。
+        - `reverse` 是否反向。
+        - `inside` 是否在内部。
+        - `position` 位置，支持 `left` 和 `right` 。
+        - `scrollZoomEnabled` 是否允许滚动缩放。
+        - `gap` 上下边距配置。
+          - `top` 上边距。
+          - `bottom` 下边距。
   - `locale` 语言，内置支持 `zh-CN` 和 `en-US` 。
   - `timezone` 时区名，如 `Asia/Shanghai` ，如果不设置会自动获取本机时区，时区对应名字列表请参阅 [时区列表](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) 。
   - `styles` 可以是通过 `klinecharts.registerStyles` 注册的样式名，也可以是 object，样式列表，详情参阅 [样式](./styles.md) ，支持增量。
@@ -26,7 +44,7 @@ outline: deep
     - `sign` 标识符。
     - `format` 自定义格式化方法。
   - `decimalFold` 小数 0 折叠配置。
-    - `type` 类型，内置了 `curlyBracket` 和 `subscript` 。
+    - `type` 支持 `curlyBracket` 和 `subscript` 。
     - `threshold` 折叠阈值。
     - `format` 自定义格式化方法。
 
@@ -34,51 +52,63 @@ outline: deep
 `init` 返回一个图表实例对象 `chart`。
 
 <script setup>
-import InitOptionsLayoutBasic from '../../@views/api/samples/init-options-layout-basic/index.vue'
-import InitOptionsLayoutOrder from '../../@views/api/samples/init-options-layout-order/index.vue'
-import InitOptionsLocaleBuiltIn from '../../@views/api/samples/init-options-locale-built-in/index.vue'
-import InitOptionsLocaleExtension from '../../@views/api/samples/init-options-locale-extension/index.vue'
-import InitOptionsTimezone from '../../@views/api/samples/init-options-timezone/index.vue'
-import InitOptionsStylesBuiltIn from '../../@views/api/samples/init-options-styles-built-in/index.vue'
-import InitOptionsStylesObject from '../../@views/api/samples/init-options-styles-object/index.vue'
-import InitOptionsStylesExtension from '../../@views/api/samples/init-options-styles-extension/index.vue'
-import InitOptionsCustomApi from '../../@views/api/samples/init-options-customapi/index.vue'
-import InitOptionsThousandsSeparator from '../../@views/api/samples/init-options-thousandsseparator/index.vue'
-import InitOptionsDecimalFold from '../../@views/api/samples/init-options-decimalfold/index.vue'
+import InitBasic from '../../@views/api/samples/init-basic/index.vue'
+import InitLayout from '../../@views/api/samples/init-layout/index.vue'
+import InitLocaleBuiltIn from '../../@views/api/samples/init-locale-built-in/index.vue'
+import InitLocaleExtension from '../../@views/api/samples/init-locale-extension/index.vue'
+import InitTimezone from '../../@views/api/samples/init-timezone/index.vue'
+import InitStylesBuiltIn from '../../@views/api/samples/init-styles-built-in/index.vue'
+import InitStylesExtension from '../../@views/api/samples/init-styles-extension/index.vue'
+import InitStylesObject from '../../@views/api/samples/init-styles-object/index.vue'
+import InitFormatDate from '../../@views/api/samples/init-formateDate/index.vue'
+import InitFormatBigNumber from '../../@views/api/samples/init-formatBigNumber/index.vue'
+import InitThousandsSeparator from '../../@views/api/samples/init-thousandsSeparator/index.vue'
+import InitDecimalFoldNormal from '../../@views/api/samples/init-decimalFold-normal/index.vue'
+import InitDecimalFoldType from '../../@views/api/samples/init-decimalFold-type/index.vue'
+import InitDecimalFoldFormat from '../../@views/api/samples/init-decimalFold-format/index.vue'
 </script>
 
 ## 用法 {#usage}
-### 使用 `options.layout` 在初始化的时候创建好指标 {#init-layout-basic}
-<InitOptionsLayoutBasic />
 
-### 使用 `options.layout` 在初始化的时候改变时间轴默认位置 {#init-layout-order}
-<InitOptionsLayoutOrder />
+### 基本用法 {#basic}
+<InitBasic/>
 
-### 使用 `options.locale` 使用内置的语言在初始化的时候设置图表语言， {#init-locale-built-in}
-<InitOptionsLocaleBuiltIn />
+### 自定义布局 {#layout}
+<InitLayout />
 
-### 使用 `options.locale` 和 `klinecharts.registerLocale` 在初始化的时候设置自定义语言 {#init-locale-extension}
-<InitOptionsLocaleExtension />
+### 内置语言 {#init-locale-built-in}
+<InitLocaleBuiltIn />
 
-### 使用 `options.timezone` 在初始化的时候设置时区 {#init-timezone}
-<InitOptionsTimezone />
+### 自定义扩展语言 {#init-locale-extension}
+<InitLocaleExtension />
 
-### 使用 `options.styles` 使用内置样式模版在初始化的时候设置图表样式 {#init-styles-built-in}
-<InitOptionsStylesBuiltIn />
+### 设置时区 {#init-timezone}
+<InitTimezone />
 
-### 使用 `options.styles` 直接使用样式配置在初始化的时候设置图表样式 {#init-styles-object}
-<InitOptionsStylesObject />
+### 内置样式模版 {#init-styles-built-in}
+<InitStylesBuiltIn />
 
-### 使用 `options.styles` 和 `klinecharts.registerStyles` 在初始化的时候设置图表样式 {#init-styles-extension}
-<InitOptionsStylesExtension />
+### 自定义样式模版 {#init-styles-extension}
+<InitStylesExtension />
 
-### 使用 `options.customApi` 改变图表上的时间和超大数据显示 {#init-customapi}
-<InitOptionsCustomApi />
+### 样式直接覆盖 {#init-styles-object}
+<InitStylesObject />
 
-### 使用 `options.thousandsSeparator` 改变千分符显示 {#init-thousandsseparator}
+### 自定义时间显示 {#init-formatDate}
+<InitFormatDate />
+
+### 自定义大数字显示 {#init-formatBigNumber}
+<InitFormatBigNumber />
+
+### 千分符显示 {#init-thousandsSeparator}
 <InitOptionsThousandsSeparator />
 
-### 使用 `options.decimalFold` 改变小数 0 折叠显示 {#init-decimalfold}
-<InitOptionsDecimalFold />
+### 小数 0 不折叠 {#init-decimalFold-normal}
+<InitDecimalFoldNormal/>
 
+### 小数 0 折叠下标显示 {#init-decimalFold-type}
+<InitDecimalFoldType />
+
+### 小数 0 折叠自定义显示 {#init-decimalFold-format}
+<InitDecimalFoldFormat />
 

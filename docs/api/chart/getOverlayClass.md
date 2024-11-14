@@ -1,3 +1,3 @@
 ---
-aside: false
+outline: deep
 ---

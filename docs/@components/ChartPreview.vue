@@ -280,38 +280,38 @@ h3 + .chart-preview {
 }
 
 .code-action-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 46px;
-    border-top: solid 1px var(--vp-c-divider);
-  }
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 46px;
+  border-top: solid 1px var(--vp-c-divider);
+}
 
-  .code-action-container form {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+.code-action-container form {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-  .code-action-container a, .code-action-container button {
-    padding: 0 6px;
-  }
+.code-action-container a, .code-action-container button {
+  padding: 0 6px;
+}
 
-  .code-action-container a:last-child {
-    margin-right: 0;
-  }
-  .code-action-container a svg, .code-action-container button svg {
-    fill: var(--vp-c-text-1);
-    stroke: var(--vp-c-text-1);
-    opacity: 0.68;
-    transform: scale(1);
-    transition: opacity linear .2s, transform linear .2s;
-  }
+.code-action-container a:last-child {
+  margin-right: 0;
+}
+.code-action-container a svg, .code-action-container button svg {
+  fill: var(--vp-c-text-1);
+  stroke: var(--vp-c-text-1);
+  opacity: 0.68;
+  transform: scale(1);
+  transition: opacity linear .2s, transform linear .2s;
+}
 
-  .code-action-container a svg:hover, .code-action-container button svg:hover {
-    opacity: 1;
-    transform: scale(1.2);
-  }
+.code-action-container a svg:hover, .code-action-container button svg:hover {
+  opacity: 1;
+  transform: scale(1.2);
+}
 </style>
 
 <style>
