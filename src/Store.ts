@@ -111,7 +111,7 @@ const BAR_GAP_RATIO = 0.2
 
 export const SCALE_MULTIPLIER = 10
 
-export interface Store<B = number> {
+export interface Store {
   setStyles: (value: string | DeepPartial<Styles>) => void
   getStyles: () => Styles
   setCustomApi: (api: Partial<CustomApi>) => void
@@ -134,7 +134,7 @@ export interface Store<B = number> {
   setLeftMinVisibleBarCount: (barCount: number) => void
   setRightMinVisibleBarCount: (barCount: number) => void
   setBarSpace: (space: number) => void
-  getBarSpace: () => B
+  getBarSpace: () => BarSpace
   getVisibleRange: () => VisibleRange
   setLoadMoreDataCallback: (callback: LoadDataCallback) => void
   overrideIndicator: (override: IndicatorCreate) => boolean
@@ -148,7 +148,7 @@ export interface Store<B = number> {
   clearData: () => void
 }
 
-export default class StoreImp implements Store<BarSpace> {
+export default class StoreImp implements Store {
   /**
    * Internal chart
    */

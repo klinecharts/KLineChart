@@ -57,6 +57,7 @@ import { getIndicatorClass } from './extension/indicator/index'
 import Event from './Event'
 import type DeepPartial from './common/DeepPartial'
 import type { Styles } from './common/Styles'
+import type BarSpace from './common/BarSpace'
 
 export enum DomPosition {
   Root = 'root',
@@ -704,8 +705,8 @@ export default class ChartImp implements Chart {
     this._chartStore.setBarSpace(space)
   }
 
-  getBarSpace (): number {
-    return this._chartStore.getBarSpace().bar
+  getBarSpace (): BarSpace {
+    return this._chartStore.getBarSpace()
   }
 
   getVisibleRange (): VisibleRange {
