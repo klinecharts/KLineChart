@@ -377,8 +377,9 @@ export default class CandleTooltipView extends IndicatorTooltipView {
     const prev = dataList[dataIndex - 1] ?? null
     const current = dataList[dataIndex]
     
+    
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- ignore
-    const prevClose = prev.close ?? current.close
+    const prevClose = prev?.close ?? current.close
     const changeValue = current.close - prevClose
     const mapping = {
       '{time}': customApi.formatDate(current.timestamp, 'YYYY-MM-DD HH:mm', FormatDateType.Tooltip),

@@ -316,7 +316,9 @@ export default class IndicatorTooltipView extends View<YAxis> {
           } else {
             value.text = data.value
           }
-          value.text = decimalFold.format(thousandsSeparator.format(value.text))
+          if (isNumber(Number(value.text))) {
+            value.text = decimalFold.format(thousandsSeparator.format(value.text))
+          }
           optimizedLegends.push({ title, value })
         })
         tooltipData.legends = optimizedLegends
