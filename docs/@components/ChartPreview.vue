@@ -22,7 +22,7 @@ const props = defineProps(['title', 'chartId', 'code'])
 
 const loading = ref(true)
 
-const showCode = ref(false)
+const showCode = ref(!props.chartId)
 
 const chartContainer = ref(null)
 
@@ -170,7 +170,9 @@ onUnmounted(() => {
         class="content-item chart">
         <Loading v-if="loading"/>
       </div>
-      <div class="code-action-container">
+      <div
+        class="code-action-container"
+        :class="{ 'hiddenCode': !showCode }">
         <form
           action="https://codesandbox.io/api/v1/sandboxes/define"
           method="POST"
@@ -226,7 +228,6 @@ onUnmounted(() => {
     <div
       v-if="showCode"
       class="content-item chart-preview-code"
-      :class="{ 'hidden-chart': props.hiddenChart }"
       v-html="codeHtml"/>
   </div>
 </div>
@@ -285,6 +286,11 @@ h3 + .chart-preview {
   justify-content: center;
   height: 46px;
   border-top: solid 1px var(--vp-c-divider);
+  border-bottom: solid 1px var(--vp-c-divider);
+}
+
+.code-action-container.hiddenCode {
+  border-bottom: none;
 }
 
 .code-action-container form {
@@ -318,12 +324,7 @@ h3 + .chart-preview {
 .chart-preview-code {
   overflow: auto;
   padding: 18px 20px;
-  border-top: solid 1px var(--vp-c-gutter);
   font-size: var(--vp-code-font-size);
-}
-
-.chart-preview-code.hidden-chart {
-  border-top: none;
 }
 
 .chart-preview-code .shiki {

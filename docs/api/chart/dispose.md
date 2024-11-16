@@ -20,5 +20,5 @@ outline: deep
 import Dispose from '../../@views/api/samples/dispose/index.vue'
 </script>
 
-### 销毁一个图表 {#dispose}
+### 基本用法 {#basic}
 <Dispose />

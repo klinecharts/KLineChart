@@ -17,12 +17,12 @@ outline: deep
 
 ## 用法 {#usage}
 <script setup>
-import InitOptionsLocaleExtension from '../../@views/api/samples/init-options-locale-extension/index.vue'
+import InitLocaleExtension from '../../@views/api/samples/init-locale-extension/index.vue'
 import SetLocaleExtension from '../../@views/api/samples/setLocale-extension/index.vue'
 </script>
 
-### 在初始化图表的时候使用扩展的语言 {#init-local}
-<InitOptionsLocaleExtension />
+### 初始化时使用 {#init-local}
+<InitLocaleExtension />
 
-### 使用实例方法 `setLocale` 设置扩展的语言 {#setlocale}
+### 动态设置 {#setLocale}
 <SetLocaleExtension />

@@ -13,3 +13,11 @@ outline: deep
 
 ### 返回值
 `version` 返回 `string` 。
+
+## 用法 {#usage}
+<script setup>
+import Version from '../../@views/api/samples/version/index.vue'
+</script>
+
+### 基本用法 {#basic}
+<Version />

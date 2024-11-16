@@ -13,3 +13,11 @@ outline: deep
 
 ### 返回值
 `registerLocale` 返回 `string` 数组 。
+
+## 用法 {#usage}
+<script setup>
+import GetSupportedLocales from '../../@views/api/samples/getSupportedLocales/index.vue'
+</script>
+
+### 基本用法 {#basic}
+<GetSupportedLocales />

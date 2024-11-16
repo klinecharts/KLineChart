@@ -39,7 +39,7 @@ registerIndicator({
   calc: dataList => dataList
 });
 
-const chart = init('registerfigure-usage-custom-indicator-chart');
+const chart = init('custom-figure-custom-indicator-chart');
 
 chart.createIndicator('customIndicator')
 

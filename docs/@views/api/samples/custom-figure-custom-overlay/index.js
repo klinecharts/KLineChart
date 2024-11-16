@@ -38,7 +38,7 @@ registerOverlay({
   }
 });
 
-const chart = init('registerfigure-usage-custom-overlay-chart');
+const chart = init('custom-figure-custom-overlay-chart');
 
 fetch('/datas/kline.json')
   .then(res => res.json())

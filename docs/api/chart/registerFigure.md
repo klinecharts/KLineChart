@@ -20,12 +20,12 @@ outline: deep
 
 ## 用法 {#usage}
 <script setup>
-import RegisterFigureUsageCustomIndicator from '../../@views/api/samples/registerFigure-usage-custom-indicator/index.vue'
-import RegisterFigureUsageCustomOverlay from '../../@views/api/samples/registerFigure-usage-custom-overlay/index.vue'
+import CustomFigureCustomIndicator from '../../@views/api/samples/custom-figure-custom-indicator/index.vue'
+import CustomFigureCustomOverlay from '../../@views/api/samples/custom-figure-custom-overlay/index.vue'
 </script>
 
-### 将自定义基础图形用于自定义指标中 {#usage-custom-indicator}
-<RegisterFigureUsageCustomIndicator />
+### 用于自定义指标中 {#usage-custom-indicator}
+<CustomFigureCustomIndicator />
 
-### 将自定义基础图形用于自定义覆盖物中 {#usage-custom-overlay}
-<RegisterFigureUsageCustomOverlay />
+### 用于自定义覆盖物中 {#usage-custom-overlay}
+<CustomFigureCustomOverlay />

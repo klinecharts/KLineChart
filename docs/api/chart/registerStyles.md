@@ -17,12 +17,12 @@ outline: deep
 
 ## 用法 {#usage}
 <script setup>
-import InitOptionsStylesExtension from '../../@views/api/samples/init-options-styles-extension/index.vue'
+import InitStylesExtension from '../../@views/api/samples/init-styles-extension/index.vue'
 import SetStylesExtension from '../../@views/api/samples/setStyles-extension/index.vue'
 </script>
 
-### 在初始化图表的时候使用扩展的样式模版 {#init-styles}
-<InitOptionsStylesExtension />
+### 初始化时使用 {#init-styles}
+<InitStylesExtension />
 
-### 使用实例方法 `setStyles` 运用样式模版 {#setstyles}
+### 动态设置 {#setStyles}
 <SetStylesExtension />

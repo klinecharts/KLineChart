@@ -1,10 +1,10 @@
 <script setup>
 import ChartPreview from '../../../../@components/ChartPreview.vue';
-import { data } from './index.data'
+import { data } from './index.data';
 </script>
 
 <template>
   <ChartPreview
-    chartId="registerfigure-usage-custom-indicator-chart"
+    :hiddenChart="true"
     :code="data.js"/>
 </template>

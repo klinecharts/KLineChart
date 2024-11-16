@@ -13,3 +13,11 @@ outline: deep
 
 ### 返回值
 `getSupportedFigures` 返回一个基础图形 `Figure` 。
+
+## 用法 {#usage}
+<script setup>
+import GetFigureClass from '../../@views/api/samples/getFigureClass/index.vue'
+</script>
+
+### 基本使用 {#basic}
+<GetFigureClass />

@@ -1,6 +1,6 @@
 ```typescript
 (
   name: string,
-  styles: object
+  styles: Styles
 ) => void
 ```

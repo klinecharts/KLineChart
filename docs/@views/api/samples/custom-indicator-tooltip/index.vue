@@ -5,6 +5,6 @@ import { data } from './index.data'
 
 <template>
   <ChartPreview
-    :hiddenChart="true"
+    chartId="custom-indicator-tooltip-chart"
     :code="data.js"/>
 </template>
