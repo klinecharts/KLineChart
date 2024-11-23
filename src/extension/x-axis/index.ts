@@ -12,8 +12,7 @@
  * limitations under the License.
  */
 
-import type { AxisTemplate } from '../../component/Axis'
-import XAxisImp, { type XAxisConstructor } from '../../component/XAxis'
+import XAxisImp, { type XAxisTemplate, type XAxisConstructor } from '../../component/XAxis'
 
 import normal from './normal'
 
@@ -21,7 +20,7 @@ const xAxises: Record<string, XAxisConstructor> = {
   normal: XAxisImp.extend(normal)
 }
 
-function registerXAxis (axis: AxisTemplate): void {
+function registerXAxis (axis: XAxisTemplate): void {
   xAxises[axis.name] = XAxisImp.extend(axis)
 }
 
