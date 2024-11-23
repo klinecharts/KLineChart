@@ -17,10 +17,13 @@ import type Bounding from '../common/Bounding'
 import type { KLineData } from '../common/Data'
 import type Precision from '../common/Precision'
 import type Crosshair from '../common/Crosshair'
+import type {
+  CandleStyle, TooltipLegend, TooltipLegendChild,
+  CandleTooltipCustomCallbackData, CandleTooltipRectStyle,
+} from "../common/Styles";
 import {
-  type CandleStyle, type TooltipLegend, type TooltipLegendChild, TooltipShowType, CandleTooltipRectPosition,
-  type CandleTooltipCustomCallbackData, PolygonType, type CandleTooltipRectStyle
-} from '../common/Styles'
+  TooltipShowType, CandleTooltipRectPosition, PolygonType,
+} from "../common/Styles";
 import { formatPrecision } from '../common/utils/format'
 import { createFont } from '../common/utils/canvas'
 import { isFunction, isObject, isValid } from '../common/utils/typeChecks'
