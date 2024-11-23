@@ -10,7 +10,7 @@ outline: deep
 
 ### 参数
 - `figure` 基础图形配置。
-  - `name` 名字，唯一标识。
+  - `name` 名称，唯一标识。
   - `draw` 绘制方法。
   - `checkEventOn` 检查事件是否在图形上。
 

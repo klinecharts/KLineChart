@@ -121,7 +121,6 @@ export default defineConfig({
         { text: 'getSupportedIndicators', link: '/api/chart/getSupportedIndicators' },
         { text: 'registerOverlay', link: '/api/chart/registerOverlay' },
         { text: 'getSupportedOverlays', link: '/api/chart/getSupportedOverlays' },
-        { text: 'getOverlayClass', link: '/api/chart/getOverlayClass' },
         { text: 'registerXAxis', link: '/api/chart/registerXAxis' },
         { text: 'registerYAxis', link: '/api/chart/registerYAxis' }
       ],

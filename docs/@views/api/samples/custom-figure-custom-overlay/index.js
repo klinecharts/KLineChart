@@ -22,7 +22,7 @@ registerFigure({
 });
 
 registerOverlay({
-  name: 'customOverlay',
+  name: 'customOverlayCustomFigure',
   totalStep: 2,
   createPointFigures: ({ coordinates }) => {
     return {
@@ -46,7 +46,7 @@ fetch('/datas/kline.json')
     chart.applyNewData(dataList);
     const data = dataList[dataList.length - 10];
     chart.createOverlay({
-      name: 'customOverlay',
+      name: 'customOverlayCustomFigure',
       points: [{ timestamp: data.timestamp, value: data.close }]
     })
   });

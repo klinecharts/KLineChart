@@ -3,10 +3,22 @@ import { init, registerIndicator, getFigureClass } from 'klinecharts';
 registerIndicator({
   name: 'customIndicatorDraw',
   shortName: 'Volume',
-  series: 'price',
   zLevel: -1,
   figures: [],
   calc: dataList => dataList.map(data => ({ volume: data.volume, close: data.close, open: data.open })),
+  createTooltipDataSource: ({ indicator, crosshair }) => {
+    const result = indicator.result;
+    const data = result[crosshair.dataIndex];
+    if (data) {
+      const color = data.open < data.close ? 'rgb(224, 152, 199)' : 'rgb(143, 211, 232)';
+      return {
+        legends: [
+          { title: '', value: { text: data.volume, color } },
+        ]
+      };
+    }
+    return {};
+  },
   draw: ({ ctx, chart, indicator, bounding, xAxis }) => {
     const { realFrom, realTo } = chart.getVisibleRange();
     const { gapBar, halfGapBar } = chart.getBarSpace()

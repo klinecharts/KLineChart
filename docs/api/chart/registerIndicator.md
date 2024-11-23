@@ -10,7 +10,7 @@ outline: deep
 
 ### 参数
 - `indicator` 指标配置。
-  - `name` 名字，唯一标识。
+  - `name` 名称，用于创建或者修改的唯一标识。
   - `shortName` 简短名称，用于提示显示。
   - `precision` 精度。
   - `calcParams` 计算参数。

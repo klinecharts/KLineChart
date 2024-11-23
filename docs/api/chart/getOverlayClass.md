@@ -1,3 +1,0 @@
----
-outline: deep
----

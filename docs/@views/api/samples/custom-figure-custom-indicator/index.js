@@ -22,7 +22,7 @@ registerFigure({
 });
 
 registerIndicator({
-  name: 'customIndicator',
+  name: 'customIndicatorCustomFigure',
   figures: [{
     key: 'close',
     type: 'diamond',
@@ -41,7 +41,7 @@ registerIndicator({
 
 const chart = init('custom-figure-custom-indicator-chart');
 
-chart.createIndicator('customIndicator')
+chart.createIndicator('customIndicatorCustomFigure')
 
 fetch('/datas/kline.json')
   .then(res => res.json())

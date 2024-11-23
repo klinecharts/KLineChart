@@ -6,7 +6,7 @@ outline: deep
 `dispose` 用于销毁一个图表。
 
 ## 参考 {#reference}
-<!--@include: @/@views/api/chart/dispose/reference.md-->
+<!-- @include: @/@views/api/chart/dispose/reference.md -->
 
 ### 参数
 - `dcs` 图表实例，`dom` 元素或者 `dom` 元素id。

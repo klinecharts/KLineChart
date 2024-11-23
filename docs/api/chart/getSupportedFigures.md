@@ -12,7 +12,7 @@ outline: deep
 `getSupportedFigures` 不接收任何参数。
 
 ### 返回值
-`getSupportedFigures` 返回 `string` 数组 。
+`getSupportedFigures` 返回 `string` 数组。
 
 ## 用法 {#usage}
 

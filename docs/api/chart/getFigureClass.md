@@ -6,7 +6,7 @@ outline: deep
 `getFigureClass` 获取基础图形对象。
 
 ## 参考 {#reference}
-<!--@include: @/@views/api/chart/getFigureClass/reference.md-->
+<!-- @include: @/@views/api/chart/getFigureClass/reference.md -->
 
 ### 参数
 - `name` 基础图形名称。
