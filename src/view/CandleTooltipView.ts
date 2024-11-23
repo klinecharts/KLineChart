@@ -17,7 +17,7 @@ import type Bounding from '../common/Bounding'
 import type { KLineData } from '../common/Data'
 import type Precision from '../common/Precision'
 import type Crosshair from '../common/Crosshair'
-import 
+import {
   type CandleStyle, type TooltipLegend, type TooltipLegendChild, TooltipShowType, CandleTooltipRectPosition,
   type CandleTooltipCustomCallbackData, PolygonType, type CandleTooltipRectStyle
 } from '../common/Styles'
