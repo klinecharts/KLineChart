@@ -19,21 +19,19 @@ import View from './View'
 
 import type { YAxis } from '../component/YAxis'
 
-import { formatPrecision, formatThousands, formatFoldDecimal } from '../common/utils/format'
+import { formatPrecision } from '../common/utils/format'
 
 export default class CandleHighLowPriceView extends View<YAxis> {
   override drawImp (ctx: CanvasRenderingContext2D): void {
     const widget = this.getWidget()
     const pane = widget.getPane()
     const chartStore = pane.getChart().getChartStore()
-    const chartOptions = chartStore.getOptions()
-    const priceMarkStyles = chartOptions.styles.candle.priceMark
+    const { styles, decimalFold, thousandsSeparator } = chartStore.getOptions()
+    const priceMarkStyles = styles.candle.priceMark
     const highPriceMarkStyles = priceMarkStyles.high
     const lowPriceMarkStyles = priceMarkStyles.low
     if (priceMarkStyles.show && (highPriceMarkStyles.show || lowPriceMarkStyles.show)) {
       const highestLowestPrice = chartStore.getVisibleRangeHighLowPrice()
-      const thousandsSeparator = chartOptions.thousandsSeparator
-      const decimalFoldThreshold = chartOptions.decimalFoldThreshold
       const precision = chartStore.getPrecision()
       const yAxis = pane.getAxisComponent()
 
@@ -44,7 +42,7 @@ export default class CandleHighLowPriceView extends View<YAxis> {
       if (highPriceMarkStyles.show && high !== Number.MIN_SAFE_INTEGER) {
         this._drawMark(
           ctx,
-          formatFoldDecimal(formatThousands(formatPrecision(high, precision.price), thousandsSeparator), decimalFoldThreshold),
+          decimalFold.format(thousandsSeparator.format(formatPrecision(high, precision.price))),
           { x: highX, y: highY },
           highY < lowY ? [-2, -5] : [2, 5],
           highPriceMarkStyles
@@ -53,7 +51,7 @@ export default class CandleHighLowPriceView extends View<YAxis> {
       if (lowPriceMarkStyles.show && low !== Number.MAX_SAFE_INTEGER) {
         this._drawMark(
           ctx,
-          formatFoldDecimal(formatThousands(formatPrecision(low, precision.price), thousandsSeparator), decimalFoldThreshold),
+          decimalFold.format(thousandsSeparator.format(formatPrecision(low, precision.price))),
           { x: lowX, y: lowY },
           highY < lowY ? [2, 5] : [-2, -5],
           lowPriceMarkStyles

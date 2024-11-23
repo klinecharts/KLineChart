@@ -141,12 +141,18 @@ export default class SeparatorWidget extends Widget<SeparatorPane> {
         if (startDragReducedPaneHeight > reducedPaneMinHeight) {
           const reducedPaneHeight = Math.max(startDragReducedPaneHeight - Math.abs(dragDistance), reducedPaneMinHeight)
           const diffHeight = startDragReducedPaneHeight - reducedPaneHeight
-          reducedPane.setOriginalBounding({ height: reducedPaneHeight })
-          increasedPane.setOriginalBounding({ height: startDragIncreasedPaneHeight + diffHeight })
+          reducedPane.setBounding({ height: reducedPaneHeight })
+          increasedPane.setBounding({ height: startDragIncreasedPaneHeight + diffHeight })
           const currentPane = this.getPane()
           const chart = currentPane.getChart()
           chart.getChartStore().executeAction(ActionType.OnPaneDrag, { paneId: currentPane.getId() })
-          chart.adjustPaneViewport(true, true, true, true, true)
+          chart.layout({
+            measureHeight: true,
+            measureWidth: true,
+            update: true,
+            buildYAxisTick: true,
+            forceBuildAxisTick: true
+          })
         }
       }
     }

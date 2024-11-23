@@ -67,6 +67,10 @@ export default abstract class Pane implements Updater {
     }
   }
 
+  getVisible (): boolean {
+    return this._visible
+  }
+
   getId (): string {
     return this._id
   }

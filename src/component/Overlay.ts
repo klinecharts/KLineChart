@@ -18,8 +18,6 @@ import type ExcludePickPartial from '../common/ExcludePickPartial'
 import type Point from '../common/Point'
 import type Coordinate from '../common/Coordinate'
 import type Bounding from '../common/Bounding'
-import type BarSpace from '../common/BarSpace'
-import type Precision from '../common/Precision'
 import type { OverlayStyle } from '../common/Styles'
 import type { MouseTouchEvent } from '../common/SyntheticEvent'
 import { clone, isArray, isFunction, isNumber, isString, isValid, merge } from '../common/utils/typeChecks'
@@ -27,6 +25,7 @@ import { clone, isArray, isFunction, isNumber, isString, isValid, merge } from '
 import type { XAxis } from './XAxis'
 import type { YAxis } from './YAxis'
 import type ChartStore from '../Store'
+import type { Chart } from '../Chart'
 
 export enum OverlayMode {
   Normal = 'normal',
@@ -66,24 +65,11 @@ export interface OverlayFigure {
   ignoreEvent?: boolean | OverlayFigureIgnoreEventType[]
 }
 
-export interface OverlayPrecision extends Precision {
-  max: number
-  min: number
-  excludePriceVolumeMax: number
-  excludePriceVolumeMin: number
-  [key: string]: number
-}
-
 export interface OverlayCreateFiguresCallbackParams {
+  chart: Chart
   overlay: Overlay
   coordinates: Coordinate[]
   bounding: Bounding
-  barSpace: BarSpace
-  precision: OverlayPrecision
-  thousandsSeparator: string
-  decimalFoldThreshold: number
-  dateTimeFormat: Intl.DateTimeFormat
-  defaultStyles: OverlayStyle
   xAxis: Nullable<XAxis>
   yAxis: Nullable<YAxis>
 }
@@ -92,6 +78,7 @@ export interface OverlayEvent extends Partial<MouseTouchEvent> {
   figureKey?: string
   figureIndex?: number
   overlay: Overlay
+  chart: Chart
 }
 
 export type OverlayEventCallback = (event: OverlayEvent) => boolean

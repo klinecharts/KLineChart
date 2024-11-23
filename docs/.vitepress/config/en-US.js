@@ -39,8 +39,11 @@ export default defineConfig({
         ]
       },
       {
-        text: `V${pkg.version}`,
-        items: [{ text: 'V8 Docs', link: 'https://v8.klinecharts.com' }]
+        text: 'Next',
+        items: [
+          { text: 'V9 Docs', link: 'https://v9.klinecharts.com/en-US' },
+          { text: 'V8 Docs', link: 'https://v8.klinecharts.com' }
+        ]
       },
     ],
     sidebar: {

@@ -52,7 +52,7 @@ onMounted(() => {
 
 .NotFound .logo img {
   width: 92px;
-  margin: 0 16px
+  margin: 0 22px
 }
 
 @media (min-width: 768px) {

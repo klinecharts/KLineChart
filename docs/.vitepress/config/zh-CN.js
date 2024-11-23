@@ -43,8 +43,11 @@ export default defineConfig({
         ]
       },
       {
-        text: `V${pkg.version}`,
-        items: [{ text: 'V8 文档', link: 'https://v8.klinecharts.com/zh-CN' }]
+        text: 'Next',
+        items: [
+          { text: 'V9 文档', link: 'https://v9.klinecharts.com' },
+          { text: 'V8 文档', link: 'https://v8.klinecharts.com/zh-CN' }
+        ]
       },
     ],
     sidebar: {

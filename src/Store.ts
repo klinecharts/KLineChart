@@ -24,7 +24,7 @@ import type BarSpace from './common/BarSpace';
 import type Precision from './common/Precision'
 import Action from './common/Action';
 import { ActionType, type ActionCallback } from './common/Action';
-import { formatValue, type DateTime, formatDateToDateTime } from './common/utils/format'
+import { formatValue, type DateTime, formatDateToDateTime, formatFoldDecimalForCurlyBracket, formatFoldDecimalForSubscript, formatDateToString, formatBigNumber, formatThousands } from './common/utils/format'
 import { getDefaultStyles, type Styles, type TooltipLegend } from './common/Styles'
 import { isArray, isString, isValid, isNumber, isBoolean, isFunction, merge } from './common/utils/typeChecks'
 import { createId } from './common/utils/id'
@@ -35,7 +35,7 @@ import { UpdateLevel } from './common/Updater'
 import type { MouseTouchEvent } from './common/SyntheticEvent'
 import { type LoadDataCallback, type LoadDataParams, LoadDataType } from './common/LoadDataCallback'
 
-import { getDefaultCustomApi, type CustomApi, defaultLocale, type Options } from './Options'
+import { type Options, DecimalFoldType, type OverrideOptions } from './Options'
 
 import { IndicatorDataState, type IndicatorCreate, type IndicatorFilter } from './component/Indicator'
 import type IndicatorImp from './component/Indicator'
@@ -122,10 +122,26 @@ export default class Store {
    */
   private readonly _options = {
     styles: getDefaultStyles(),
-    customApi: getDefaultCustomApi(),
-    locale: defaultLocale,
-    thousandsSeparator: ',',
-    decimalFoldThreshold: 3,
+    customApi: {
+      formatDate: (timestamp: number, format: string) => formatDateToString(this._dateTimeFormat, timestamp, format),
+      formatBigNumber
+    },
+    locale: 'en-US',
+    thousandsSeparator: {
+      sign: ',',
+      format: (value: string | number) => formatThousands(value, this._options.thousandsSeparator.sign)
+    },
+    decimalFold: {
+      type: DecimalFoldType.CurlyBracket,
+      threshold: 3,
+      format: (value: string | number) => {
+        const { type, threshold } = this._options.decimalFold
+        if (type === DecimalFoldType.CurlyBracket) {
+          return formatFoldDecimalForCurlyBracket(value, threshold)
+        }
+        return formatFoldDecimalForSubscript(value, threshold)
+      }
+    },
     timezone: 'auto'
   }
 
@@ -250,7 +266,7 @@ export default class Store {
 
   /**
    * Actions
-   */
+   */ 
   private readonly _actions = new Map<ActionType, Action>()
 
   /**
@@ -263,6 +279,9 @@ export default class Store {
    */
   private readonly _taskScheduler = new TaskScheduler()
 
+  /**
+   * Overlay
+   */
   private readonly _overlays = new Map<string, OverlayImp[]>()
 
   /**
@@ -306,14 +325,14 @@ export default class Store {
     attrsIndex: -1
   }
 
-  constructor (chart: Chart, options?: Options) {
+  constructor (chart: Chart, options?: OverrideOptions) {
     this._chart = chart
     this._calcOptimalBarSpace()
     this._lastBarRightSideDiffBarCount = this._offsetRightDistance / this._barSpace
     this.setOptions(options)
   }
 
-  setOptions (options?: Options): void {
+  setOptions (options?: OverrideOptions): void {
     if (
       !isValid(this._dateTimeFormat) ||
       (isString(options?.timezone) && options.timezone !== this._options.timezone)
@@ -358,7 +377,7 @@ export default class Store {
     }
   }
 
-  getOptions (): Required<Omit<Options, 'layout'>> & { customApi: CustomApi, styles: Styles } {
+  getOptions (): Options {
     return this._options
   }
 
@@ -469,7 +488,11 @@ export default class Store {
             this._addIndicatorCalcTask(paneId, indicator, type)
           })
         })
-        this._chart.adjustPaneViewport(false, true, true, true)
+        this._chart.layout({
+          measureWidth: true,
+          update: true,
+          buildYAxisTick: true
+        })
       }
     }
   }
@@ -688,10 +711,6 @@ export default class Store {
     }
   }
 
-  getDateTimeFormat (): Intl.DateTimeFormat {
-    return this._dateTimeFormat
-  }
-
   getBarSpace (): BarSpace {
     return {
       bar: this._barSpace,
@@ -710,7 +729,11 @@ export default class Store {
     adjustBeforeFunc?.()
     this._adjustVisibleRange()
     this.setCrosshair(this._crosshair, true)
-    this._chart.adjustPaneViewport(false, true, true, true)
+    this._chart.layout({
+      measureWidth: true,
+      update: true,
+      buildYAxisTick: true
+    })
   }
 
   setTotalBarSpace (totalSpace: number): void {
@@ -727,7 +750,11 @@ export default class Store {
     if (isUpdate ?? false) {
       this._adjustVisibleRange()
       this.setCrosshair(this._crosshair, true)
-      this._chart.adjustPaneViewport(false, true, true, true)
+      this._chart.layout({
+        measureWidth: true,
+        update: true,
+        buildYAxisTick: true
+      })
     }
     return this
   }
@@ -790,7 +817,11 @@ export default class Store {
     this._lastBarRightSideDiffBarCount = this._startLastBarRightSideDiffBarCount - distanceBarCount
     this._adjustVisibleRange()
     this.setCrosshair(this._crosshair, true)
-    this._chart.adjustPaneViewport(false, true, true, true)
+    this._chart.layout({
+      measureWidth: true,
+      update: true,
+      buildYAxisTick: true
+    })
     const realDistance = Math.round(
       prevLastBarRightSideDistance - this._lastBarRightSideDiffBarCount * this._barSpace
     )
@@ -973,7 +1004,11 @@ export default class Store {
         })
         indicator.calcImp(this._dataList).then(result => {
           if (result) {
-            this._chart.adjustPaneViewport(false, true, true, true)
+            this._chart.layout({
+              measureWidth: true,
+              update: true,
+              buildYAxisTick: true
+            })
             indicator.onDataStateChange?.({
               state: IndicatorDataState.Ready,
               type: loadDataType,
@@ -1228,7 +1263,7 @@ export default class Store {
           this._overlays.get(paneId)?.push(overlay)
         }
         if (overlay.isStart()) {
-          overlay.onDrawStart?.(({ overlay }))
+          overlay.onDrawStart?.(({ overlay, chart: this._chart }))
         }
         return id
       }
@@ -1310,7 +1345,7 @@ export default class Store {
     filterMap.forEach((overlays, paneId) => {
       const paneOverlays = this.getOverlaysByPaneId(paneId)
       overlays.forEach(overlay => {
-        overlay.onRemoved?.({ overlay })
+        overlay.onRemoved?.({ overlay, chart: this._chart })
         if (!updatePaneIds.includes(paneId)) {
           updatePaneIds.push(paneId)
         }
@@ -1358,7 +1393,7 @@ export default class Store {
         if (overlay !== null) {
           sortFlag = true
           if (isFunction(overlay.onMouseLeave)) {
-            overlay.onMouseLeave({ overlay, figureKey, figureIndex, ...event })
+            overlay.onMouseLeave({ chart: this._chart, overlay, figureKey, figureIndex, ...event })
             ignoreUpdateFlag = true
           }
         }
@@ -1366,7 +1401,7 @@ export default class Store {
         if (infoOverlay !== null) {
           sortFlag = true
           if (isFunction(infoOverlay.onMouseEnter)) {
-            infoOverlay.onMouseEnter({ overlay: infoOverlay, figureKey: info.figureKey, figureIndex: info.figureIndex, ...event })
+            infoOverlay.onMouseEnter({ chart: this._chart, overlay: infoOverlay, figureKey: info.figureKey, figureIndex: info.figureIndex, ...event })
             ignoreUpdateFlag = true
           }
         }
@@ -1388,13 +1423,13 @@ export default class Store {
     const { paneId, overlay, figureType, figureKey, figureIndex } = this._clickOverlayInfo
     const infoOverlay = info.overlay
     if (!(infoOverlay?.isDrawing() ?? false)) {
-      infoOverlay?.onClick?.({ overlay: infoOverlay, figureKey: info.figureKey, figureIndex: info.figureIndex, ...event })
+      infoOverlay?.onClick?.({ chart: this._chart, overlay: infoOverlay, figureKey: info.figureKey, figureIndex: info.figureIndex, ...event })
     }
     if (overlay?.id !== infoOverlay?.id || figureType !== info.figureType || figureIndex !== info.figureIndex) {
       this._clickOverlayInfo = info
       if (overlay?.id !== infoOverlay?.id) {
-        overlay?.onDeselected?.({ overlay, figureKey, figureIndex, ...event })
-        infoOverlay?.onSelected?.({ overlay: infoOverlay, figureKey: info.figureKey, figureIndex: info.figureIndex, ...event })
+        overlay?.onDeselected?.({ chart: this._chart, overlay, figureKey, figureIndex, ...event })
+        infoOverlay?.onSelected?.({ chart: this._chart, overlay: infoOverlay, figureKey: info.figureKey, figureIndex: info.figureIndex, ...event })
         this._chart.updatePane(UpdateLevel.Overlay, info.paneId)
         if (paneId !== info.paneId) {
           this._chart.updatePane(UpdateLevel.Overlay, paneId)

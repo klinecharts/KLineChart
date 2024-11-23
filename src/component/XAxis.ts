@@ -75,29 +75,28 @@ export default abstract class XAxisImp extends AxisImp implements XAxis {
     const chartStore = this.getParent().getChart().getChartStore()
     const formatDate = chartStore.getOptions().customApi.formatDate
     const timeTickList = chartStore.getVisibleRangeTimeTickList()
-    const dateTimeFormat = chartStore.getDateTimeFormat()
     const ticks = timeTickList.map(({ dataIndex, weight, timestamp }) => {
       let text = ''
       switch (weight) {
         case TimeWeightConstants.Year: {
-          text = formatDate(dateTimeFormat, timestamp, 'YYYY', FormatDateType.XAxis)
+          text = formatDate(timestamp, 'YYYY', FormatDateType.XAxis)
           break
         }
         case TimeWeightConstants.Month: {
-          text = formatDate(dateTimeFormat, timestamp, 'YYYY-MM', FormatDateType.XAxis)
+          text = formatDate(timestamp, 'YYYY-MM', FormatDateType.XAxis)
           break
         }
         case TimeWeightConstants.Day: {
-          text = formatDate(dateTimeFormat, timestamp, 'MM-DD', FormatDateType.XAxis)
+          text = formatDate(timestamp, 'MM-DD', FormatDateType.XAxis)
           break
         }
         case TimeWeightConstants.Hour:
         case TimeWeightConstants.Minute: {
-          text = formatDate(dateTimeFormat, timestamp, 'HH:mm', FormatDateType.XAxis)
+          text = formatDate(timestamp, 'HH:mm', FormatDateType.XAxis)
           break
         }
         default: {
-          text = formatDate(dateTimeFormat, timestamp, 'HH:mm:ss', FormatDateType.XAxis)
+          text = formatDate(timestamp, 'HH:mm:ss', FormatDateType.XAxis)
           break
         }
       }

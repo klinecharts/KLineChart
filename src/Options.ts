@@ -14,7 +14,6 @@
 
 import type DeepPartial from './common/DeepPartial'
 import type { Styles } from './common/Styles'
-import { formatDateToString, formatBigNumber } from './common/utils/format'
 
 import type { IndicatorCreate } from './component/Indicator'
 import type { PaneOptions } from './pane/types'
@@ -25,7 +24,7 @@ export enum FormatDateType {
   XAxis
 }
 
-export type FormatDate = (dateTimeFormat: Intl.DateTimeFormat, timestamp: number, format: string, type: FormatDateType) => string
+export type FormatDate = (timestamp: number, format: string, type: FormatDateType) => string
 
 export type FormatBigNumber = (value: string | number) => string
 
@@ -33,15 +32,6 @@ export interface CustomApi {
   formatDate: FormatDate
   formatBigNumber: FormatBigNumber
 }
-
-export function getDefaultCustomApi (): CustomApi {
-  return {
-    formatDate: formatDateToString,
-    formatBigNumber
-  }
-}
-
-export const defaultLocale = 'en-US'
 
 export interface Locales {
   time: string
@@ -67,12 +57,33 @@ export interface LayoutChild {
   options?: PaneOptions
 }
 
+
+export const enum DecimalFoldType {
+  CurlyBracket = 'curlyBracket',
+  Subscript = 'subscript'
+}
+
+export interface DecimalFold {
+  type: DecimalFoldType
+  threshold: number
+  format: (value: string | number) => string
+}
+
+export interface ThousandsSeparator {
+  sign: string
+  format: (value: string | number) => string
+}
+
 export interface Options {
+  locale: string
+  timezone: string
+  styles: Styles
+  customApi: CustomApi
+  thousandsSeparator: ThousandsSeparator
+  decimalFold: DecimalFold
+}
+
+export type OverrideOptions = DeepPartial<Omit<Options, 'styles'>> & {
   layout?: LayoutChild[]
-  locale?: string
-  timezone?: string
   styles?: string | DeepPartial<Styles>
-  customApi?: Partial<CustomApi>
-  thousandsSeparator?: string
-  decimalFoldThreshold?: number
 }

@@ -4,7 +4,10 @@ import DefaultTheme from 'vitepress/theme'
 import { nextTick, provide } from 'vue'
 
 import Banner from './Banner.vue'
-import HomeSponsor from './home/sponsor/index.vue'
+import HomeHero from './home/Hero.vue'
+import HomeCreateChart from './home/CreateChart.vue'
+import HomeFAQ from './home/FAQ.vue'
+import HomeSponsor from './home/Sponsor.vue'
 import NotFound from './NotFound.vue'
 
 const { isDark } = useData()
@@ -45,10 +48,15 @@ provide('toggle-appearance', async ({ clientX: x, clientY: y }) => {
 
 <template>
   <DefaultTheme.Layout>
-    <!-- <template #layout-top>
+    <template #layout-top>
       <Banner/>
-    </template> -->
+    </template>
+    <template #home-hero-before>
+      <HomeHero/>
+    </template>
     <template #home-features-after>
+      <HomeCreateChart/>
+      <HomeFAQ/>
       <HomeSponsor/>
     </template>
     <template #not-found>

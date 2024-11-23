@@ -1,9 +1,24 @@
 <script setup>
   import { ref } from 'vue'
+  import Section from './Section.vue';
 
   import { useData } from 'vitepress'
 
-  import sponsors from './index.json'
+  const sponsors = [
+    {
+      "name": "Northstar",
+      "logo": "/images/sponsors/Northstar.png",
+      "website": "https://www.quantit.tech",
+      "amount": 600
+    },
+    {
+      "name": "flameOnYou",
+      "text": "flameOnYou",
+      "logo": "/images/sponsors/flameOnYou.jpg",
+      "website": "https://github.com/flameOnYou",
+      "amount": 1600
+    }
+  ]
 
   sponsors.sort((s1, s2) => s2.amount - s1.amount)
 
@@ -28,15 +43,16 @@
 </script>
 
 <template>
-  <section class="home-section sponsor-section">
-    <div class="home-section-content sponsor">
-      <h2>{{ lang === 'zh-CN' ? '赞助商' : 'Sponsors' }}</h2>
+  <Section
+    :title="lang === 'zh-CN' ? '赞助商' : 'Sponsors'"
+    :subTitle="lang === 'zh-CN' ? '维护这样一个图表和开发新功能需要巨大精力，只有在我们的赞助者慷慨的财务支持下才得以持续。' : 'Maintaining such a chart and developing new features requires tremendous effort, which can only be sustained with the generous financial support of our sponsors.'">
+    <div class="sponsor">
       <div class="sponsor-grid sponsor-top-grid">
-        <a class="sponsor-grid-item item-no1" :href="sponsors[0].website" target="_blank" rel="noreferrer">
+        <a class="sponsor-grid-item item-no2-no3" :href="sponsors[0].website" target="_blank" rel="noreferrer">
           <img class="image" :src="sponsors[0].logo"/>
           <span class="text" v-if="!!sponsors[0].text">{{ sponsors[0].text }}</span>
         </a>
-        <a class="sponsor-grid-item item-no1" :href="sponsors[1].website" target="_blank" rel="noreferrer">
+        <a class="sponsor-grid-item item-no2-no3" :href="sponsors[1].website" target="_blank" rel="noreferrer">
           <img class="image" :src="sponsors[1].logo"/>
           <span class="text" v-if="!!sponsors[1].text">{{ sponsors[1].text }}</span>
         </a>
@@ -64,46 +80,20 @@
       </div>
       <div class="sponsor-become">
         <a target="_blank" rel="noreferrer" href="./sponsor.html">
+          <svg width="18" height="18" viewBox="0 0 24 24">
+            <path fill="currentColor" d="m12 21l-1.45-1.3q-2.525-2.275-4.175-3.925T3.75 12.812T2.388 10.4T2 8.15Q2 5.8 3.575 4.225T7.5 2.65q1.3 0 2.475.55T12 4.75q.85-1 2.025-1.55t2.475-.55q2.35 0 3.925 1.575T22 8.15q0 1.15-.387 2.25t-1.363 2.412t-2.625 2.963T13.45 19.7z"/>
+          </svg>
+          &nbsp;
           {{ lang === 'zh-CN' ? '成为赞助商' : 'Become a sponsor' }}
         </a>
       </div>
     </div>
-  </section>
+  </Section>
 </template>
 
 <style scoped>
-  .home-section {
-    border-top: 1px solid var(--vp-c-gutter);
-    padding: 60px 24px;
-    text-align: center;
-  }
-
-  .home-section .home-section-content {
-    margin: 0 auto;
-    max-width: 1152px;
-  }
-
-  @media (min-width: 640px) {
-    .home-section {
-      padding: 60px 48px
-    }
-  }
-
-  @media (min-width: 960px) {
-    .home-section{
-      padding: 60px 64px
-    }
-  }
-
-  .sponsor-section {
-    margin-top: 100px;
-  }
-
-  .sponsor h2 {
-    font-size: 26px;
-    text-align: center;
-    font-weight: 600;
-    padding-bottom: 34px;
+  .sponsor {
+    width: 100%;
   }
 
   .sponsor h4 {
@@ -116,7 +106,7 @@
   .sponsor-grid {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
+    gap: 12px;
   }
 
   .sponsor-grid-item {
@@ -126,7 +116,7 @@
     width: 100%;
     color: var(--vp-c-text-2)!important;
     background-color: var(--vp-c-bg-soft);
-    border-radius: 4px;
+    border-radius: 8px;
     transition: background-color .2s;
     cursor: pointer;
     color: inherit;
@@ -138,21 +128,8 @@
     padding-left: 12px;
   }
 
-  /* .dark .sponsor .sponsor-grid .sponsor-grid-item .image {
-    filter: grayscale(1) invert(1);
-  } */
-
-  .dark .sponsor .sponsor-grid .sponsor-grid-item:hover {
-    background-color: var(--vp-c-neutral);
-    color: rgba(0, 0, 0, 0.6)!important;
-  }
-
-  /* .dark .sponsor-grid .sponsor-grid-item:hover .image {
-    filter: grayscale(0) invert(0);
-  } */
-
   .sponsor-top-grid .item-no1 {
-    height: 160px;
+    height: 200px;
     font-size: 16px;
   }
 
@@ -190,26 +167,32 @@
     display: flex;
     flex-direction: row;
     justify-content: center;
-    padding-top: 26px;
+    padding-top: 30px;
     font-size: 14px;
     color: var(--vp-c-indigo-1);
     font-weight: bold;
   }
 
   .sponsor-become a {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
     padding: 8px 22px;
     border-radius: 99px;
     transition: all .25s ease-in;
-    text-decoration: underline;
-  }
-
-  .sponsor-become a:hover {
     background-color: var(--vp-c-indigo-1);
     color: white;
     text-decoration: none;
   }
 
+  .sponsor-become a:hover {
+    background-color: var(--vp-c-indigo-2);
+  }
+
   @media (min-width: 640px) {
+    .sponsor-grid {
+      gap: 20px;
+    }
     .sponsor-platinum-grid .item {
       width: calc((100% - 12px) / 3);
     }
@@ -221,7 +204,12 @@
 
   @media (min-width: 960px) {
     .sponsor-top-grid .item-no2-no3 {
-      width: calc((100% - 6px) / 2);
+      width: calc((100% - 20px) / 2);
+      height: 200px;
+    }
+
+    .sponsor-top-grid .item-no2-no3 .image {
+      height: 72px;
     }
 
     .sponsor-platinum-grid .item {

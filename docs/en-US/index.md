@@ -3,32 +3,35 @@ title: Highly customizable professional lightweight financial chart
 # https://vitepress.dev/reference/default-theme-home-page
 layout: home
 
-hero:
-  name: KLineChart
-  text: Highly customizable professional lightweight financial chart
-  tagline: Easy to use, lightweight and smooth, suitable for web front-end financial chart with rich scenarios.
-  image:
-    src: /images/logo_hero.svg
-    alt: KLineChart
-  actions:
-    - theme: brand
-      text: Getting Started
-      link: /en-US/guide/quick-start
-    - theme: alt
-      text: View on Github
-      link: https://github.com/klinecharts/KLineChart
-
 features:
   - icon:
-      src: /images/box.png
+      light: /images/box_light.png
+      dark: /images/box_dark.png
     title: Out of the box
-    details: Simple and fast integration, zero cost to get started, only 3 lines of code to display a chart, so that all attention can be focused on data docking.
+    details: Simple and fast integration, zero cost to get started, displaying a chart in just 3 lines of code, allowing users to focus on data integration.
   - icon:
-      src: /images/rocket.png
+      light: /images/rocket_light.png
+      dark: /images/rocket_dark.png
     title: Lightweight and smooth
-    details: Zero dependency, only about 50k under Gzip compression, and less than 1 millisecond to load under 4G network. Charts remain fluid even with thousands of candles.
+    details: Zero dependency, only about 50k under Gzip compression. Charts can remain smooth even with thousands of data.
   - icon:
-      src: /images/expand.png
+      light: /images/power_light.png
+      dark: /images/power_dark.png
+    title: Powerful functionality
+    details: Built in multiple candlestick charts, multiple coordinate axes, dozens of commonly used indicators, and line drawing models to meet most needs.
+  - icon:
+      light: /images/expand_light.png
+      dark: /images/expand_dark.png
     title: Highly expand
-    details: Provide rich configuration and Api, style modification, function collocation as you like. Provide technical indicators and line drawing model extensions, so that the chart has more possibilities.
+    details: Provide rich APIs, style configurations, technical specifications, line drawing models, and coordinate axis extensions, with customizable functional combinations.
+  - icon:
+      light: /images/mobile_light.png
+      dark: /images/mobile_dark.png
+    title: Mobile
+    details: Specially adapted for mobile devices, fully capable of running on mobile browsers.
+  - icon:
+      light: /images/typescript_light.png
+      dark: /images/typescript_dark.png
+    title: Typescript
+    details: Provide a complete Typescript declaration file, perfectly supporting Typescript development.
 ---

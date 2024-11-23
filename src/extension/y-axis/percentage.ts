@@ -26,8 +26,10 @@ const percentage: AxisTemplate = {
   realValueToValue: (value, { range }) => {
     return (value - range.realFrom) / range.realRange * range.range + range.from
   },
-  createRange: ({ defaultRange, dataVisibleRange, kLineDataList }) => {
-    const kLineData = kLineDataList[dataVisibleRange.from]
+  createRange: ({ chart, defaultRange }) => {
+    const kLineDataList = chart.getDataList()
+    const visibleRange = chart.getVisibleRange()
+    const kLineData = kLineDataList[visibleRange.from]
     if (isValid(kLineData)) {
       const { from, to, range } = defaultRange
       const realFrom = (defaultRange.from - kLineData.close) / kLineData.close * 100

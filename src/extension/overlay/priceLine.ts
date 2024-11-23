@@ -14,17 +14,24 @@
 
 import type { OverlayTemplate } from '../../component/Overlay'
 
-import { formatThousands, formatFoldDecimal } from '../../common/utils/format'
-
 const priceLine: OverlayTemplate = {
   name: 'priceLine',
   totalStep: 2,
   needDefaultPointFigure: true,
   needDefaultXAxisFigure: true,
   needDefaultYAxisFigure: true,
-  createPointFigures: ({ coordinates, bounding, precision, overlay, thousandsSeparator, decimalFoldThreshold, yAxis }) => {
+  createPointFigures: ({ chart, coordinates, bounding, overlay, yAxis }) => {
+    let precision = 0
+    if (yAxis?.isInCandle() ?? true) {
+      precision = chart.getPriceVolumePrecision().price
+    } else {
+      const indicators = chart.getIndicators({ paneId: overlay.paneId }).get(overlay.paneId) ?? []
+      indicators.forEach(indicator => {
+        precision = Math.max(precision, indicator.precision)
+      })
+    }
+    const { decimalFold, thousandsSeparator } = chart.getOptions()
     const { value = 0 } = (overlay.points)[0]
-    const currentPrecision = (yAxis?.isInCandle() ?? true) ? precision.price : precision.excludePriceVolumeMax
     return [
       {
         type: 'line',
@@ -36,7 +43,7 @@ const priceLine: OverlayTemplate = {
         attrs: {
           x: coordinates[0].x,
           y: coordinates[0].y,
-          text: formatFoldDecimal(formatThousands(value.toFixed(currentPrecision), thousandsSeparator), decimalFoldThreshold),
+          text: decimalFold.format(thousandsSeparator.format(value.toFixed(precision))),
           baseline: 'bottom'
         }
       }

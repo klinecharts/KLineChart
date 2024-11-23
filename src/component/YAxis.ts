@@ -17,7 +17,7 @@ import type Bounding from '../common/Bounding'
 import { isNumber, isString, isValid, merge } from '../common/utils/typeChecks'
 import { index10, getPrecision, nice, round } from '../common/utils/number'
 import { calcTextWidth } from '../common/utils/canvas'
-import { formatPrecision, formatThousands, formatFoldDecimal } from '../common/utils/format'
+import { formatPrecision } from '../common/utils/format'
 
 import AxisImp, {
   type AxisTemplate, type Axis, type AxisRange,
@@ -169,10 +169,8 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
     }
 
     const range = this.createRange({
+      chart,
       paneId,
-      kLineDataList: chartStore.getDataList(),
-      dataVisibleRange: chartStore.getVisibleRange(),
-      indicators,
       defaultRange
     })
     let realFrom = range.realFrom
@@ -268,7 +266,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
     const chartStore = pane.getChart().getChartStore()
     const optimalTicks: AxisTick[] = []
     const indicators = chartStore.getIndicatorsByPaneId(pane.getId())
-    const { styles, customApi, thousandsSeparator, decimalFoldThreshold } = chartStore.getOptions()
+    const { styles, customApi, thousandsSeparator, decimalFold } = chartStore.getOptions()
     let precision = 0
     let shouldFormatBigNumber = false
     if (this.isInCandle()) {
@@ -294,7 +292,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
       if (shouldFormatBigNumber) {
         v = customApi.formatBigNumber(value)
       }
-      v = formatFoldDecimal(formatThousands(v, thousandsSeparator), decimalFoldThreshold)
+      v = decimalFold.format(thousandsSeparator.format(v))
       const validYNumber = isNumber(validY)
       if (
         y > textHeight &&
@@ -310,15 +308,13 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
   override getAutoSize (): number {
     const pane = this.getParent()
     const chart = pane.getChart()
-    const chartOptions = chart.getOptions()
-    const styles = chartOptions.styles
+    const chartStore = chart.getChartStore()
+    const { customApi, decimalFold, styles } = chartStore.getOptions()
     const yAxisStyles = styles.yAxis
     const width = yAxisStyles.size
     if (width !== 'auto') {
       return width
     }
-    const chartStore = chart.getChartStore()
-    const customApi = chartOptions.customApi
     let yAxisWidth = 0
     if (yAxisStyles.show) {
       if (yAxisStyles.axisLine.show) {
@@ -368,7 +364,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
       if (shouldFormatBigNumber) {
         valueText = customApi.formatBigNumber(valueText)
       }
-      valueText = formatFoldDecimal(valueText, chartStore.getOptions().decimalFoldThreshold)
+      valueText = decimalFold.format(valueText)
       crosshairVerticalTextWidth += (
         crosshairStyles.horizontal.text.paddingLeft +
         crosshairStyles.horizontal.text.paddingRight +
