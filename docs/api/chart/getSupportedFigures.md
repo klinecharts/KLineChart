@@ -20,5 +20,5 @@ outline: deep
 import GetSupportedFigures from '../../@views/api/samples/getSupportedFigures/index.vue'
 </script>
 
-### 基本用法 {#basic}
+### 基本使用 {#basic}
 <GetSupportedFigures />

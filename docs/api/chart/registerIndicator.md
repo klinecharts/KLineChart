@@ -47,7 +47,7 @@ import CustomIndicatorTooltip from '../../@views/api/samples/custom-indicator-to
 import CustomIndicatorDraw from '../../@views/api/samples/custom-indicator-draw/index.vue'
 </script>
 
-### 基本用法 {#basic}
+### 基本使用 {#basic}
 <CustomIndicatorBasic/>
 
 ### 使用自定义基础图形 {#custom-figure}

@@ -19,5 +19,5 @@ outline: deep
 import Version from '../../@views/api/samples/version/index.vue'
 </script>
 
-### 基本用法 {#basic}
+### 基本使用 {#basic}
 <Version />

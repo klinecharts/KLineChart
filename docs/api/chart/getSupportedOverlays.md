@@ -19,5 +19,5 @@ outline: deep
 import GetSupportedOverlays from '../../@views/api/samples/getSupportedOverlays/index.vue'
 </script>
 
-### 基本用法 {#basic}
+### 基本使用 {#basic}
 <GetSupportedOverlays />

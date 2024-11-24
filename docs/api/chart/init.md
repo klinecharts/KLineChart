@@ -70,7 +70,7 @@ import InitDecimalFoldFormat from '../../@views/api/samples/init-decimalFold-for
 
 ## 用法 {#usage}
 
-### 基本用法 {#basic}
+### 基本使用 {#basic}
 <InitBasic/>
 
 ### 自定义布局 {#layout}

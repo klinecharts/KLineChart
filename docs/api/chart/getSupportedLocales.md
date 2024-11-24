@@ -19,5 +19,5 @@ outline: deep
 import GetSupportedLocales from '../../@views/api/samples/getSupportedLocales/index.vue'
 </script>
 
-### 基本用法 {#basic}
+### 基本使用 {#basic}
 <GetSupportedLocales />

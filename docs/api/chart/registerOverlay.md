@@ -52,7 +52,7 @@ import CustomOverlayBasic from '../../@views/api/samples/custom-overlay-basic/in
 import CustomOverlayCustomFigure from '../../@views/api/samples/custom-figure-custom-overlay/index.vue'
 </script>
 
-### 基本用法 {#basic}
+### 基本使用 {#basic}
 <CustomOverlayBasic/>
 
 ### 使用自定义基础图形 {#custom-figure}
