@@ -14,7 +14,7 @@
 
 import { CandleType } from '../common/Styles'
 import type Bounding from '../common/Bounding'
-import { isNumber, isString, isValid, merge } from '../common/utils/typeChecks'
+import { isFunction, isNumber, isString, isValid, merge } from '../common/utils/typeChecks'
 import { index10, getPrecision, nice, round } from '../common/utils/number'
 import { calcTextWidth } from '../common/utils/canvas'
 import { formatPrecision } from '../common/utils/format'
@@ -305,6 +305,13 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
         validY = y
       }
     })
+    if (isFunction(this.createTicks)) {
+      return this.createTicks({
+        range: this.getRange(),
+        bounding: this.getBounding(),
+        defaultTicks: optimalTicks
+      })
+    }
     return optimalTicks
   }
 

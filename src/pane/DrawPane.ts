@@ -59,18 +59,17 @@ export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
 
   setOptions (options: PaneOptions): this {
     const paneId = this.getId()
-    let name = options.axis?.name ?? 'normal'
-    if (paneId === PaneIdConstants.CANDLE) {
+    if (paneId === PaneIdConstants.CANDLE || paneId === PaneIdConstants.X_AXIS) {
+      const axisName = options.axis?.name
       if (
         !isValid(this._axis) ||
-        (this._options.axis.name !== name)
+        (isValid(axisName) && this._options.axis.name !== axisName)
       ) {
-        this._axis = this.createAxisComponent(name)
+        this._axis = this.createAxisComponent(axisName ?? 'normal')
       }
     } else {
-      name = 'normal'
       if (!isValid(this._axis)) {
-        this._axis = this.createAxisComponent(name)
+        this._axis = this.createAxisComponent('normal')
       }
     }
     if (this._axis instanceof YAxisImp) {
@@ -78,8 +77,8 @@ export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
     }
     merge(this._options, options)
     this._axis.override({
-      name,
-      ...this._options.axis
+      ...this._options.axis,
+      name: options.axis?.name ?? 'normal',
     })
     let container: Nullable<HTMLElement> = null
     let cursor = 'default'
