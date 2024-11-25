@@ -1,3 +1,0 @@
-```typescript
-(name: string) => Figure
-```

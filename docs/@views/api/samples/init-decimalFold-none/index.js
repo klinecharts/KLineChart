@@ -1,7 +1,7 @@
 import { init } from 'klinecharts';
 
 const chart = init(
-  'init-decimalFold-normal-chart',
+  'init-decimalFold-none-chart',
   { decimalFold: { threshold: 1000 } }
 )
 

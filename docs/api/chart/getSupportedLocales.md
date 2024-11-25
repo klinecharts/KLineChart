@@ -6,7 +6,7 @@ outline: deep
 `getSupportedLocales` 获取目前图表支持的多语言列表。
 
 ## 参考 {#reference}
-<!-- @include: @/@views/api/chart/getSupportedLocales/reference.md -->
+<!-- @include: @/@views/api/references/chart/getSupportedLocales.md -->
 
 ### 参数
 `getSupportedLocales` 不接收任何参数。

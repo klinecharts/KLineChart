@@ -6,7 +6,7 @@ outline: deep
 `getSupportedFigures` 获取目前图表支持的基础图形列表。
 
 ## 参考 {#reference}
-<!--@include: @/@views/api/chart/getSupportedFigures/reference.md-->
+<!--@include: @/@views/api/references/chart/getSupportedFigures.md-->
 
 ### 参数
 `getSupportedFigures` 不接收任何参数。

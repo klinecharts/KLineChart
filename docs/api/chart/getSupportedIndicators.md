@@ -6,7 +6,7 @@ outline: deep
 `getSupportedIndicators` 获取目前图表支持的指标列表。
 
 ## 参考 {#reference}
-<!-- @include: @/@views/api/chart/getSupportedIndicators/reference.md -->
+<!-- @include: @/@views/api/references/chart/getSupportedIndicators.md -->
 
 ### 参数
 `getSupportedIndicators` 不接收任何参数。

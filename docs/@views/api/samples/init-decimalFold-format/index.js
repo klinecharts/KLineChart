@@ -1,17 +1,18 @@
 import { init } from 'klinecharts';
 
-const superscriptNumbers = {
-  '0': '⁰',
-  '1': '¹',
-  '2': '²',
-  '3': '³',
-  '4': '⁴',
-  '5': '⁵',
-  '6': '⁶',
-  '7': '⁷',
-  '8': '⁸',
-  '9': '⁹'
-};
+const subscriptNumbers = {
+  '0': '₀',
+  '1': '₁',
+  '2': '₂',
+  '3': '₃',
+  '4': '₄',
+  '5': '₅',
+  '6': '₆',
+  '7': '₇',
+  '8': '₈',
+  '9': '₉'
+}
+
 
 const chart = init(
   'init-decimalFold-format-chart',
@@ -27,7 +28,7 @@ const chart = init(
           const match = /0*/.exec(v);
           if (match) {
             const count = `${match[0].length}`;
-            result[lastIndex] = v.replace(/0*/, `0${count.replace(/\d/, $1 => superscriptNumbers[$1] ?? '')}`);
+            result[lastIndex] = v.replace(/0*/, `0${count.replace(/\d/, $1 => subscriptNumbers[$1] ?? '')}`);
             return result.join('.')
           }
         }

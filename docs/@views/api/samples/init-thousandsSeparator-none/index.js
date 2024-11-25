@@ -1,12 +1,10 @@
 import { init } from 'klinecharts';
 
 const chart = init(
-  'init-decimalFold-type-chart',
-  { decimalFold: { type: 'subscript' } }
+  'init-thousandsSeparator-none-chart',
+  { thousandsSeparator: { sign: '' } }
 )
 
-chart.setPrecision({ price: 10 })
-
-fetch('/datas/kline2.json')
+fetch('/datas/kline.json')
   .then(res => res.json())
   .then(dataList => { chart.applyNewData(dataList); });

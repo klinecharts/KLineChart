@@ -6,7 +6,7 @@ outline: deep
 `registerYAxis` 用于扩展 y 轴。
 
 ## 参考 {#reference}
-<!--@include: @/@views/api/chart/registerYAxis/reference.md-->
+<!--@include: @/@views/api/references/chart/registerYAxis.md-->
 
 ### 参数
 - `yAxis` y轴配置。

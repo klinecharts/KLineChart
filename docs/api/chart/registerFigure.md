@@ -6,7 +6,7 @@ outline: deep
 `registerFigure` 用于自定义基础图形。
 
 ## 参考 {#reference}
-<!--@include: @/@views/api/chart/registerFigure/reference.md-->
+<!--@include: @/@views/api/references/chart/registerFigure.md-->
 
 ### 参数
 - `figure` 基础图形配置。

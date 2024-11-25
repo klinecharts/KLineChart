@@ -6,7 +6,7 @@ outline: deep
 `registerStyles` 用于扩展样式模版。
 
 ## 参考 {#reference}
-<!--@include: @/@views/api/chart/registerStyles/reference.md-->
+<!--@include: @/@views/api/references/chart/registerStyles.md-->
 
 ### 参数
 - `name` 样式模板名。

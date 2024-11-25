@@ -1,5 +1,7 @@
 import { defineConfig } from 'vitepress'
 
+import { getChartApiMenus, getInstanceApiMenus } from './share'
+
 import pkg from '../../../package.json'
 
 export default defineConfig({
@@ -18,7 +20,7 @@ export default defineConfig({
         activeMatch: 'api',
         items: [
           { text: '图表API', link: '/api/chart/init' },
-          { text: '实例API', link: '/api/instance/init' }
+          { text: '实例API', link: '/api/instance/getDom' }
         ]
       },
       { text: '预览', link: 'https://preview.klinecharts.com' },
@@ -107,23 +109,8 @@ export default defineConfig({
           ]
         }
       ],
-      '/api/chart/': [
-        { text: 'init', link: '/api/chart/init' },
-        { text: 'dispose', link: '/api/chart/dispose' },
-        { text: 'version', link: '/api/chart/version' },
-        { text: 'registerLocale', link: '/api/chart/registerLocale' },
-        { text: 'getSupportedLocales', link: '/api/chart/getSupportedLocales' },
-        { text: 'registerStyles', link: '/api/chart/registerStyles' },
-        { text: 'registerFigure', link: '/api/chart/registerFigure' },
-        { text: 'getSupportedFigures', link: '/api/chart/getSupportedFigures' },
-        { text: 'getFigureClass', link: '/api/chart/getFigureClass' },
-        { text: 'registerIndicator', link: '/api/chart/registerIndicator' },
-        { text: 'getSupportedIndicators', link: '/api/chart/getSupportedIndicators' },
-        { text: 'registerOverlay', link: '/api/chart/registerOverlay' },
-        { text: 'getSupportedOverlays', link: '/api/chart/getSupportedOverlays' },
-        { text: 'registerXAxis', link: '/api/chart/registerXAxis' },
-        { text: 'registerYAxis', link: '/api/chart/registerYAxis' }
-      ],
+      '/api/chart/': getChartApiMenus(),
+      '/api/instance/': getInstanceApiMenus(),
       '/sample/': [
         { text: '基础展示', link: '/sample/basic' },
         { text: '蜡烛图类型', link: '/sample/candle-type' },

@@ -63,6 +63,7 @@
 body {
   font-feature-settings: normal;
   font-variation-settings: normal;
+  line-height: 1.6;
 }
 
 .VPFeatures .VPFeature {

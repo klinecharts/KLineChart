@@ -1,7 +1,7 @@
 import { init } from 'klinecharts';
 
 const chart = init(
-  'init-thousandsSeparator-chart',
+  'init-thousandsSeparator-format-chart',
   {
     thousandsSeparator: {
       format: value => {

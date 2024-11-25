@@ -6,7 +6,7 @@ outline: deep
 `registerLocale` 用于扩展多语言。
 
 ## 参考 {#reference}
-<!--@include: @/@views/api/chart/registerLocale/reference.md-->
+<!--@include: @/@views/api/references/chart/registerLocale.md-->
 
 ### 参数
 - `locale` 扩展语言名称。

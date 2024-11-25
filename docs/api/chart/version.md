@@ -2,11 +2,11 @@
 outline: deep
 ---
 
-# version(dcs)
+# version()
 `version` 获取图表的版本。
 
 ## 参考 {#reference}
-<!--@include: @/@views/api/chart/version/reference.md-->
+<!--@include: @/@views/api/references/chart/version.md-->
 
 ### 参数
 `version` 不接收任何参数。

@@ -5,6 +5,6 @@ import { data } from './index.data'
 
 <template>
   <ChartPreview
-    chartId="init-decimalFold-type-chart"
+    chartId="init-decimalFold-none-chart"
     :code="data.js"/>
 </template>

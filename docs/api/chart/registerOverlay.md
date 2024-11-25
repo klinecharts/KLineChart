@@ -6,7 +6,7 @@ outline: deep
 `registerOverlay` 用于自定义覆盖物。
 
 ## 参考 {#reference}
-<!-- @include: @/@views/api/chart/registerOverlay/reference.md -->
+<!-- @include: @/@views/api/references/chart/registerOverlay.md -->
 
 ### 参数
 - `overlay` 覆盖物配置。

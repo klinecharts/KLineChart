@@ -10,7 +10,7 @@ outline: deep
 :::
 
 ## 参考 {#reference}
-<!--@include: @/@views/api/chart/init/reference.md-->
+<!-- @include: @/@views/api/references/chart/init.md -->
 
 ### 参数
 - `ds` 容器，可以是dom元素或者元素id。
@@ -44,7 +44,6 @@ outline: deep
     - `sign` 标识符。
     - `format` 自定义格式化方法。
   - `decimalFold` 小数 0 折叠配置。
-    - `type` 支持 `curlyBracket` 和 `subscript` 。
     - `threshold` 折叠阈值。
     - `format` 自定义格式化方法。
 
@@ -62,9 +61,9 @@ import InitStylesExtension from '../../@views/api/samples/init-styles-extension/
 import InitStylesObject from '../../@views/api/samples/init-styles-object/index.vue'
 import InitFormatDate from '../../@views/api/samples/init-formateDate/index.vue'
 import InitFormatBigNumber from '../../@views/api/samples/init-formatBigNumber/index.vue'
-import InitThousandsSeparator from '../../@views/api/samples/init-thousandsSeparator/index.vue'
-import InitDecimalFoldNormal from '../../@views/api/samples/init-decimalFold-normal/index.vue'
-import InitDecimalFoldType from '../../@views/api/samples/init-decimalFold-type/index.vue'
+import InitThousandsSeparatorNone from '../../@views/api/samples/init-thousandsSeparator-none/index.vue'
+import InitThousandsSeparatorFormat from '../../@views/api/samples/init-thousandsSeparator-format/index.vue'
+import InitDecimalFoldNone from '../../@views/api/samples/init-decimalFold-none/index.vue'
 import InitDecimalFoldFormat from '../../@views/api/samples/init-decimalFold-format/index.vue'
 </script>
 
@@ -100,14 +99,14 @@ import InitDecimalFoldFormat from '../../@views/api/samples/init-decimalFold-for
 ### 自定义大数字显示 {#init-formatBigNumber}
 <InitFormatBigNumber />
 
-### 千分符显示 {#init-thousandsSeparator}
-<InitOptionsThousandsSeparator />
+### 不显示千分符 {#init-thousandsSeparator-none}
+<InitThousandsSeparatorNone/>
 
-### 小数 0 不折叠 {#init-decimalFold-normal}
-<InitDecimalFoldNormal/>
+### 自定义千分符显示 {#init-thousandsSeparator-format}
+<InitThousandsSeparatorFormat />
 
-### 小数 0 折叠下标显示 {#init-decimalFold-type}
-<InitDecimalFoldType />
+### 小数 0 不折叠 {#init-decimalFold-none}
+<InitDecimalFoldNone/>
 
 ### 小数 0 折叠自定义显示 {#init-decimalFold-format}
 <InitDecimalFoldFormat />

@@ -6,7 +6,7 @@ outline: deep
 `getSupportedOverlays` 获取目前图表支持的覆盖物列表。
 
 ## 参考 {#reference}
-<!-- @include: @/@views/api/chart/getSupportedOverlays/reference.md -->
+<!-- @include: @/@views/api/references/chart/getSupportedOverlays.md -->
 
 ### 参数
 `getSupportedOverlays` 不接收任何参数。

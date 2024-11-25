@@ -6,7 +6,7 @@ outline: deep
 `registerXAxis` 用于扩展 x 轴。
 
 ## 参考 {#reference}
-<!--@include: @/@views/api/chart/registerXAxis/reference.md-->
+<!--@include: @/@views/api/references/chart/registerXAxis.md-->
 
 ### 参数
 - `xAxis` x轴配置。
