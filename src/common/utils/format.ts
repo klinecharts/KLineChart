@@ -57,7 +57,7 @@ export function formatValue (data: unknown, key: string, defaultValue?: unknown)
   return defaultValue ?? '--'
 }
 
-export function formatDateToDateTime (dateTimeFormat: Intl.DateTimeFormat, timestamp: number): DateTime {
+export function formatTimestampToDateTime (dateTimeFormat: Intl.DateTimeFormat, timestamp: number): DateTime {
   const date: Record<string, string> = {}
   dateTimeFormat.formatToParts(new Date(timestamp)).forEach(({ type, value }) => {
     switch (type) {
@@ -90,8 +90,8 @@ export function formatDateToDateTime (dateTimeFormat: Intl.DateTimeFormat, times
   return date as unknown as DateTime
 }
 
-export function formatDateToString (dateTimeFormat: Intl.DateTimeFormat, timestamp: number, format: string): string {
-  const date = formatDateToDateTime(dateTimeFormat, timestamp)
+export function formatTimestampToString (dateTimeFormat: Intl.DateTimeFormat, timestamp: number, format: string): string {
+  const date = formatTimestampToDateTime(dateTimeFormat, timestamp)
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return -- ignore
   return format.replace(/YYYY|MM|DD|HH|mm|ss/g, key => date[key])
 }
@@ -132,7 +132,7 @@ export function formatThousands (value: string | number, sign: string): string {
   return vl.replace(/(\d)(?=(\d{3})+$)/g, $1 => `${$1}${sign}`)
 }
 
-export function formatFoldDecimal (value: string | number, threshold: number, format: (count: number) => string): string {
+export function formatFoldDecimal (value: string | number, threshold: number): string {
   const vl = `${value}`
   const reg = new RegExp('\\.0{' + threshold + ',}[1-9][0-9]*$')
   if (reg.test(vl)) {
@@ -142,33 +142,9 @@ export function formatFoldDecimal (value: string | number, threshold: number, fo
     const match = /0*/.exec(v)
     if (isValid(match)) {
       const count = match[0].length
-      result[lastIndex] = v.replace(/0*/, `0${format(count)}`)
+      result[lastIndex] = v.replace(/0*/, `0{${count}}`)
       return result.join('.')
     }
   }
   return vl
-}
-
-export function formatFoldDecimalForCurlyBracket (value: string | number, threshold: number): string {
-  return formatFoldDecimal(value, threshold, count => `{${count}}`)
-}
-
-const subscriptNumbers = {
-  '0': '₀',
-  '1': '₁',
-  '2': '₂',
-  '3': '₃',
-  '4': '₄',
-  '5': '₅',
-  '6': '₆',
-  '7': '₇',
-  '8': '₈',
-  '9': '₉'
-}
-
-export function formatFoldDecimalForSubscript (value: string | number, threshold: number): string {
-  return formatFoldDecimal(value, threshold, count => `${count}`.replace(/\d/, $1 => 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return -- ignore
-       subscriptNumbers[$1] ?? ''
-    ))
 }

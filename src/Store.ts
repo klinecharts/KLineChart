@@ -24,7 +24,7 @@ import type BarSpace from './common/BarSpace';
 import type Precision from './common/Precision'
 import Action from './common/Action';
 import { ActionType, type ActionCallback } from './common/Action';
-import { formatValue, type DateTime, formatDateToDateTime, formatFoldDecimalForCurlyBracket, formatFoldDecimalForSubscript, formatDateToString, formatBigNumber, formatThousands } from './common/utils/format'
+import { formatValue, type DateTime, formatTimestampToDateTime, formatTimestampToString, formatBigNumber, formatThousands, formatFoldDecimal } from './common/utils/format'
 import { getDefaultStyles, type Styles, type TooltipLegend } from './common/Styles'
 import { isArray, isString, isValid, isNumber, isBoolean, isFunction, merge } from './common/utils/typeChecks'
 import { createId } from './common/utils/id'
@@ -35,7 +35,7 @@ import { UpdateLevel } from './common/Updater'
 import type { MouseTouchEvent } from './common/SyntheticEvent'
 import { type LoadDataCallback, type LoadDataParams, LoadDataType } from './common/LoadDataCallback'
 
-import { type Options, DecimalFoldType, type CustomApi, type ThousandsSeparator, type DecimalFold } from './Options'
+import type { Options, CustomApi, ThousandsSeparator, DecimalFold } from './Options'
 
 import { IndicatorDataState, type IndicatorCreate, type IndicatorFilter } from './component/Indicator'
 import type IndicatorImp from './component/Indicator'
@@ -163,7 +163,7 @@ export default class StoreImp implements Store {
    * Custom api
    */
   private readonly _customApi = {
-    formatDate: (timestamp: number, format: string) => formatDateToString(this._dateTimeFormat, timestamp, format),
+    formatDate: (timestamp: number, format: string) => formatTimestampToString(this._dateTimeFormat, timestamp, format),
     formatBigNumber
   }
 
@@ -184,15 +184,8 @@ export default class StoreImp implements Store {
    * Decimal fold
    */
   private readonly _decimalFold = {
-    type: DecimalFoldType.CurlyBracket,
     threshold: 3,
-    format: (value: string | number) => {
-      const { type, threshold } = this._decimalFold
-      if (type === DecimalFoldType.CurlyBracket) {
-        return formatFoldDecimalForCurlyBracket(value, threshold)
-      }
-      return formatFoldDecimalForSubscript(value, threshold)
-    }
+    format: (value: string | number ) => formatFoldDecimal(value, this._decimalFold.threshold)
   }
 
   /**
@@ -608,9 +601,9 @@ export default class StoreImp implements Store {
     for (let i = 0; i < newDataList.length; i++) {
       const kLineData = newDataList[i]
       let weight = TimeWeightConstants.Second
-      const dateTime = formatDateToDateTime(this._dateTimeFormat, kLineData.timestamp)
+      const dateTime = formatTimestampToDateTime(this._dateTimeFormat, kLineData.timestamp)
       if (isValid(prevKLineData)) {
-        const prevDateTime = formatDateToDateTime(this._dateTimeFormat, prevKLineData.timestamp)
+        const prevDateTime = formatTimestampToDateTime(this._dateTimeFormat, prevKLineData.timestamp)
         if (dateTime.YYYY !== prevDateTime.YYYY) {
           weight = TimeWeightConstants.Year
         } else if (dateTime.MM !== prevDateTime.MM) {

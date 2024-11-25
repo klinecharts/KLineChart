@@ -65,15 +65,20 @@ export enum DomPosition {
   YAxis = 'yAxis'
 }
 
-export interface ConvertFinder {
+export interface ConvertFilter {
   paneId?: string
   absolute?: boolean
 }
 
+export interface DomFilter {
+  paneId: string
+  position?: DomPosition
+}
+
 export interface Chart extends Store {
   id: string
-  getDom: (paneId?: string, position?: DomPosition) => Nullable<HTMLElement>
-  getSize: (paneId?: string, position?: DomPosition) => Nullable<Bounding>
+  getDom: (filter?: DomFilter) => Nullable<HTMLElement>
+  getSize: (filter?: DomFilter) => Nullable<Bounding>
   applyNewData: (dataList: KLineData[], more?: boolean | Partial<LoadDataMore>) => void
   updateData: (data: KLineData) => void
   createIndicator: (value: string | IndicatorCreate, isStack?: boolean, paneOptions?: PaneOptions) => Nullable<string>
@@ -88,8 +93,8 @@ export interface Chart extends Store {
   zoomAtCoordinate: (scale: number, coordinate?: Coordinate, animationDuration?: number) => void
   zoomAtDataIndex: (scale: number, dataIndex: number, animationDuration?: number) => void
   zoomAtTimestamp: (scale: number, timestamp: number, animationDuration?: number) => void
-  convertToPixel: (points: Partial<Point> | Array<Partial<Point>>, finder: ConvertFinder) => Partial<Coordinate> | Array<Partial<Coordinate>>
-  convertFromPixel: (coordinates: Array<Partial<Coordinate>>, finder: ConvertFinder) => Partial<Point> | Array<Partial<Point>>
+  convertToPixel: (points: Partial<Point> | Array<Partial<Point>>, filter: ConvertFilter) => Partial<Coordinate> | Array<Partial<Coordinate>>
+  convertFromPixel: (coordinates: Array<Partial<Coordinate>>, filter: ConvertFilter) => Partial<Point> | Array<Partial<Point>>
   executeAction: (type: ActionType, data: Crosshair) => void
   subscribeAction: (type: ActionType, callback: ActionCallback) => void
   unsubscribeAction: (type: ActionType, callback?: ActionCallback) => void
@@ -548,10 +553,11 @@ export default class ChartImp implements Chart {
     }
   }
 
-  getDom (paneId?: string, position?: DomPosition): Nullable<HTMLElement> {
-    if (isString(paneId)) {
+  getDom (filter?: DomFilter): Nullable<HTMLElement> {
+    if (isValid(filter)) {
+      const { paneId, position } = filter
       const pane = this.getDrawPaneById(paneId)
-      if (pane !== null) {
+      if (isValid(pane)) {
         const pos = position ?? DomPosition.Root
         switch (pos) {
           case DomPosition.Root: {
@@ -571,10 +577,11 @@ export default class ChartImp implements Chart {
     return null
   }
 
-  getSize (paneId?: string, position?: DomPosition): Nullable<Bounding> {
-    if (isValid(paneId)) {
+  getSize (filter?: DomFilter): Nullable<Bounding> {
+    if (isValid(filter)) {
+      const { paneId, position } = filter
       const pane = this.getDrawPaneById(paneId)
-      if (pane !== null) {
+      if (isValid(pane)) {
         const pos = position ?? DomPosition.Root
         switch (pos) {
           case DomPosition.Root: {
@@ -650,7 +657,7 @@ export default class ChartImp implements Chart {
 
   getDecimalFold (): DecimalFold { return this._chartStore.getDecimalFold() }
 
-  _setOptions (fuc: () => void): void {
+  private _setOptions (fuc: () => void): void {
     fuc()
     this.layout({
       measureHeight: true,
@@ -1088,8 +1095,8 @@ export default class ChartImp implements Chart {
     this.zoomAtDataIndex(scale, dataIndex, animationDuration)
   }
 
-  convertToPixel (points: Partial<Point> | Array<Partial<Point>>, finder: ConvertFinder): Partial<Coordinate> | Array<Partial<Coordinate>> {
-    const { paneId = PaneIdConstants.CANDLE, absolute = false } = finder
+  convertToPixel (points: Partial<Point> | Array<Partial<Point>>, filter: ConvertFilter): Partial<Coordinate> | Array<Partial<Coordinate>> {
+    const { paneId = PaneIdConstants.CANDLE, absolute = false } = filter
     let coordinates: Array<Partial<Coordinate>> = []
     if (paneId !== PaneIdConstants.X_AXIS) {
       const pane = this.getDrawPaneById(paneId)
@@ -1118,8 +1125,8 @@ export default class ChartImp implements Chart {
     return isArray(points) ? coordinates : (coordinates[0] ?? {})
   }
 
-  convertFromPixel (coordinates: Array<Partial<Coordinate>>, finder: ConvertFinder): Partial<Point> | Array<Partial<Point>> {
-    const { paneId = PaneIdConstants.CANDLE, absolute = false } = finder
+  convertFromPixel (coordinates: Array<Partial<Coordinate>>, filter: ConvertFilter): Partial<Point> | Array<Partial<Point>> {
+    const { paneId = PaneIdConstants.CANDLE, absolute = false } = filter
     let points: Array<Partial<Point>> = []
     if (paneId !== PaneIdConstants.X_AXIS) {
       const pane = this.getDrawPaneById(paneId)

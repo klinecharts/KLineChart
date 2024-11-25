@@ -35,7 +35,14 @@ import { logError, logTag, logWarn } from './common/utils/logger'
 import {
   clone, merge, isString, isNumber, isValid, isObject, isArray, isFunction, isBoolean
 } from './common/utils/typeChecks'
-import { formatValue, formatPrecision, formatBigNumber, formatDateToString, formatThousands, formatFoldDecimal } from './common/utils/format'
+import {
+  formatValue,
+  formatPrecision,
+  formatBigNumber,
+  formatTimestampToString,
+  formatThousands,
+  formatFoldDecimal,
+} from './common/utils/format'
 import { calcTextWidth } from './common/utils/canvas'
 import { ActionType } from './common/Action'
 import { IndicatorSeries } from './component/Indicator'
@@ -48,7 +55,9 @@ import { checkCoordinateOnArc } from './extension/figure/arc'
 import { checkCoordinateOnCircle } from './extension/figure/circle'
 import {
   checkCoordinateOnLine,
-  getLinearYFromSlopeIntercept, getLinearSlopeIntercept, getLinearYFromCoordinates
+  getLinearYFromSlopeIntercept,
+  getLinearSlopeIntercept,
+  getLinearYFromCoordinates
 } from './extension/figure/line'
 import { checkCoordinateOnPolygon } from './extension/figure/polygon'
 import { checkCoordinateOnRect } from './extension/figure/rect'
@@ -140,7 +149,7 @@ const utils = {
   formatValue,
   formatPrecision,
   formatBigNumber,
-  formatDate: formatDateToString,
+  formatDate: formatTimestampToString,
   formatThousands,
   formatFoldDecimal,
   calcTextWidth,

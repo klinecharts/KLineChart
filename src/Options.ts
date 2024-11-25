@@ -57,14 +57,7 @@ export interface LayoutChild {
   options?: PaneOptions
 }
 
-
-export const enum DecimalFoldType {
-  CurlyBracket = 'curlyBracket',
-  Subscript = 'subscript'
-}
-
 export interface DecimalFold {
-  type: DecimalFoldType
   threshold: number
   format: (value: string | number) => string
 }
