@@ -22,3 +22,5 @@ export function getDistance (coordinate1: Coordinate, coordinate2: Coordinate): 
   const yDif = coordinate1.y - coordinate2.y
   return Math.sqrt(xDif * xDif + yDif * yDif)
 }
+
+export type MeasureCoordinate = Array<Array<Coordinate | [Coordinate, Coordinate]>>

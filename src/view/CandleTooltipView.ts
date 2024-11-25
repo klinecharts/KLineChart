@@ -32,6 +32,7 @@ import { FormatDateType, type Options } from '../Options'
 
 import { PaneIdConstants } from '../pane/types'
 
+import type Coordinate from '../common/Coordinate'
 import type Indicator from '../component/Indicator'
 import { AxisPosition } from '../component/Axis'
 
@@ -148,28 +149,28 @@ export default class CandleTooltipView extends IndicatorTooltipView {
 
       const [leftIcons, middleIcons, rightIcons] = this.classifyTooltipIcons(tooltipStyles.icons)
 
-      this.drawStandardTooltipRect(ctx, leftIcons, '', middleIcons, legends, rightIcons, coordinate, maxWidth, tooltipTextStyles, rectStyles)
+      const measureResult = this.drawStandardTooltipRect(ctx, leftIcons, '', middleIcons, legends, rightIcons, coordinate, maxWidth, tooltipTextStyles, rectStyles)
 
       prevRowHeight = this.drawStandardTooltipIcons(
-        ctx, activeTooltipIcon, leftIcons, coordinate,
-        paneId, '', left, prevRowHeight, maxWidth
+        ctx, activeTooltipIcon, leftIcons, 
+        paneId, '', prevRowHeight, measureResult[0] as Coordinate[]
       )
 
       prevRowHeight = this.drawStandardTooltipIcons(
-        ctx, activeTooltipIcon, middleIcons, coordinate,
-        paneId, '', left, prevRowHeight, maxWidth
+        ctx, activeTooltipIcon, middleIcons,
+        paneId, '', prevRowHeight, measureResult[2] as Coordinate[]
       )
 
       if (legends.length > 0) {
         prevRowHeight = this.drawStandardTooltipLegends(
-          ctx, legends, coordinate, left,
-          prevRowHeight, maxWidth, tooltipTextStyles
+          ctx, legends, prevRowHeight, tooltipTextStyles,
+          measureResult[3] as Array<[Coordinate, Coordinate]>
         )
       }
 
       prevRowHeight = this.drawStandardTooltipIcons(
-        ctx, activeTooltipIcon, rightIcons, coordinate,
-        paneId, '', left, prevRowHeight, maxWidth
+        ctx, activeTooltipIcon, rightIcons,
+        paneId, '', prevRowHeight, measureResult[4] as Coordinate[]
       )
     }
     return coordinate.y + prevRowHeight

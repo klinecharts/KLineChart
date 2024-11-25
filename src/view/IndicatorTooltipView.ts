@@ -21,6 +21,7 @@ import { formatPrecision } from '../common/utils/format'
 import { isValid, isObject, isString, isNumber, isFunction } from '../common/utils/typeChecks'
 import { createFont } from '../common/utils/canvas'
 import type Coordinate from '../common/Coordinate'
+import type { MeasureCoordinate } from '../common/Coordinate'
 
 import type { Options } from '../Options'
 
@@ -93,12 +94,12 @@ export default class IndicatorTooltipView extends View<YAxis> {
         if (nameValid || legendValid) {
           const [leftIcons, middleIcons, rightIcons] = this.classifyTooltipIcons(icons)
 
-          this.drawStandardTooltipRect(ctx, leftIcons, name, middleIcons, legends, rightIcons, coordinate, maxWidth, tooltipTextStyles, defaultTooltipRectStyles)
+          const measureResult = this.drawStandardTooltipRect(ctx, leftIcons, name, middleIcons, legends, rightIcons, coordinate, maxWidth, tooltipTextStyles, defaultTooltipRectStyles)
 
           prevRowHeight = this.drawStandardTooltipIcons(
             ctx, activeTooltipIcon, leftIcons,
-            coordinate, paneId, indicator.name,
-            left, prevRowHeight, maxWidth
+            paneId, indicator.name,
+            prevRowHeight, measureResult[0] as Coordinate[]
           )
 
           if (nameValid) {
@@ -114,28 +115,29 @@ export default class IndicatorTooltipView extends View<YAxis> {
                   value: { text, color: tooltipTextStyles.color }
                 }
               ],
-              coordinate, left, prevRowHeight, maxWidth, tooltipTextStyles
+              prevRowHeight, tooltipTextStyles,
+              measureResult[1] as Array<[Coordinate, Coordinate]>
             )
           }
 
           prevRowHeight = this.drawStandardTooltipIcons(
             ctx, activeTooltipIcon, middleIcons,
-            coordinate, paneId, indicator.name,
-            left, prevRowHeight, maxWidth
+            paneId, indicator.name,
+            prevRowHeight, measureResult[2] as Coordinate[]
           )
 
           if (legendValid) {
             prevRowHeight = this.drawStandardTooltipLegends(
-              ctx, legends, coordinate,
-              left, prevRowHeight, maxWidth, tooltipTextStyles
+              ctx, legends, prevRowHeight, tooltipTextStyles,
+              measureResult[3] as Array<[Coordinate, Coordinate]>
             )
           }
 
           // draw right icons
           prevRowHeight = this.drawStandardTooltipIcons(
             ctx, activeTooltipIcon, rightIcons,
-            coordinate, paneId, indicator.name,
-            left, prevRowHeight, maxWidth
+            paneId, indicator.name,
+            prevRowHeight, measureResult[4] as Coordinate[]
           )
           top = coordinate.y + prevRowHeight
         }
@@ -148,36 +150,37 @@ export default class IndicatorTooltipView extends View<YAxis> {
     ctx: CanvasRenderingContext2D,
     activeIcon: Nullable<TooltipIcon>,
     icons: TooltipIconStyle[],
-    coordinate: Coordinate,
+    // coordinate: Coordinate,
     paneId: string,
     indicatorName: string,
-    left: number,
+    // left: number,
     prevRowHeight: number,
-    maxWidth: number
+    // maxWidth: number,
+    measureResult: Coordinate[]
   ): number {
     if (icons.length > 0) {
-      let width = 0
-      let height = 0
-      icons.forEach(icon => {
+      // let width = 0
+      // let height = 0
+      // icons.forEach(icon => {
+      //   const {
+      //     marginLeft = 0, marginTop = 0, marginRight = 0, marginBottom = 0,
+      //     paddingLeft = 0, paddingTop = 0, paddingRight = 0, paddingBottom = 0,
+      //     size, fontFamily, icon: text
+      //   } = icon
+      //   ctx.font = createFont(size, 'normal', fontFamily)
+      //   width += (marginLeft + paddingLeft + ctx.measureText(text).width + paddingRight + marginRight)
+      //   height = Math.max(height, marginTop + paddingTop + size + paddingBottom + marginBottom)
+      // })
+      // if (coordinate.x + width > maxWidth) {
+      //   coordinate.x = left
+      //   coordinate.y += prevRowHeight
+      //   prevRowHeight = height
+      // } else {
+      //   prevRowHeight = Math.max(prevRowHeight, height)
+      // }
+      icons.forEach((icon, index) => {
         const {
-          marginLeft = 0, marginTop = 0, marginRight = 0, marginBottom = 0,
-          paddingLeft = 0, paddingTop = 0, paddingRight = 0, paddingBottom = 0,
-          size, fontFamily, icon: text
-        } = icon
-        ctx.font = createFont(size, 'normal', fontFamily)
-        width += (marginLeft + paddingLeft + ctx.measureText(text).width + paddingRight + marginRight)
-        height = Math.max(height, marginTop + paddingTop + size + paddingBottom + marginBottom)
-      })
-      if (coordinate.x + width > maxWidth) {
-        coordinate.x = left
-        coordinate.y += prevRowHeight
-        prevRowHeight = height
-      } else {
-        prevRowHeight = Math.max(prevRowHeight, height)
-      }
-      icons.forEach(icon => {
-        const {
-          marginLeft = 0, marginTop = 0, marginRight = 0,
+          marginLeft = 0, marginTop = 0,
           paddingLeft = 0, paddingTop = 0, paddingRight = 0, paddingBottom = 0,
           color, activeColor, size, fontFamily, icon: text,
           backgroundColor, activeBackgroundColor
@@ -185,7 +188,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
         const active = activeIcon?.paneId === paneId && activeIcon.indicatorName === indicatorName && activeIcon.iconId === icon.id
         this.createFigure({
           name: 'text',
-          attrs: { text, x: coordinate.x + marginLeft, y: coordinate.y + marginTop },
+          attrs: { text, x: measureResult[index].x + marginLeft, y: measureResult[index].y + marginTop },
           styles: {
             paddingLeft,
             paddingTop,
@@ -200,7 +203,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
           mouseClickEvent: this._boundIconClickEvent({ paneId, indicatorName, iconId: icon.id }),
           mouseMoveEvent: this._boundIconMouseMoveEvent({ paneId, indicatorName, iconId: icon.id })
         })?.draw(ctx)
-        coordinate.x += (marginLeft + paddingLeft + ctx.measureText(text).width + paddingRight + marginRight)
+        // coordinate.x += (marginLeft + paddingLeft + ctx.measureText(text).width + paddingRight + marginRight)
       })
     }
     return prevRowHeight
@@ -209,42 +212,43 @@ export default class IndicatorTooltipView extends View<YAxis> {
   protected drawStandardTooltipLegends (
     ctx: CanvasRenderingContext2D,
     legends: TooltipLegend[],
-    coordinate: Coordinate,
-    left: number,
+    // coordinate: Coordinate,
+    // left: number,
     prevRowHeight: number,
-    maxWidth: number,
-    styles: TooltipTextStyle
+    // maxWidth: number,
+    styles: TooltipTextStyle,
+    measureResult: Array<[Coordinate, Coordinate]>
   ): number {
     if (legends.length > 0) {
-      const { marginLeft, marginTop, marginRight, marginBottom, size, family, weight } = styles
+      const { marginLeft, marginTop, size, family, weight } = styles
       ctx.font = createFont(size, weight, family)
-      legends.forEach(data => {
+      legends.forEach((data, index) => {
         const title = data.title as TooltipLegendChild
         const value = data.value as TooltipLegendChild
-        const titleTextWidth = ctx.measureText(title.text).width
-        const valueTextWidth = ctx.measureText(value.text).width
-        const totalTextWidth = titleTextWidth + valueTextWidth
-        const h = marginTop + size + marginBottom
-        if (coordinate.x + marginLeft + totalTextWidth + marginRight > maxWidth) {
-          coordinate.x = left
-          coordinate.y += prevRowHeight
-          prevRowHeight = h
-        } else {
-          prevRowHeight = Math.max(prevRowHeight, h)
-        }
+        // const titleTextWidth = ctx.measureText(title.text).width
+        // const valueTextWidth = ctx.measureText(value.text).width
+        // const totalTextWidth = titleTextWidth + valueTextWidth
+        // const h = marginTop + size + marginBottom
+        // if (coordinate.x + marginLeft + totalTextWidth + marginRight > maxWidth) {
+        //   coordinate.x = left
+        //   coordinate.y += prevRowHeight
+        //   prevRowHeight = h
+        // } else {
+        //   prevRowHeight = Math.max(prevRowHeight, h)
+        // }
         if (title.text.length > 0) {
           this.createFigure({
             name: 'text',
-            attrs: { x: coordinate.x + marginLeft, y: coordinate.y + marginTop, text: title.text },
+            attrs: { x: measureResult[index][0].x + marginLeft, y: measureResult[index][0].x + marginTop, text: title.text },
             styles: { color: title.color, size, family, weight }
           })?.draw(ctx)
         }
         this.createFigure({
           name: 'text',
-          attrs: { x: coordinate.x + marginLeft + titleTextWidth, y: coordinate.y + marginTop, text: value.text },
+          attrs: { x: measureResult[index][1].x, y: measureResult[index][1].x + marginTop, text: value.text },
           styles: { color: value.color, size, family, weight }
         })?.draw(ctx)
-        coordinate.x += (marginLeft + totalTextWidth + marginRight)
+        // coordinate.x += (marginLeft + totalTextWidth + marginRight)
       })
     }
     return prevRowHeight
@@ -257,12 +261,14 @@ export default class IndicatorTooltipView extends View<YAxis> {
     middleIcons: TooltipIconStyle[],
     legends: TooltipLegend[],
     rightIcons: TooltipIconStyle[],
-    coordinate: Coordinate, maxWidth: number, tooltipTextStyles: TooltipTextStyle, rectStyles: CandleTooltipRectStyle): void {
+    coordinate: Coordinate, maxWidth: number, tooltipTextStyles: TooltipTextStyle, rectStyles: CandleTooltipRectStyle): MeasureCoordinate {
     let rectWidth = 0
     let rectHeight = 0
     let elmWidth = 0
     let elmHeight = 0
     let positionX = 0
+
+    const measureResult: MeasureCoordinate = []
 
     function updateRectSize (width: number, height: number): void {
       rectWidth = Math.max(rectWidth, positionX + width)
@@ -276,6 +282,8 @@ export default class IndicatorTooltipView extends View<YAxis> {
       }
     }
 
+    let tmpMeasureResult: Array<Coordinate | [Coordinate, Coordinate]> = []
+
     //  measure box left icons
     if (leftIcons.length > 0) {
       leftIcons.forEach(icon => {
@@ -288,16 +296,25 @@ export default class IndicatorTooltipView extends View<YAxis> {
         elmWidth = marginLeft + paddingLeft + ctx.measureText(text).width + paddingRight + marginRight
         elmHeight = marginTop + paddingTop + size + paddingBottom + marginBottom
         updateRectSize(elmWidth, elmHeight)
+        tmpMeasureResult.push({ x: positionX - elmWidth, y: rectHeight - elmHeight })
       })
     }
 
+    measureResult.push(tmpMeasureResult)
+    tmpMeasureResult = [];  //  reset for new box
+
     //  measure box name
     if (name.length > 0) {
+      tmpMeasureResult.push({ x: 0, y: 0 })
       ctx.font = createFont(tooltipTextStyles.size, tooltipTextStyles.weight, tooltipTextStyles.family)
       elmWidth = tooltipTextStyles.marginLeft + ctx.measureText(name).width + tooltipTextStyles.marginRight
       elmHeight = tooltipTextStyles.marginTop + tooltipTextStyles.size + tooltipTextStyles.marginBottom
       updateRectSize(elmWidth, elmHeight)
+      tmpMeasureResult.push({ x: positionX - elmWidth, y: rectHeight - elmHeight })
     }
+
+    measureResult.push(tmpMeasureResult)
+    tmpMeasureResult = [];  //  reset for new box
 
     //  measure box middle icons
     if (middleIcons.length > 0) {
@@ -311,8 +328,12 @@ export default class IndicatorTooltipView extends View<YAxis> {
         elmWidth = (marginLeft + paddingLeft + ctx.measureText(text).width + paddingRight + marginRight)
         elmHeight = marginTop + paddingTop + size + paddingBottom + marginBottom
         updateRectSize(elmWidth, elmHeight)
+        tmpMeasureResult.push({ x: positionX - elmWidth, y: rectHeight - elmHeight })
       })
     }
+
+    measureResult.push(tmpMeasureResult)
+    tmpMeasureResult = [];  //  reset for new box
 
     //  measure box legends
     if (legends.length > 0) {
@@ -320,11 +341,23 @@ export default class IndicatorTooltipView extends View<YAxis> {
       legends.forEach(legend => {
         const title = legend.title as TooltipLegendChild
         const value = legend.value as TooltipLegendChild
-        elmWidth = tooltipTextStyles.marginLeft + ctx.measureText(title.text).width + ctx.measureText(value.text).width + tooltipTextStyles.marginRight
+        const titleTextWidth = ctx.measureText(title.text).width
+        const valueTextWidth = ctx.measureText(value.text).width
+        elmWidth = tooltipTextStyles.marginLeft + titleTextWidth + valueTextWidth + tooltipTextStyles.marginRight
         elmHeight = tooltipTextStyles.marginTop + tooltipTextStyles.size + tooltipTextStyles.marginBottom
         updateRectSize(elmWidth, elmHeight)
+        tmpMeasureResult.push([
+          { x: positionX - elmWidth, y: rectHeight - elmHeight },
+          {
+            x: positionX - valueTextWidth - tooltipTextStyles.marginRight,
+            y: rectHeight - elmHeight,
+          },
+        ])
       })
     }
+
+    measureResult.push(tmpMeasureResult)
+    tmpMeasureResult = [];  //  reset for new box
 
     //  measure box right icons
     if (rightIcons.length > 0) {
@@ -338,6 +371,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
         elmWidth = (marginLeft + paddingLeft + ctx.measureText(text).width + paddingRight + marginRight)
         elmHeight = marginTop + paddingTop + size + paddingBottom + marginBottom
         updateRectSize(elmWidth, elmHeight)
+        tmpMeasureResult.push({ x: positionX - elmWidth, y: rectHeight - elmHeight })
       })
     }
 
@@ -358,6 +392,8 @@ export default class IndicatorTooltipView extends View<YAxis> {
         globalAlpha: rectStyles.globalAlpha
       }
     })?.draw(ctx)
+
+    return measureResult;
   }
 
   protected isDrawTooltip (crosshair: Crosshair, styles: TooltipStyle): boolean {
