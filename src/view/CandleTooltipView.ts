@@ -149,29 +149,31 @@ export default class CandleTooltipView extends IndicatorTooltipView {
 
       const [leftIcons, middleIcons, rightIcons] = this.classifyTooltipIcons(tooltipStyles.icons)
 
-      const measureResult = this.drawStandardTooltipRect(ctx, leftIcons, '', middleIcons, legends, rightIcons, coordinate, maxWidth, tooltipTextStyles, rectStyles)
+      const [measureResult, prevCalcHeight] = this.drawStandardTooltipRect(ctx, leftIcons, '', middleIcons, legends, rightIcons, coordinate, maxWidth, tooltipTextStyles, rectStyles)
 
-      prevRowHeight = this.drawStandardTooltipIcons(
+      this.drawStandardTooltipIcons(
         ctx, activeTooltipIcon, leftIcons, 
-        paneId, '', prevRowHeight, measureResult[0] as Coordinate[]
+        paneId, '', measureResult[0] as Coordinate[]
       )
 
-      prevRowHeight = this.drawStandardTooltipIcons(
+      this.drawStandardTooltipIcons(
         ctx, activeTooltipIcon, middleIcons,
-        paneId, '', prevRowHeight, measureResult[2] as Coordinate[]
+        paneId, '', measureResult[2] as Coordinate[]
       )
 
       if (legends.length > 0) {
-        prevRowHeight = this.drawStandardTooltipLegends(
-          ctx, legends, prevRowHeight, tooltipTextStyles,
+         this.drawStandardTooltipLegends(
+          ctx, legends, tooltipTextStyles,
           measureResult[3] as Array<[Coordinate, Coordinate]>
         )
       }
 
-      prevRowHeight = this.drawStandardTooltipIcons(
+      this.drawStandardTooltipIcons(
         ctx, activeTooltipIcon, rightIcons,
-        paneId, '', prevRowHeight, measureResult[4] as Coordinate[]
+        paneId, '', measureResult[4] as Coordinate[]
       )
+
+      prevRowHeight = prevCalcHeight;
     }
     return coordinate.y + prevRowHeight
   }
