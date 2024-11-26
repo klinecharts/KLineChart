@@ -1,0 +1,3 @@
+```typescript
+(data: KLineData) => void
+```

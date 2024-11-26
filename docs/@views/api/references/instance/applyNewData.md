@@ -1,0 +1,3 @@
+```typescript
+(dataList: KLineData[]) => void
+```
