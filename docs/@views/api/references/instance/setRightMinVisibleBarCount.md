@@ -1,0 +1,3 @@
+```typescript
+(count: number) => void
+```

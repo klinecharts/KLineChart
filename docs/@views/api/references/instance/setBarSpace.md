@@ -1,0 +1,3 @@
+```typescript
+(space: number) => void
+```

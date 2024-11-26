@@ -1,7 +1,7 @@
 import { init } from 'klinecharts';
 
-const chart = init('setOffsetRightDistance-chart');
-chart.setOffsetRightDistance(160);
+const chart = init('setRightMinVisibleBarCount-chart');
+chart.setRightMinVisibleBarCount(6);
 
 fetch('/datas/kline.json')
   .then(res => res.json())

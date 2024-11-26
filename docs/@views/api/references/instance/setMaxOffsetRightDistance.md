@@ -1,0 +1,3 @@
+```typescript
+(distance: number) => void
+```
