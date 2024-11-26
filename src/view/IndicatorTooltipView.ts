@@ -220,7 +220,6 @@ export default class IndicatorTooltipView extends View<YAxis> {
     styles: TooltipTextStyle,
     measureResult: Array<[Coordinate, Coordinate]>
   ): void {
-    console.log(JSON.stringify(legends), JSON.stringify(measureResult));
     if (legends.length > 0 && measureResult.length > 0) {
       const { marginLeft, marginTop, size, family, weight } = styles
       ctx.font = createFont(size, weight, family)
