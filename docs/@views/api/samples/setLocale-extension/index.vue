@@ -5,6 +5,6 @@ import { data } from './index.data'
 
 <template>
   <ChartPreview
-    chartId="setlocal-extension-chart"
+    chartId="setLocale-extension-chart"
     :code="data.js"/>
 </template>

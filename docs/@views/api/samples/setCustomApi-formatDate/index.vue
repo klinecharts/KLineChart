@@ -5,6 +5,6 @@ import { data } from './index.data'
 
 <template>
   <ChartPreview
-    chartId="init-styles-object-chart"
+    chartId="setCustomApi-formatDate-chart"
     :code="data.js"/>
 </template>

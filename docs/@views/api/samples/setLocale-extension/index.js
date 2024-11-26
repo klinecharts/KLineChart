@@ -9,7 +9,7 @@ registerLocale('ru-RU', {
   volume: 'Объем: '
 })
 
-const chart = init('setlocal-extension-chart');
+const chart = init('setLocale-extension-chart');
 chart.setLocale('ru-RU');
 
 fetch('/datas/kline.json')

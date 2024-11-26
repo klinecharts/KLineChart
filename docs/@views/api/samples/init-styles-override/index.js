@@ -1,7 +1,7 @@
 import { init } from 'klinecharts';
 
 const chart = init(
-  'init-styles-object-chart',
+  'init-styles-override-chart',
   {
     styles: {
       candle: {

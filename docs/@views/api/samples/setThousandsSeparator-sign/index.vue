@@ -5,6 +5,6 @@ import { data } from './index.data'
 
 <template>
   <ChartPreview
-    chartId="setStyles-extension-chart"
+    chartId="setThousandsSeparator-sign-chart"
     :code="data.js"/>
 </template>

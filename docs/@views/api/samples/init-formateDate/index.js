@@ -13,7 +13,7 @@ const chart = init(
         const minute = `${date.getMinutes()}`.padStart(2, '0')
         switch (type) {
           case 0: {
-            return `${year}-${month}-${day} ${hour}-${minute}`
+            return `${year}-${month}-${day} ${hour}:${minute}`
           }
           case 1: {
             return `${year}-${month}-${day}`

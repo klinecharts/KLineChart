@@ -13,7 +13,7 @@ registerStyles('customTheme', {
   }
 });
 
-const chart = init('setstyles-extension-chart');
+const chart = init('setStyles-extension-chart');
 chart.setStyles('customTheme');
 
 fetch('/datas/kline.json')

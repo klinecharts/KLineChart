@@ -36,7 +36,7 @@ outline: deep
           - `bottom` 下边距。
   - `locale` 语言，内置支持 `zh-CN` 和 `en-US` 。
   - `timezone` 时区名，如 `Asia/Shanghai` ，如果不设置会自动获取本机时区，时区对应名字列表请参阅 [时区列表](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) 。
-  - `styles` 可以是通过 `klinecharts.registerStyles` 注册的样式名，也可以是 object，样式列表，详情参阅 [样式](./styles.md) ，支持增量。
+  - `styles` 可以是通过 `klinecharts.registerStyles` 注册的样式名，也可以是 `Styles` ， `Styles` 详情参阅 [样式](./styles.md) ，支持增量。
   - `customApi` 自定义一些api。
     - `formatDate` 格式化日期。
     - `formatBigNumber` 格式化大的数字，如1000转换成1k，1000000转换为1M等。
@@ -50,6 +50,7 @@ outline: deep
 ### 返回值
 `init` 返回一个图表实例对象 `chart`。
 
+## 用法 {#usage}
 <script setup>
 import InitBasic from '../../@views/api/samples/init-basic/index.vue'
 import InitLayout from '../../@views/api/samples/init-layout/index.vue'
@@ -58,7 +59,7 @@ import InitLocaleExtension from '../../@views/api/samples/init-locale-extension/
 import InitTimezone from '../../@views/api/samples/init-timezone/index.vue'
 import InitStylesBuiltIn from '../../@views/api/samples/init-styles-built-in/index.vue'
 import InitStylesExtension from '../../@views/api/samples/init-styles-extension/index.vue'
-import InitStylesObject from '../../@views/api/samples/init-styles-object/index.vue'
+import InitStylesOverride from '../../@views/api/samples/init-styles-override/index.vue'
 import InitFormatDate from '../../@views/api/samples/init-formateDate/index.vue'
 import InitFormatBigNumber from '../../@views/api/samples/init-formatBigNumber/index.vue'
 import InitThousandsSeparatorNone from '../../@views/api/samples/init-thousandsSeparator-none/index.vue'
@@ -66,8 +67,6 @@ import InitThousandsSeparatorFormat from '../../@views/api/samples/init-thousand
 import InitDecimalFoldNone from '../../@views/api/samples/init-decimalFold-none/index.vue'
 import InitDecimalFoldFormat from '../../@views/api/samples/init-decimalFold-format/index.vue'
 </script>
-
-## 用法 {#usage}
 
 ### 基本使用 {#basic}
 <InitBasic/>
@@ -90,8 +89,8 @@ import InitDecimalFoldFormat from '../../@views/api/samples/init-decimalFold-for
 ### 自定义样式模版 {#init-styles-extension}
 <InitStylesExtension />
 
-### 样式直接覆盖 {#init-styles-object}
-<InitStylesObject />
+### 样式直接覆盖 {#init-styles-override}
+<InitStylesOverride />
 
 ### 自定义时间显示 {#init-formatDate}
 <InitFormatDate />

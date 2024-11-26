@@ -1,0 +1,3 @@
+```typescript
+(locale: string) => void
+```
