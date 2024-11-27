@@ -125,7 +125,10 @@ export function getMaxMin<D> (dataList: D[], maxKey: keyof D, minKey: keyof D): 
  * @return {number}
  */
 export function log10 (value: number): number {
-  return Math.log(value) / Math.log(10)
+  if (value === 0) {
+    return 0
+  }
+  return Math.log10(value)
 }
 
 /**
