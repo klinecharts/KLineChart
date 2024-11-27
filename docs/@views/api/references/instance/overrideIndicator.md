@@ -1,6 +1,6 @@
 ```typescript
 (
-  indicator: string | {
+  indicator: {
     name: string
     shortName?: string
     precision?: number
@@ -62,25 +62,6 @@
     draw?: (params: object) => boolean
     onDataStateChange?: (params: object) => void
   },
-  isStack?: boolean,
-  paneOptions: {
-    id?: string
-    height?: number
-    minHeight?: number
-    dragEnabled?: boolean
-    order?: number
-    state?: 'normal' | 'maximize' | 'minimize'
-    axis?: {
-      name: string
-      reverse?: boolean
-      inside?: boolean
-      position?: 'left' | 'right'
-      scrollZoomEnabled?: boolean
-      gap?: {
-        top?: number
-        bottom?: number
-      }
-    }
-  }
-) => string | null
+  paneId?: string
+) => void
 ```

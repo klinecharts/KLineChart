@@ -1,7 +1,9 @@
 import { init } from 'klinecharts';
 
-const chart = init('createIndicator-object-chart');
-chart.createIndicator({
+const chart = init('overrideIndicator-paneId-chart');
+chart.createIndicator('MA', false, { id: 'candle_pane' });
+chart.createIndicator('MA');
+chart.overrideIndicator({
   name: 'MA',
   shouldOhlc: false,
   precision: 1,
@@ -12,7 +14,7 @@ chart.createIndicator({
       { color: '#edafda' }
     ]
   }
-});
+}, 'candle_pane');
 
 fetch('/datas/kline.json')
   .then(res => res.json())
