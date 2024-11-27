@@ -13,6 +13,7 @@
  */
 
 import type Nullable from '../common/Nullable'
+import type DeepPartial from '../common/DeepPartial'
 import type ExcludePickPartial from '../common/ExcludePickPartial'
 import type { KLineData } from '../common/Data'
 import type Bounding from '../common/Bounding'
@@ -190,7 +191,7 @@ export interface Indicator<D = unknown> {
   /**
    * Style configuration
    */
-  styles: Nullable<Partial<IndicatorStyle>>
+  styles: Nullable<DeepPartial<IndicatorStyle>>
 
   /**
    *  Should update, should calc or draw
@@ -230,9 +231,12 @@ export interface Indicator<D = unknown> {
 
 export type IndicatorTemplate<D = unknown> = ExcludePickPartial<Omit<Indicator<D>, 'result'>, 'name' | 'calc'>
 
-export type IndicatorCreate<D = unknown> = ExcludePickPartial<Omit<Indicator<D>, 'result'>, 'name'> & { paneId?: string }
+export type IndicatorCreate<D = unknown> = ExcludePickPartial<Omit<Indicator<D>, 'result'>, 'name'>
 
-export type IndicatorFilter = Partial<Pick<Indicator, 'name'>> & { paneId?: string }
+export interface IndicatorFilter {
+  name?: string
+  paneId?: string
+}
 
 export type IndicatorConstructor<D = unknown> = new () => IndicatorImp<D>
 

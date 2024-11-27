@@ -90,7 +90,7 @@ export default class IndicatorView extends CandleBarView {
         }
         if (!isCover) {
           const result = indicator.result
-          const lines: Array<Array<{ coordinates: Coordinate[], styles: SmoothLineStyle }>> = []
+          const lines: Array<Array<{ coordinates: Coordinate[], styles: Partial<SmoothLineStyle> }>> = []
 
           this.eachChildren((data, barSpace) => {
             const { halfGapBar } = barSpace
@@ -214,8 +214,8 @@ export default class IndicatorView extends CandleBarView {
                   lastMergeLine.styles.color === current.styles.color &&
                   lastMergeLine.styles.size === current.styles.size &&
                   lastMergeLine.styles.smooth === current.styles.smooth &&
-                  lastMergeLine.styles.dashedValue[0] === current.styles.dashedValue[0] &&
-                  lastMergeLine.styles.dashedValue[1] === current.styles.dashedValue[1]
+                  lastMergeLine.styles.dashedValue?.[0] === current.styles.dashedValue?.[0] &&
+                  lastMergeLine.styles.dashedValue?.[1] === current.styles.dashedValue?.[1]
                 ) {
                   lastMergeLine.coordinates.push(current.coordinates[1])
                 } else {

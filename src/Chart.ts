@@ -782,8 +782,8 @@ export default class ChartImp implements Chart {
     return options.id
   }
 
-  overrideIndicator (override: IndicatorCreate): boolean {
-    return this._chartStore.overrideIndicator(override)
+  overrideIndicator (override: IndicatorCreate, paneId?: string): boolean {
+    return this._chartStore.overrideIndicator(override, paneId)
   }
 
   getIndicators (filter?: IndicatorFilter): Map<string, Indicator[]> {

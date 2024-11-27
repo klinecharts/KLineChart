@@ -137,7 +137,7 @@ export interface Store {
   getBarSpace: () => BarSpace
   getVisibleRange: () => VisibleRange
   setLoadMoreDataCallback: (callback: LoadDataCallback) => void
-  overrideIndicator: (override: IndicatorCreate) => boolean
+  overrideIndicator: (override: IndicatorCreate, paneId?: string) => boolean
   removeIndicator: (filter?: IndicatorFilter) => boolean
   overrideOverlay: (override: Partial<OverlayCreate>) => boolean
   removeOverlay: (filter?: OverlayFilter) => boolean
@@ -1135,7 +1135,6 @@ export default class StoreImp implements Store {
       map.set(paneId, find(indicators, name))
     } else {
       if (isValid(name)) {
-        const map = new Map<string, IndicatorImp[]>()
         this._indicators.forEach((indicators, paneId) => {
           map.set(paneId, find(indicators, name))
         })
@@ -1199,8 +1198,8 @@ export default class StoreImp implements Store {
     }
   }
 
-  overrideIndicator (create: IndicatorCreate): boolean {
-    const { name, paneId } = create
+  overrideIndicator (create: IndicatorCreate, paneId?: string): boolean {
+    const { name } = create
     let indictors = new Map<string, IndicatorImp[]>()
     if (isValid(paneId)) {
       const paneIndicators = this._indicators.get(paneId)
