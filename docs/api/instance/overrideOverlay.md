@@ -2,14 +2,14 @@
 outline: deep
 ---
 
-# createOverlay(value)
-`createOverlay` 创建覆盖物。
+# overlayOverlay(overlay)
+`overlayOverlay` 覆盖覆盖物属性。
 
 ## 参考 {#reference}
-<!--@include: @/@views/api/references/instance/createOverlay.md-->
+<!--@include: @/@views/api/references/instance/overrideOverlay.md-->
 
 ### 参数
-- `value` 覆盖物配置，可以是覆盖物名称，可以是覆盖物对象，也可以是覆盖物名称和对象组成的数组。
+- `overlay` 覆盖物配置。
   - `name` 覆盖物名称。
   - `id` 覆盖物id。
   - `groupId` 编组id。
@@ -41,24 +41,21 @@ outline: deep
   - `onDeselected` 取消选中事件。
 
 ### 返回值
-`createOverlay` 返回 `string` 或者 `null` 或者 `Array<string | null>` 。
+`overlayOverlay` 返回 `boolean` 。
 
 ## 用法 {#usage}
 <script setup>
-import CreateOverlayBasic from '../../@views/api/samples/createOverlay-basic/index.vue'
-import CreateOverlayExtension from '../../@views/api/samples/custom-figure-custom-overlay/index.vue'
-import CreateOverlayPoints from '../../@views/api/samples/createOverlay-points/index.vue'
-import CreateOverlayBatch from '../../@views/api/samples/createOverlay-batch/index.vue'
+import OverrideOverlayBasic from '../../@views/api/samples/overrideOverlay-basic/index.vue'
+import OverrideOverlayName from '../../@views/api/samples/overrideOverlay-name/index.vue'
+import OverrideOverlayGroupId from '../../@views/api/samples/overrideOverlay-groupId/index.vue'
 </script>
 
 ### 基本使用 {#basic}
-<CreateOverlayBasic/>
+<OverrideOverlayBasic/>
 
-### 使用自定义覆盖物 {#extension}
-<CreateOverlayExtension/>
+### 按名称覆盖属性 {#name}
+<OverrideOverlayName/>
 
-### 立即完成创建 {#points}
-<CreateOverlayPoints/>
+### 按组覆盖属性 {#groupId}
+<OverrideOverlayGroupId/>
 
-### 批量创建 {#batch}
-<CreateOverlayBatch/>
