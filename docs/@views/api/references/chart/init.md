@@ -13,7 +13,7 @@
         order?: number
         state?: 'normal' | 'maximize' | 'minimize'
         axis?: {
-          name: string
+          name?: string
           reverse?: boolean
           inside?: boolean
           position?: 'left' | 'right'

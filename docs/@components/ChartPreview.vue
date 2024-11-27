@@ -118,7 +118,7 @@ onMounted(() => {
         plugins: ['transform-modules-umd'],
       })
       const chartDom = document.createElement('div')
-      chartDom.style.height = '100%'
+      chartDom.style.height = '350px'
       chartDom.id = props.chartId
       chartContainer.value.appendChild(chartDom)
       const script = document.createElement('script')
@@ -277,7 +277,6 @@ h3 + .chart-preview {
 
 .chart {
   position: relative;
-  height: 350px;
 }
 
 .code-action-container {

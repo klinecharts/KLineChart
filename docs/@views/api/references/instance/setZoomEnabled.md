@@ -1,0 +1,3 @@
+```typescript
+(enabled: boolean) => void
+```
