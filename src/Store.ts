@@ -1312,10 +1312,8 @@ export default class StoreImp implements Store {
       if (isValid(OverlayClazz)) {
         const id = create.id ?? createId(OVERLAY_ID_PREFIX)
         const overlay = new OverlayClazz()
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- ignore
-        const groupId = overlay.groupId ?? id
         create.id = id
-        create.groupId = groupId
+        create.groupId ??= id
         overlay.override(create)
         const paneId = overlay.paneId
         if (!updatePaneIds.includes(paneId)) {
@@ -1376,7 +1374,6 @@ export default class StoreImp implements Store {
 
   overrideOverlay (create: Partial<OverlayCreate>): boolean {
     let sortFlag = false
-
     const updatePaneIds: string[] = []
     const filterMap = this.getOverlaysByFilter(create)
     filterMap.forEach((overlays, paneId) => {
