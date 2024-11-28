@@ -36,6 +36,6 @@ chart.setDecimalFold({
   }
 })
 
-fetch('/datas/kline2.json')
+fetch('https://klinecharts.com/datas/kline2.json')
   .then(res => res.json())
   .then(dataList => { chart.applyNewData(dataList); });

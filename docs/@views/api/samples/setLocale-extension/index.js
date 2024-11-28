@@ -12,6 +12,6 @@ registerLocale('ru-RU', {
 const chart = init('setLocale-extension-chart');
 chart.setLocale('ru-RU');
 
-fetch('/datas/kline.json')
+fetch('https://klinecharts.com/datas/kline.json')
   .then(res => res.json())
   .then(dataList => { chart.applyNewData(dataList); });

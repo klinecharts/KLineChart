@@ -11,14 +11,13 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useWindowScroll } from '@vueuse/core'
-import { useData, useRoute } from 'vitepress'
+import { useData } from 'vitepress'
 
 const { y } = useWindowScroll()
 
 const isVisible = ref(true)
 
-const { lang, page } = useData()
-console.log(page)
+const { lang } = useData()
 
 const closeBanner = () => {
   isVisible.value = false

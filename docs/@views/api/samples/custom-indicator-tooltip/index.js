@@ -29,6 +29,6 @@ const chart = init('custom-indicator-tooltip-chart');
 
 chart.createIndicator('customIndicatorTooltip');
 
-fetch('/datas/kline.json')
+fetch('https://klinecharts.com/datas/kline.json')
   .then(res => res.json())
   .then(dataList => { chart.applyNewData(dataList); });

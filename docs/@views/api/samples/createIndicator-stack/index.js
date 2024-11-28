@@ -7,6 +7,6 @@ chart.createIndicator('EMA', true, { id: 'candle_pane' });
 const id = chart.createIndicator('BOLL');
 chart.createIndicator('EMA', true, { id });
 
-fetch('/datas/kline.json')
+fetch('https://klinecharts.com/datas/kline.json')
   .then(res => res.json())
   .then(dataList => { chart.applyNewData(dataList); });
