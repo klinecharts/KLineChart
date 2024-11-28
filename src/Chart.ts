@@ -93,12 +93,12 @@ export interface Chart extends Store {
   zoomAtCoordinate: (scale: number, coordinate?: Coordinate, animationDuration?: number) => void
   zoomAtDataIndex: (scale: number, dataIndex: number, animationDuration?: number) => void
   zoomAtTimestamp: (scale: number, timestamp: number, animationDuration?: number) => void
-  convertToPixel: (points: Partial<Point> | Array<Partial<Point>>, filter: ConvertFilter) => Partial<Coordinate> | Array<Partial<Coordinate>>
-  convertFromPixel: (coordinates: Array<Partial<Coordinate>>, filter: ConvertFilter) => Partial<Point> | Array<Partial<Point>>
+  convertToPixel: (points: Partial<Point> | Array<Partial<Point>>, filter?: ConvertFilter) => Partial<Coordinate> | Array<Partial<Coordinate>>
+  convertFromPixel: (coordinates: Array<Partial<Coordinate>>, filter?: ConvertFilter) => Partial<Point> | Array<Partial<Point>>
   executeAction: (type: ActionType, data: Crosshair) => void
   subscribeAction: (type: ActionType, callback: ActionCallback) => void
   unsubscribeAction: (type: ActionType, callback?: ActionCallback) => void
-  getConvertPictureUrl: (includeOverlay?: boolean, type?: string, backgroundColor?: string) => string
+  getConvertPictureUrl: (includeOverlay?: boolean, type?: 'png' | 'jpeg' | 'bmp', backgroundColor?: string) => string
   resize: () => void
 }
 
@@ -1095,8 +1095,8 @@ export default class ChartImp implements Chart {
     this.zoomAtDataIndex(scale, dataIndex, animationDuration)
   }
 
-  convertToPixel (points: Partial<Point> | Array<Partial<Point>>, filter: ConvertFilter): Partial<Coordinate> | Array<Partial<Coordinate>> {
-    const { paneId = PaneIdConstants.CANDLE, absolute = false } = filter
+  convertToPixel (points: Partial<Point> | Array<Partial<Point>>, filter?: ConvertFilter): Partial<Coordinate> | Array<Partial<Coordinate>> {
+    const { paneId = PaneIdConstants.CANDLE, absolute = false } = filter ?? {}
     let coordinates: Array<Partial<Coordinate>> = []
     if (paneId !== PaneIdConstants.X_AXIS) {
       const pane = this.getDrawPaneById(paneId)
@@ -1125,8 +1125,8 @@ export default class ChartImp implements Chart {
     return isArray(points) ? coordinates : (coordinates[0] ?? {})
   }
 
-  convertFromPixel (coordinates: Array<Partial<Coordinate>>, filter: ConvertFilter): Partial<Point> | Array<Partial<Point>> {
-    const { paneId = PaneIdConstants.CANDLE, absolute = false } = filter
+  convertFromPixel (coordinates: Array<Partial<Coordinate>>, filter?: ConvertFilter): Partial<Point> | Array<Partial<Point>> {
+    const { paneId = PaneIdConstants.CANDLE, absolute = false } = filter ?? {}
     let points: Array<Partial<Point>> = []
     if (paneId !== PaneIdConstants.X_AXIS) {
       const pane = this.getDrawPaneById(paneId)
@@ -1172,7 +1172,7 @@ export default class ChartImp implements Chart {
     this._chartStore.unsubscribeAction(type, callback)
   }
 
-  getConvertPictureUrl (includeOverlay?: boolean, type?: string, backgroundColor?: string): string {
+  getConvertPictureUrl (includeOverlay?: boolean, type?: 'png' | 'jpeg' | 'bmp', backgroundColor?: string): string {
     const { width, height } = this._chartBounding
     const canvas = createDom('canvas', {
       width: `${width}px`,
