@@ -8,36 +8,19 @@ export default defineConfig({
   description: '💹📈 Highly customizable professional lightweight financial chart.',
   themeConfig: {
     nav: [
-      { text: 'Docs', link: '/en-US/guide/introduction', activeMatch: 'guide' },
-      { text: 'Sample', link: '/en-US/sample/basic', activeMatch: 'sample' },
+      { text: 'Guide', link: '/en-US/guide/introduction', activeMatch: 'guide' },
+      {
+        text: 'API',
+        activeMatch: 'api',
+        items: [
+          { text: 'Chart API', link: '/en-US/api/chart/init' },
+          { text: 'Instance API', link: '/en-US/api/instance/getDom' }
+        ]
+      },
+      { text: 'Pro', link: 'https://pro.klinecharts.com/en-US' },
       { text: 'Preview', link: 'https://preview.klinecharts.com/#en-US' },
       { text: 'Customize', link: '/en-US/customize' },
       { text: 'Sponsor', link: '/en-US/sponsor' },
-      {
-        text: 'More',
-        items: [
-          {
-            text: 'Resources',
-            items: [
-              { text: 'Pro', link: 'https://pro.klinecharts.com/en-US' },
-              { text: 'Extension(Under construction)', link: 'https://klinecharts.com/en-US' }
-            ]
-          },
-          {
-            text: 'Development Guide',
-            items: [
-              { text: 'Local Development', link: '/en-US/more/local-development' },
-            ]
-          },
-          {
-            text: 'Community',
-            items: [
-              { text: 'FAQ', link: '/en-US/more/faq' },
-              { text: 'Feedback', link: '/en-US/more/feedback' }
-            ]
-          }
-        ]
-      },
       {
         text: 'Next',
         items: [
@@ -49,7 +32,7 @@ export default defineConfig({
     sidebar: {
       '/en-US/guide/': [
         {
-          text: 'Getting Started',
+          text: 'Started',
           collapsed: false,
           items: [
             { text: 'Introduction', link: '/en-US/guide/introduction' },
@@ -74,15 +57,7 @@ export default defineConfig({
             { text: 'Figure', link: '/en-US/guide/figure' },
             { text: 'Indicator', link: '/en-US/guide/indicator' },
             { text: 'Overlay', link: '/en-US/guide/overlay' },
-            { text: 'Custom Axis', link: '/en-US/guide/custom-axis' }
-          ]
-        },
-        {
-          text: 'API',
-          collapsed: false,
-          items: [
-            { text: 'Chart API', link: '/en-US/guide/chart-api' },
-            { text: 'Instance API', link: '/en-US/guide/instance-api' }
+            { text: 'Local Development', link: '/en-US/guide/local-development' }
           ]
         },
         {
@@ -90,22 +65,14 @@ export default defineConfig({
           collapsed: false,
           items: [
             { text: 'V8 To V9', link: '/en-US/guide/v8-to-v9' },
+            { text: 'FAQ', link: '/en-US/guide/faq' },
+            { text: 'Feedback', link: '/en-US/guide/feedback' },
             { text: 'Changelog', link: '/en-US/guide/changelog' }
           ]
         }
       ],
-      '/en-US/sample/': [
-        { text: 'Basic', link: '/en-US/sample/basic' },
-        { text: 'Candle Type', link: '/en-US/sample/candle-type' },
-        { text: 'Indicator', link: '/en-US/sample/indicator' },
-        { text: 'Axis', link: '/en-US/sample/axis' },
-        { text: 'Tooltip', link: '/en-US/sample/tooltip' },
-        { text: 'Overlay', link: '/en-US/sample/overlay' },
-        { text: 'Data', link: '/en-US/sample/data' },
-        { text: 'Theme', link: '/en-US/sample/theme' },
-        { text: 'Timezone', link: '/en-US/sample/timezone' },
-        { text: 'I18n', link: '/en-US/sample/i18n' },
-      ]
+      '/en-US/api/chart/': getChartApiMenus('/en-US'),
+      '/en-US/api/instance/': getInstanceApiMenus('/en-US')
     },
     editLink: {
       pattern: 'https://github.com/klinecharts/KLineChart/edit/main/docs/:path',
