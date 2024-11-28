@@ -91,14 +91,6 @@ export default defineConfig({
           ]
         },
         {
-          text: 'API',
-          collapsed: false,
-          items: [
-            { text: '图表API', link: '/guide/chart-api' },
-            { text: '实例API', link: '/guide/instance-api' }
-          ]
-        },
-        {
           text: '其它',
           collapsed: false,
           items: [

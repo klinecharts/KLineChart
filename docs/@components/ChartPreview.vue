@@ -29,6 +29,8 @@ const chartContainer = ref(null)
 const observer = ref(null)
 const codeHtml = ref(null)
 
+const copied = ref(false)
+
 const version = ref(window.klinecharts.version())
 
 function openStackBlitz () {
@@ -89,6 +91,52 @@ function getCodeSandboxParameters () {
     files['index.css'] = { content: props.css }
   }
   return getParameters({ files })
+}
+
+async function copyHandler () {
+  copied.value = true
+  const text = props.code
+  try {
+    await navigator.clipboard.writeText(text)
+  } catch {
+    const element = document.createElement('textarea')
+    const previouslyFocusedElement = document.activeElement
+
+    element.value = text
+
+    element.setAttribute('readonly', '')
+
+    element.style.contain = 'strict'
+    element.style.position = 'absolute'
+    element.style.left = '-9999px'
+    element.style.fontSize = '12pt' // Prevent zooming on iOS
+
+    const selection = document.getSelection()
+    const originalRange = selection
+      ? selection.rangeCount > 0 && selection.getRangeAt(0)
+      : null
+
+    document.body.appendChild(element)
+    element.select()
+
+    element.selectionStart = 0
+    element.selectionEnd = text.length
+
+    document.execCommand('copy')
+    document.body.removeChild(element)
+
+    if (originalRange) {
+      selection.removeAllRanges()
+      selection.addRange(originalRange)
+    }
+
+    if (previouslyFocusedElement) {
+      ;(previouslyFocusedElement).focus()
+    }
+  }
+  setTimeout(() => {
+    copied.value = false
+  }, 3000)
 }
 
 onMounted(() => {
@@ -224,11 +272,15 @@ onUnmounted(() => {
         </button>
       </div>
     </template>
-    
     <div
       v-if="showCode"
-      class="content-item chart-preview-code"
-      v-html="codeHtml"/>
+      class="content-item chart-preview-code">
+      <button
+        class="copy"
+        :class="{ 'copied': copied }"
+        @click="copyHandler()"/>
+      <div v-html="codeHtml"/>
+    </div>
   </div>
 </div>
 </template>
@@ -321,9 +373,66 @@ h3 + .chart-preview {
 
 <style>
 .chart-preview-code {
+  position: relative;
   overflow: auto;
-  padding: 18px 20px;
   font-size: var(--vp-code-font-size);
+}
+
+.chart-preview-code button.copy {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 3;
+  border: 1px solid var(--vp-code-copy-code-border-color);
+  border-radius: 4px;
+  width: 40px;
+  height: 40px;
+  background-color: var(--vp-code-copy-code-bg);
+  opacity: 0;
+  cursor: pointer;
+  background-image: var(--vp-icon-copy);
+  background-position: 50%;
+  background-size: 20px;
+  background-repeat: no-repeat;
+  transition: border-color 0.25s, background-color 0.25s, opacity 0.25s;
+}
+
+.chart-preview-code:hover button.copy {
+  opacity: 1;
+}
+
+.chart-preview-code button.copy.copied {
+  background-image: var(--vp-icon-copied);
+}
+
+.chart-preview-code button.copy.copied::before,
+.chart-preview-code button.copy:hover.copied::before {
+  position: relative;
+  top: -1px;
+  /*rtl:ignore*/
+  transform: translateX(calc(-100% - 1px));
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid var(--vp-code-copy-code-hover-border-color);
+  /*rtl:ignore*/
+  border-right: 0;
+  border-radius: 4px 0 0 4px;
+  padding: 0 10px;
+  width: fit-content;
+  height: 40px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--vp-code-copy-code-active-text);
+  background-color: var(--vp-code-copy-code-hover-bg);
+  white-space: nowrap;
+  content: var(--vp-code-copy-copied-text-content);
+}
+
+.chart-preview-code button.copy:hover, .chart-preview-code button.copy.copied {
+  border-color: var(--vp-code-copy-code-hover-border-color);
+  background-color: var(--vp-code-copy-code-hover-bg);
 }
 
 .chart-preview-code .shiki {
@@ -331,7 +440,14 @@ h3 + .chart-preview {
   background-color: transparent!important;
 }
 
-html.dark .chart-preview-code .shiki span {
+.chart-preview-code .shiki code {
+  display: block;
+  padding: 24px;
+  width: fit-content;
+  min-width: 100%;
+}
+
+html.dark .chart-preview-code .shiki code span {
   color: var(--shiki-dark) !important;
 }
 </style>

@@ -6,7 +6,7 @@ outline: deep
 `setLocale` 设置图表的语言。
 
 ## 参考 {#reference}
-<!--@include: @/@views/api/references/instance/setCustomApi.md-->
+<!--@include: @/@views/api/references/instance/setLocale.md-->
 
 ### 参数
 - `locale` 语言名称，已内置 `zh-CN` 和 `en-US` 。
