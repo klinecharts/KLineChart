@@ -23,34 +23,10 @@ export default defineConfig({
           { text: '实例API', link: '/api/instance/getDom' }
         ]
       },
+      { text: 'Pro', link: 'https://pro.klinecharts.com' },
       { text: '预览', link: 'https://preview.klinecharts.com' },
       { text: '定制', link: '/customize' },
       { text: '赞助', link: '/sponsor' },
-      {
-        text: '更多',
-        items: [
-          {
-            text: '资源',
-            items: [
-              { text: 'Pro', link: 'https://pro.klinecharts.com' },
-              { text: '扩展(建设中)', link: 'https://klinecharts.com' }
-            ]
-          },
-          {
-            text: '开发指南',
-            items: [
-              { text: '本地开发', link: '/more/local-development' },
-            ]
-          },
-          {
-            text: '社区',
-            items: [
-              { text: '常见问题', link: '/more/faq' },
-              { text: '反馈和共建', link: '/more/feedback' }
-            ]
-          }
-        ]
-      },
       {
         text: 'Next',
         items: [
@@ -66,55 +42,43 @@ export default defineConfig({
           collapsed: false,
           items: [
             { text: '简介', link: '/guide/introduction' },
-            { text: '快速上手', link: '/guide/quick-start' },
+            { text: '快速上手', link: '/guide/quick-start' }
           ]
         },
         {
-          text: '基础篇',
+          text: '基础',
           collapsed: false,
           items: [
             { text: '样式配置', link: '/guide/styles' },
             { text: '数据', link: '/guide/data-source' },
             { text: '国际化', link: '/guide/i18n' },
             { text: '环境要求', link: '/guide/environment' },
-            { text: '快捷键', link: '/guide/hot-key' },
+            { text: '快捷键', link: '/guide/hot-key' }
           ]
         },
         {
-          text: '进阶篇',
+          text: '进阶',
           collapsed: false,
           items: [
             { text: '基础图形', link: '/guide/figure' },
             { text: '技术指标', link: '/guide/indicator' },
             { text: '覆盖物', link: '/guide/overlay' },
-            { text: '自定义坐标轴', link: '/guide/custom-axis' }
+            { text: '本地开发', link: '/guide/local-development' }
           ]
         },
         {
           text: '其它',
           collapsed: false,
           items: [
-            
             { text: '从v8到v9', link: '/guide/v8-to-v9' },
-            { text: '更新日志', link: '/guide/changelog' },
-            
+            { text: '常见问题', link: '/guide/faq' },
+            { text: '反馈和共建', link: '/guide/feedback' },
+            { text: '更新日志', link: '/guide/changelog' }
           ]
         }
       ],
       '/api/chart/': getChartApiMenus(),
-      '/api/instance/': getInstanceApiMenus(),
-      '/sample/': [
-        { text: '基础展示', link: '/sample/basic' },
-        { text: '蜡烛图类型', link: '/sample/candle-type' },
-        { text: '技术指标', link: '/sample/indicator' },
-        { text: '坐标轴', link: '/sample/axis' },
-        { text: '提示条', link: '/sample/tooltip' },
-        { text: '覆盖物', link: '/sample/overlay' },
-        { text: '数据加载', link: '/sample/data' },
-        { text: '主题', link: '/sample/theme' },
-        { text: '时区', link: '/sample/timezone' },
-        { text: '多语言', link: '/sample/i18n' },
-      ]
+      '/api/instance/': getInstanceApiMenus()
     },
     docFooter: {
       prev: '上一篇',

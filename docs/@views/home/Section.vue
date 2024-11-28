@@ -1,5 +1,5 @@
 <script setup>
-const props = defineProps(['title', 'subTitle'])
+const props = defineProps(['title', 'description'])
 
 </script>
 
@@ -7,7 +7,7 @@ const props = defineProps(['title', 'subTitle'])
   <section class="section">
     <div class="content">
       <h2 class="title">{{ props.title }}</h2>
-      <p class="sub-title">{{ props.subTitle }}</p>
+      <p class="description">{{ props.description }}</p>
       <slot></slot>
     </div>
   </section>
@@ -35,7 +35,7 @@ const props = defineProps(['title', 'subTitle'])
   text-align: center;
   font-weight: bold;
 }
-.sub-title {
+.description {
   padding-top: 18px;
   font-size: 18px;
   line-height: 26px;
@@ -61,7 +61,7 @@ const props = defineProps(['title', 'subTitle'])
     font-size: 36px;
     line-height: 42px;
   }
-  .sub-title {
+  .description {
     padding-top: 26px;
     font-size: 20px;
     line-height: 30px;

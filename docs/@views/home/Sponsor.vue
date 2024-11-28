@@ -45,7 +45,7 @@
 <template>
   <Section
     :title="lang === 'zh-CN' ? '赞助商' : 'Sponsors'"
-    :subTitle="lang === 'zh-CN' ? '维护这样一个图表和开发新功能需要巨大精力，只有在我们的赞助者慷慨的财务支持下才得以持续。' : 'Maintaining such a chart and developing new features requires tremendous effort, which can only be sustained with the generous financial support of our sponsors.'">
+    :description="lang === 'zh-CN' ? '维护这样一个图表和开发新功能需要巨大精力，只有在我们的赞助者慷慨的财务支持下才得以持续。' : 'Maintaining such a chart and developing new features requires tremendous effort, which can only be sustained with the generous financial support of our sponsors.'">
     <div class="sponsor">
       <div class="sponsor-grid sponsor-top-grid">
         <a class="sponsor-grid-item item-no2-no3" :href="sponsors[0].website" target="_blank" rel="noreferrer">

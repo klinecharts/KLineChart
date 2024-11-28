@@ -18,7 +18,7 @@ import Loading from './Loading.vue'
 
 const href = ref()
 
-const props = defineProps(['title', 'chartId', 'code'])
+const props = defineProps(['title', 'chartId', 'chartHeight', 'code'])
 
 const loading = ref(true)
 
@@ -166,7 +166,7 @@ onMounted(() => {
         plugins: ['transform-modules-umd'],
       })
       const chartDom = document.createElement('div')
-      chartDom.style.height = '350px'
+      chartDom.style.height = `${props.chartHeight || 350}px`
       chartDom.id = props.chartId
       chartContainer.value.appendChild(chartDom)
       const script = document.createElement('script')
@@ -207,80 +207,74 @@ onUnmounted(() => {
 
 <template>
 <div class="chart-preview">
-  <div v-if="!!props.title" class="title">
-    <span>{{ props.title }}</span>
-  </div>
-  <div
-    class="content">
-    <template v-if="!!props.chartId">
-      <div
-        ref="chartContainer"
-        class="content-item chart">
-        <Loading v-if="loading"/>
-      </div>
-      <div
-        class="code-action-container"
-        :class="{ 'hiddenCode': !showCode }">
-        <form
-          action="https://codesandbox.io/api/v1/sandboxes/define"
-          method="POST"
-          target="_blank">
-          <input
-            type="hidden"
-            name="parameters"
-            :value="getCodeSandboxParameters()"/>
-          <button type="submit">
-            <Tooltip :tip="lang === 'zh-CN' ? '在 CodeSandbox 中打开' : 'Open in CodeSandbox'">
-              <svg width="18px" height="18px" viewBox="0 0 24 24">
-                <path stroke="none" d="M2.34 6.423L12 .845l9.66 5.578v11.154L12 23.155l-9.66-5.578zM12 3.155L9.67 4.5L12 5.845L14.33 4.5zm4.33 2.5L12 8.155l-4.33-2.5L5.34 7L12 10.845L18.66 7zm3.33 3.077L13 12.577v7.69l2.34-1.35v-4.994l4.32-2.495zm0 5.006l-2.32 1.34v2.684l2.32-1.34zm-15.32-2.31l4.32 2.495v4.994l2.34 1.35v-7.69L4.34 8.732zm0 2.31v2.685l2.32 1.34v-2.686z"/>
-              </svg>
-            </Tooltip>
-          </button>
-        </form>
-        <form
-          action="https://codepen.io/pen/define"
-          method="POST"
-          target="_blank">
-          <input
-            type="hidden"
-            name="data"
-            :value="getCodePenParameters()"/>
-          <button type="submit">
-            <Tooltip :tip="lang === 'zh-CN' ? '在 CodePen 中打开' : 'Open in CodePen'">
-              <svg width="20px" height="20px" viewBox="0 0 24 24"><path stroke="none" d="m21.66 8.264l-9.18-6.12a.88.88 0 0 0-.966 0l-9.146 6.12c-.225.129-.354.451-.354.676v6.087c0 .258.129.548.354.741l9.147 6.087a.88.88 0 0 0 .966 0l9.146-6.087c.226-.129.355-.45.355-.74V8.94c.032-.257-.097-.547-.323-.676m-8.793-3.8l6.731 4.509l-3.06 1.996l-3.703-2.512c.032 0 .032-3.993.032-3.993m-1.707 0v3.993L7.424 10.97L4.43 8.973zM3.753 10.55L5.878 12l-2.125 1.45zm7.407 8.985l-6.73-4.509l2.994-1.996l3.736 2.512zm.87-5.475L8.97 12l3.06-2.061L15.09 12zm.837 5.475v-3.993l3.736-2.512l2.995 1.996zm7.407-6.087L18.15 12l2.125-1.45z"/></svg>
-            </Tooltip>
-          </button>
-        </form>
-        <button
-          @click="openStackBlitz()">
-          <Tooltip :tip="lang === 'zh-CN' ? '在 StackBlitz 中打开' : 'Open in StackBlitz'">
-            <svg width="18px" height="18px" viewBox="0 0 24 24">
-              <path stroke="none" d="M10.797 14.182H3.635L16.728 0l-3.525 9.818h7.162L7.272 24l3.524-9.818Z"/>
-            </svg>
-          </Tooltip>
-        </button>
-        <button
-          @click="showCode = !showCode">
-          <Tooltip :tip="lang === 'zh-CN' ? (showCode ? '收起代码' : '显示代码') : (showCode ? 'Hide code' : 'Show code')">
-            <svg v-if="!showCode" width="20px" height="20px" viewBox="0 0 16 16">
-              <path fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5.25 11.25L1.75 8l3.5-3.25m5.5 6.5L14.25 8l-3.5-3.25"/>
-            </svg>
-            <svg v-if="showCode" width="20px" height="20px" viewBox="0 0 16 16">
-              <path stroke="none" fill-rule="evenodd" d="M10.218 3.216a.75.75 0 0 0-1.436-.431l-3 10a.75.75 0 0 0 1.436.43zM4.53 4.97a.75.75 0 0 1 0 1.06L2.56 8l1.97 1.97a.75.75 0 0 1-1.06 1.06l-2.5-2.5a.75.75 0 0 1 0-1.06l2.5-2.5a.75.75 0 0 1 1.06 0m6.94 6.06a.75.75 0 0 1 0-1.06L13.44 8l-1.97-1.97a.75.75 0 0 1 1.06-1.06l2.5 2.5a.75.75 0 0 1 0 1.06l-2.5 2.5a.75.75 0 0 1-1.06 0" clip-rule="evenodd"/>
-            </svg>
-          </Tooltip>
-        </button>
-      </div>
-    </template>
+  <template v-if="!!props.chartId">
     <div
-      v-if="showCode"
-      class="content-item chart-preview-code">
-      <button
-        class="copy"
-        :class="{ 'copied': copied }"
-        @click="copyHandler()"/>
-      <div v-html="codeHtml"/>
+      ref="chartContainer"
+      class="content-item chart">
+      <Loading v-if="loading"/>
     </div>
+    <div
+      class="code-action-container"
+      :class="{ 'hiddenCode': !showCode }">
+      <form
+        action="https://codesandbox.io/api/v1/sandboxes/define"
+        method="POST"
+        target="_blank">
+        <input
+          type="hidden"
+          name="parameters"
+          :value="getCodeSandboxParameters()"/>
+        <button type="submit">
+          <Tooltip :tip="lang === 'zh-CN' ? '在 CodeSandbox 中打开' : 'Open in CodeSandbox'">
+            <svg width="18px" height="18px" viewBox="0 0 24 24">
+              <path stroke="none" d="M2.34 6.423L12 .845l9.66 5.578v11.154L12 23.155l-9.66-5.578zM12 3.155L9.67 4.5L12 5.845L14.33 4.5zm4.33 2.5L12 8.155l-4.33-2.5L5.34 7L12 10.845L18.66 7zm3.33 3.077L13 12.577v7.69l2.34-1.35v-4.994l4.32-2.495zm0 5.006l-2.32 1.34v2.684l2.32-1.34zm-15.32-2.31l4.32 2.495v4.994l2.34 1.35v-7.69L4.34 8.732zm0 2.31v2.685l2.32 1.34v-2.686z"/>
+            </svg>
+          </Tooltip>
+        </button>
+      </form>
+      <form
+        action="https://codepen.io/pen/define"
+        method="POST"
+        target="_blank">
+        <input
+          type="hidden"
+          name="data"
+          :value="getCodePenParameters()"/>
+        <button type="submit">
+          <Tooltip :tip="lang === 'zh-CN' ? '在 CodePen 中打开' : 'Open in CodePen'">
+            <svg width="20px" height="20px" viewBox="0 0 24 24"><path stroke="none" d="m21.66 8.264l-9.18-6.12a.88.88 0 0 0-.966 0l-9.146 6.12c-.225.129-.354.451-.354.676v6.087c0 .258.129.548.354.741l9.147 6.087a.88.88 0 0 0 .966 0l9.146-6.087c.226-.129.355-.45.355-.74V8.94c.032-.257-.097-.547-.323-.676m-8.793-3.8l6.731 4.509l-3.06 1.996l-3.703-2.512c.032 0 .032-3.993.032-3.993m-1.707 0v3.993L7.424 10.97L4.43 8.973zM3.753 10.55L5.878 12l-2.125 1.45zm7.407 8.985l-6.73-4.509l2.994-1.996l3.736 2.512zm.87-5.475L8.97 12l3.06-2.061L15.09 12zm.837 5.475v-3.993l3.736-2.512l2.995 1.996zm7.407-6.087L18.15 12l2.125-1.45z"/></svg>
+          </Tooltip>
+        </button>
+      </form>
+      <button
+        @click="openStackBlitz()">
+        <Tooltip :tip="lang === 'zh-CN' ? '在 StackBlitz 中打开' : 'Open in StackBlitz'">
+          <svg width="18px" height="18px" viewBox="0 0 24 24">
+            <path stroke="none" d="M10.797 14.182H3.635L16.728 0l-3.525 9.818h7.162L7.272 24l3.524-9.818Z"/>
+          </svg>
+        </Tooltip>
+      </button>
+      <button
+        @click="showCode = !showCode">
+        <Tooltip :tip="lang === 'zh-CN' ? (showCode ? '收起代码' : '显示代码') : (showCode ? 'Hide code' : 'Show code')">
+          <svg v-if="!showCode" width="20px" height="20px" viewBox="0 0 16 16">
+            <path fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5.25 11.25L1.75 8l3.5-3.25m5.5 6.5L14.25 8l-3.5-3.25"/>
+          </svg>
+          <svg v-if="showCode" width="20px" height="20px" viewBox="0 0 16 16">
+            <path stroke="none" fill-rule="evenodd" d="M10.218 3.216a.75.75 0 0 0-1.436-.431l-3 10a.75.75 0 0 0 1.436.43zM4.53 4.97a.75.75 0 0 1 0 1.06L2.56 8l1.97 1.97a.75.75 0 0 1-1.06 1.06l-2.5-2.5a.75.75 0 0 1 0-1.06l2.5-2.5a.75.75 0 0 1 1.06 0m6.94 6.06a.75.75 0 0 1 0-1.06L13.44 8l-1.97-1.97a.75.75 0 0 1 1.06-1.06l2.5 2.5a.75.75 0 0 1 0 1.06l-2.5 2.5a.75.75 0 0 1-1.06 0" clip-rule="evenodd"/>
+          </svg>
+        </Tooltip>
+      </button>
+    </div>
+  </template>
+  <div
+    v-if="showCode"
+    class="content-item chart-preview-code">
+    <button
+      class="copy"
+      :class="{ 'copied': copied }"
+      @click="copyHandler()"/>
+    <div v-html="codeHtml"/>
   </div>
 </div>
 </template>
@@ -298,28 +292,6 @@ onUnmounted(() => {
 
 h3 + .chart-preview {
   margin-top: 20px;
-}
-
-.title {
-  display: flex;
-  width: 100%;
-  flex-direction: row;
-  align-items: center;
-  border-top-left-radius: 8px;
-  border-top-right-radius: 8px;
-  padding: 0 20px;
-  height: 44px;
-  color: var(--vp-c-text-2);
-  background-color: var(--vp-c-bg-soft);
-  border-bottom: solid 1px var(--vp-c-gutter);
-  box-sizing: border-box;
-}
-
-.content {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  box-sizing: border-box;
 }
 
 .content-item {
