@@ -11,11 +11,11 @@ import { resolvePath, getVersion } from './utils.js'
 
 const version = getVersion()
 
-let commitId = ''
-try {
-  commitId = child_process.execSync(`git rev-parse --short v${version}^{}`).toString().trim()
-} catch {
-}
+// let commitId = ''
+// try {
+//   commitId = child_process.execSync(`git rev-parse --short v${version}^{}`).toString().trim()
+// } catch {
+// }
 
 const env = process.env.NODE_ENV
 
@@ -37,7 +37,8 @@ function createInputConfig ({ input, replaceValues }) {
       replace({
         preventAssignment: true,
         values: {
-          '__VERSION__': `v${version}(${commitId.length > 0 ? `${commitId}, ` : ''}${new Date().toISOString()})`,
+          // '__VERSION__': `v${version}(${commitId.length > 0 ? `${commitId}, ` : ''}${new Date().toISOString()})`,
+          '__VERSION__': version,
           ...replaceValues
         }
       }),
