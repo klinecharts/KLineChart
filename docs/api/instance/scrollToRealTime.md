@@ -8,10 +8,10 @@ outline: deep
 ## 参考 {#reference}
 <!-- @include: @/@views/api/references/instance/scrollToRealTime.md -->
 
-### 参数
+### 参数 {#parameters}
 - `animationDuration` 动画持续时间，如果小于等于0，则无动画。
 
-### 返回值
+### 返回值 {#returns}
 `scrollToRealTime` 返回 `undefined` 。
 
 ## 用法 {#usage}

@@ -8,7 +8,7 @@ outline: deep
 ## 参考 {#reference}
 <!--@include: @/@views/api/references/instance/overrideOverlay.md-->
 
-### 参数
+### 参数 {#parameters}
 - `overlay` 覆盖物配置。
   - `name` 覆盖物名称。
   - `id` 覆盖物id。
@@ -40,7 +40,7 @@ outline: deep
   - `onSelected` 选中事件。
   - `onDeselected` 取消选中事件。
 
-### 返回值
+### 返回值 {#returns}
 `overlayOverlay` 返回 `boolean` 。
 
 ## 用法 {#usage}

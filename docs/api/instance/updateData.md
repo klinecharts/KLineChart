@@ -12,10 +12,10 @@ outline: deep
 ## 参考 {#reference}
 <!-- @include: @/@views/api/references/instance/updateData.md -->
 
-### 参数
+### 参数 {#parameters}
 - `data` K 线数据，数据格式参照 [数据](/guide/data-source)。
 
-### 返回值
+### 返回值 {#returns}
 `updateData` 返回 `undefined` 。
 
 ## 用法 {#usage}

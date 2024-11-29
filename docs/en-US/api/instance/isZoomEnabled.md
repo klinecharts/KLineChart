@@ -8,10 +8,10 @@ outline: deep
 ## Reference {#reference}
 <!--@include: @/@views/api/references/instance/isZoomEnabled.md-->
 
-### Parameters
+### Parameters {#parameters}
 `isZoomEnabled` does not accept any parameters.
 
-### Returns
+### Returns {#returns}
 `isZoomEnabled` returns `boolean` .
 
 ## Usage {#usage}

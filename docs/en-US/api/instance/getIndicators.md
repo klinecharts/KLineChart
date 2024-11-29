@@ -8,13 +8,13 @@ outline: deep
 ## Reference {#reference}
 <!-- @include: @/@views/api/references/instance/getIndicators.md -->
 
-### Parameters
+### Parameters {#parameters}
 - `filter` Filter conditions.
   - `name` Indicator name.
   - `paneId` Pane id.
 
 
-### Returns
+### Returns {#returns}
 `getIndicators` returns `Map<string, Indicator[]>` .
 
 ## Usage {#usage}

@@ -8,7 +8,7 @@ outline: deep
 ## Reference {#reference}
 <!-- @include: @/@views/api/references/instance/overrideIndicator.md -->
 
-### Parameters
+### Parameters {#parameters}
 - `indicator` Indicator configuration.
   - `name` Name.
   - `shortName` A short name, used for prompt display.
@@ -37,7 +37,7 @@ outline: deep
   - `onDataStateChange` Data change callback notification.
 - `paneId` Pane id.
 
-### Returns
+### Returns {#returns}
 `overrideIndicator` returns `undefined` .
 
 ## Usage {#usage}

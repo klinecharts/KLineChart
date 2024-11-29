@@ -8,7 +8,7 @@ outline: deep
 ## Reference {#reference}
 <!--@include: @/@views/api/references/chart/registerIndicator.md-->
 
-### Parameters
+### Parameters {#parameters}
 - `indicator` Indicator configuration.
   - `name` Name, a unique identifier used for creation or modification.
   - `shortName` A short name, used for prompt display.
@@ -36,7 +36,7 @@ outline: deep
   - `draw` Custom drawing method, if the return value is `true`, it will override the default drawing.
   - `onDataStateChange` Data change callback notification.
 
-### Returns
+### Returns {#returns}
 `registerIndicator` returns `undefined` .
 
 ## Usage {#usage}

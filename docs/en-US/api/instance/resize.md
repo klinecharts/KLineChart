@@ -12,10 +12,10 @@ The container size will always be filled. This method will recalculate the size 
 ## Reference {#reference}
 <!-- @include: @/@views/api/references/instance/resize.md -->
 
-### Parameters
+### Parameters {#parameters}
 `resize` does not accept any parameters.
 
-### Returns
+### Returns {#returns}
 `resize` returns `undefined` .
 
 ## Usage {#usage}

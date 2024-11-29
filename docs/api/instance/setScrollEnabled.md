@@ -8,10 +8,10 @@ outline: deep
 ## 参考 {#reference}
 <!-- @include: @/@views/api/references/instance/setScrollEnabled.md -->
 
-### 参数
+### 参数 {#parameters}
 - `enabled` 是否可以滚动。
 
-### 返回值
+### 返回值 {#returns}
 `setScrollEnabled` 返回 `undefined` 。
 
 ## 用法 {#usage}

@@ -8,12 +8,12 @@ outline: deep
 ## 参考 {#reference}
 <!--@include: @/@views/api/references/instance/setThousandsSeparator.md-->
 
-### 参数
+### 参数 {#parameters}
 - `thousandsSeparator` 千分符配置。
   - `sign` 千分符符号。
   - `format` 自定义千分符格式化。
 
-### 返回值
+### 返回值 {#returns}
 `setThousandsSeparator` 返回 `undefined` 。
 
 ## 用法 {#usage}

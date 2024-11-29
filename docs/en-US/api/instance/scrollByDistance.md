@@ -8,11 +8,11 @@ outline: deep
 ## Reference {#reference}
 <!-- @include: @/@views/api/references/instance/scrollByDistance.md -->
 
-### Parameters
+### Parameters {#parameters}
 - `distance` Scroll distance
 - `animationDuration` Animation duration. If it is less than or equal to 0, there is no animation.
 
-### Returns
+### Returns {#returns}
 `scrollByDistance` returns `undefined` .
 
 ## Usage {#usage}

@@ -8,11 +8,11 @@ outline: deep
 ## Reference {#reference}
 <!-- @include: @/@views/api/references/instance/scrollToTimestamp.md -->
 
-### Parameters
+### Parameters {#parameters}
 - `timestamp` Timestamp.
 - `animationDuration` Animation duration. If it is less than or equal to 0, there is no animation.
 
-### Returns
+### Returns {#returns}
 `scrollToTimestamp` returns `undefined` .
 
 ## Usage {#usage}

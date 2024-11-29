@@ -8,10 +8,10 @@ outline: deep
 ## Reference {#reference}
 <!--@include: @/@views/api/references/instance/getLocale.md-->
 
-### Parameters
+### Parameters {#parameters}
 `getLocale` does not accept any parameters.
 
-### Returns
+### Returns {#returns}
 `getLocale` returns `string` .
 
 ## Usage {#usage}

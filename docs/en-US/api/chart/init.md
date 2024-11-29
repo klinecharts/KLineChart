@@ -12,7 +12,7 @@ When calling, you need to wait until the container `dom` is ready.
 ## Reference {#reference}
 <!-- @include: @/@views/api/references/chart/init.md -->
 
-### Parameters
+### Parameters {#parameters}
 - `ds` Container, which can be a DOM element or an element id.
 - `options` Optional configuration item.
   - `layout` Custom layout, an array.
@@ -47,7 +47,7 @@ When calling, you need to wait until the container `dom` is ready.
     - `threshold` Fold threshold.
     - `format` Custom formatting method.
 
-### Returns
+### Returns {#returns}
 `init` returns an object `Chart`。
 
 ## Usage {#usage}

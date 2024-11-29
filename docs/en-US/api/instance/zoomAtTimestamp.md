@@ -8,12 +8,12 @@ outline: deep
 ## Reference {#reference}
 <!-- @include: @/@views/api/references/instance/zoomAtTimestamp.md -->
 
-### Parameters
+### Parameters {#parameters}
 - `scale` Scaling.
 - `timestamp` Timestamp.
 - `animationDuration` Animation duration. If it is less than or equal to 0, there is no animation.
 
-### Returns
+### Returns {#returns}
 `zoomAtTimestamp` returns `undefined` .
 
 ## Usage {#usage}

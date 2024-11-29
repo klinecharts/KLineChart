@@ -8,10 +8,10 @@ outline: deep
 ## 参考 {#reference}
 <!--@include: @/@views/api/references/instance/getLocale.md-->
 
-### 参数
+### 参数 {#parameters}
 `getLocale` 不接收任何参数。
 
-### 返回值
+### 返回值 {#returns}
 `getLocale` 返回 `string` 。
 
 ## 用法 {#usage}

@@ -8,10 +8,10 @@ outline: deep
 ## Reference {#reference}
 <!--@include: @/@views/api/references/instance/setZoomEnabled.md-->
 
-### Parameters
+### Parameters {#parameters}
 - `enabled` Whether it can be scaled.
 
-### Returns
+### Returns {#returns}
 `setZoomEnabled` returns `undefined` .
 
 ## Usage {#usage}

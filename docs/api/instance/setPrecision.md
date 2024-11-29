@@ -8,12 +8,12 @@ outline: deep
 ## 参考 {#reference}
 <!--@include: @/@views/api/references/instance/setPrecision.md-->
 
-### 参数
+### 参数 {#parameters}
 - `precision` 精度。
   - `price` 价格精度。
   - `volume` 数量精度。 
 
-### 返回值
+### 返回值 {#returns}
 `setPrecision` 返回 `undefined` 。
 
 ## 用法 {#usage}

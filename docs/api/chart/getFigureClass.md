@@ -8,10 +8,10 @@ outline: deep
 ## 参考 {#reference}
 <!-- @include: @/@views/api/references/chart/getFigureClass.md -->
 
-### 参数
+### 参数 {#parameters}
 - `name` 基础图形名称。
 
-### 返回值
+### 返回值 {#returns}
 `getSupportedFigures` 返回一个基础图形 `Figure` 。
 
 ## 用法 {#usage}

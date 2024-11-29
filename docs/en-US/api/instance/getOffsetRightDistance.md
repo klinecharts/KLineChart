@@ -8,10 +8,10 @@ outline: deep
 ## Reference {#reference}
 <!--@include: @/@views/api/references/instance/getOffsetRightDistance.md-->
 
-### Parameters
+### Parameters {#parameters}
 `getOffsetRightDistance` does not accept any parameters.
 
-### Returns
+### Returns {#returns}
 `getOffsetRightDistance` returns `number` .
 
 ## Usage {#usage}

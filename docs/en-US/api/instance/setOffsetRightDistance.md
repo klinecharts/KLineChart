@@ -8,10 +8,10 @@ outline: deep
 ## Reference {#reference}
 <!-- @include: @/@views/api/references/instance/setOffsetRightDistance.md -->
 
-### Parameters
+### Parameters {#parameters}
 - `distance` Distance
 
-### Returns
+### Returns {#returns}
 `setOffsetRightDistance` returns `undefined` .
 
 ## Usage {#usage}

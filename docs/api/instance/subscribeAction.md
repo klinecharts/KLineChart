@@ -8,11 +8,11 @@ outline: deep
 ## 参考 {#reference}
 <!-- @include: @/@views/api/references/instance/subscribeAction.md -->
 
-### 参数
+### 参数 {#parameters}
 - `type` 类型，支持 `onZoom` ， `onScroll` ， `onVisibleRangeChange` ， `onTooltipIconClick` ， `onCrosshairChange` ， `onCandleBarClick` 和 `onPaneDrag` 。
 - `cb` 回调方法。
 
-### 返回值
+### 返回值 {#returns}
 `executeAction` 返回 `undefined` 。
 
 ## 用法 {#usage}

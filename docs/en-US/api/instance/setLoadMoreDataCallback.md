@@ -8,10 +8,10 @@ outline: deep
 ## Reference {#reference}
 <!--@include: @/@views/api/references/instance/setLoadMoreDataCallback.md-->
 
-### Parameters
+### Parameters {#parameters}
 - `cb` Callback.
 
-### Returns
+### Returns {#returns}
 `setLoadMoreDataCallback` returns `undefined` .
 
 ## Usage {#usage}

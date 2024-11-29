@@ -8,11 +8,11 @@ outline: deep
 ## Reference {#reference}
 <!--@include: @/@views/api/references/chart/registerStyles.md-->
 
-### Parameters
+### Parameters {#parameters}
 - `name` The name of the style template.
 - `styles` Style configuration. See [styles](/en-US/guide/styles) for details. Incremental support.
 
-### Returns
+### Returns {#returns}
 `registerStyles` returns `undefined` .
 
 ## Usage {#usage}

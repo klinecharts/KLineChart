@@ -8,10 +8,10 @@ outline: deep
 ## Reference {#reference}
 <!--@include: @/@views/api/references/chart/version.md-->
 
-### Parameters
+### Parameters {#parameters}
 `version` does not accept any parameters.
 
-### 返回值
+### Returns {#returns}
 `version` returns `string` 。
 
 ## Usage {#usage}

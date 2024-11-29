@@ -8,11 +8,11 @@ outline: deep
 ## Reference {#reference}
 <!-- @include: @/@views/api/references/instance/unsubscribeAction.md -->
 
-### Parameters
+### Parameters {#parameters}
 - `type` Type, supports `onZoom`, `onScroll`, `onVisibleRangeChange`, `onTooltipIconClick`, `onCrosshairChange`, `onCandleBarClick` and `onPaneDrag` .
 - `cb` The callback method when subscribing. By default, all subscriptions of the current type are canceled.
 
-### Returns
+### Returns {#returns}
 `unsubscribeAction` returns `undefined` .
 
 ## Usage {#usage}

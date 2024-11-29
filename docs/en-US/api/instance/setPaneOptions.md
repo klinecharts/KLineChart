@@ -8,7 +8,7 @@ outline: deep
 ## Reference {#reference}
 <!-- @include: @/@views/api/references/instance/setPaneOptions.md -->
 
-### Parameters
+### Parameters {#parameters}
 - `options` Pane configuration.
   - `id` Pane id.
   - `height` Height.
@@ -26,7 +26,7 @@ outline: deep
       - `top` Top margin.
       - `bottom` Bottom margin.
 
-### Returns
+### Returns {#returns}
 `setPaneOptions` returns `undefined` .
 
 ## Usage {#usage}

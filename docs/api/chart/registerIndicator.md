@@ -8,7 +8,7 @@ outline: deep
 ## 参考 {#reference}
 <!--@include: @/@views/api/references/chart/registerIndicator.md-->
 
-### 参数
+### 参数 {#parameters}
 - `indicator` 指标配置。
   - `name` 名称，用于创建或者修改的唯一标识。
   - `shortName` 简短名称，用于提示显示。
@@ -36,7 +36,7 @@ outline: deep
   - `draw` 自定义绘制方法，如果返回值是 `true` ，则会覆盖默认的绘制。
   - `onDataStateChange` 数据变化回调通知。
 
-### 返回值
+### 返回值 {#returns}
 `registerIndicator` 返回 `undefined` 。
 
 ## 用法 {#usage}

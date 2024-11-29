@@ -8,10 +8,10 @@ outline: deep
 ## Reference {#reference}
 <!-- @include: @/@views/api/references/instance/getVisibleRange.md -->
 
-### Parameters
+### Parameters {#parameters}
 `getVisibleRange` does not accept any parameters.
 
-### Returns
+### Returns {#returns}
 `getVisibleRange` returns a `VisibleRange` object containing range information.
 
 ## Usage {#usage}

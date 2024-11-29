@@ -8,7 +8,7 @@ outline: deep
 ## 参考 {#reference}
 <!-- @include: @/@views/api/references/instance/setPaneOptions.md -->
 
-### 参数
+### 参数 {#parameters}
 - `options` 窗口配置项。
   - `id` 窗口id。
   - `height` 高度。
@@ -26,7 +26,7 @@ outline: deep
       - `top` 上边距。
       - `bottom` 下边距。
 
-### 返回值
+### 返回值 {#returns}
 `setPaneOptions` 返回 `undefined`。
 
 ## 用法 {#usage}

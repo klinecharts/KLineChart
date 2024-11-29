@@ -8,14 +8,14 @@ outline: deep
 ## Reference {#reference}
 <!-- @include: @/@views/api/references/instance/zoomAtCoordinate.md -->
 
-### 参数
+### Parameters {#parameters}
 - `scale` Scaling.
 - `coordinate` Coordinate.
   - `x` X-axis.
   - `y` Y-axis
 - `animationDuration` Animation duration. If it is less than or equal to 0, there is no animation.
 
-### Returns
+### Returns {#returns}
 `zoomAtCoordinate` returns `undefined` .
 
 ## Usage {#usage}

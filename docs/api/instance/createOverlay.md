@@ -8,7 +8,7 @@ outline: deep
 ## 参考 {#reference}
 <!--@include: @/@views/api/references/instance/createOverlay.md-->
 
-### 参数
+### 参数 {#parameters}
 - `value` 覆盖物配置，可以是覆盖物名称，可以是覆盖物对象，也可以是覆盖物名称和对象组成的数组。
   - `name` 覆盖物名称。
   - `id` 覆盖物id。
@@ -40,7 +40,7 @@ outline: deep
   - `onSelected` 选中事件。
   - `onDeselected` 取消选中事件。
 
-### 返回值
+### 返回值 {#returns}
 `createOverlay` 返回 `string` 或者 `null` 或者 `Array<string | null>` 。
 
 ## 用法 {#usage}

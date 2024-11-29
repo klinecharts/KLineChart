@@ -8,10 +8,10 @@ outline: deep
 ## 参考 {#reference}
 <!--@include: @/@views/api/references/instance/setMaxOffsetLeftDistance.md-->
 
-### 参数
+### 参数 {#parameters}
 - `distance` 距离。
 
-### 返回值
+### 返回值 {#returns}
 `setMaxOffsetLeftDistance` 返回 `undefined` 。
 
 ## 用法 {#usage}

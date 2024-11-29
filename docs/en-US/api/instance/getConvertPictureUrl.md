@@ -8,12 +8,12 @@ outline: deep
 ## Reference {#reference}
 <!--@include: @/@views/api/references/instance/getConvertPictureUrl.md-->
 
-### Parameters
+### Parameters {#parameters}
 - `includeOverlay` Whether to include the overlay lever.
 - `type` The converted image type supports `png` , `jpeg` and `bmp`, the default is `jpeg` .
 - `backgroundColor` Background color, default is `#FFFFFF` .
 
-### Returns
+### Returns {#returns}
 `getConvertPictureUrl` returns `string` .
 
 ## Usage {#usage}

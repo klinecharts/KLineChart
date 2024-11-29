@@ -8,12 +8,12 @@ outline: deep
 ## 参考 {#reference}
 <!-- @include: @/@views/api/references/instance/getDom.md -->
 
-### 参数
+### 参数 {#parameters}
 - `filter` 过滤条件。
   - `paneId` 窗口 id 。
   - `position` 位置，支持 `root` ， `main` 和 `yAxis` 。
 
-### 返回值
+### 返回值 {#returns}
 `getDom` 返回一个 `HTMLElement` 或者 `null` 。
 
 ## 用法 {#usage}

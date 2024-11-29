@@ -8,13 +8,13 @@ outline: deep
 ## Reference {#reference}
 <!--@include: @/@views/api/references/chart/registerXAxis.md-->
 
-### Parameters
+### Parameters {#parameters}
 - `xAxis` X-axis configuration.
   - `name` Name, a unique identifier used for creation or modification.
   - `scrollZoomEnabled` Whether scrolling and zooming are possible on the axis.
   - `createTicks` Create ticks information callback method.
 
-### Returns
+### Returns {#returns}
 `registerXAxis` returns `undefined` .
 
 ## Usage {#usage}

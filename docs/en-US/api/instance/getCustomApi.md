@@ -8,10 +8,10 @@ outline: deep
 ## Reference {#reference}
 <!--@include: @/@views/api/references/instance/getCustomApi.md-->
 
-### Parameters
+### Parameters {#parameters}
 `getCustomApi` does not accept any parameters.
 
-### Returns
+### Returns {#returns}
 `getCustomApi` returns an object `CustomApi` containing the custom api.
 
 ## Usage {#usage}

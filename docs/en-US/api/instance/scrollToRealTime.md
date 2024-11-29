@@ -8,10 +8,10 @@ outline: deep
 ## Reference {#reference}
 <!-- @include: @/@views/api/references/instance/scrollToRealTime.md -->
 
-### Parameters
+### Parameters {#parameters}
 - `animationDuration` Animation duration. If it is less than or equal to 0, there is no animation.
 
-### Returns
+### Returns {#returns}
 `scrollToRealTime` returns `undefined` .
 
 ## Usage {#usage}

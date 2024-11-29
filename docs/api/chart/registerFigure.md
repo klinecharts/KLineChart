@@ -8,14 +8,14 @@ outline: deep
 ## 参考 {#reference}
 <!--@include: @/@views/api/references/chart/registerFigure.md-->
 
-### 参数
+### 参数 {#parameters}
 - `figure` 基础图形配置。
   - `name` 名称，唯一标识。
   - `draw` 绘制方法。
   - `checkEventOn` 检查事件是否在图形上。
 
 
-### 返回值
+### 返回值 {#returns}
 `registerFigure` 返回 `undefined` 。
 
 ## 用法 {#usage}

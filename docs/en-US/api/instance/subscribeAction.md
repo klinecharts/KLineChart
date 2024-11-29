@@ -8,11 +8,11 @@ outline: deep
 ## Reference {#reference}
 <!-- @include: @/@views/api/references/instance/subscribeAction.md -->
 
-### Parameters
+### Parameters {#parameters}
 - `type` Type, supports `onZoom`, `onScroll`, `onVisibleRangeChange`, `onTooltipIconClick`, `onCrosshairChange`, `onCandleBarClick` and `onPaneDrag` .
 - `cb` Callback.
 
-### Returns
+### Returns {#returns}
 `executeAction` returns `undefined` .
 
 ## Usage {#usage}

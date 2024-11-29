@@ -8,12 +8,12 @@ outline: deep
 ## 参考 {#reference}
 <!-- @include: @/@views/api/references/instance/removeIndicator.md -->
 
-### 参数
+### 参数 {#parameters}
 - `filter` 过滤参数。
   - `name` 指标名称。
   - `paneId` 窗口id。
 
-### 返回值
+### 返回值 {#returns}
 `removeIndicator` 返回 `boolean` 。
 
 ## 用法 {#usage}

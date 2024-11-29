@@ -8,10 +8,10 @@ outline: deep
 ## Reference {#reference}
 <!-- @include: @/@views/api/references/chart/getSupportedLocales.md -->
 
-### Parameters
+### Parameters {#parameters}
 `getSupportedLocales` does not accept any parameters.
 
-### Returns
+### Returns {#returns}
 `getSupportedLocales` returns `string` array.
 
 ## Usage {#usage}

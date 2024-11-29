@@ -8,10 +8,10 @@ outline: deep
 ## 参考 {#reference}
 <!-- @include: @/@views/api/references/instance/isScrollEnabled.md -->
 
-### 参数
+### 参数 {#parameters}
 `isScrollEnabled` 不接收任何参数。
 
-### 返回值
+### 返回值 {#returns}
 `isScrollEnabled` 返回 `boolean` 。
 
 ## 用法 {#usage}

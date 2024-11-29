@@ -8,10 +8,10 @@ outline: deep
 ## 参考 {#reference}
 <!--@include: @/@views/api/references/instance/getStyles.md-->
 
-### 参数
+### 参数 {#parameters}
 `getStyles` 不接收任何参数。
 
-### 返回值
+### 返回值 {#returns}
 `getStyles` 返回完整的样式配置 `Styles` 。
 
 ## 用法 {#usage}

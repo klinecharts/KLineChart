@@ -8,10 +8,10 @@ outline: deep
 ## Reference {#reference}
 <!--@include: @/@views/api/references/instance/setTimezone.md-->
 
-### Parameters
+### Parameters {#parameters}
 - `timezone` Timezone name, such as `Asia/Shanghai`. For a list of timezone names, see the [List of Timezone](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) .
 
-### Returns
+### Returns {#returns}
 `setTimezone` returns `undefined` .
 
 ## Usage {#usage}

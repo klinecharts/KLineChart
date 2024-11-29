@@ -8,10 +8,10 @@ outline: deep
 ## Reference {#reference}
 <!--@include: @/@views/api/references/instance/getDataList.md-->
 
-### Parameters
+### Parameters {#parameters}
 `getDataList` does not accept any parameters.
 
-### Returns
+### Returns {#returns}
 `getDataList` returns `KLineData` array.
 
 ## Usage {#usage}

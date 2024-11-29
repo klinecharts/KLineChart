@@ -8,7 +8,7 @@ outline: deep
 ## Reference {#reference}
 <!--@include: @/@views/api/references/instance/createOverlay.md-->
 
-### Parameters
+### Parameters {#parameters}
 - `value` Overlay configuration, which can be an overlay name, an overlay object, or an array of overlay names and objects.
   - `name` Overlay name.
   - `id` Overlay id.
@@ -40,7 +40,7 @@ outline: deep
   - `onSelected` Select the event.
   - `onDeselected` Deselect the event.
 
-### Returns
+### Returns {#returns}
 `createOverlay` returns `string` or `null` or `Array<string | null>` .
 
 ## Usage {#usage}

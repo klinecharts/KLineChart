@@ -8,7 +8,7 @@ outline: deep
 ## 参考 {#reference}
 <!-- @include: @/@views/api/references/instance/overrideIndicator.md -->
 
-### 参数
+### 参数 {#parameters}
 - `indicator` 指标配置。
   - `name` 名称。
   - `shortName` 简短名称，用于提示显示。
@@ -37,7 +37,7 @@ outline: deep
   - `onDataStateChange` 数据变化回调通知。
 - `paneId` 窗口id。
 
-### 返回值
+### 返回值 {#returns}
 `overrideIndicator` 返回 `undefined` 。
 
 ## 用法 {#usage}

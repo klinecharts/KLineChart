@@ -8,10 +8,10 @@ outline: deep
 ## 参考 {#reference}
 <!--@include: @/@views/api/references/instance/getDataList.md-->
 
-### 参数
+### 参数 {#parameters}
 `getDataList` 不接收任何参数。
 
-### 返回值
+### 返回值 {#returns}
 `getDataList` 返回 `KLineData` 数组。
 
 ## 用法 {#usage}

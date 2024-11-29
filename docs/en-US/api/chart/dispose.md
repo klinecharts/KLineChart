@@ -8,10 +8,10 @@ outline: deep
 ## Reference {#reference}
 <!-- @include: @/@views/api/references/chart/dispose.md -->
 
-### Parameters
+### Parameters {#parameters}
 - `dcs` Chart instance, `dom` element or `dom` element id.
 
-### Returns
+### Returns {#returns}
 `dispose` returns `undefined` .
 
 ## Usage {#usage}

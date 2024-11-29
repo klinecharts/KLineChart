@@ -8,11 +8,11 @@ outline: deep
 ## Reference {#reference}
 <!-- @include: @/@views/api/references/instance/executeAction.md -->
 
-### Parameters
+### Parameters {#parameters}
 - `type` Type, only supports `onCrosshairChange` .
 - `data` Data.
 
-### Returns
+### Returns {#returns}
 `executeAction` returns `undefined` .
 
 ## Usage {#usage}

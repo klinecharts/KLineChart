@@ -8,12 +8,12 @@ outline: deep
 ## Reference {#reference}
 <!-- @include: @/@views/api/references/instance/setDecimalFold.md -->
 
-### Parameters
+### Parameters {#parameters}
 - `decimalFold` Decimal 0 folds the configuration.
   - `threshold` Fold threshold.
   - `format` Custom formatting method.
 
-### Returns
+### Returns {#returns}
 `setDecimalFold` returns `undefined` .
 
 ## Usage {#usage}

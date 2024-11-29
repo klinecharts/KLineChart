@@ -8,11 +8,11 @@ outline: deep
 ## Reference {#reference}
 <!--@include: @/@views/api/references/chart/registerLocale.md-->
 
-### Parameters
+### Parameters {#parameters}
 - `locale` Locale name.
 - `locales` Locale configuration.
 
-### Returns
+### Returns {#returns}
 `registerLocale` returns `undefined` .
 
 ## Usage {#usage}

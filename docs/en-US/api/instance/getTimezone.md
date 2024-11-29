@@ -8,10 +8,10 @@ outline: deep
 ## Reference {#reference}
 <!--@include: @/@views/api/references/instance/getTimezone.md-->
 
-### Parameters
+### Parameters {#parameters}
 `getTimezone` does not accept any parameters.
 
-### Returns
+### Returns {#returns}
 `getTimezone` returns `string` .
 
 ## Usage {#usage}

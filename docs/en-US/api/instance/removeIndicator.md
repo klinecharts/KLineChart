@@ -8,12 +8,12 @@ outline: deep
 ## Reference {#reference}
 <!-- @include: @/@views/api/references/instance/removeIndicator.md -->
 
-### Parameters
+### Parameters {#parameters}
 - `filter` Filter conditions.
   - `name` Indicator name.
   - `paneId` Pane id.
 
-### Returns
+### Returns {#returns}
 `removeIndicator` return `boolean` .
 
 ## Usage {#usage}

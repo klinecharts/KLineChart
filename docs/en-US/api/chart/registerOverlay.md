@@ -8,7 +8,7 @@ outline: deep
 ## Reference {#reference}
 <!-- @include: @/@views/api/references/chart/registerOverlay.md -->
 
-### Parameters
+### Parameters {#parameters}
 - `overlay` Overlay configuration.
   - `name` Name, a unique identifier used for creation or modification.
   - `totalStep` Total implementation steps.
@@ -43,7 +43,7 @@ outline: deep
   - `onSelected` Select the event.
   - `onDeselected` Deselect the event.
 
-### Returns
+### Returns {#returns}
 `registerOverlay` returns `undefined` .
 
 ## Usage {#usage}

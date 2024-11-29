@@ -8,10 +8,10 @@ outline: deep
 ## Reference {#reference}
 <!--@include: @/@views/api/references/instance/getPrecision.md-->
 
-### Parameters
+### Parameters {#parameters}
 `getPrecision` does not accept any parameters.
 
-### Returns
+### Returns {#returns}
 `getPrecision` returns a `Precision` object containing the precision of price and volume.
 
 ## Usage {#usage}

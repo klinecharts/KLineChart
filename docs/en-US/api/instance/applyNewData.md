@@ -8,10 +8,10 @@ outline: deep
 ## Reference {#reference}
 <!-- @include: @/@views/api/references/instance/applyNewData.md -->
 
-### Parameters
+### Parameters {#parameters}
 - `dataList` K-line data array, the sub-item format refers to [data](/en-US/guide/data-source).
 
-### Returns
+### Returns {#returns}
 `applyNewData` returns `undefined` .
 
 ## Usage {#usage}

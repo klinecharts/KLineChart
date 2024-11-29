@@ -8,10 +8,10 @@ outline: deep
 ## Reference {#reference}
 <!-- @include: @/@views/api/references/chart/getFigureClass.md -->
 
-### Parameters
+### Parameters {#parameters}
 - `name` Figure name.
 
-### Returns
+### Returns {#returns}
 `getSupportedFigures` returns `Figure` .
 
 ## Usage {#usage}

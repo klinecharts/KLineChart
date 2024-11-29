@@ -8,11 +8,11 @@ outline: deep
 ## 参考 {#reference}
 <!--@include: @/@views/api/references/chart/registerLocale.md-->
 
-### 参数
+### 参数 {#parameters}
 - `locale` 扩展语言名称。
 - `locales` 语言配置。
 
-### 返回值
+### 返回值 {#returns}
 `registerLocale` 返回 `undefined` 。
 
 ## 用法 {#usage}

@@ -8,12 +8,12 @@ outline: deep
 ## Reference {#reference}
 <!--@include: @/@views/api/references/instance/setCustomApi.md-->
 
-### Parameters
+### Parameters {#parameters}
 - `customApi` Customize some APIs.
   - `formatDate` Formats a date.
   - `formatBigNumber` Format big numbers, such as 1000 is converted to 1k, 1000000 is converted to 1M, etc.
 
-### Returns
+### Returns {#returns}
 `setCustomApi` returns `undefined` .
 
 ## Usage {#usage}

@@ -8,7 +8,7 @@ outline: deep
 ## 参考 {#reference}
 <!-- @include: @/@views/api/references/instance/removeOverlay.md -->
 
-### 参数
+### 参数 {#parameters}
 - `filter` 过滤参数。
   - `id` 覆盖物id。
   - `name` 覆盖物名称。
@@ -16,7 +16,7 @@ outline: deep
   - `paneId` 窗口id。
 
 
-### 返回值
+### 返回值 {#returns}
 `removeOverlay` 返回 `boolean` 。
 
 ## 用法 {#usage}

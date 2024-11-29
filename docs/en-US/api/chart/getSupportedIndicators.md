@@ -8,10 +8,10 @@ outline: deep
 ## Reference {#reference}
 <!-- @include: @/@views/api/references/chart/getSupportedIndicators.md -->
 
-### Parameters
+### Parameters {#parameters}
 `getSupportedIndicators` does not accept any parameters.
 
-### Returns
+### Returns {#returns}
 `getSupportedIndicators` returns `string` array.
 
 ## Usage {#usage}

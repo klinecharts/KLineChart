@@ -8,10 +8,10 @@ outline: deep
 ## Reference {#reference}
 <!--@include: @/@views/api/references/chart/getSupportedFigures.md-->
 
-### Parameters
+### Parameters {#parameters}
 `getSupportedFigures` does not accept any parameters.
 
-### Returns
+### Returns {#returns}
 `getSupportedFigures` returns `string` array.
 
 ## Usage {#usage}

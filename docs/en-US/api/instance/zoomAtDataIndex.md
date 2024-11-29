@@ -8,12 +8,12 @@ outline: deep
 ## Reference {#reference}
 <!-- @include: @/@views/api/references/instance/zoomAtDataIndex.md -->
 
-### Parameters
+### Parameters {#parameters}
 - `scale` Scaling.
 - `dataIndex` Data index.
 - `animationDuration` Animation duration. If it is less than or equal to 0, there is no animation.
 
-### Returns
+### Returns {#returns}
 `zoomAtCoordinate` returns `undefined` .
 
 ## Usage {#usage}

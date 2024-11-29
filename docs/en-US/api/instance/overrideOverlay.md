@@ -8,7 +8,7 @@ outline: deep
 ## Reference {#reference}
 <!--@include: @/@views/api/references/instance/overrideOverlay.md-->
 
-### Parameters
+### Parameters {#parameters}
 - `overlay` Overlay configuration.
   - `name` Overlay name.
   - `id` Overlay id.
@@ -40,7 +40,7 @@ outline: deep
   - `onSelected` Select the event.
   - `onDeselected` Deselect the event.
 
-### Returns
+### Returns {#returns}
 `overlayOverlay` returns `boolean` .
 
 ## Usage {#usage}

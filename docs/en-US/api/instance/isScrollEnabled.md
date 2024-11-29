@@ -8,10 +8,10 @@ outline: deep
 ## Reference {#reference}
 <!-- @include: @/@views/api/references/instance/isScrollEnabled.md -->
 
-### Parameters
+### Parameters {#parameters}
 `isScrollEnabled` does not accept any parameters.
 
-### Returns
+### Returns {#returns}
 `isScrollEnabled` returns `boolean` .
 
 ## Usage {#usage}

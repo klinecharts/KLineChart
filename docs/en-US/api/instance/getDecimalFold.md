@@ -8,10 +8,10 @@ outline: deep
 ## Reference {#reference}
 <!--@include: @/@views/api/references/instance/getDecimalFold.md-->
 
-### Parameters
+### Parameters {#parameters}
 `getDecimalFold` does not accept any parameters.
 
-### Returns
+### Returns {#returns}
 `getDecimalFold` returns an object `DecimalFold` containing the decimal folding configuration.
 
 ## Usage {#usage}

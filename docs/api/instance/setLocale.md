@@ -8,10 +8,10 @@ outline: deep
 ## 参考 {#reference}
 <!--@include: @/@views/api/references/instance/setLocale.md-->
 
-### 参数
+### 参数 {#parameters}
 - `locale` 语言名称，已内置 `zh-CN` 和 `en-US` 。
 
-### 返回值
+### 返回值 {#returns}
 `setLocale` 返回 `undefined` 。
 
 ## 用法 {#usage}

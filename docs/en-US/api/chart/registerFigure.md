@@ -8,14 +8,14 @@ outline: deep
 ## Reference {#reference}
 <!--@include: @/@views/api/references/chart/registerFigure.md-->
 
-### Parameters
+### Parameters {#parameters}
 - `figure` Figure configuration.
   - `name` Name, unique identifier.
   - `draw` Drawing method.
   - `checkEventOn` Checks if the event is on a figure.
 
 
-### Returns
+### Returns {#returns}
 `registerFigure` returns `undefined` 。
 
 ## Usage {#usage}

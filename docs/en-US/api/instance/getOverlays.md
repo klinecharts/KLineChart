@@ -8,7 +8,7 @@ outline: deep
 ## Reference {#reference}
 <!-- @include: @/@views/api/references/instance/getOverlays.md -->
 
-### Parameters
+### Parameters {#parameters}
 - `filter` Filter conditions.
   - `id` Overlay id.
   - `name` Overlay name.
@@ -16,7 +16,7 @@ outline: deep
   - `paneId` Pane id.
 
 
-### Returns
+### Returns {#returns}
 `getOverlays` returns `Map<string, Overlay[]>` .
 
 ## Usage {#usage}

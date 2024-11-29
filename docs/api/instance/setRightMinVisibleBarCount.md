@@ -8,10 +8,10 @@ outline: deep
 ## 参考 {#reference}
 <!--@include: @/@views/api/references/instance/setRightMinVisibleBarCount.md-->
 
-### 参数
+### 参数 {#parameters}
 - `count` 数量。
 
-### 返回值
+### 返回值 {#returns}
 `setRightMinVisibleBarCount` 返回 `undefined` 。
 
 ## 用法 {#usage}

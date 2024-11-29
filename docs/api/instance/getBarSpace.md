@@ -8,10 +8,10 @@ outline: deep
 ## 参考 {#reference}
 <!-- @include: @/@views/api/references/instance/getBarSpace.md -->
 
-### 参数
+### 参数 {#parameters}
 `getBarSpace` 不接收任何参数。
 
-### 返回值
+### 返回值 {#returns}
 `getBarSpace` 返回一个包含单根蜡烛柱所占空间信息的对象 `BarSpace` 。
 
 ## 用法 {#usage}

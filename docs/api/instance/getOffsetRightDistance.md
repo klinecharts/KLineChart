@@ -8,10 +8,10 @@ outline: deep
 ## 参考 {#reference}
 <!--@include: @/@views/api/references/instance/getOffsetRightDistance.md-->
 
-### 参数
+### 参数 {#parameters}
 `getOffsetRightDistance` 不接收任何参数。
 
-### 返回值
+### 返回值 {#returns}
 `getOffsetRightDistance` 返回 `number` 。
 
 ## 用法 {#usage}

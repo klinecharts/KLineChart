@@ -8,10 +8,10 @@ outline: deep
 ## 参考 {#reference}
 <!-- @include: @/@views/api/references/instance/applyNewData.md -->
 
-### 参数
+### 参数 {#parameters}
 - `dataList` K 线数据数组，子项格式参照 [数据](/guide/data-source)。
 
-### 返回值
+### 返回值 {#returns}
 `applyNewData` 返回 `undefined` 。
 
 ## 用法 {#usage}

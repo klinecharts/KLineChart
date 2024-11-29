@@ -112,6 +112,12 @@ body {
 }
 
 @media (min-width: 960px) {
+  .VPSidebar .curtain {
+    top: calc(var(--vp-nav-height)* -1);
+  }
+}
+
+@media (min-width: 960px) {
   .VPFeatures .VPFeature .title {
     font-size: 20px;
     padding: 16px 0;

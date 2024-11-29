@@ -8,10 +8,10 @@ outline: deep
 ## Reference {#reference}
 <!--@include: @/@views/api/references/instance/getStyles.md-->
 
-### Parameters
+### Parameters {#parameters}
 `getStyles` does not accept any parameters.
 
-### Returns
+### Returns {#returns}
 `getStyles` returns the complete style configuration `Styles` .
 
 ## Usage {#usage}

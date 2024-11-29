@@ -8,10 +8,10 @@ outline: deep
 ## Reference {#reference}
 <!-- @include: @/@views/api/references/instance/getBarSpace.md -->
 
-### Parameters
+### Parameters {#parameters}
 `getBarSpace` does not accept any parameters.
 
-### Returns
+### Returns {#returns}
 `getBarSpace` returns an object containing information about the space occupied by a single candlestick `BarSpace` .
 
 ## Usage {#usage}

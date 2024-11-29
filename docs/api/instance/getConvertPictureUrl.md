@@ -8,12 +8,12 @@ outline: deep
 ## 参考 {#reference}
 <!--@include: @/@views/api/references/instance/getConvertPictureUrl.md-->
 
-### 参数
+### 参数 {#parameters}
 - `includeOverlay` 是否需要包含浮层。
 - `type` 转换后的图片类型，支持 `png` ， `jpeg` 和 `bmp` ，默认为 `jpeg` 。
 - `backgroundColor` 背景色，默认为 `#FFFFFF` 。
 
-### 返回值
+### 返回值 {#returns}
 `getConvertPictureUrl` 返回 `string` 。
 
 ## 用法 {#usage}

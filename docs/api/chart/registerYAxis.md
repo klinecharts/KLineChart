@@ -8,7 +8,7 @@ outline: deep
 ## 参考 {#reference}
 <!--@include: @/@views/api/references/chart/registerYAxis.md-->
 
-### 参数
+### 参数 {#parameters}
 - `yAxis` y轴配置。
   - `name` 名称，用于创建或者修改的唯一标识。
   - `reverse` 是否是反置。
@@ -27,7 +27,7 @@ outline: deep
   - `createRange` 创建轴上取值范围回调方法。
   - `createTicks` 创建分割信息回调方法。
 
-### 返回值
+### 返回值 {#returns}
 `registerYAxis` 返回 `undefined` 。
 
 ## 用法 {#usage}

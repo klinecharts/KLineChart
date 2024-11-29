@@ -8,10 +8,10 @@ outline: deep
 ## 参考 {#reference}
 <!--@include: @/@views/api/references/instance/getCustomApi.md-->
 
-### 参数
+### 参数 {#parameters}
 `getCustomApi` 不接收任何参数。
 
-### 返回值
+### 返回值 {#returns}
 `getCustomApi` 返回一个包含自定义api的对象 `CustomApi` 。
 
 ## 用法 {#usage}

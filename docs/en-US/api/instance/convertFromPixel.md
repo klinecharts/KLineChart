@@ -8,7 +8,7 @@ outline: deep
 ## Reference {#reference}
 <!-- @include: @/@views/api/references/instance/convertFromPixel.md -->
 
-### Parameters
+### Parameters {#parameters}
 - `coordinate` The coordinates to be converted can be an object or an array.
   - `x` The x-axis value.
   - `y` The y-axis value.
@@ -16,7 +16,7 @@ outline: deep
   - `paneId` Pane id.
   - `absolute` Whether it is an absolute coordinate, only applies to the y-axis.
 
-### Returns
+### Returns {#returns}
 `convertFromPixel` returns `{ timestamp?: number, dataIndex?: number, value?: number }` or `Array<{ timestamp?: number, dataIndex?: number, value?: number }>` .
 
 ## Usage {#usage}

@@ -8,11 +8,11 @@ outline: deep
 ## Reference {#reference}
 <!-- @include: @/@views/api/references/instance/scrollToDataIndex.md -->
 
-### Parameters
+### Parameters {#parameters}
 - `dataIndex` Data index.
 - `animationDuration` Animation duration. If it is less than or equal to 0, there is no animation.
 
-### Returns
+### Returns {#returns}
 `scrollToDataIndex` returns `undefined` .
 
 ## Usage {#usage}

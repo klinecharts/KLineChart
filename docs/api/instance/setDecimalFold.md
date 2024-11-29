@@ -8,12 +8,12 @@ outline: deep
 ## 参考 {#reference}
 <!-- @include: @/@views/api/references/instance/setDecimalFold.md -->
 
-### 参数
+### 参数 {#parameters}
 - `decimalFold` 折叠配置。
   - `threshold` 折叠阈值。
   - `format` 自定义折叠格式化。
 
-### 返回值
+### 返回值 {#returns}
 `setDecimalFold` 返回 `undefined` 。
 
 ## 用法 {#usage}

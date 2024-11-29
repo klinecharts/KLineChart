@@ -8,12 +8,12 @@ outline: deep
 ## Reference {#reference}
 <!--@include: @/@views/api/references/instance/setThousandsSeparator.md-->
 
-### Parameters
+### Parameters {#parameters}
 - `thousandsSeparator` Thousand separator configuration.
   - `sign` Sign.
   - `format` Custom formatting method.
 
-### Returns
+### Returns {#returns}
 `setThousandsSeparator` returns `undefined` .
 
 ## Usage {#usage}

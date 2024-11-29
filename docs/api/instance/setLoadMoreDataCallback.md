@@ -8,10 +8,10 @@ outline: deep
 ## 参考 {#reference}
 <!--@include: @/@views/api/references/instance/setLoadMoreDataCallback.md-->
 
-### 参数
+### 参数 {#parameters}
 - `cb` 回调方法。
 
-### 返回值
+### 返回值 {#returns}
 `setLoadMoreDataCallback` 返回 `undefined` 。
 
 ## 用法 {#usage}

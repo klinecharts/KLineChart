@@ -8,10 +8,10 @@ outline: deep
 ## 参考 {#reference}
 <!-- @include: @/@views/api/references/chart/getSupportedLocales.md -->
 
-### 参数
+### 参数 {#parameters}
 `getSupportedLocales` 不接收任何参数。
 
-### 返回值
+### 返回值 {#returns}
 `getSupportedLocales` 返回 `string` 数组 。
 
 ## 用法 {#usage}

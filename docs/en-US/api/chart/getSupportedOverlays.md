@@ -8,10 +8,10 @@ outline: deep
 ## Reference {#reference}
 <!-- @include: @/@views/api/references/chart/getSupportedOverlays.md -->
 
-### Parameters
+### Parameters {#parameters}
 `getSupportedOverlays` does not accept any parameters.
 
-### returns
+### Returns {#returns}
 `getSupportedOverlays` returns `string` array.
 
 ## Usage {#usage}

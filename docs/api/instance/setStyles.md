@@ -8,10 +8,10 @@ outline: deep
 ## 参考 {#reference}
 <!--@include: @/@views/api/references/instance/setStyles.md-->
 
-### 参数
+### 参数 {#parameters}
 - `styles` 样式，可以是通过 `klinecharts.registerStyles` 注册的样式名，也可以是 `Styles` ， `Styles` 详情参阅 [样式](./styles.md) ，支持增量。
 
-### 返回值
+### 返回值 {#returns}
 `setStyles` 返回 `undefined` 。
 
 

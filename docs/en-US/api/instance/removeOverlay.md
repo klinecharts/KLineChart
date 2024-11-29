@@ -8,14 +8,14 @@ outline: deep
 ## Reference {#reference}
 <!-- @include: @/@views/api/references/instance/removeOverlay.md -->
 
-### Parameters
+### Parameters {#parameters}
 - `filter` Filter conditions.
   - `id` Overlay id.
   - `name` Overlay name.
   - `groupId` Group id.
   - `paneId` Pane id.
 
-### Returns
+### Returns {#returns}
 `removeOverlay` returns `boolean` .
 
 ## Usage {#usage}

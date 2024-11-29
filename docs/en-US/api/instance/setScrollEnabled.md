@@ -8,10 +8,10 @@ outline: deep
 ## Reference {#reference}
 <!-- @include: @/@views/api/references/instance/setScrollEnabled.md -->
 
-### Parameters
+### Parameters {#parameters}
 - `enabled` Whether scrolling is possible.
 
-### Returns
+### Returns {#returns}
 `setScrollEnabled` returns `undefined` .
 
 ## Usage {#usage}

@@ -8,12 +8,12 @@ outline: deep
 ## Reference {#reference}
 <!--@include: @/@views/api/references/instance/setPrecision.md-->
 
-### Parameters
+### Parameters {#parameters}
 - `precision` Precision.
   - `price` Price precision.
   - `volume` Volume precision.
 
-### Returns
+### Returns {#returns}
 `setPrecision` returns `undefined` .
 
 ## Usage {#usage}

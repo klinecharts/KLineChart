@@ -8,10 +8,10 @@ outline: deep
 ## Reference {#reference}
 <!--@include: @/@views/api/references/instance/setStyles.md-->
 
-### Parameters
+### Parameters {#parameters}
 - `styles` Style, which can be a style name registered by `klinecharts.registerStyles`, or `Styles`. For details about `Styles`, see [Styles](/en-US/guide/styles). Incremental values ​​are supported.
 
-### Returns
+### Returns {#returns}
 `setStyles` returns `undefined` .
 
 ## Usage {#usage}

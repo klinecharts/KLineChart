@@ -8,10 +8,10 @@ outline: deep
 ## 参考 {#reference}
 <!--@include: @/@views/api/references/instance/setTimezone.md-->
 
-### 参数
+### 参数 {#parameters}
 - `timezone` 时区名，如 `Asia/Shanghai` ，时区对应名字列表请参阅 [时区列表](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) 。
 
-### 返回值
+### 返回值 {#returns}
 `setTimezone` 返回 `undefined` 。
 
 ## 用法 {#usage}

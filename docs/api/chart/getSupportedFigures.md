@@ -8,10 +8,10 @@ outline: deep
 ## 参考 {#reference}
 <!--@include: @/@views/api/references/chart/getSupportedFigures.md-->
 
-### 参数
+### 参数 {#parameters}
 `getSupportedFigures` 不接收任何参数。
 
-### 返回值
+### 返回值 {#returns}
 `getSupportedFigures` 返回 `string` 数组。
 
 ## 用法 {#usage}

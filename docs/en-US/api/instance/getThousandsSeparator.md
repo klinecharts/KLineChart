@@ -8,10 +8,10 @@ outline: deep
 ## Reference {#reference}
 <!--@include: @/@views/api/references/instance/getThousandsSeparator.md-->
 
-### Parameters
+### Parameters {#parameters}
 `getThousandsSeparator` does not accept any parameters.
 
-### Returns
+### Returns {#returns}
 `getThousandsSeparator` returns a `ThousandsSeparator` object containing the thousands separator configuration.
 
 ## Usage {#usage}

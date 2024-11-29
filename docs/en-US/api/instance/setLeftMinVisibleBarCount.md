@@ -8,10 +8,10 @@ outline: deep
 ## Reference {#reference}
 <!-- @include: @/@views/api/references/instance/setLeftMinVisibleBarCount.md -->
 
-### Parameters
+### Parameters {#parameters}
 - `count` Count.
 
-### Returns
+### Returns {#returns}
 `setLeftMinVisibleBarCount` returns `undefined` .
 
 ## Usage {#usage}

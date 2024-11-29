@@ -8,7 +8,7 @@ outline: deep
 ## 参考 {#reference}
 <!-- @include: @/@views/api/references/chart/registerOverlay.md -->
 
-### 参数
+### 参数 {#parameters}
 - `overlay` 覆盖物配置。
   - `name` 名称，用于创建或者修改的唯一标识。
   - `totalStep` 总的实现步骤。
@@ -43,7 +43,7 @@ outline: deep
   - `onSelected` 选中事件。
   - `onDeselected` 取消选中事件。
 
-### 返回值
+### 返回值 {#returns}
 `registerOverlay` 返回 `undefined` 。
 
 ## 用法 {#usage}

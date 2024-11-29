@@ -8,11 +8,11 @@ outline: deep
 ## 参考 {#reference}
 <!-- @include: @/@views/api/references/instance/executeAction.md -->
 
-### 参数
+### 参数 {#parameters}
 - `type` 类型，仅支持 `onCrosshairChange` 。
 - `data` 数据。
 
-### 返回值
+### 返回值 {#returns}
 `executeAction` 返回 `undefined` 。
 
 ## 用法 {#usage}

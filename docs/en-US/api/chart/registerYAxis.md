@@ -8,7 +8,7 @@ outline: deep
 ## Reference {#reference}
 <!--@include: @/@views/api/references/chart/registerYAxis.md-->
 
-### Parameters
+### Parameters {#parameters}
 - `yAxis` Y-axis configuration.
   - `name` Name, a unique identifier used for creation or modification.
   - `reverse` Whether it is inverted.
@@ -27,7 +27,7 @@ outline: deep
   - `createRange` Create an axis value range callback method.
   - `createTicks` Create ticks information callback method.
 
-### 返回值
+### 返回值 {#returns}
 `registerYAxis` returns `undefined` .
 
 ## Usage {#usage}

@@ -8,10 +8,10 @@ outline: deep
 ## 参考 {#reference}
 <!-- @include: @/@views/api/references/chart/getSupportedOverlays.md -->
 
-### 参数
+### 参数 {#parameters}
 `getSupportedOverlays` 不接收任何参数。
 
-### 返回值
+### 返回值 {#returns}
 `getSupportedOverlays` 返回 `string` 数组。
 
 ## 用法 {#usage}

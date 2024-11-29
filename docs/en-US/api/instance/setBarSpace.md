@@ -8,10 +8,10 @@ outline: deep
 ## Reference {#reference}
 <!--@include: @/@views/api/references/instance/setBarSpace.md-->
 
-### Parameters
+### Parameters {#parameters}
 - `space` The size of the space, ranging from 1 to 50.
 
-### Returns
+### Returns {#returns}
 `setBarSpace` returns `undefined` .
 
 ## Usage {#usage}

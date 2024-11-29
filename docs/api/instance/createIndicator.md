@@ -8,7 +8,7 @@ outline: deep
 ## 参考 {#reference}
 <!-- @include: @/@views/api/references/instance/createIndicator.md -->
 
-### 参数
+### 参数 {#parameters}
 - `indicator` 指标配置，可以是指标名，也可以是一个对象。对象参数如下。
   - `name` 名称。
   - `shortName` 简短名称，用于提示显示。
@@ -53,7 +53,7 @@ outline: deep
       - `top` 上边距。
       - `bottom` 下边距。
 
-### 返回值
+### 返回值 {#returns}
 `createIndicator` 返回窗口id `string` 或者 `null`。
 
 ## 用法 {#usage}

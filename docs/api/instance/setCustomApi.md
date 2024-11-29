@@ -8,12 +8,12 @@ outline: deep
 ## 参考 {#reference}
 <!--@include: @/@views/api/references/instance/setCustomApi.md-->
 
-### 参数
+### 参数 {#parameters}
 - `customApi` 自定义一些api。
   - `formatDate` 格式化日期。
   - `formatBigNumber` 格式化大的数字，如1000转换成1k，1000000转换为1M等。
 
-### 返回值
+### 返回值 {#returns}
 `setCustomApi` 返回 `undefined` 。
 
 ## 用法 {#usage}

@@ -12,7 +12,7 @@ outline: deep
 ## 参考 {#reference}
 <!-- @include: @/@views/api/references/chart/init.md -->
 
-### 参数
+### 参数 {#parameters}
 - `ds` 容器，可以是dom元素或者元素id。
 - `options` 可选配置项。
   - `layout` 自定义布局，是一个数组。
@@ -47,7 +47,7 @@ outline: deep
     - `threshold` 折叠阈值。
     - `format` 自定义格式化方法。
 
-### 返回值
+### 返回值 {#returns}
 `init` 返回一个图表实例对象 `Chart`。
 
 ## 用法 {#usage}

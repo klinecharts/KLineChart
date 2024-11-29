@@ -8,10 +8,10 @@ outline: deep
 ## 参考 {#reference}
 <!--@include: @/@views/api/references/instance/setZoomEnabled.md-->
 
-### 参数
+### 参数 {#parameters}
 - `enabled` 是否可以缩放。
 
-### 返回值
+### 返回值 {#returns}
 `setZoomEnabled` 返回 `undefined` 。
 
 ## 用法 {#usage}

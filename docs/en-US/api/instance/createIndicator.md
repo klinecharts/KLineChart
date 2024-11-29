@@ -8,7 +8,7 @@ outline: deep
 ## Reference {#reference}
 <!-- @include: @/@views/api/references/instance/createIndicator.md -->
 
-### Parameters
+### Parameters {#parameters}
 - `indicator` Indicator configuration can be an indicator name or an object. The object parameters are as follows.
   - `name` Name.
   - `shortName` A short name, used for prompt display.
@@ -53,7 +53,7 @@ outline: deep
       - `top` Top margin.
       - `bottom` Bottom margin.
 
-### Returns
+### Returns {#returns}
 `createIndicator` returns pane id `string` or `null` .
 
 ## Usage {#usage}

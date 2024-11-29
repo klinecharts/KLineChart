@@ -8,11 +8,11 @@ outline: deep
 ## 参考 {#reference}
 <!--@include: @/@views/api/references/chart/registerStyles.md-->
 
-### 参数
+### 参数 {#parameters}
 - `name` 样式模板名。
 - `styles` 样式配置。详情参阅 [样式](/guide/styles) ，支持增量。
 
-### 返回值
+### 返回值 {#returns}
 `registerStyles` 返回 `undefined` 。
 
 ## 用法 {#usage}

@@ -12,8 +12,8 @@ There is no need to call it manually. In order to avoid repeated drawing, it onl
 ## Reference {#reference}
 <!--@include: @/@views/api/references/instance/clearData.md-->
 
-### Parameters
+### Parameters {#parameters}
 `clearData` does not accept any parameters.
 
-### Returns
+### Returns {#returns}
 `clearData` returns `undefined` 。

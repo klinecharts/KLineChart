@@ -8,12 +8,12 @@ outline: deep
 ## Reference {#reference}
 <!--@include: @/@views/api/references/instance/getSize.md-->
 
-### Parameters
+### Parameters {#parameters}
 - `filter` Filter conditions.
   - `paneId` Pane id.
   - `position` Position, supports `root`, `main` and `yAxis` .
 
-### Returns
+### Returns {#returns}
 `getDom` returns a `Bounding` object containing size information or `null` .
 
 

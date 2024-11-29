@@ -8,10 +8,10 @@ outline: deep
 ## 参考 {#reference}
 <!--@include: @/@views/api/references/instance/getDecimalFold.md-->
 
-### 参数
+### 参数 {#parameters}
 `getDecimalFold` 不接收任何参数。
 
-### 返回值
+### 返回值 {#returns}
 `getDecimalFold` 返回一个包含小数折叠配置的对象 `DecimalFold` 。
 
 ## 用法 {#usage}

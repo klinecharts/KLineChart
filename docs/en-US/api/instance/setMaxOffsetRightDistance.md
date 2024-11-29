@@ -8,10 +8,10 @@ outline: deep
 ## Reference {#reference}
 <!-- @include: @/@views/api/references/instance/setMaxOffsetRightDistance.md -->
 
-### Parameters
+### Parameters {#parameters}
 - `distance` Distance.
 
-### Returns
+### Returns {#returns}
 `setMaxOffsetRightDistance` returns `undefined` .
 
 ## Usage {#usage}

@@ -8,10 +8,10 @@ outline: deep
 ## Reference {#reference}
 <!--@include: @/@views/api/references/instance/setLocale.md-->
 
-### Parameters
+### Parameters {#parameters}
 - `locale` Locale name, `zh-CN` and `en-US` are built-in.
 
-### Returns
+### Returns {#returns}
 `setLocale` returns `undefined` .
 
 ## Usage {#usage}
