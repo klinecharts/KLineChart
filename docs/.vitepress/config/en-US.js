@@ -63,7 +63,7 @@ export default defineConfig({
           text: 'Others',
           collapsed: false,
           items: [
-            { text: 'V8 To V9', link: '/en-US/guide/v8-to-v9' },
+            { text: 'V8 to V9', link: '/en-US/guide/v8-to-v9' },
             { text: 'FAQ', link: '/en-US/guide/faq' },
             { text: 'Feedback', link: '/en-US/guide/feedback' },
             { text: 'Changelog', link: '/en-US/guide/changelog' }
