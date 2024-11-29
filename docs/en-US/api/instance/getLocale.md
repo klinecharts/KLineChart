@@ -3,21 +3,21 @@ outline: deep
 ---
 
 # getLocale()
-`getLocale` 获取图表当前语言。
+`getLocale` get the current locale of the chart.
 
-## 参考 {#reference}
+## Reference {#reference}
 <!--@include: @/@views/api/references/instance/getLocale.md-->
 
-### 参数
-`getLocale` 不接收任何参数。
+### Parameters
+`getLocale` does not accept any parameters.
 
-### 返回值
-`getLocale` 返回 `string` 。
+### Returns
+`getLocale` returns `string` .
 
-## 用法 {#usage}
+## Usage {#usage}
 <script setup>
 import GetLocale from '../../../@views/api/samples/getLocale/index.vue'
 </script>
 
-### 基本用法 {#basic}
+### Basic usage {#basic}
 <GetLocale/>

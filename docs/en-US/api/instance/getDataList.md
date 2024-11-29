@@ -3,21 +3,21 @@ outline: deep
 ---
 
 # getDataList()
-`getDataList` 获取图表当前数据。
+`getDataList` get the current data of the chart.
 
-## 参考 {#reference}
+## Reference {#reference}
 <!--@include: @/@views/api/references/instance/getDataList.md-->
 
-### 参数
-`getDataList` 不接收任何参数。
+### Parameters
+`getDataList` does not accept any parameters.
 
-### 返回值
-`getDataList` 返回 `KLineData` 数组。
+### Returns
+`getDataList` returns `KLineData` array.
 
-## 用法 {#usage}
+## Usage {#usage}
 <script setup>
 import GetDataList from '../../../@views/api/samples/getDataList/index.vue'
 </script>
 
-### 基本使用 {#basic}
+### Basic usage {#basic}
 <GetDataList/>

@@ -3,23 +3,23 @@ outline: deep
 ---
 
 # getDom(filter?)
-`getDom` 获取图表 dom 元素。
+`getDom` get the chart dom element.
 
-## 参考 {#reference}
+## Reference {#reference}
 <!-- @include: @/@views/api/references/instance/getDom.md -->
 
-### 参数
-- `filter` 过滤条件。
-  - `paneId` 窗口 id 。
-  - `position` 位置，支持 `root` ， `main` 和 `yAxis` 。
+### Parameters
+- `filter` Filter conditions.
+  - `paneId` Pane id.
+  - `position` Position, supports `root`, `main` and `yAxis` .
 
-### 返回值
-`getDom` 返回一个 `HTMLElement` 或者 `null` 。
+### Returns
+`getDom` Returns an `HTMLElement` or `null` .
 
-## 用法 {#usage}
+## Usage {#usage}
 <script setup>
 import GetDom from '../../../@views/api/samples/getDom/index.vue'
 </script>
 
-### 基本使用 {#basic}
+### Basic usage {#basic}
 <GetDom/>

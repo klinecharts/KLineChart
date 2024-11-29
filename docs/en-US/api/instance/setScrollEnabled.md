@@ -3,21 +3,21 @@ outline: deep
 ---
 
 # setScrollEnabled(enabled)
-`setScrollEnabled` 设置是否可以滚动。
+`setScrollEnabled` set whether scrolling is enabled.
 
-## 参考 {#reference}
+## Reference {#reference}
 <!-- @include: @/@views/api/references/instance/setScrollEnabled.md -->
 
-### 参数
-- `enabled` 是否可以滚动。
+### Parameters
+- `enabled` Whether scrolling is possible.
 
-### 返回值
-`setScrollEnabled` 返回 `undefined` 。
+### Returns
+`setScrollEnabled` returns `undefined` .
 
-## 用法 {#usage}
+## Usage {#usage}
 <script setup>
 import SetScrollEnabled from '../../../@views/api/samples/setScrollEnabled/index.vue'
 </script>
 
-### 基本用法 {#basic}
+### Basic usage {#basic}
 <SetScrollEnabled/>

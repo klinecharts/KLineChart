@@ -3,22 +3,22 @@ outline: deep
 ---
 
 # unsubscribeAction(type, cb?)
-`unsubscribeAction` 取消订阅图表动作。
+`unsubscribeAction` Unsubscribe from chart actions.
 
-## 参考 {#reference}
+## Reference {#reference}
 <!-- @include: @/@views/api/references/instance/unsubscribeAction.md -->
 
-### 参数
-- `type` 类型，支持 `onZoom` ， `onScroll` ， `onVisibleRangeChange` ， `onTooltipIconClick` ， `onCrosshairChange` ， `onCandleBarClick` 和 `onPaneDrag` 。
-- `cb` 订阅时的回调方法，缺省则取消当前类型所有。
+### Parameters
+- `type` Type, supports `onZoom`, `onScroll`, `onVisibleRangeChange`, `onTooltipIconClick`, `onCrosshairChange`, `onCandleBarClick` and `onPaneDrag` .
+- `cb` The callback method when subscribing. By default, all subscriptions of the current type are canceled.
 
-### 返回值
-`unsubscribeAction` 返回 `undefined` 。
+### Returns
+`unsubscribeAction` returns `undefined` .
 
-## 用法 {#usage}
+## Usage {#usage}
 <script setup>
 import UnsubscribeAction from '../../../@views/api/samples/unsubscribeAction/index.vue'
 </script>
 
-### 基本用法 {#basic}
+### Basic usage {#basic}
 <UnsubscribeAction/>

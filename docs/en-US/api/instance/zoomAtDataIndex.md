@@ -3,23 +3,23 @@ outline: deep
 ---
 
 # zoomAtDataIndex(scale, dataIndex, animationDuration?)
-`zoomAtDataIndex` 在指定数据索引位置缩放。
+`zoomAtDataIndex` zoom at the specified data index.
 
-## 参考 {#reference}
+## Reference {#reference}
 <!-- @include: @/@views/api/references/instance/zoomAtDataIndex.md -->
 
-### 参数
-- `scale` 缩放比例
-- `dataIndex` 数据索引。
-- `animationDuration` 动画持续时间，如果小于等于0，则无动画。
+### Parameters
+- `scale` Scaling.
+- `dataIndex` Data index.
+- `animationDuration` Animation duration. If it is less than or equal to 0, there is no animation.
 
-### 返回值
-`zoomAtCoordinate` 返回 `undefined` 。
+### Returns
+`zoomAtCoordinate` returns `undefined` .
 
-## 用法 {#usage}
+## Usage {#usage}
 <script setup>
 import ZoomAtDataIndex from '../../../@views/api/samples/zoomAtDataIndex/index.vue'
 </script>
 
-### 基本用法 {#basic}
+### Basic usage {#basic}
 <ZoomAtDataIndex/>

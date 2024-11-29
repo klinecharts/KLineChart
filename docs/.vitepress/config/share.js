@@ -1,3 +1,7 @@
+import pkg from '../../../package.json'
+
+export const version = pkg.version
+
 export function getChartApiMenus (lang = '') {
   const prefix = `${lang}/api/chart`
   return [

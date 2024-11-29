@@ -3,51 +3,51 @@ outline: deep
 ---
 
 # overrideIndicator(indicator, paneId?)
-`overrideIndicator` 覆盖指标属性。
+`overrideIndicator` override indicator attrs.
 
-## 参考 {#reference}
+## Reference {#reference}
 <!-- @include: @/@views/api/references/instance/overrideIndicator.md -->
 
-### 参数
-- `indicator` 指标配置。
-  - `name` 名称。
-  - `shortName` 简短名称，用于提示显示。
-  - `precision` 精度。
-  - `calcParams` 计算参数。
-  - `shouldOhlc` 是否需要显示 `ohlc` 柱。
-  - `shouldFormatBigNumber` 是否需要将大数字格式化显示。
-  - `visible` 是否可见。
-  - `zLevel` 层级，只作用于指标与指标之间。
-  - `extendData` 自定义扩展数据。
-  - `series` 系列，支持 `normal` ， `price` 和 `volume` ，当是 `price` 并且没有设置 `precision` 时，精度将随着价格精度变化，当是 `volume` 并且没有设置 `precision` 时，精度将随数量精度变化。
-  - `figures` 图形配置，是一个数组，子项是包含配置的 `object` 。
-    - `key` 数据取值的标识，与 `calc` 返回的数据子项的 `key` 对应。
-    - `type` 图形类型，支持 `klinecharts.getSupportedFigures` 返回值存在的类型。
-    - `baseValue` 基本对照值，目前仅仅作用于 `type` 是 `rect` 和 `bar` 的时候，当此值有效时，图形将会以此值为基准上下绘制。
-    - `attrs` 属性值，是一个方法，返回值是 `klinecharts.getFigureClass` 得到的对象所需要的属性。
-    - `styles` 样式，是一个方法，返回值是 `klinecharts.getFigureClass` 得到的对象所需要的样式。
-  - `minValue` 指定最小值。
-  - `maxValue` 指定最大值。
-  - `styles` 样式配置，类型同通用样式 `Styles` 中的 `indicator` 。
-  - `shouldUpdate` 手动控制是否需要更新。
-  - `calc` 计算方法。
-  - `regenerateFigures` 重新生成基础图形配置，当 `calcParams` 变化时触发，返回值类型同 `figures` 。
-  - `createTooltipDataSource` 创建自定义的提示信息。
-  - `draw` 自定义绘制方法，如果返回值是 `true` ，则会覆盖默认的绘制。
-  - `onDataStateChange` 数据变化回调通知。
-- `paneId` 窗口id。
+### Parameters
+- `indicator` Indicator configuration.
+  - `name` Name.
+  - `shortName` A short name, used for prompt display.
+  - `precision` Precision.
+  - `calcParams` Calculate the parameters.
+  - `shouldOhlc` Whether to show the `ohlc` bar.
+  - `shouldFormatBigNumber` Whether big numbers need to be formatted and displayed.
+  - `visible` Whether it is visible.
+  - `zLevel` Hierarchy only works between indicators.
+  - `extendData` Custom the extended data.
+  - `series` Series, supports `normal` , `price` and `volume` , when `price` and `precision` is not set, the precision will follow the price precision, when `volume` and `precision` is not set, the precision will follow the volume precision.
+  - `figures` Figure configuration, an array of items containing `object` configuration.
+    - `key` The identifier of the data value, corresponding to the `key` of the data sub-item returned by `calc`.
+    - `type` The type of figure that supports the type returned by `klinecharts.getSupportedFigures` .
+    - `baseValue` The basic control value, currently only works when `type` is `rect` and `bar` . When this value is valid, the graphics will be drawn up and down based on this value.
+    - `attrs` The property value is a method, and the return value is the required property of the object obtained by `klinecharts.getFigureClass` .
+    - `styles` Style is a method that returns the style required by the object obtained by `klinecharts.getFigureClass` .
+  - `minValue` Specify a minimum value.
+  - `maxValue` Specifies the maximum value.
+  - `styles` Style configuration, the type is the same as `indicator` in the general style `Styles`.
+  - `shouldUpdate` Control whether updates are needed.
+  - `calc` Calculation method.
+  - `regenerateFigures` Regenerates the basic graphics configuration. This is triggered when `calcParams` changes. The return value type is the same as `figures` .
+  - `createTooltipDataSource` Create custom prompts.
+  - `draw` Custom drawing method, if the return value is `true`, it will override the default drawing.
+  - `onDataStateChange` Data change callback notification.
+- `paneId` Pane id.
 
-### 返回值
-`overrideIndicator` 返回 `undefined` 。
+### Returns
+`overrideIndicator` returns `undefined` .
 
-## 用法 {#usage}
+## Usage {#usage}
 <script setup>
 import OverrideIndicatorBasic from '../../../@views/api/samples/overrideIndicator-basic/index.vue'
 import OverrideIndicatorPaneId from '../../../@views/api/samples/overrideIndicator-paneId/index.vue'
 </script>
 
-### 基本使用 {#basic}
+### Basic usage {#basic}
 <OverrideIndicatorBasic/>
 
-### 覆盖指定窗口上的指标属性 {#paneId}
+### Overrides indicator properties on the specified pane {#paneId}
 <OverrideIndicatorPaneId/>

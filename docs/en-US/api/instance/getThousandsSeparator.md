@@ -3,21 +3,21 @@ outline: deep
 ---
 
 # getThousandsSeparator()
-`getThousandsSeparator` 获取图表千分符配置。
+`getThousandsSeparator` gets the chart thousands separator configuration.
 
-## 参考 {#reference}
+## Reference {#reference}
 <!--@include: @/@views/api/references/instance/getThousandsSeparator.md-->
 
-### 参数
-`getThousandsSeparator` 不接收任何参数。
+### Parameters
+`getThousandsSeparator` does not accept any parameters.
 
-### 返回值
-`getThousandsSeparator` 返回一个包含千分符配置的对象 `ThousandsSeparator` 。
+### Returns
+`getThousandsSeparator` returns a `ThousandsSeparator` object containing the thousands separator configuration.
 
-## 用法 {#usage}
+## Usage {#usage}
 <script setup>
 import GetThousandsSeparator from '../../../@views/api/samples/getThousandsSeparator/index.vue'
 </script>
 
-### 基本使用 {#basic}
+### Basic usage {#basic}
 <GetThousandsSeparator/>

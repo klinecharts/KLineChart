@@ -3,281 +3,281 @@ outline: deep
 ---
 
 # utils
-`utils` 工具类方法集合。
+`utils` collection of tool class methods.
 
-## 方法列表 {#list}
+## Method List {#list}
 ### utils.clone(target)
 ```typescript
-(target: unknown) => unknown
+(target: any) => any
 ```
-深度复制。
+deep copy.
 
 ### utils.merge(target, source)
 ```typescript
 (target: object, source: object) => void
 ```
-将一个对象合并到另一个对象。
+Merge one object into another.
 
 ### utils.isString(value)
 ```typescript
-(value: unknown) => boolean
+(value: any) => boolean
 ```
-检查某个值是否是字符串。
+Checks if a value is a string.
 
 ### utils.isNumber(value)
 ```typescript
-(value: unknown) => boolean
+(value: any) => boolean
 ```
-检查某个值是否是数字。
+Checks if a value is a number.
 
 ### utils.isValid(value)
 ```typescript
-(value: unknown) => boolean
+(value: any) => boolean
 ```
-检查某个值是否有效。
+Checks if a value is valid.
 
 ### utils.isObject(value)
 ```typescript
-(value: unknown) => boolean
+(value: any) => boolean
 ```
-检查某个值是否是对象。
+Checks if a value is an object.
 
 ### utils.isFunction(value)
 ```typescript
-(value: unknown) => boolean
+(value: any) => boolean
 ```
-检查某个值是否是方法。
+Checks if a value is a method.
 
 ### utils.isBoolean(value)
 ```typescript
-(value: unknown) => boolean
+(value: any) => boolean
 ```
-检查某个值是否是bool值。
+Checks if a value is a bool value.
 
 ### utils.formatValue(value, key, defaultValue)
 ```typescript
-(data: unknown, key: string, defaultValue?: unknown) => unknown
+(data: any, key: string, defaultValue?: any) => any
 ```
-从某个值取对应的值，支持嵌套，如`const o = { a: { b: { c: 1 } } }`，`formatValue(o, 'a.b.c')`取`c`的值。
+Get the corresponding value from a certain value, support nesting, such as `const o = { a: { b: { c: 1 } } }`, `formatValue(o, 'a.b.c')` takes the value of `c` .
 
 ### utils.formatPrecision(value)
 ```typescript
 (value: string | number, precision?: number) => string
 ```
-格式化精度。
+Formatting precision.
 
 ### utils.formatBigNumber(value)
 ```typescript
 (value: string | number) => string
 ```
-格式化大的数字，如1000转换成1k，1000000转换为1M等。
+Format large numbers, such as 1000 into 1k, 1000000 into 1M, etc.
 
 ### utils.formatDate(dateTimeFormat, timestamp, format)
 ```typescript
 (dateTimeFormat: Intl.DateTimeFormat, timestamp: number, format: string) => string
 ```
-格式化日期。`format`格式，如'YYYY-MM-DD HH:mm:ss'。
+Format date. `format`, such as 'YYYY-MM-DD HH:mm:ss'.
 
 ### utils.formatThousands(value, sign)
 ```typescript
 (value: string | number, sign: string) => string
 ```
-格式化千分符。
+Format thousands separator.
 
-### utils.formatFoldDecimal(value, threshold)
+### utils.formatFoldDecimal(value, threshold) <Badge>^9.8.0</Badge>
 ```typescript
 (value: string | number, threshold: number) => string
 ```
-格式化折叠小数。
+Format fold decimal.
 
 
-### utils.calcTextWidth(text, size, weight, family)
+### utils.calcTextWidth(text, size, weight, family) <Badge>^9.3.0</Badge>
 ```typescript
 (text: string, size?: number, weight?: string | number, family?: string) => number
 ```
-计算文字宽度
+Calculate text width.
 
 ### utils.getLinearSlopeIntercept(coordinate1, coordinate2)
 ```typescript
 (
-  coordinate1: {
-    x: number
-    y: number
-  },
-  coordinate2: {
-    x: number
-    y: number
-  }
+   coordinate1: {
+      x: number
+      y: number
+   },
+   coordinate2: {
+      x: number
+      y: number
+   }
 ) => []
 ```
-根据两个坐标点，获取点组成的线的斜率和常数项，即`y = kx + b`中的`k`和`b`。
+According to two coordinate points, get the slope and constant term of the line composed of points, namely `k` and `b` in `y = kx + b`.
 
 ### utils.getLinearYFromCoordinates(coordinate1, coordinate2, targetCoordinate)
 ```typescript
 (
   coordinate1: {
-    x: number
-    y: number
-  },
-  coordinate2: {
-    x: number
-    y: number
-  }
-  targetCoordinate: {
-    x: number
-    y: number
-  }
+      x: number
+      y: number
+   },
+   coordinate2: {
+      x: number
+      y: number
+   },
+   targetCoordinate: {
+      x: number
+      y: number
+   }
 ) => number
 ```
-获取一个点在另外两个坐标点形成的线上的y轴坐标值。
+Get the y-axis coordinate value of a point on the line formed by two other coordinate points.
 
 ### utils.getLinearYFromSlopeIntercept(kb, targetCoordinate)
 ```typescript
 (
-  kb: Array<number>,
-  targetCoordinate: {
-    x: number
-    y: number
-  }
+   kb: Array<number>,
+   targetCoordinate: {
+      x: number
+      y: number
+   }
 ) => number
 ```
-获取一个点在斜率和常数项形成的线上的y轴坐标值。
+Get the y-coordinate value of a point on the line formed by the slope and the constant term.
 
 ### utils.checkCoordinateOnArc(coordinate, arc)
 ```typescript
 (
-  coordinate: {
-    x: number
-    y: number
-  },
-  arc: {
-    x: number
-    y: number
-    r: number
-    startAngle: number
-    endAngle: number
-  }
+   coordinate: {
+      x: number
+      y: number
+   },
+   arc: {
+      x: number
+      y: number
+      r: number
+      startAngle: number
+      endAngle: number
+   }
 ) => boolean
 ```
-检查某个坐标点是否在圆弧上。
-- `coordinate` 坐标点信息
-- `arc` 圆弧参数
-  - `x` 圆心的x轴值
-  - `y` 圆心的y轴值
-  - `r` 半径
-  - `startAngle` 起始角度
-  - `endAngle` 结束角度
+Check whether a certain coordinate point is on the arc.
+- `coordinate` coordinate point information
+- `arc` arc parameter
+   - `x` the x-axis value of the center of the circle
+   - `y` the y-axis value of the center of the circle
+   - `r` radius
+   - `startAngle` start angle
+   - `endAngle` end angle
 
 ### utils.checkCoordinateOnCircle(coordinate, circle)
 ```typescript
 (
-  coordinate: {
-    x: number
-    y: number
-  },
-  circle: {
-    x: number
-    y: number
-    r: number
-  }
+   coordinate: {
+      x: number
+      y: number
+   },
+   circle: {
+      x: number
+      y: number
+      r: number
+   }
 ) => boolean
 ```
-检查某个坐标点是否在圆上。
-- `coordinate` 坐标点信息
-- `circle` 圆参数
-  - `x` 圆心的x轴值
-  - `y` 圆心的y轴值
-  - `r` 半径
+Checks whether a certain coordinate point is on a circle.
+- `coordinate` coordinate point information
+- `circle` circle parameter
+   - `x` the x-axis value of the center of the circle
+   - `y` the y-axis value of the center of the circle
+   - `r` radius
 
 ### utils.checkCoordinateOnLine(coordinate, line)
 ```typescript
 (
-  coordinate: {
-    x: number
-    y: number
-  },
-  line: {
-    coordinates: Array<{
+   coordinate: {
       x: number
       y: number
-    }>
-  }
+   },
+   line: {
+      coordinates: Array<{
+         x: number
+         y: number
+      }>
+   }
 ) => boolean
 ```
-检查某个坐标点是否在线上。
+Check if a certain coordinate point is on the line.
 
 ### utils.checkCoordinateOnPolygon(coordinate, polygon)
 ```typescript
 (
-  coordinate: {
-    x: number
-    y: number
-  },
-  polygon: {
-    coordinates: Array<{
+   coordinate: {
       x: number
       y: number
-    }>
-  }
+   },
+   polygon: {
+      coordinates: Array<{
+         x: number
+         y: number
+      }>
+   }
 ) => boolean
 ```
-检查某个坐标点是否在多边形上。
+Checks whether a certain coordinate point is on a polygon.
 
 ### utils.checkCoordinateOnRect(coordinate, rect)
 ```typescript
 (
-  coordinate: {
-    x: number
-    y: number
-  },
-  rect: {
-    x: number
-    y: number
-    width: number
-    height: number
-  }
+   coordinate: {
+      x: number
+      y: number
+   },
+   rect: {
+      x: number
+      y: number
+      width: number
+      height: number
+   }
 ) => boolean
 ```
-检查某个坐标点是否在矩形上。
-- `coordinate` 坐标点信息
-- `rect` 矩形参数
-  - `x` 起始点x轴值
-  - `y` 起始点y轴值
-  - `width` 宽度
-  - `height` 高度
+Checks whether a certain coordinate point is on a rectangle.
+- `coordinate` coordinate point information
+- `rect` rectangle parameter
+   - `x` starting point x-axis value
+   - `y` starting point y-axis value
+   - `width` width
+   - `height` height
 
 ### utils.checkCoordinateOnText(coordinate, text, styles)
 ```typescript
 (
-  coordinate: {
-    x: number
-    y: number
-  },
-  text: {
-    x: number
-    y: number
-    text: unknown
-    align?: 'center' | 'end' | 'left' | 'right' | 'start'
-    baseline?: 'alphabetic' | 'bottom' | 'hanging' | 'ideographic' | 'middle' | 'top'
-  },
-  styles: {
-    color?: string
-    size?: number
-    family?: string
-    weight?: number | string
-  }
+   coordinate: {
+      x: number
+      y: number
+   },
+   text: {
+      x: number
+      y: number
+      text: any
+      align?: 'center' | 'end' | 'left' | 'right' | 'start'
+      baseline?: 'alphabetic' | 'bottom' | 'hanging' | 'ideographic' | 'middle' | 'top'
+   },
+   styles: {
+      color?: string
+      size?: number
+      family?: string
+      weight?: number | string
+   }
 ) => boolean
 ```
-检查某个坐标点是否在文字上。
-- `coordinate` 坐标点信息
-- `text` 文字参数
-  - `x` 起始点x轴值
-  - `y` 起始点y轴值
-  - `text` 文字内容
-  - `align` 水平对齐方式
-  - `baseline` 垂直对齐方式
-- `styles` 样式
-  - `color` 颜色
-  - `size` 尺寸
-  - `family` 字体
-  - `weight` 权重
+Check if a certain coordinate point is on the text.
+- `coordinate` coordinate point information
+- `text` text parameter
+   - `x` starting point x-axis value
+   - `y` starting point y-axis value
+   - `text` text content
+   - `align` horizontal alignment
+   - `baseline` vertical alignment
+- `styles` styles
+   - `color` color
+   - `size` size
+   - `family` font
+   - `weight` weight

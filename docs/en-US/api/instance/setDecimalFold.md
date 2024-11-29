@@ -3,27 +3,27 @@ outline: deep
 ---
 
 # setDecimalFold(decimalFold)
-`setDecimalFold` 设置图表小数折叠配置。
+`setDecimalFold` set the chart decimal folding configuration.
 
-## 参考 {#reference}
+## Reference {#reference}
 <!-- @include: @/@views/api/references/instance/setDecimalFold.md -->
 
-### 参数
-- `decimalFold` 折叠配置。
-  - `threshold` 折叠阈值。
-  - `format` 自定义折叠格式化。
+### Parameters
+- `decimalFold` Decimal 0 folds the configuration.
+  - `threshold` Fold threshold.
+  - `format` Custom formatting method.
 
-### 返回值
-`setDecimalFold` 返回 `undefined` 。
+### Returns
+`setDecimalFold` returns `undefined` .
 
-## 用法 {#usage}
+## Usage {#usage}
 <script setup>
 import SetDecimalFoldThreshold from '../../../@views/api/samples/setDecimalFold-threshold/index.vue'
 import SetDecimalFoldFormat from '../../../@views/api/samples/setDecimalFold-format/index.vue'
 </script>
 
-### 不折叠小数 {#threshold}
+### Do not fold decimals {#threshold}
 <SetDecimalFoldThreshold/>
 
-### 自定义格式化
+### Custom format
 <SetDecimalFoldFormat/>

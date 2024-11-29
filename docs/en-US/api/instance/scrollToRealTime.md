@@ -3,21 +3,21 @@ outline: deep
 ---
 
 # scrollToRealTime(animationDuration?)
-`scrollToRealTime` 滚动最新数据的位置。
+`scrollToRealTime` scroll the position of the latest data.
 
-## 参考 {#reference}
+## Reference {#reference}
 <!-- @include: @/@views/api/references/instance/scrollToRealTime.md -->
 
-### 参数
-- `animationDuration` 动画持续时间，如果小于等于0，则无动画。
+### Parameters
+- `animationDuration` Animation duration. If it is less than or equal to 0, there is no animation.
 
-### 返回值
-`scrollToRealTime` 返回 `undefined` 。
+### Returns
+`scrollToRealTime` returns `undefined` .
 
-## 用法 {#usage}
+## Usage {#usage}
 <script setup>
 import ScrollToRealTime from '../../../@views/api/samples/ScrollToRealTime/index.vue'
 </script>
 
-### 基本用法 {#basic}
+### Basic usage {#basic}
 <ScrollToRealTime/>

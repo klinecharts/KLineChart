@@ -3,23 +3,23 @@ outline: deep
 ---
 
 # zoomAtTimestamp(scale, timestamp, animationDuration?)
-`zoomAtTimestamp` 在指定时间戳位置缩放。
+`zoomAtTimestamp` zoom to the specified timestamp.
 
-## 参考 {#reference}
+## Reference {#reference}
 <!-- @include: @/@views/api/references/instance/zoomAtTimestamp.md -->
 
-### 参数
-- `scale` 缩放比例
-- `timestamp` 时间戳
-- `animationDuration` 动画持续时间，如果小于等于0，则无动画。
+### Parameters
+- `scale` Scaling.
+- `timestamp` Timestamp.
+- `animationDuration` Animation duration. If it is less than or equal to 0, there is no animation.
 
-### 返回值
-`zoomAtTimestamp` 返回 `undefined` 。
+### Returns
+`zoomAtTimestamp` returns `undefined` .
 
-## 用法 {#usage}
+## Usage {#usage}
 <script setup>
 import ZoomAtTimestamp from '../../../@views/api/samples/zoomAtTimestamp/index.vue'
 </script>
 
-### 基本用法 {#basic}
+### Basic usage {#basic}
 <ZoomAtTimestamp/>

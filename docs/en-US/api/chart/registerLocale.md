@@ -3,26 +3,26 @@ outline: deep
 ---
 
 # registerLocale(locale, locales)
-`registerLocale` 用于扩展多语言。
+`registerLocale` used to custom locale.
 
-## 参考 {#reference}
+## Reference {#reference}
 <!--@include: @/@views/api/references/chart/registerLocale.md-->
 
-### 参数
-- `locale` 扩展语言名称。
-- `locales` 语言配置。
+### Parameters
+- `locale` Locale name.
+- `locales` Locale configuration.
 
-### 返回值
-`registerLocale` 返回 `undefined` 。
+### Returns
+`registerLocale` returns `undefined` .
 
-## 用法 {#usage}
+## Usage {#usage}
 <script setup>
 import InitLocaleExtension from '../../../@views/api/samples/init-locale-extension/index.vue'
 import SetLocaleExtension from '../../../@views/api/samples/setLocale-extension/index.vue'
 </script>
 
-### 初始化时使用 {#init-local}
+### Using initialization {#init-local}
 <InitLocaleExtension />
 
-### 动态设置 {#setLocale}
+### Dynamic settings {#setLocale}
 <SetLocaleExtension />

@@ -3,21 +3,21 @@ outline: deep
 ---
 
 # getVisibleRange()
-`getVisibleRange` 获取图表可见区间信息。
+`getVisibleRange` get the visible range information of the chart.
 
-## 参考 {#reference}
+## Reference {#reference}
 <!-- @include: @/@views/api/references/instance/getVisibleRange.md -->
 
-### 参数
-`getVisibleRange` 不接收任何参数。
+### Parameters
+`getVisibleRange` does not accept any parameters.
 
-### 返回值
-`getVisibleRange` 返回一个包含区间信息的对象 `VisibleRange` 。
+### Returns
+`getVisibleRange` returns a `VisibleRange` object containing range information.
 
-## 用法 {#usage}
+## Usage {#usage}
 <script setup>
 import GetVisibleRange from '../../../@views/api/samples/getVisibleRange/index.vue'
 </script>
 
-### 基本使用 {#basic}
+### Basic usage {#basic}
 <GetVisibleRange/>

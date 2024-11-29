@@ -3,25 +3,25 @@ outline: deep
 ---
 
 # updateData(data)
-`updateData` 更新数据。
+`updateData` Update data.
 
-::: tip 提示
-该方法只会匹配当前最后一条数据的时间戳，相同则覆盖，时间戳大于则追加。
+::: tip Tip
+This method will only match the timestamp of the current last data. If the timestamp is the same, it will be overwritten. If the timestamp is greater, it will be appended.
 :::
 
-## 参考 {#reference}
+## Reference {#reference}
 <!-- @include: @/@views/api/references/instance/updateData.md -->
 
-### 参数
-- `data` K 线数据，数据格式参照 [数据](/guide/data-source)。
+### Parameters
+- `data` K-line data, data format refers to [data](/en-US/guide/data-source).
 
-### 返回值
-`updateData` 返回 `undefined` 。
+### Returns
+`updateData` returns `undefined` .
 
-## 用法 {#usage}
+## Usage {#usage}
 <script setup>
 import UpdateData from '../../../@views/api/samples/updateData/index.vue'
 </script>
 
-### 基本用法 {#basic}
+### Basic usage {#basic}
 <UpdateData/>

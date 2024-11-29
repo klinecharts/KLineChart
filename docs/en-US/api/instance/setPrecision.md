@@ -3,23 +3,23 @@ outline: deep
 ---
 
 # setPrecision(precision)
-`setPrecision` 设置图表价格数量精度。
+`setPrecision` set the chart price volume precision.
 
-## 参考 {#reference}
+## Reference {#reference}
 <!--@include: @/@views/api/references/instance/setPrecision.md-->
 
-### 参数
-- `precision` 精度。
-  - `price` 价格精度。
-  - `volume` 数量精度。 
+### Parameters
+- `precision` Precision.
+  - `price` Price precision.
+  - `volume` Volume precision.
 
-### 返回值
-`setPrecision` 返回 `undefined` 。
+### Returns
+`setPrecision` returns `undefined` .
 
-## 用法 {#usage}
+## Usage {#usage}
 <script setup>
 import SetPrecision from '../../../@views/api/samples/setPrecision/index.vue'
 </script>
 
-### 基本使用 {#basic}
+### Basic usage {#basic}
 <SetPrecision/>

@@ -3,21 +3,21 @@ outline: deep
 ---
 
 # setLoadMoreDataCallback(cb)
-`setLoadMoreDataCallback` 设置图表加载更多数据回调。
+`setLoadMoreDataCallback` set the callback for loading more data for the chart.
 
-## 参考 {#reference}
+## Reference {#reference}
 <!--@include: @/@views/api/references/instance/setLoadMoreDataCallback.md-->
 
-### 参数
-- `cb` 回调方法。
+### Parameters
+- `cb` Callback.
 
-### 返回值
-`setLoadMoreDataCallback` 返回 `undefined` 。
+### Returns
+`setLoadMoreDataCallback` returns `undefined` .
 
-## 用法 {#usage}
+## Usage {#usage}
 <script setup>
 import SetLoadMoreDataCallback from '../../../@views/api/samples/setLoadMoreDataCallback/index.vue'
 </script>
 
-### 基本用法 {#basic}
+### Basic usage {#basic}
 <SetLoadMoreDataCallback/>

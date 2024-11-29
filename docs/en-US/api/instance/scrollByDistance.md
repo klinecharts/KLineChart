@@ -3,22 +3,22 @@ outline: deep
 ---
 
 # scrollByDistance(distance, animationDuration?)
-`scrollByDistance` 滚动指定的距离。
+`scrollByDistance` scroll the specified distance.
 
-## 参考 {#reference}
+## Reference {#reference}
 <!-- @include: @/@views/api/references/instance/scrollByDistance.md -->
 
-### 参数
-- `distance` 滚动距离。
-- `animationDuration` 动画持续时间，如果小于等于0，则无动画。
+### Parameters
+- `distance` Scroll distance
+- `animationDuration` Animation duration. If it is less than or equal to 0, there is no animation.
 
-### 返回值
-`scrollByDistance` 返回 `undefined` 。
+### Returns
+`scrollByDistance` returns `undefined` .
 
-## 用法 {#usage}
+## Usage {#usage}
 <script setup>
 import ScrollByDistance from '../../../@views/api/samples/scrollByDistance/index.vue'
 </script>
 
-### 基本用法 {#basic}
+### Basic usage {#basic}
 <ScrollByDistance/>

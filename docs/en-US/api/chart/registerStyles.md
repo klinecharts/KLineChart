@@ -3,26 +3,26 @@ outline: deep
 ---
 
 # registerStyles(name, styles)
-`registerStyles` 用于扩展样式模版。
+`registerStyles` used to extend style templates.
 
-## 参考 {#reference}
+## Reference {#reference}
 <!--@include: @/@views/api/references/chart/registerStyles.md-->
 
-### 参数
-- `name` 样式模板名。
-- `styles` 样式配置。详情参阅 [样式](./styles.md) ，支持增量。
+### Parameters
+- `name` The name of the style template.
+- `styles` Style configuration. See [styles](/en-US/guide/styles) for details. Incremental support.
 
-### 返回值
-`registerStyles` 返回 `undefined` 。
+### Returns
+`registerStyles` returns `undefined` .
 
-## 用法 {#usage}
+## Usage {#usage}
 <script setup>
 import InitStylesExtension from '../../../@views/api/samples/init-styles-extension/index.vue'
 import SetStylesExtension from '../../../@views/api/samples/setStyles-extension/index.vue'
 </script>
 
-### 初始化时使用 {#init-styles}
+### Using initialization {#init-styles}
 <InitStylesExtension />
 
-### 动态设置 {#setStyles}
+### Dynamic settings {#setStyles}
 <SetStylesExtension />

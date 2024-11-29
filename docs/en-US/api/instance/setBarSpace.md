@@ -3,21 +3,21 @@ outline: deep
 ---
 
 # setBarSpace(space)
-`setBarSpace` 设置图表单根蜡烛柱所占的空间大小。
+`setBarSpace` set the size of the space that a single candlestick on the chart should occupy.
 
-## 参考 {#reference}
+## Reference {#reference}
 <!--@include: @/@views/api/references/instance/setBarSpace.md-->
 
-### 参数
-- `space` 空间大小，范围在 1 到 50 之间。
+### Parameters
+- `space` The size of the space, ranging from 1 to 50.
 
-### 返回值
-`setBarSpace` 返回 `undefined` 。
+### Returns
+`setBarSpace` returns `undefined` .
 
-## 用法 {#usage}
+## Usage {#usage}
 <script setup>
 import SetBarSpace from '../../../@views/api/samples/setBarSpace/index.vue'
 </script>
 
-### 基本用法 {#basic}
+### Basic usage {#basic}
 <SetBarSpace/>

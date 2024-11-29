@@ -3,24 +3,24 @@ outline: deep
 ---
 
 # registerXAxis(xAxis)
-`registerXAxis` 用于扩展 x 轴。
+`registerXAxis` used to custom x-axis.
 
-## 参考 {#reference}
+## Reference {#reference}
 <!--@include: @/@views/api/references/chart/registerXAxis.md-->
 
-### 参数
-- `xAxis` x轴配置。
-  - `name` 名称，用于创建或者修改的唯一标识。
-  - `scrollZoomEnabled` 是否在轴上可以滚动缩放。
-  - `createTicks` 创建分割信息回调方法。
+### Parameters
+- `xAxis` X-axis configuration.
+  - `name` Name, a unique identifier used for creation or modification.
+  - `scrollZoomEnabled` Whether scrolling and zooming are possible on the axis.
+  - `createTicks` Create ticks information callback method.
 
-### 返回值
-`registerXAxis` 返回 `undefined` 。
+### Returns
+`registerXAxis` returns `undefined` .
 
-## 用法 {#usage}
+## Usage {#usage}
 <script setup>
 import RegisterXAxisBasic from '../../../@views/api/samples/registerXAxis/index.vue'
 </script>
 
-### 基本使用 {#basic}
+### Basic usage {#basic}
 <RegisterXAxisBasic/>

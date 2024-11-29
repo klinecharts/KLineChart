@@ -3,21 +3,21 @@ outline: deep
 ---
 
 # getDecimalFold()
-`getDecimalFold` 获取图表小数折叠配置。
+`getDecimalFold` get the chart decimal folding configuration.
 
-## 参考 {#reference}
+## Reference {#reference}
 <!--@include: @/@views/api/references/instance/getDecimalFold.md-->
 
-### 参数
-`getDecimalFold` 不接收任何参数。
+### Parameters
+`getDecimalFold` does not accept any parameters.
 
-### 返回值
-`getDecimalFold` 返回一个包含小数折叠配置的对象 `DecimalFold` 。
+### Returns
+`getDecimalFold` returns an object `DecimalFold` containing the decimal folding configuration.
 
-## 用法 {#usage}
+## Usage {#usage}
 <script setup>
 import GetDecimalFold from '../../../@views/api/samples/getDecimalFold/index.vue'
 </script>
 
-### 基本使用 {#basic}
+### Basic usage {#basic}
 <GetDecimalFold/>

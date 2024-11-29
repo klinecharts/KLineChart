@@ -3,17 +3,17 @@ outline: deep
 ---
 
 # clearData()
-`clearData` 清除数据。
+`clearData` clear data.
 
-::: tip 提示
-一般情况下不用手动调用，为了避免重复绘制，这里只是清除数据，图表不会重绘。
+::: tip Tip
+There is no need to call it manually. In order to avoid repeated drawing, it only clears the data here and the chart will not be redrawn.
 :::
 
-## 参考 {#reference}
+## Reference {#reference}
 <!--@include: @/@views/api/references/instance/clearData.md-->
 
-### 参数
-`clearData` 不接收任何参数。
+### Parameters
+`clearData` does not accept any parameters.
 
-### 返回值
-`clearData` 返回 `undefined` 。
+### Returns
+`clearData` returns `undefined` 。

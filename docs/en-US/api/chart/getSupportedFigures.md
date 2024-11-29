@@ -3,22 +3,22 @@ outline: deep
 ---
 
 # getSupportedFigures()
-`getSupportedFigures` 获取目前图表支持的基础图形列表。
+`getSupportedFigures` get the figure list supported by the current chart.
 
-## 参考 {#reference}
+## Reference {#reference}
 <!--@include: @/@views/api/references/chart/getSupportedFigures.md-->
 
-### 参数
-`getSupportedFigures` 不接收任何参数。
+### Parameters
+`getSupportedFigures` does not accept any parameters.
 
-### 返回值
-`getSupportedFigures` 返回 `string` 数组。
+### Returns
+`getSupportedFigures` returns `string` array.
 
-## 用法 {#usage}
+## Usage {#usage}
 
 <script setup>
 import GetSupportedFigures from '../../../@views/api/samples/getSupportedFigures/index.vue'
 </script>
 
-### 基本使用 {#basic}
+### Basic usage {#basic}
 <GetSupportedFigures />

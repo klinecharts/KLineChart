@@ -3,21 +3,21 @@ outline: deep
 ---
 
 # setOffsetRightDistance(distance)
-`setOffsetRightDistance` 设置图表最后一根蜡烛柱距离最右侧的距离。
+`setOffsetRightDistance` set the distance from the last candlestick on the chart to the rightmost side.
 
-## 参考 {#reference}
+## Reference {#reference}
 <!-- @include: @/@views/api/references/instance/setOffsetRightDistance.md -->
 
-### 参数
-- `distance` 距离。
+### Parameters
+- `distance` Distance
 
-### 返回值
-`setOffsetRightDistance` 返回 `undefined` 。
+### Returns
+`setOffsetRightDistance` returns `undefined` .
 
-## 用法 {#usage}
+## Usage {#usage}
 <script setup>
 import SetOffsetRightDistance from '../../../@views/api/samples/setOffsetRightDistance/index.vue'
 </script>
 
-### 基本用法 {#basic}
+### Basic usage {#basic}
 <SetOffsetRightDistance/>

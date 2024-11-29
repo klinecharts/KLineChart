@@ -3,26 +3,26 @@ outline: deep
 ---
 
 # convertFromPixel(coordinate, finder?)
-`convertFromPixel` 将坐标转换成值。
+`convertFromPixel` convert coordinates to values.
 
-## 参考 {#reference}
+## Reference {#reference}
 <!-- @include: @/@views/api/references/instance/convertFromPixel.md -->
 
-### 参数
-- `coordinate` 需要转换的坐标，可以是当个对象，也可以是数组。
-  - `x` 横坐标值。
-  - `y` 纵坐标值。
-- `finder` 过滤条件。
-  - `paneId` 窗口id。
-  - `absolute` 是否是绝对坐标，只作用于y轴。
+### Parameters
+- `coordinate` The coordinates to be converted can be an object or an array.
+  - `x` The x-axis value.
+  - `y` The y-axis value.
+- `finder` Filter conditions.
+  - `paneId` Pane id.
+  - `absolute` Whether it is an absolute coordinate, only applies to the y-axis.
 
-### 返回值
-`convertFromPixel` 返回 `{ timestamp?: number, dataIndex?: number, value?: number }` 或者 `Array<{ timestamp?: number, dataIndex?: number, value?: number }>` 。
+### Returns
+`convertFromPixel` returns `{ timestamp?: number, dataIndex?: number, value?: number }` or `Array<{ timestamp?: number, dataIndex?: number, value?: number }>` .
 
-## 用法 {#usage}
+## Usage {#usage}
 <script setup>
 import ConvertFromPixel from '../../../@views/api/samples/convertFromPixel/index.vue'
 </script>
 
-### 基本用法 {#basic}
+### Basic usage {#basic}
 <ConvertFromPixel/>

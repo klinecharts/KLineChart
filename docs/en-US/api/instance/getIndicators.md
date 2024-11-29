@@ -3,24 +3,24 @@ outline: deep
 ---
 
 # getIndicators(filter?)
-`getIndicators` 获取指标信息。
+`getIndicators` get indicator information.
 
-## 参考 {#reference}
+## Reference {#reference}
 <!-- @include: @/@views/api/references/instance/getIndicators.md -->
 
-### 参数
-- `filter` 过滤参数。
-  - `name` 指标名称。
-  - `paneId` 窗口id。
+### Parameters
+- `filter` Filter conditions.
+  - `name` Indicator name.
+  - `paneId` Pane id.
 
 
-### 返回值
-`getIndicators` 返回 `Map<string, Indicator[]>` 。
+### Returns
+`getIndicators` returns `Map<string, Indicator[]>` .
 
-## 用法 {#usage}
+## Usage {#usage}
 <script setup>
 import GetIndicators from '../../../@views/api/samples/getIndicators/index.vue'
 </script>
 
-### 基本使用 {#basic}
+### Basic usage {#basic}
 <GetIndicators/>

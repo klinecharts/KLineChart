@@ -10,7 +10,7 @@ outline: deep
 
 ### 参数
 - `name` 样式模板名。
-- `styles` 样式配置。详情参阅 [样式](./styles.md) ，支持增量。
+- `styles` 样式配置。详情参阅 [样式](/guide/styles) ，支持增量。
 
 ### 返回值
 `registerStyles` 返回 `undefined` 。

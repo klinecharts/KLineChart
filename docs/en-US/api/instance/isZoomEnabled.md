@@ -3,21 +3,21 @@ outline: deep
 ---
 
 # isZoomEnabled()
-`isZoomEnabled` 是否可以缩放。
+`isZoomEnabled` whether it can be scaled.
 
-## 参考 {#reference}
+## Reference {#reference}
 <!--@include: @/@views/api/references/instance/isZoomEnabled.md-->
 
-### 参数
-`isZoomEnabled` 不接收任何参数。
+### Parameters
+`isZoomEnabled` does not accept any parameters.
 
-### 返回值
-`isZoomEnabled` 返回 `boolean` 。
+### Returns
+`isZoomEnabled` returns `boolean` .
 
-## 用法 {#usage}
+## Usage {#usage}
 <script setup>
 import IsZoomEnabled from '../../../@views/api/samples/isZoomEnabled/index.vue'
 </script>
 
-### 基本用法 {#basic}
+### Basic usage {#basic}
 <IsZoomEnabled/>

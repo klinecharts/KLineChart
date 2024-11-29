@@ -3,21 +3,21 @@ outline: deep
 ---
 
 # getCustomApi()
-`getCustomApi` 获取图表的自定义api。
+`getCustomApi` get the custom api for the chart.
 
-## 参考 {#reference}
+## Reference {#reference}
 <!--@include: @/@views/api/references/instance/getCustomApi.md-->
 
-### 参数
-`getCustomApi` 不接收任何参数。
+### Parameters
+`getCustomApi` does not accept any parameters.
 
-### 返回值
-`getCustomApi` 返回一个包含自定义api的对象 `CustomApi` 。
+### Returns
+`getCustomApi` returns an object `CustomApi` containing the custom api.
 
-## 用法 {#usage}
+## Usage {#usage}
 <script setup>
 import GetCustomApi from '../../../@views/api/samples/getCustomApi/index.vue'
 </script>
 
-### 基本使用 {#basic}
+### Basic usage {#basic}
 <GetCustomApi/>

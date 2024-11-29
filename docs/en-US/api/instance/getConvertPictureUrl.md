@@ -3,23 +3,23 @@ outline: deep
 ---
 
 # getConvertPictureUrl(includeOverlay?, type?, backgroundColor?)
-`getConvertPictureUrl` 获取图表转换成图片后的图片url。
+`getConvertPictureUrl` get the image URL after the chart is converted into an image.
 
-## 参考 {#reference}
+## Reference {#reference}
 <!--@include: @/@views/api/references/instance/getConvertPictureUrl.md-->
 
-### 参数
-- `includeOverlay` 是否需要包含浮层。
-- `type` 转换后的图片类型，支持 `png` ， `jpeg` 和 `bmp` ，默认为 `jpeg` 。
-- `backgroundColor` 背景色，默认为 `#FFFFFF` 。
+### Parameters
+- `includeOverlay` Whether to include the overlay lever.
+- `type` The converted image type supports `png` , `jpeg` and `bmp`, the default is `jpeg` .
+- `backgroundColor` Background color, default is `#FFFFFF` .
 
-### 返回值
-`getConvertPictureUrl` 返回 `string` 。
+### Returns
+`getConvertPictureUrl` returns `string` .
 
-## 用法 {#usage}
+## Usage {#usage}
 <script setup>
 import GetConvertPictureUrl from '../../../@views/api/samples/getConvertPictureUrl/index.vue'
 </script>
 
-### 基本使用 {#basic}
+### Basic usage {#basic}
 <GetConvertPictureUrl/>

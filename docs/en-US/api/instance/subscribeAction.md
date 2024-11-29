@@ -3,22 +3,22 @@ outline: deep
 ---
 
 # subscribeAction(type, cb)
-`subscribeAction` 订阅图表动作。
+`subscribeAction` subscribe to chart actions.
 
-## 参考 {#reference}
+## Reference {#reference}
 <!-- @include: @/@views/api/references/instance/subscribeAction.md -->
 
-### 参数
-- `type` 类型，支持 `onZoom` ， `onScroll` ， `onVisibleRangeChange` ， `onTooltipIconClick` ， `onCrosshairChange` ， `onCandleBarClick` 和 `onPaneDrag` 。
-- `cb` 回调方法。
+### Parameters
+- `type` Type, supports `onZoom`, `onScroll`, `onVisibleRangeChange`, `onTooltipIconClick`, `onCrosshairChange`, `onCandleBarClick` and `onPaneDrag` .
+- `cb` Callback.
 
-### 返回值
-`executeAction` 返回 `undefined` 。
+### Returns
+`executeAction` returns `undefined` .
 
-## 用法 {#usage}
+## Usage {#usage}
 <script setup>
 import SubscribeAction from '../../../@views/api/samples/subscribeAction/index.vue'
 </script>
 
-### 基本用法 {#basic}
+### Basic usage {#basic}
 <SubscribeAction/>

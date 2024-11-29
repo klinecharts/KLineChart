@@ -3,21 +3,21 @@ outline: deep
 ---
 
 # setMaxOffsetLeftDistance(distance)
-`setMaxOffsetLeftDistance` 设置图表第一根蜡烛柱距离最左侧的最大距离。
+`setMaxOffsetLeftDistance` set the maximum distance of the first candlestick on the chart from the leftmost side.
 
-## 参考 {#reference}
+## Reference {#reference}
 <!--@include: @/@views/api/references/instance/setMaxOffsetLeftDistance.md-->
 
-### 参数
-- `distance` 距离。
+### Parameters
+- `distance` Distance.
 
-### 返回值
-`setMaxOffsetLeftDistance` 返回 `undefined` 。
+### Returns
+`setMaxOffsetLeftDistance` return `undefined` .
 
-## 用法 {#usage}
+## Usage {#usage}
 <script setup>
 import SetMaxOffsetLeftDistance from '../../../@views/api/samples/setMaxOffsetLeftDistance/index.vue'
 </script>
 
-### 基本用法 {#basic}
+### Basic usage {#basic}
 <SetMaxOffsetLeftDistance/>

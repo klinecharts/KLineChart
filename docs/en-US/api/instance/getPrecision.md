@@ -3,21 +3,21 @@ outline: deep
 ---
 
 # getPrecision()
-`getPrecision` 获取图表价格数量精度。
+`getPrecision` get the chart price quantity precision.
 
-## 参考 {#reference}
+## Reference {#reference}
 <!--@include: @/@views/api/references/instance/getPrecision.md-->
 
-### 参数
-`getPrecision` 不接收任何参数。
+### Parameters
+`getPrecision` does not accept any parameters.
 
-### 返回值
-`getPrecision` 返回一个包含价格和数量精度的对象 `Precision` 。
+### Returns
+`getPrecision` returns a `Precision` object containing the precision of price and volume.
 
-## 用法 {#usage}
+## Usage {#usage}
 <script setup>
 import GetPrecision from '../../../@views/api/samples/getPrecision/index.vue'
 </script>
 
-### 基本使用 {#basic}
+### Basic usage {#basic}
 <GetPrecision/>

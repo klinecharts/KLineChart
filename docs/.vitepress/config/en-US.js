@@ -1,6 +1,5 @@
 import { defineConfig } from 'vitepress'
-
-import pkg from '../../../package.json'
+import { getChartApiMenus, getInstanceApiMenus, version } from './share'
 
 export default defineConfig({
   label: '🇬🇧 English',

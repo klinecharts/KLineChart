@@ -3,22 +3,22 @@ outline: deep
 ---
 
 # executeAction(type, data)
-`executeAction` 执行图表动作。
+`executeAction` executes a chart action.
 
-## 参考 {#reference}
+## Reference {#reference}
 <!-- @include: @/@views/api/references/instance/executeAction.md -->
 
-### 参数
-- `type` 类型，仅支持 `onCrosshairChange` 。
-- `data` 数据。
+### Parameters
+- `type` Type, only supports `onCrosshairChange` .
+- `data` Data.
 
-### 返回值
-`executeAction` 返回 `undefined` 。
+### Returns
+`executeAction` returns `undefined` .
 
-## 用法 {#usage}
+## Usage {#usage}
 <script setup>
 import ExecuteAction from '../../../@views/api/samples/executeAction/index.vue'
 </script>
 
-### 基本用法 {#basic}
+### Basic usage {#basic}
 <ExecuteAction/>

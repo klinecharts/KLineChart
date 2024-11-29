@@ -3,21 +3,21 @@ outline: deep
 ---
 
 # isScrollEnabled()
-`isZoomEnabled` 是否可以滚动。
+`isZoomEnabled` whether scrolling is possible.
 
-## 参考 {#reference}
+## Reference {#reference}
 <!-- @include: @/@views/api/references/instance/isScrollEnabled.md -->
 
-### 参数
-`isScrollEnabled` 不接收任何参数。
+### Parameters
+`isScrollEnabled` does not accept any parameters.
 
-### 返回值
-`isScrollEnabled` 返回 `boolean` 。
+### Returns
+`isScrollEnabled` returns `boolean` .
 
-## 用法 {#usage}
+## Usage {#usage}
 <script setup>
 import IsScrollEnabled from '../../../@views/api/samples/isScrollEnabled/index.vue'
 </script>
 
-### 基本用法 {#basic}
+### Basic usage {#basic}
 <IsScrollEnabled/>

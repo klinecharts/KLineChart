@@ -3,21 +3,21 @@ outline: deep
 ---
 
 # getSupportedLocales()
-`getSupportedLocales` 获取目前图表支持的多语言列表。
+`getSupportedLocales` get the locale list supported by the current chart.
 
-## 参考 {#reference}
+## Reference {#reference}
 <!-- @include: @/@views/api/references/chart/getSupportedLocales.md -->
 
-### 参数
-`getSupportedLocales` 不接收任何参数。
+### Parameters
+`getSupportedLocales` does not accept any parameters.
 
-### 返回值
-`getSupportedLocales` 返回 `string` 数组 。
+### Returns
+`getSupportedLocales` returns `string` array.
 
-## 用法 {#usage}
+## Usage {#usage}
 <script setup>
 import GetSupportedLocales from '../../../@views/api/samples/getSupportedLocales/index.vue'
 </script>
 
-### 基本使用 {#basic}
+### Basic usage {#basic}
 <GetSupportedLocales />

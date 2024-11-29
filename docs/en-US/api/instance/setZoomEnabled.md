@@ -3,21 +3,21 @@ outline: deep
 ---
 
 # setZoomEnabled(enabled)
-`setZoomEnabled` 设置是否可以缩放。
+`setZoomEnabled` set whether to scale.
 
-## 参考 {#reference}
+## Reference {#reference}
 <!--@include: @/@views/api/references/instance/setZoomEnabled.md-->
 
-### 参数
-- `enabled` 是否可以缩放。
+### Parameters
+- `enabled` Whether it can be scaled.
 
-### 返回值
-`setZoomEnabled` 返回 `undefined` 。
+### Returns
+`setZoomEnabled` returns `undefined` .
 
-## 用法 {#usage}
+## Usage {#usage}
 <script setup>
 import SetZoomEnabled from '../../../@views/api/samples/setZoomEnabled/index.vue'
 </script>
 
-### 基本用法 {#basic}
+### Basic usage {#basic}
 <SetZoomEnabled/>

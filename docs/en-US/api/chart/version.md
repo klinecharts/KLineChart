@@ -3,21 +3,21 @@ outline: deep
 ---
 
 # version()
-`version` 获取图表的版本。
+`version` gets the version of the chart.
 
-## 参考 {#reference}
+## Reference {#reference}
 <!--@include: @/@views/api/references/chart/version.md-->
 
-### 参数
-`version` 不接收任何参数。
+### Parameters
+`version` does not accept any parameters.
 
 ### 返回值
-`version` 返回 `string` 。
+`version` returns `string` 。
 
-## 用法 {#usage}
+## Usage {#usage}
 <script setup>
 import Version from '../../../@views/api/samples/version/index.vue'
 </script>
 
-### 基本使用 {#basic}
+### Basic usage {#basic}
 <Version />

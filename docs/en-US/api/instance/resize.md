@@ -3,25 +3,25 @@ outline: deep
 ---
 
 # resize()
-`resize` 调整图表尺寸。
+`resize` resize the chart.
 
-::: warning 注意
-总是会填充容器大小，此方法会重新计算整个图表各个模块的大小，频繁调用可能会影响到性能，调用请谨慎。
+::: warning Warning
+The container size will always be filled. This method will recalculate the size of each module of the entire chart. Frequent calls may affect performance, so please call with caution.
 :::
 
-## 参考 {#reference}
+## Reference {#reference}
 <!-- @include: @/@views/api/references/instance/resize.md -->
 
-### 参数
-`resize` 不接收任何参数。
+### Parameters
+`resize` does not accept any parameters.
 
-### 返回值
-`resize` 返回 `undefined` 。
+### Returns
+`resize` returns `undefined` .
 
-## 用法 {#usage}
+## Usage {#usage}
 <script setup>
 import Resize from '../../../@views/api/samples/Resize/index.vue'
 </script>
 
-### 基本用法 {#basic}
+### Basic usage {#basic}
 <Resize/>

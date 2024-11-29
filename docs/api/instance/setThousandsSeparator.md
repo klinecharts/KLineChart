@@ -25,5 +25,5 @@ import SetThousandsSeparatorFormat from '../../@views/api/samples/setThousandsSe
 ### 不显示千分符 {#sign}
 <SetThousandsSeparatorSign/>
 
-### 自定义格式化
+### 自定义格式化 {#format}
 <SetThousandsSeparatorFormat/>

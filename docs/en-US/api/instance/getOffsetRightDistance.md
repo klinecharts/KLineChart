@@ -3,21 +3,21 @@ outline: deep
 ---
 
 # getOffsetRightDistance()
-`getOffsetRightDistance` 获取图表最后一根蜡烛柱距离最右侧的距离。
+`getOffsetRightDistance` get the distance from the last candlestick of the chart to the rightmost side.
 
-## 参考 {#reference}
+## Reference {#reference}
 <!--@include: @/@views/api/references/instance/getOffsetRightDistance.md-->
 
-### 参数
-`getOffsetRightDistance` 不接收任何参数。
+### Parameters
+`getOffsetRightDistance` does not accept any parameters.
 
-### 返回值
-`getOffsetRightDistance` 返回 `number` 。
+### Returns
+`getOffsetRightDistance` returns `number` .
 
-## 用法 {#usage}
+## Usage {#usage}
 <script setup>
 import GetOffsetRightDistance from '../../../@views/api/samples/getOffsetRightDistance/index.vue'
 </script>
 
-### 基本使用 {#basic}
+### Basic usage {#basic}
 <GetOffsetRightDistance/>

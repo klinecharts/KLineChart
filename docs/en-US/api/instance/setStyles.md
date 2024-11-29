@@ -3,30 +3,29 @@ outline: deep
 ---
 
 # setStyles(styles)
-`setStyles` 设置图表样式。
+`setStyles` set the chart style.
 
-## 参考 {#reference}
+## Reference {#reference}
 <!--@include: @/@views/api/references/instance/setStyles.md-->
 
-### 参数
-- `styles` 样式，可以是通过 `klinecharts.registerStyles` 注册的样式名，也可以是 `Styles` ， `Styles` 详情参阅 [样式](./styles.md) ，支持增量。
+### Parameters
+- `styles` Style, which can be a style name registered by `klinecharts.registerStyles`, or `Styles`. For details about `Styles`, see [Styles](/en-US/guide/styles). Incremental values ​​are supported.
 
-### 返回值
-`setStyles` 返回 `undefined` 。
+### Returns
+`setStyles` returns `undefined` .
 
-
-## 用法 {#usage}
+## Usage {#usage}
 <script setup>
 import SetStylesBasic from '../../../@views/api/samples/setStyles-basic/index.vue'
 import SetStylesBuiltIn from '../../../@views/api/samples/setStyles-built-in/index.vue'
 import SetStylesExtension from '../../../@views/api/samples/setStyles-extension/index.vue'
 </script>
 
-### 基本使用 {#basic}
+### Basic usage {#basic}
 <SetStylesBasic/>
 
-### 内置模版 {#built-in}
+### Built-in templates {#built-in}
 <SetStylesBuiltIn/>
 
-### 自定义模版 {#extension}
+### Custom templates {#extension}
 <SetStylesExtension/>

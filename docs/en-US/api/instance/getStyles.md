@@ -3,21 +3,21 @@ outline: deep
 ---
 
 # getStyles()
-`getStyles` 获取图表样式配置。
+`getStyles` get the chart style configuration.
 
-## 参考 {#reference}
+## Reference {#reference}
 <!--@include: @/@views/api/references/instance/getStyles.md-->
 
-### 参数
-`getStyles` 不接收任何参数。
+### Parameters
+`getStyles` does not accept any parameters.
 
-### 返回值
-`getStyles` 返回完整的样式配置 `Styles` 。
+### Returns
+`getStyles` returns the complete style configuration `Styles` .
 
-## 用法 {#usage}
+## Usage {#usage}
 <script setup>
 import GetStyles from '../../../@views/api/samples/getStyles/index.vue'
 </script>
 
-### 基本使用 {#basic}
+### Basic usage {#basic}
 <GetStyles/>

@@ -3,21 +3,21 @@ outline: deep
 ---
 
 # setRightMinVisibleBarCount(count)
-`setRightMinVisibleBarCount` 设置图表右边最小可见蜡烛柱的数量。
+`setRightMinVisibleBarCount` set the minimum number of visible candlesticks on the right side of the chart.
 
-## 参考 {#reference}
+## Reference {#reference}
 <!--@include: @/@views/api/references/instance/setRightMinVisibleBarCount.md-->
 
-### 参数
-- `count` 数量。
+### Parameters
+- `count` Count.
 
-### 返回值
-`setRightMinVisibleBarCount` 返回 `undefined` 。
+### Returns
+`setRightMinVisibleBarCount` returns `undefined` .
 
-## 用法 {#usage}
+## Usage {#usage}
 <script setup>
 import SetRightMinVisibleBarCount from '../../../@views/api/samples/setRightMinVisibleBarCount/index.vue'
 </script>
 
-### 基本用法 {#basic}
+### Basic usage {#basic}
 <SetRightMinVisibleBarCount/>

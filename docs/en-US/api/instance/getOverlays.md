@@ -3,26 +3,26 @@ outline: deep
 ---
 
 # getOverlays(filter?)
-`getOverlays` 获取覆盖物信息。
+`getOverlays` get overlay information.
 
-## 参考 {#reference}
+## Reference {#reference}
 <!-- @include: @/@views/api/references/instance/getOverlays.md -->
 
-### 参数
-- `filter` 过滤参数。
-  - `id` 覆盖物id。
-  - `name` 覆盖物名称。
-  - `groupId` 编组id
-  - `paneId` 窗口id。
+### Parameters
+- `filter` Filter conditions.
+  - `id` Overlay id.
+  - `name` Overlay name.
+  - `groupId` Group id.
+  - `paneId` Pane id.
 
 
-### 返回值
-`getOverlays` 返回 `Map<string, Overlay[]>` 。
+### Returns
+`getOverlays` returns `Map<string, Overlay[]>` .
 
-## 用法 {#usage}
+## Usage {#usage}
 <script setup>
 import GetOverlays from '../../../@views/api/samples/getOverlays/index.vue'
 </script>
 
-### 基本使用 {#basic}
+### Basic usage {#basic}
 <GetOverlays/>

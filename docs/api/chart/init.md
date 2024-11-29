@@ -48,7 +48,7 @@ outline: deep
     - `format` 自定义格式化方法。
 
 ### 返回值
-`init` 返回一个图表实例对象 `chart`。
+`init` 返回一个图表实例对象 `Chart`。
 
 ## 用法 {#usage}
 <script setup>
