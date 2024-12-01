@@ -26,7 +26,7 @@ export default defineConfig({
       { text: '定制', link: '/customize' },
       { text: '赞助', link: '/sponsor' },
       {
-        text: 'Next',
+        text: `${version}`,
         items: [
           { text: '9.x 文档', link: 'https://v9.klinecharts.com' },
           { text: '8.x 文档', link: 'https://v8.klinecharts.com/zh-CN' }

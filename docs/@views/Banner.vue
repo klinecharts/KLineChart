@@ -1,7 +1,7 @@
 <template>
   <div class="banner" :class="{ 'top': y === 0 }" role="banner" v-if="isVisible">
-    <span v-if="lang === 'zh-CN'">🎉&nbsp;🎉&nbsp;🎉&nbsp;&nbsp;新版本即将发布。9.x 版本请访问 <strong><a target="_blank" href="https://v9.klinecharts.com">文档</a></strong>。</span>
-    <span v-else>🎉&nbsp;🎉&nbsp;🎉&nbsp;&nbsp;The new version is about to be released. Version 9.x please visit <strong><a target="_blank" href="https://v9.klinecharts.com">document</a></strong>.</span>
+    <span v-if="lang === 'zh-CN'">🎉&nbsp;🎉&nbsp;🎉&nbsp;&nbsp;v10.0.0-alpha1 已发布。</span>
+    <span v-else>🎉&nbsp;🎉&nbsp;🎉&nbsp;&nbsp;v10.0.0-alpha1 has been released.</span>
     <button class="banner-close" @click.prevent="closeBanner">
       <span class="close">&times;</span>
     </button>

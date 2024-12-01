@@ -21,7 +21,7 @@ export default defineConfig({
       { text: 'Customize', link: '/en-US/customize' },
       { text: 'Sponsor', link: '/en-US/sponsor' },
       {
-        text: 'Next',
+        text: `${version}`,
         items: [
           { text: '9.x Docs', link: 'https://v9.klinecharts.com/en-US' },
           { text: '8.x Docs', link: 'https://v8.klinecharts.com' }
