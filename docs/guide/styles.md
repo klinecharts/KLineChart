@@ -358,12 +358,6 @@ import StyleExplain from '../@views/styles/Explain.vue'
   yAxis: {
     show: true,
     size: 'auto',
-    // 'left' | 'right'
-    position: 'right',
-    // 'normal' | 'percentage' | 'log'
-    type: 'normal',
-    inside: false,
-    reverse: false,
     // y轴线
     axisLine: {
       show: true,

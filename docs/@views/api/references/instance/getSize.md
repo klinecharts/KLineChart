@@ -1,8 +1,3 @@
 ```typescript
-(
-  filter?: {
-    paneId: string
-    position?: 'root' | 'main' | 'yAxis'
-  }
-) => Bounding | null
+(paneId?: string, position?: 'root' | 'main' | 'yAxis') => Bounding | null
 ```

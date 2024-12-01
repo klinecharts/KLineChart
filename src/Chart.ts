@@ -77,8 +77,8 @@ export interface DomFilter {
 
 export interface Chart extends Store {
   id: string
-  getDom: (filter?: DomFilter) => Nullable<HTMLElement>
-  getSize: (filter?: DomFilter) => Nullable<Bounding>
+  getDom: (paneId?: string, position?: DomPosition) => Nullable<HTMLElement>
+  getSize: (paneId?: string, position?: DomPosition) => Nullable<Bounding>
   applyNewData: (dataList: KLineData[], more?: boolean | Partial<LoadDataMore>) => void
   updateData: (data: KLineData) => void
   createIndicator: (value: string | IndicatorCreate, isStack?: boolean, paneOptions?: PaneOptions) => Nullable<string>
@@ -557,9 +557,8 @@ export default class ChartImp implements Chart {
     }
   }
 
-  getDom (filter?: DomFilter): Nullable<HTMLElement> {
-    if (isValid(filter)) {
-      const { paneId, position } = filter
+  getDom (paneId?: string, position?: DomPosition): Nullable<HTMLElement> {
+    if (isValid(paneId)) {
       const pane = this.getDrawPaneById(paneId)
       if (isValid(pane)) {
         const pos = position ?? DomPosition.Root
@@ -581,9 +580,8 @@ export default class ChartImp implements Chart {
     return null
   }
 
-  getSize (filter?: DomFilter): Nullable<Bounding> {
-    if (isValid(filter)) {
-      const { paneId, position } = filter
+  getSize (paneId?: string, position?: DomPosition): Nullable<Bounding> {
+    if (isValid(paneId)) {
       const pane = this.getDrawPaneById(paneId)
       if (isValid(pane)) {
         const pos = position ?? DomPosition.Root

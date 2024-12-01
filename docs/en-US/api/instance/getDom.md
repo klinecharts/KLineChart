@@ -2,16 +2,15 @@
 outline: deep
 ---
 
-# getDom(filter?)
+# getDom(paneId?, position?)
 `getDom` get the chart dom element.
 
 ## Reference {#reference}
 <!-- @include: @/@views/api/references/instance/getDom.md -->
 
 ### Parameters {#parameters}
-- `filter` Filter conditions.
-  - `paneId` Pane id.
-  - `position` Position, supports `root`, `main` and `yAxis` .
+- `paneId` Pane id.
+- `position` Position, supports `root`, `main` and `yAxis` .
 
 ### Returns {#returns}
 `getDom` Returns an `HTMLElement` or `null` .

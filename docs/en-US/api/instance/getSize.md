@@ -2,16 +2,15 @@
 outline: deep
 ---
 
-# getSize(filter?)
+# getSize(paneId?, position?)
 `getSize` get the size of the chart.
 
 ## Reference {#reference}
 <!--@include: @/@views/api/references/instance/getSize.md-->
 
 ### Parameters {#parameters}
-- `filter` Filter conditions.
-  - `paneId` Pane id.
-  - `position` Position, supports `root`, `main` and `yAxis` .
+- `paneId` Pane id.
+- `position` Position, supports `root`, `main` and `yAxis` .
 
 ### Returns {#returns}
 `getDom` returns a `Bounding` object containing size information or `null` .
