@@ -23,8 +23,8 @@ export default defineConfig({
       {
         text: 'Next',
         items: [
-          { text: 'V9 Docs', link: 'https://v9.klinecharts.com/en-US' },
-          { text: 'V8 Docs', link: 'https://v8.klinecharts.com' }
+          { text: '9.x Docs', link: 'https://v9.klinecharts.com/en-US' },
+          { text: '8.x Docs', link: 'https://v8.klinecharts.com' }
         ]
       },
     ],
@@ -63,7 +63,7 @@ export default defineConfig({
           text: 'Others',
           collapsed: false,
           items: [
-            { text: 'V8 to V9', link: '/en-US/guide/v8-to-v9' },
+            { text: '9.x to 10.x', link: '/en-US/guide/v9-to-v10' },
             { text: 'FAQ', link: '/en-US/guide/faq' },
             { text: 'Feedback', link: '/en-US/guide/feedback' },
             { text: 'Changelog', link: '/en-US/guide/changelog' }

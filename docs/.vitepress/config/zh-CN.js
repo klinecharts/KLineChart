@@ -28,8 +28,8 @@ export default defineConfig({
       {
         text: 'Next',
         items: [
-          { text: 'V9 文档', link: 'https://v9.klinecharts.com' },
-          { text: 'V8 文档', link: 'https://v8.klinecharts.com/zh-CN' }
+          { text: '9.x 文档', link: 'https://v9.klinecharts.com' },
+          { text: '8.x 文档', link: 'https://v8.klinecharts.com/zh-CN' }
         ]
       },
     ],
@@ -68,7 +68,7 @@ export default defineConfig({
           text: '其它',
           collapsed: false,
           items: [
-            { text: '从v8到v9', link: '/guide/v8-to-v9' },
+            { text: '从 9.x 到 10.x', link: '/guide/v9-to-v10' },
             { text: '常见问题', link: '/guide/faq' },
             { text: '反馈和共建', link: '/guide/feedback' },
             { text: '更新日志', link: '/guide/changelog' }

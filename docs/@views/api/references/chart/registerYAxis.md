@@ -1,6 +1,6 @@
 ```typescript
 (
-  xAxis: {
+  yAxis: {
     name: string
     reverse?: boolean
     inside?: boolean
