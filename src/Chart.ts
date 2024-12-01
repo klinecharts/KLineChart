@@ -164,11 +164,9 @@ export default class ChartImp implements Chart {
 
   private _initPanes (options?: Options): void {
     const layout = options?.layout ?? [{ type: LayoutChildType.Candle }]
-    let candlePaneInitialized = false
-    let xAxisPaneInitialized = false
 
     const createCandlePane: ((child: LayoutChild) => void) = child => {
-      if (!candlePaneInitialized) {
+      if (!isValid(this._candlePane)) {
         const paneOptions = child.options ?? {}
         merge(paneOptions, { id: PaneIdConstants.CANDLE })
         this._candlePane = this._createPane<CandlePane>(CandlePane, PaneIdConstants.CANDLE, paneOptions)
@@ -176,15 +174,13 @@ export default class ChartImp implements Chart {
         content.forEach(v => {
           this.createIndicator(v, true, paneOptions)
         })
-        candlePaneInitialized = true
       }
     }
 
     const createXAxisPane: ((ops?: PaneOptions) => void) = (ops?: PaneOptions) => {
-      if (!xAxisPaneInitialized) {
+      if (!isValid(this._xAxisPane)) {
         const pane = this._createPane<XAxisPane>(XAxisPane, PaneIdConstants.X_AXIS, ops ?? {})
         this._xAxisPane = pane
-        xAxisPaneInitialized = true
       }
     }
 
@@ -237,7 +233,13 @@ export default class ChartImp implements Chart {
           const prevPane = this._drawPanes[i - 1]
           const currentPane = this._drawPanes[i]
           if (order >= prevPane.getOptions().order && order < currentPane.getOptions().order) {
-            newPane = new DrawPaneClass(this._chartContainer, currentPane.getContainer(), this, id, options ?? {})
+            let afterElement: Nullable<HTMLElement> = null
+            if (currentPane.getId() !== PaneIdConstants.X_AXIS) {
+              afterElement = this._separatorPanes.get(currentPane)?.getContainer() ?? null
+            } else {
+              afterElement = currentPane.getContainer()
+            }
+            newPane = new DrawPaneClass(this._chartContainer, afterElement, this, id, options ?? {})
             index = i
             break
           }
@@ -308,13 +310,15 @@ export default class ChartImp implements Chart {
       this._candlePane.getOptions().state === PaneState.Normal
     ) {
       const height = this._candlePane.getBounding().height
-      const minHeight = this._candlePane.getOptions().minHeight
-      let newHeight = height + changeHeight
-      if (newHeight < minHeight) {
-        newHeight = minHeight
-        currentHeight -= (height + changeHeight - newHeight)
+      if (height > 0) {
+        const minHeight = this._candlePane.getOptions().minHeight
+        let newHeight = height + changeHeight
+        if (newHeight < minHeight) {
+          newHeight = minHeight
+          currentHeight -= (height + changeHeight - newHeight)
+        }
+        this._candlePane.setBounding({ height: newHeight })
       }
-      this._candlePane.setBounding({ height: newHeight })
     } else {
       let remainingHeight = changeHeight
       const normalStatePaneChangeHeight = Math.floor(changeHeight / count)
@@ -336,7 +340,6 @@ export default class ChartImp implements Chart {
         currentHeight -= remainingHeight
       }
     }
-    
     currentPane.setBounding({ height: currentHeight })
     return true
   }
