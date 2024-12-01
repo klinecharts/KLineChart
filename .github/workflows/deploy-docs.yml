@@ -14,12 +14,14 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: 21
-      - run: npm install
-      - run: npm run docs:build
+          cache: pnpm
+      - run: pnpm install
+      - run: pnpm run docs:build
       - uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.DEPLOY_DOCS_TOKEN }}
