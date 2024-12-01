@@ -1,6 +1,6 @@
 # 📚 Data
 
-The data required for the chart must be in a fixed format. Through the chart API [applyNewData(dataList, more)](./instance-api.md#applynewdata-datalist-more), [applyMoreData(dataList, more)](./instance-api.md#applymoredatadatalist-more) and [updateData(data)](./instance-api.md#updatedatadata) to interact data with the chart.
+The data required by the chart must be in a fixed format. Use the chart instance APIs [applyNewData(dataList, more)](/en-US/api/instance/applyNewData) , [updateData(data)](/en-US/api/instance/updateData) and [setLoadMoreDataCallback(callback)](/en-US/api/instance/setLoadMoreDataCallback) to interact with the chart.
 
 ```typescript
 {
