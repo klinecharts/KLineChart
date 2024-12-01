@@ -86,6 +86,7 @@ export interface Chart extends Store {
   createOverlay: (value: string | OverlayCreate | Array<string | OverlayCreate>) => Nullable<string> | Array<Nullable<string>>
   getOverlays: (filter?: OverlayFilter) => Map<string, Overlay[]>
   setPaneOptions: (options: PaneOptions) => void
+  getPaneOptions: (id?: string) => Nullable<PaneOptions> | PaneOptions[]
   scrollByDistance: (distance: number, animationDuration?: number) => void
   scrollToRealTime: (animationDuration?: number) => void
   scrollToDataIndex: (dataIndex: number, animationDuration?: number) => void
@@ -1016,6 +1017,14 @@ export default class ChartImp implements Chart {
         forceBuildYAxisTick: true
       })
     }
+  }
+
+  getPaneOptions (id?: string): Nullable<PaneOptions> | PaneOptions[] {
+    if (isValid(id)) {
+      const pane = this.getDrawPaneById(id)
+      return pane?.getOptions() ?? null
+    }
+    return this._drawPanes.map(pane => pane.getOptions())
   }
 
   setZoomEnabled (enabled: boolean): void {
