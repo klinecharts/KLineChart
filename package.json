@@ -52,7 +52,7 @@
     "docs:dev": "pnpm -F=docs dev",
     "docs:build": "pnpm -F=docs build",
     "docs:preview": "pnpm -F=docs preview",
-    "docs:deploy": "pnpm docs:build && gh-pages -d website"
+    "docs:deploy": "pnpm build-umd:prod && pnpm docs:build && gh-pages -d website"
   },
   "engines": {
     "node": ">=0.10.0"

@@ -1,6 +1,6 @@
 import { init } from 'klinecharts';
 
-const chart = init('setPaneOptions-axis-chart');
+const chart = init('setPaneOptions-axis-basic-chart');
 chart.createIndicator('MACD');
 
 chart.setPaneOptions({

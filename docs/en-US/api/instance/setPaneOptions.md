@@ -25,6 +25,8 @@ outline: deep
     - `gap` Top and bottom margin configuration.
       - `top` Top margin.
       - `bottom` Bottom margin.
+    - `createRange` Create an axis value range callback method.
+    - `createTicks` Create ticks information callback method.
 
 ### Returns {#returns}
 `setPaneOptions` returns `undefined` .
@@ -34,18 +36,23 @@ outline: deep
 import SetPaneOptionsBasic from '../../../@views/api/samples/setPaneOptions-basic/index.vue'
 import SetPaneOptionsDragEnabled from '../../../@views/api/samples/setPaneOptions-dragEnabled/index.vue'
 import SetPaneOptionsState from '../../../@views/api/samples/setPaneOptions-state/index.vue'
-import SetPaneOptionsAxis from '../../../@views/api/samples/setPaneOptions-axis/index.vue'
+import SetPaneOptionsAxisBasic from '../../../@views/api/samples/setPaneOptions-axis-basic/index.vue'
+import SetPaneOptionsAxisExtension from '../../../@views/api/samples/setPaneOptions-axis-extension/index.vue'
 </script>
 
 ### Basic usage {#basic}
 <SetPaneOptionsBasic/>
 
-### 不可调整高度
+### Height cannot be adjusted {#dragEnabled}
 <SetPaneOptionsDragEnabled/>
 
-### 最小化
+### Minimize the window {#state}
 <SetPaneOptionsState/>
 
-### 坐标轴
-<SetPaneOptionsAxis/>
+### Set basic properties of the axis {#axis}
+<SetPaneOptionsAxisBasic/>
+
+### Simple custom axis
+<SetPaneOptionsAxisExtension/>
+
 

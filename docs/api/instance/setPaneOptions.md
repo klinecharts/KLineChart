@@ -25,6 +25,8 @@ outline: deep
     - `gap` 上下边距配置。
       - `top` 上边距。
       - `bottom` 下边距。
+    - `createRange` 创建轴上取值范围回调方法。如果是x轴此方法无用。
+    - `createTicks` 创建分割信息回调方法。
 
 ### 返回值 {#returns}
 `setPaneOptions` 返回 `undefined`。
@@ -34,18 +36,22 @@ outline: deep
 import SetPaneOptionsBasic from '../../@views/api/samples/setPaneOptions-basic/index.vue'
 import SetPaneOptionsDragEnabled from '../../@views/api/samples/setPaneOptions-dragEnabled/index.vue'
 import SetPaneOptionsState from '../../@views/api/samples/setPaneOptions-state/index.vue'
-import SetPaneOptionsAxis from '../../@views/api/samples/setPaneOptions-axis/index.vue'
+import SetPaneOptionsAxisBasic from '../../@views/api/samples/setPaneOptions-axis-basic/index.vue'
+import SetPaneOptionsAxisExtension from '../../@views/api/samples/setPaneOptions-axis-extension/index.vue'
 </script>
 
 ### 基本使用 {#basic}
 <SetPaneOptionsBasic/>
 
-### 不可调整高度
+### 不可调整高度 {#dragEnabled}
 <SetPaneOptionsDragEnabled/>
 
-### 最小化
+### 窗口最小化 {#state}
 <SetPaneOptionsState/>
 
-### 坐标轴
-<SetPaneOptionsAxis/>
+### 设置坐标轴基础属性 {#axis-basic}
+<SetPaneOptionsAxisBasic/>
+
+### 坐标轴简单自定义 {#axis-extension}
+<SetPaneOptionsAxisExtension/>
 

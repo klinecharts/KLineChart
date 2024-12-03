@@ -52,6 +52,8 @@ outline: deep
     - `gap` Top and bottom margin configuration.
       - `top` Top margin.
       - `bottom` Bottom margin.
+    - `createRange` Create an axis value range callback method.
+    - `createTicks` Create ticks information callback method.
 
 ### Returns {#returns}
 `createIndicator` returns pane id `string` or `null` .
@@ -62,7 +64,8 @@ import CreateIndicatorBasic from '../../../@views/api/samples/createIndicator-ba
 import CreateIndicatorExtension from '../../../@views/api/samples/custom-indicator-basic/index.vue'
 import CreateIndicatorStack from '../../../@views/api/samples/createIndicator-stack/index.vue'
 import CreateIndicatorObject from '../../../@views/api/samples/createIndicator-object/index.vue'
-import CreateIndicatorPaneOptions from '../../../@views/api/samples/createIndicator-paneOptions/index.vue'
+import CreateIndicatorPaneOptionsBasic from '../../../@views/api/samples/createIndicator-paneOptions-basic/index.vue'
+import CreateIndicatorPaneOptionsAxis from '../../../@views/api/samples/createIndicator-paneOptions-axis/index.vue'
 </script>
 
 ### Basic usage {#basic}
@@ -77,5 +80,8 @@ import CreateIndicatorPaneOptions from '../../../@views/api/samples/createIndica
 ### Setting indicator attrs {#attrs}
 <CreateIndicatorObject/>
 
-### Setting pane options {#paneOptions}
-<CreateIndicatorPaneOptions/>
+### Setting pane basic options {#paneOptions-basic}
+<CreateIndicatorPaneOptionsBasic/>
+
+### Setting pane axis {#paneOptions-axis}
+<CreateIndicatorPaneOptionsAxis/>

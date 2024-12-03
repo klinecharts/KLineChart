@@ -52,6 +52,8 @@ outline: deep
     - `gap` 上下边距配置。
       - `top` 上边距。
       - `bottom` 下边距。
+    - `createRange` 创建轴上取值范围回调方法。
+    - `createTicks` 创建分割信息回调方法。
 
 ### 返回值 {#returns}
 `createIndicator` 返回窗口id `string` 或者 `null`。
@@ -62,7 +64,8 @@ import CreateIndicatorBasic from '../../@views/api/samples/createIndicator-basic
 import CreateIndicatorExtension from '../../@views/api/samples/custom-indicator-basic/index.vue'
 import CreateIndicatorStack from '../../@views/api/samples/createIndicator-stack/index.vue'
 import CreateIndicatorObject from '../../@views/api/samples/createIndicator-object/index.vue'
-import CreateIndicatorPaneOptions from '../../@views/api/samples/createIndicator-paneOptions/index.vue'
+import CreateIndicatorPaneOptionsBasic from '../../@views/api/samples/createIndicator-paneOptions-basic/index.vue'
+import CreateIndicatorPaneOptionsAxis from '../../@views/api/samples/createIndicator-paneOptions-axis/index.vue'
 </script>
 
 ### 基本使用 {#basic}
@@ -77,5 +80,8 @@ import CreateIndicatorPaneOptions from '../../@views/api/samples/createIndicator
 ### 设置指标属性
 <CreateIndicatorObject/>
 
-### 设置窗口属性 {#paneOptions}
-<CreateIndicatorPaneOptions/>
+### 设置窗口基础属性 {#paneOptions-basic}
+<CreateIndicatorPaneOptionsBasic/>
+
+### 设置窗口坐标轴 {#paneOptions-axis}
+<CreateIndicatorPaneOptionsAxis/>

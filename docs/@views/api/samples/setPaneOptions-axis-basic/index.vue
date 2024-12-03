@@ -5,6 +5,6 @@ import { data } from './index.data'
 
 <template>
   <ChartPreview
-    chartId="createIndicator-paneOptions-chart"
+    chartId="setPaneOptions-axis-basic-chart"
     :code="data.js"/>
 </template>
