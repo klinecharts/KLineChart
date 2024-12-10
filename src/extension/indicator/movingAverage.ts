@@ -33,10 +33,10 @@ const movingAverage: IndicatorTemplate<Ma> = {
   precision: 2,
   shouldOhlc: true,
   figures: [
-    { key: 'ma5', title: 'MA5: ', type: 'line' },
-    { key: 'ma10', title: 'MA10: ', type: 'line' },
-    { key: 'ma30', title: 'MA30: ', type: 'line' },
-    { key: 'ma60', title: 'MA60: ', type: 'line' }
+    { key: 'ma1', title: 'MA5: ', type: 'line' },
+    { key: 'ma2', title: 'MA10: ', type: 'line' },
+    { key: 'ma3', title: 'MA30: ', type: 'line' },
+    { key: 'ma4', title: 'MA60: ', type: 'line' }
   ],
   regenerateFigures: (params: unknown[]) => params.map((p: number, i: number) => ({ key: `ma${i + 1}`, title: `MA${p}: `, type: 'line' })),
   calc: (dataList: KLineData[], indicator: Indicator<Ma>) => {
