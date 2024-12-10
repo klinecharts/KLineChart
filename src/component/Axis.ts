@@ -65,7 +65,7 @@ export interface AxisCreateTicksParams {
 
 export type AxisCreateTicksCallback = (params: AxisCreateTicksParams) => AxisTick[]
 
-export type AxisMinSpanCallback = (precision: number) => number
+export type AxisMinSpanCallback = (value?: number) => number
 
 export interface Axis {
   override: (axis: AxisTemplate) => void
@@ -93,7 +93,7 @@ export interface AxisTemplate {
   createTicks?: AxisCreateTicksCallback
 }
 
-export type AxisCreate = Omit<AxisTemplate, 'displayValueToText' | 'valueToRealValue' | 'realValueToDisplayValue' | 'displayValueToRealValue' | 'realValueToValue' | 'minSpan'>
+export type AxisCreate = Omit<AxisTemplate, 'displayValueToText' | 'valueToRealValue' | 'realValueToDisplayValue' | 'displayValueToRealValue' | 'realValueToValue'>
 
 function getDefaultAxisRange (): AxisRange {
   return {

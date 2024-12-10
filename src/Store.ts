@@ -24,13 +24,12 @@ import type BarSpace from './common/BarSpace';
 import type Precision from './common/Precision'
 import Action from './common/Action';
 import { ActionType, type ActionCallback } from './common/Action';
-import { formatValue, type DateTime, formatTimestampToDateTime, formatTimestampToString, formatBigNumber, formatThousands, formatFoldDecimal } from './common/utils/format'
+import { formatValue, formatTimestampToString, formatBigNumber, formatThousands, formatFoldDecimal } from './common/utils/format'
 import { getDefaultStyles, type Styles, type TooltipLegend } from './common/Styles'
 import { isArray, isString, isValid, isNumber, isBoolean, isFunction, merge } from './common/utils/typeChecks'
 import { createId } from './common/utils/id'
 import { binarySearchNearest } from './common/utils/number'
 import { logWarn } from './common/utils/logger'
-import { calcTextWidth } from './common/utils/canvas'
 import { UpdateLevel } from './common/Updater'
 import type { MouseTouchEvent } from './common/SyntheticEvent'
 import { type LoadDataCallback, type LoadDataParams, LoadDataType } from './common/LoadDataCallback'
@@ -51,22 +50,6 @@ import { getStyles as getExtensionStyles } from './extension/styles/index'
 import { PaneIdConstants } from './pane/types'
 
 import type Chart from './Chart'
-
-export interface TimeTick {
-  weight: number
-  dataIndex: number
-  dateTime: DateTime
-  timestamp: number
-}
-
-export const TimeWeightConstants = {
-  Year: 365 * 24 * 3600,
-  Month: 30 * 24 * 3600,
-  Day: 24 * 3600,
-  Hour: 3600,
-  Minute: 60,
-  Second: 1
-}
 
 const BarSpaceLimitConstants = {
   MIN: 1,
@@ -278,11 +261,6 @@ export default class StoreImp implements Store {
    */
   private _visibleRange = getDefaultVisibleRange()
 
-  private _cacheVisibleRange = getDefaultVisibleRange()
-
-  private readonly _timeTicks = new Map<number, TimeTick[]>()
-
-  private _visibleRangeTimeTickList: TimeTick[] = []
 
   /**
    * Visible data array
@@ -441,14 +419,16 @@ export default class StoreImp implements Store {
         logWarn('', '', 'Timezone is error!!!')
       }
       if (dateTimeFormat !== null) {
-        this._classifyTimeTicks(this._dataList)
-        this._adjustVisibleRangeTimeTickList()
         this._dateTimeFormat = dateTimeFormat
       }
     }
   }
 
   getTimezone (): string { return this._dateTimeFormat.resolvedOptions().timeZone }
+
+  getDateTimeFormat (): Intl.DateTimeFormat {
+    return this._dateTimeFormat
+  }
 
   setThousandsSeparator (thousandsSeparator: Partial<ThousandsSeparator>): void {
     merge(this._thousandsSeparator, thousandsSeparator)
@@ -497,13 +477,11 @@ export default class StoreImp implements Store {
           this._dataList = data
           this._loadDataMore.backward = more?.forward ?? false
           this._loadDataMore.forward = more?.forward ?? false
-          this._classifyTimeTicks(this._dataList)
           this.setOffsetRightDistance(this._offsetRightDistance)
           adjustFlag = true
           break
         }
         case LoadDataType.Backward: {
-          this._classifyTimeTicks(data, true)
           this._dataList = this._dataList.concat(data)
           this._loadDataMore.backward = more?.backward ?? false
           adjustFlag = dataLengthChange > 0
@@ -511,7 +489,6 @@ export default class StoreImp implements Store {
         }
         case LoadDataType.Forward: {
           this._dataList = data.concat(this._dataList)
-          this._classifyTimeTicks(this._dataList)
           this._loadDataMore.forward = more?.forward ?? false
           adjustFlag = dataLengthChange > 0
         }
@@ -524,7 +501,6 @@ export default class StoreImp implements Store {
       const timestamp = data.timestamp
       const lastDataTimestamp = formatValue(this._dataList[dataCount - 1], 'timestamp', 0) as number
       if (timestamp > lastDataTimestamp) {
-        this._classifyTimeTicks([data], true)
         this._dataList.push(data)
         let lastBarRightSideDiffBarCount = this.getLastBarRightSideDiffBarCount()
         if (lastBarRightSideDiffBarCount < 0) {
@@ -587,101 +563,6 @@ export default class StoreImp implements Store {
       --gapBarSpace
     }
     this._gapBarSpace = Math.max(1, gapBarSpace)
-  }
-
-  private _classifyTimeTicks (newDataList: KLineData[], isUpdate?: boolean): void {
-    let baseDataIndex = 0
-    let prevKLineData: Nullable<KLineData> = null
-    if (isUpdate ?? false) {
-      baseDataIndex = this._dataList.length
-      prevKLineData = this._dataList[baseDataIndex - 1]
-    } else {
-      this._timeTicks.clear()
-    }
-    for (let i = 0; i < newDataList.length; i++) {
-      const kLineData = newDataList[i]
-      let weight = TimeWeightConstants.Second
-      const dateTime = formatTimestampToDateTime(this._dateTimeFormat, kLineData.timestamp)
-      if (isValid(prevKLineData)) {
-        const prevDateTime = formatTimestampToDateTime(this._dateTimeFormat, prevKLineData.timestamp)
-        if (dateTime.YYYY !== prevDateTime.YYYY) {
-          weight = TimeWeightConstants.Year
-        } else if (dateTime.MM !== prevDateTime.MM) {
-          weight = TimeWeightConstants.Month
-        } else if (dateTime.DD !== prevDateTime.DD) {
-          weight = TimeWeightConstants.Day
-        } else if (dateTime.HH !== prevDateTime.HH) {
-          weight = TimeWeightConstants.Hour
-        } else if (dateTime.mm !== prevDateTime.mm) {
-          weight = TimeWeightConstants.Minute
-        } else {
-          weight = TimeWeightConstants.Second
-        }
-      }
-      const tickList = this._timeTicks.get(weight) ?? []
-      tickList.push({ dataIndex: i + baseDataIndex, weight, dateTime, timestamp: kLineData.timestamp })
-      this._timeTicks.set(weight, tickList)
-      prevKLineData = kLineData
-    }
-  }
-
-  private _adjustVisibleRangeTimeTickList (): void {
-    const tickTextStyles = this._styles.xAxis.tickText
-    const width = Math.max(
-      Math.ceil(this._totalBarSpace / 10),
-      calcTextWidth('0000-00-00 00:00', tickTextStyles.size, tickTextStyles.weight, tickTextStyles.family)
-    )
-    const barCount = Math.ceil(width / this._barSpace)
-    let tickList: TimeTick[] = []
-    Array.from(this._timeTicks.keys()).sort((w1, w2) => w2 - w1).forEach(key => {
-      const prevTickList = tickList
-      tickList = []
-
-      const prevTickListLength = prevTickList.length
-      let prevTickListPointer = 0
-      const currentTicks = this._timeTicks.get(key)!
-      const currentTicksLength = currentTicks.length
-
-      let rightIndex = Infinity
-      let leftIndex = -Infinity
-      for (let i = 0; i < currentTicksLength; i++) {
-        const tick = currentTicks[i]
-        const currentIndex = tick.dataIndex
-
-        while (prevTickListPointer < prevTickListLength) {
-          const lastMark = prevTickList[prevTickListPointer]
-          const lastIndex = lastMark.dataIndex
-          if (lastIndex < currentIndex) {
-            prevTickListPointer++
-            tickList.push(lastMark)
-            leftIndex = lastIndex
-            rightIndex = Infinity
-          } else {
-            rightIndex = lastIndex
-            break
-          }
-        }
-
-        if (rightIndex - currentIndex >= barCount && currentIndex - leftIndex >= barCount) {
-          tickList.push(tick)
-          leftIndex = currentIndex
-        }
-      }
-
-      for (; prevTickListPointer < prevTickListLength; prevTickListPointer++) {
-        tickList.push(prevTickList[prevTickListPointer])
-      }
-    })
-    this._visibleRangeTimeTickList = []
-    for (const tick of tickList) {
-      if (tick.dataIndex >= this._visibleRange.from && tick.dataIndex <= this._visibleRange.to) {
-        this._visibleRangeTimeTickList.push(tick)
-      }
-    }
-  }
-
-  getVisibleRangeTimeTickList (): TimeTick[] {
-    return this._visibleRangeTimeTickList
   }
 
   private _adjustVisibleRange (): void {
@@ -747,13 +628,6 @@ export default class StoreImp implements Store {
           this._visibleRangeHighLowPrice[1].x = x
         }
       }
-    }
-    if (
-      this._cacheVisibleRange.from !== this._visibleRange.from ||
-      this._cacheVisibleRange.to !== this._visibleRange.to
-    ) {
-      this._cacheVisibleRange = { ...this._visibleRange }
-      this._adjustVisibleRangeTimeTickList()
     }
     // More processing and loading, more loading if there are callback methods and no data is being loaded
     if (!this._loading && isValid(this._loadMoreDataCallback)) {
@@ -1530,8 +1404,6 @@ export default class StoreImp implements Store {
       { x: 0, price: Number.MAX_SAFE_INTEGER },
     ]
     this._visibleRange = getDefaultVisibleRange()
-    this._cacheVisibleRange = getDefaultVisibleRange()
-    this._timeTicks.clear()
     this._crosshair = {}
     this._activeTooltipIcon = null
   }
