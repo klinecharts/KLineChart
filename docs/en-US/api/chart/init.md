@@ -34,6 +34,8 @@ When calling, you need to wait until the container `dom` is ready.
         - `gap` Top and bottom margin configuration.
           - `top` Top margin.
           - `bottom` Bottom margin.
+        - `createRange` Create an axis value range callback method.
+        - `createTicks` Create ticks information callback method.
   - `locale` Locale, with built-in support for `zh-CN` and `en-US` .
   - `timezone` Timezone name, such as `Asia/Shanghai` . If not set, the local time zone will be automatically obtained. For a list of time zone names, please refer to the [Timezone List](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) .
   - `styles` It can be a style name registered by `klinecharts.registerStyles` or `Styles` . For details about `Styles` , see [Styles](/en-US/guide/styles). Incremental values ​​are supported.

@@ -34,6 +34,8 @@ outline: deep
         - `gap` 上下边距配置。
           - `top` 上边距。
           - `bottom` 下边距。
+        - `createRange` 创建轴上取值范围回调方法。如果是x轴此方法无用。
+        - `createTicks` 创建分割信息回调方法。
   - `locale` 语言，内置支持 `zh-CN` 和 `en-US` 。
   - `timezone` 时区名，如 `Asia/Shanghai` ，如果不设置会自动获取本机时区，时区对应名字列表请参阅 [时区列表](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) 。
   - `styles` 可以是通过 `klinecharts.registerStyles` 注册的样式名，也可以是 `Styles` ， `Styles` 详情参阅 [样式](/guide/styles) ，支持增量。
