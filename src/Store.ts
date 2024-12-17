@@ -33,6 +33,7 @@ import { logWarn } from './common/utils/logger'
 import { UpdateLevel } from './common/Updater'
 import type { MouseTouchEvent } from './common/SyntheticEvent'
 import { type LoadDataCallback, type LoadDataParams, LoadDataType } from './common/LoadDataCallback'
+import { calcTextWidth } from './common/utils/canvas'
 
 import type { Options, CustomApi, ThousandsSeparator, DecimalFold } from './Options'
 
@@ -279,7 +280,7 @@ export default class StoreImp implements Store {
 
   private readonly _timeWeightTickMap = new Map<number, TimeWeightTick[]>()
 
-  private _timeWeightTickList: TimeWeightTick[][] = []
+  private _timeWeightTickList: TimeWeightTick[] = []
 
   /**
    * Visible data array
@@ -623,10 +624,59 @@ export default class StoreImp implements Store {
       this._timeWeightTickMap.set(weight, currentTimeWeightList)
       prevKLineData = kLineData
     }
-    this._timeWeightTickList = Array.from(this._timeWeightTickMap.keys()).sort((w1, w2) => w2 - w1).map(key => (this._timeWeightTickMap.get(key) ?? []))
+    this._buildTimeWeightTickList()
   }
 
-  getTimeWeightTickList (): TimeWeightTick[][] {
+  private _buildTimeWeightTickList (): void {
+    const styles = this._styles.xAxis.tickText
+    const space = Math.max(calcTextWidth('0000-00-00 00:00:00', styles.size, styles.weight, styles.family), 146)
+    const barCount = Math.ceil(
+      space / this._barSpace
+    )
+    let optTimeWeightTickList: TimeWeightTick[] = []
+    Array.from(this._timeWeightTickMap.keys()).sort((w1, w2) => w2 - w1).forEach(weight => {
+      const currentTimeWeightTickList = this._timeWeightTickMap.get(weight)!
+      const prevOptTimeWeightTickList = optTimeWeightTickList
+      optTimeWeightTickList = []
+
+      const prevOptTimeWeightTickListLength = prevOptTimeWeightTickList.length
+      let prevOptTimeWeightTickListPointer = 0
+      const currentTimeWeightTickListLength = currentTimeWeightTickList.length
+
+      let rightIndex = Infinity
+      let leftIndex = -Infinity
+      for (let i = 0; i < currentTimeWeightTickListLength; i++) {
+        const timeWeightTick = currentTimeWeightTickList[i]
+        const currentIndex = timeWeightTick.dataIndex
+
+        while (prevOptTimeWeightTickListPointer < prevOptTimeWeightTickListLength) {
+          const lastTimeWeightTick = prevOptTimeWeightTickList[prevOptTimeWeightTickListPointer]
+          const lastIndex = lastTimeWeightTick.dataIndex
+          if (lastIndex < currentIndex) {
+            prevOptTimeWeightTickListPointer++
+            optTimeWeightTickList.push(lastTimeWeightTick)
+            leftIndex = lastIndex
+            rightIndex = Infinity
+          } else {
+            rightIndex = lastIndex
+            break
+          }
+        }
+
+        if (rightIndex - currentIndex >= barCount && currentIndex - leftIndex >= barCount) {
+          optTimeWeightTickList.push(timeWeightTick)
+          leftIndex = currentIndex
+        }
+      }
+
+      for (; prevOptTimeWeightTickListPointer < prevOptTimeWeightTickListLength; prevOptTimeWeightTickListPointer++) {
+        optTimeWeightTickList.push(prevOptTimeWeightTickList[prevOptTimeWeightTickListPointer])
+      }
+    })
+    this._timeWeightTickList = optTimeWeightTickList
+  }
+
+  getTimeWeightTickList (): TimeWeightTick[] {
     return this._timeWeightTickList
   }
 
@@ -740,6 +790,7 @@ export default class StoreImp implements Store {
       return
     }
     this._barSpace = barSpace
+    this._buildTimeWeightTickList()
     this._calcOptimalBarSpace()
     adjustBeforeFunc?.()
     this._adjustVisibleRange()

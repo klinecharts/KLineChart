@@ -15,13 +15,12 @@
 import type Nullable from '../common/Nullable'
 import type Bounding from '../common/Bounding'
 import { isFunction, isString } from '../common/utils/typeChecks'
-import { calcTextWidth } from '../common/utils/canvas'
 
 import AxisImp, { type AxisTemplate, type Axis, type AxisRange, type AxisTick, type AxisMinSpanCallback } from './Axis'
 
 import type DrawPane from '../pane/DrawPane'
 
-import { type TimeWeightTick, TimeWeightConstants } from '../Store'
+import { TimeWeightConstants } from '../Store'
 import { FormatDateType } from '../Options'
 
 export type XAxisTemplate = Pick<AxisTemplate, 'name' | 'scrollZoomEnabled' | 'createTicks' | 'minSpan'>
@@ -80,52 +79,10 @@ export default abstract class XAxisImp extends AxisImp implements XAxis {
   protected override createTicksImp (): AxisTick[] {
     const { realFrom, realTo } = this.getRange()
     const chartStore = this.getParent().getChart().getChartStore()
-    const timeWeightTickList = chartStore.getTimeWeightTickList()
-    const styles = chartStore.getStyles().xAxis.tickText
-
-    const barCount = Math.ceil(calcTextWidth('0000-00-00 00-00-00-00', styles.size, styles.weight, styles.family) / chartStore.getBarSpace().bar)
-    let optTimeWeightTickList: TimeWeightTick[] = []
-    timeWeightTickList.forEach(currentTimeWeightTickList => {
-      const prevOptTimeWeightTickList = optTimeWeightTickList
-      optTimeWeightTickList = []
-
-      const prevOptTimeWeightTickListLength = prevOptTimeWeightTickList.length
-      let prevOptTimeWeightTickListPointer = 0
-      const currentTimeWeightTickListLength = currentTimeWeightTickList.length
-
-      let rightIndex = Infinity
-      let leftIndex = -Infinity
-      for (let i = 0; i < currentTimeWeightTickListLength; i++) {
-        const timeWeightTick = currentTimeWeightTickList[i]
-        const currentIndex = timeWeightTick.dataIndex
-
-        while (prevOptTimeWeightTickListPointer < prevOptTimeWeightTickListLength) {
-          const lastTimeWeightTick = prevOptTimeWeightTickList[prevOptTimeWeightTickListPointer]
-          const lastIndex = lastTimeWeightTick.dataIndex
-          if (lastIndex < currentIndex) {
-            prevOptTimeWeightTickListPointer++
-            optTimeWeightTickList.push(lastTimeWeightTick)
-            leftIndex = lastIndex
-            rightIndex = Infinity
-          } else {
-            rightIndex = lastIndex
-            break
-          }
-        }
-
-        if (rightIndex - currentIndex >= barCount && currentIndex - leftIndex >= barCount) {
-          optTimeWeightTickList.push(timeWeightTick)
-          leftIndex = currentIndex
-        }
-      }
-
-      for (; prevOptTimeWeightTickListPointer < prevOptTimeWeightTickListLength; prevOptTimeWeightTickListPointer++) {
-        optTimeWeightTickList.push(prevOptTimeWeightTickList[prevOptTimeWeightTickListPointer])
-      }
-    })
-    const ticks: AxisTick[] = []
     const formatDate = chartStore.getCustomApi().formatDate
-    for (const timeWeightTick of optTimeWeightTickList) {
+    const timeWeightTickList = chartStore.getTimeWeightTickList()
+    const ticks: AxisTick[] = []
+    for (const timeWeightTick of timeWeightTickList) {
       if (timeWeightTick.dataIndex >= realFrom && timeWeightTick.dataIndex <= realTo) {
         const { timestamp, weight, dataIndex } = timeWeightTick
         let text = ''
