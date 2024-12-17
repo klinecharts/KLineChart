@@ -38,6 +38,7 @@
   "license": "Apache-2.0",
   "private": false,
   "scripts": {
+    "preinstall": "npx only-allow pnpm",
     "lint": "eslint src/**/*.ts",
     "clean": "node scripts/clean.js",
     "build-esm": "node scripts/build-esm.js",
@@ -60,12 +61,13 @@
   "packageManager": "pnpm@9.12.3",
   "devDependencies": {
     "@babel/standalone": "^7.24.4",
+    "@eslint/eslintrc": "^3.2.0",
+    "@rollup/plugin-eslint": "^9.0.5",
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-replace": "^5.0.5",
     "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^11.1.6",
-    "@rollup/pluginutils": "^5.1.0",
     "@stackblitz/sdk": "^1.9.0",
     "@types/node": "^20.12.7",
     "@vueuse/core": "^11.1.0",
@@ -73,8 +75,9 @@
     "codesandbox": "^2.2.3",
     "cross-env": "^7.0.3",
     "dts-bundle-generator": "^9.5.1",
-    "eslint": "^9.13.0",
-    "eslint-config-love": "^97.0.0",
+    "eslint": "^9.17.0",
+    "eslint-config-love": "^112.0.0",
+    "eslint-config-standard": "^17.1.0",
     "eslint-plugin-file-progress": "^1.5.0",
     "fs-extra": "^11.2.0",
     "gh-pages": "^6.1.1",
@@ -86,5 +89,10 @@
     "tslib": "^2.6.2",
     "typescript": "^5.5.4",
     "vitepress": "^1.5.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "@rollup/plugin-eslint>eslint": "$eslint"
+    }
   }
 }

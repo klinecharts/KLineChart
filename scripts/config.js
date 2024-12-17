@@ -1,13 +1,13 @@
-import child_process from 'child_process'
+// import child_process from 'child_process'
 
 import { nodeResolve } from '@rollup/plugin-node-resolve'
 import replace from '@rollup/plugin-replace'
 import typescript from '@rollup/plugin-typescript'
 import terser from '@rollup/plugin-terser'
 import fileSize from 'rollup-plugin-filesize'
-import eslint from './eslint.js'
+import eslint from '@rollup/plugin-eslint'
 
-import { resolvePath, getVersion } from './utils.js' 
+import { resolvePath, getVersion } from './utils.js'
 
 const version = getVersion()
 
@@ -38,7 +38,7 @@ function createInputConfig ({ input, replaceValues }) {
         preventAssignment: true,
         values: {
           // '__VERSION__': `v${version}(${commitId.length > 0 ? `${commitId}, ` : ''}${new Date().toISOString()})`,
-          '__VERSION__': version,
+          __VERSION__: version,
           ...replaceValues
         }
       }),
@@ -68,16 +68,16 @@ function createOutputConfig ({
      * KLineChart v${version}
      * Copyright (c) 2019 lihu.
      * Licensed under Apache License 2.0 https://www.apache.org/licenses/LICENSE-2.0
-     */`.trim(),
+     */`.trim()
   }
-  
-  if (!!name) {
+
+  if (name) {
     config.name = name
   }
   return config
 }
 
-export { 
+export {
   createInputConfig,
   createOutputConfig,
   version,
