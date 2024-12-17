@@ -1,4 +1,4 @@
- /* eslint-disable eslint-comments/require-description -- ignore */
+/* eslint-disable eslint-comments/require-description -- ignore */
 
 /**
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,6 +28,13 @@ import type Nullable from './Nullable'
 
 import { isFF, isIOS } from './utils/platform'
 import { isValid } from './utils/typeChecks'
+
+export interface MouseTouchEvent extends Coordinate {
+  pageX: number
+  pageY: number
+  isTouch?: boolean
+  preventDefault?: () => void
+}
 
 export type MouseTouchEventCallback = (event: MouseTouchEvent, other?: number) => boolean
 
@@ -67,13 +74,6 @@ export interface EventHandler {
 
 export type EventName = keyof EventHandler
 
-export interface MouseTouchEvent extends Coordinate {
-  pageX: number
-  pageY: number
-  isTouch?: boolean
-  preventDefault?: () => void
-}
-
 export interface EventOptions {
   treatVertDragAsPageScroll: () => boolean
   treatHorzDragAsPageScroll: () => boolean
@@ -93,13 +93,13 @@ const ManhattanDistance = {
   CancelClick: 5,
   CancelTap: 5,
   DoubleClick: 5,
-  DoubleTap: 30,
+  DoubleTap: 30
 }
 
 const MouseEventButton = {
   Left: 0,
   Middle: 1,
-  Right: 2,
+  Right: 2
 }
 
 export const TOUCH_MIN_RADIUS = 10
@@ -319,13 +319,15 @@ export default class SyntheticEvent {
       this._preventDefault(wheelEvent)
 
       switch (wheelEvent.deltaMode) {
-        case wheelEvent.DOM_DELTA_PAGE:
+        case wheelEvent.DOM_DELTA_PAGE: {
           deltaY *= 120
           break
+        }
 
-        case wheelEvent.DOM_DELTA_LINE:
+        case wheelEvent.DOM_DELTA_LINE: {
           deltaY *= 32
           break
+        }
       }
 
       if (deltaY !== 0) {
@@ -361,7 +363,6 @@ export default class SyntheticEvent {
     const moveInfo = this._mouseTouchMoveWithDownInfo(this._getCoordinate(touch), this._touchMoveStartCoordinate!)
     const { xOffset, yOffset, manhattanDistance } = moveInfo
 
-     
     if (!this._touchMoveExceededManhattanDistance && manhattanDistance < ManhattanDistance.CancelTap) {
       return
     }
@@ -401,7 +402,6 @@ export default class SyntheticEvent {
   }
 
   private _mouseMoveWithDownHandler (moveEvent: MouseEvent): void {
-     
     if (moveEvent.button !== MouseEventButton.Left) {
       return
     }
@@ -409,7 +409,6 @@ export default class SyntheticEvent {
     const moveInfo = this._mouseTouchMoveWithDownInfo(this._getCoordinate(moveEvent), this._mouseMoveStartCoordinate!)
     const { manhattanDistance } = moveInfo
 
-     
     if (manhattanDistance >= ManhattanDistance.CancelClick) {
       // if manhattan distance is more that 5 - we should cancel click event
       this._cancelClick = true
@@ -452,7 +451,7 @@ export default class SyntheticEvent {
 
       if (this._tapTimeoutId !== null && this._tapCount > 1) {
         const { manhattanDistance } = this._mouseTouchMoveWithDownInfo(this._getCoordinate(dblClickEvent), this._tapCoordinate)
-         
+
         if (manhattanDistance < ManhattanDistance.DoubleTap && !this._cancelTap) {
           this._processEvent(this._makeCompatEvent(dblClickEvent), this._handler.doubleTapEvent)
         }
@@ -463,7 +462,7 @@ export default class SyntheticEvent {
 
       if (this._clickTimeoutId !== null && this._clickCount > 1) {
         const { manhattanDistance } = this._mouseTouchMoveWithDownInfo(this._getCoordinate(dblClickEvent), this._clickCoordinate)
-         
+
         if (manhattanDistance < ManhattanDistance.DoubleClick && !this._cancelClick) {
           this._processEvent(this._makeCompatEvent(dblClickEvent), this._handler.mouseDoubleClickEvent)
         }
@@ -472,7 +471,6 @@ export default class SyntheticEvent {
     }
   }
 
-   
   private _touchEndHandler (touchEndEvent: TouchEvent): void {
     let touch = this._touchWithId(touchEndEvent.changedTouches, this._activeTouchId)
     if (touch === null && touchEndEvent.touches.length === 0) {

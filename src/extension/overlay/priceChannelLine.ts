@@ -23,11 +23,11 @@ const priceChannelLine: OverlayTemplate = {
   needDefaultXAxisFigure: true,
   needDefaultYAxisFigure: true,
   createPointFigures: ({ coordinates, bounding }) => [
-      {
-        type: 'line',
-        attrs: getParallelLines(coordinates, bounding, 1)
-      }
-    ]
+    {
+      type: 'line',
+      attrs: getParallelLines(coordinates, bounding, 1)
+    }
+  ]
 }
 
 export default priceChannelLine

@@ -57,11 +57,11 @@ const rayLine: OverlayTemplate = {
   needDefaultXAxisFigure: true,
   needDefaultYAxisFigure: true,
   createPointFigures: ({ coordinates, bounding }) => [
-      {
-        type: 'line',
-        attrs: getRayLine(coordinates, bounding)
-      }
-    ]
+    {
+      type: 'line',
+      attrs: getRayLine(coordinates, bounding)
+    }
+  ]
 }
 
 export default rayLine

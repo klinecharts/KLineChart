@@ -70,11 +70,11 @@ const parallelStraightLine: OverlayTemplate = {
   needDefaultXAxisFigure: true,
   needDefaultYAxisFigure: true,
   createPointFigures: ({ coordinates, bounding }) => [
-      {
-        type: 'line',
-        attrs: getParallelLines(coordinates, bounding)
-      }
-    ]
+    {
+      type: 'line',
+      attrs: getParallelLines(coordinates, bounding)
+    }
+  ]
 }
 
 export default parallelStraightLine

@@ -31,7 +31,6 @@ function getSupportedLocales (): string[] {
 }
 
 function i18n (key: string, locale: string): string {
-   
   return locales[locale][key] ?? key
 }
 

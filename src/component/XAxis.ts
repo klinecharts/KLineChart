@@ -14,14 +14,15 @@
 
 import type Nullable from '../common/Nullable'
 import type Bounding from '../common/Bounding'
-import { isFunction, isNumber, isString, isValid } from '../common/utils/typeChecks'
-import { type DateTime, formatTimestampToDateTime } from '../common/utils/format'
+import { isFunction, isString } from '../common/utils/typeChecks'
+import { calcTextWidth } from '../common/utils/canvas'
 
 import AxisImp, { type AxisTemplate, type Axis, type AxisRange, type AxisTick, type AxisMinSpanCallback } from './Axis'
 
 import type DrawPane from '../pane/DrawPane'
+
+import { type TimeWeightTick, TimeWeightConstants } from '../Store'
 import { FormatDateType } from '../Options'
-import { calcTextWidth } from '../common/utils/canvas'
 
 export type XAxisTemplate = Pick<AxisTemplate, 'name' | 'scrollZoomEnabled' | 'createTicks' | 'minSpan'>
 
@@ -31,23 +32,6 @@ export interface XAxis extends Axis, Required<XAxisTemplate> {
 }
 
 export type XAxisConstructor = new (parent: DrawPane) => XAxis
-
-export interface TimeWeightTick {
-  weight: number
-  dataIndex: number
-  dateTime: DateTime
-  timestamp: number
-}
-
-export const TimeWeightConstants = {
-  Year: 365 * 24 * 3600,
-  Month: 30 * 24 * 3600,
-  Day: 24 * 3600,
-  Hour: 3600,
-  Minute: 60,
-  Second: 1,
-  Unknown: -1
-}
 
 export default abstract class XAxisImp extends AxisImp implements XAxis {
   minSpan: AxisMinSpanCallback
@@ -96,91 +80,31 @@ export default abstract class XAxisImp extends AxisImp implements XAxis {
   protected override createTicksImp (): AxisTick[] {
     const { realFrom, realTo } = this.getRange()
     const chartStore = this.getParent().getChart().getChartStore()
-    const dataList = chartStore.getDataList()
-    const dateTimeFormat = chartStore.getDateTimeFormat()
-
+    const timeWeightTickList = chartStore.getTimeWeightTickList()
     const styles = chartStore.getStyles().xAxis.tickText
-    const textWidth = calcTextWidth('0000-00-00 00:00:00', styles.size, styles.weight, styles.family)
-    const barCount = Math.ceil(textWidth / chartStore.getBarSpace().bar)
-    let visibleFrom = Math.floor(realFrom / barCount) * barCount
-    if (visibleFrom > dataList.length - 1) {
-      visibleFrom = dataList.length -1
-    }
 
-    const timeWeightTicks = new Map<number, TimeWeightTick[]>()
-    
-    let timeDiff = -1
-    if (isFunction(this.minSpan)) {
-      timeDiff = this.minSpan()
-    }
-    
-    let prevDateTime: Nullable<DateTime> = null
-    let prevTimestamp: Nullable<number> = null
-    if (isValid(dataList[visibleFrom - 1])) {
-      prevDateTime = formatTimestampToDateTime(dateTimeFormat, dataList[visibleFrom - 1].timestamp)
-    }
+    const barCount = Math.ceil(calcTextWidth('0000-00-00 00-00-00-00', styles.size, styles.weight, styles.family) / chartStore.getBarSpace().bar)
+    let optTimeWeightTickList: TimeWeightTick[] = []
+    timeWeightTickList.forEach(currentTimeWeightTickList => {
+      const prevOptTimeWeightTickList = optTimeWeightTickList
+      optTimeWeightTickList = []
 
-    for (let i = visibleFrom; i < realTo; i++) {
-      const kLineData = dataList[i]
-      let timestamp: Nullable<number> = null
-      if (isValid(kLineData)) {
-        timestamp = kLineData.timestamp
-      } else {
-        if (isNumber(prevTimestamp) && timeDiff > 0) {
-          timestamp = prevTimestamp + timeDiff
-        }
-      }
-      if (isNumber(timestamp)) {
-        let weight = TimeWeightConstants.Unknown
-        const dateTime = formatTimestampToDateTime(dateTimeFormat, timestamp)
-        if (isValid(prevTimestamp)) {
-          const pdt = prevDateTime!
-          if (dateTime.YYYY !== pdt.YYYY) {
-            weight = TimeWeightConstants.Year
-          } else if (dateTime.MM !== pdt.MM) {
-            weight = TimeWeightConstants.Month
-          } else if (dateTime.DD !== pdt.DD) {
-            weight = TimeWeightConstants.Day
-          } else if (dateTime.HH !== pdt.HH) {
-            weight = TimeWeightConstants.Hour
-          } else if (dateTime.mm !== pdt.mm) {
-            weight = TimeWeightConstants.Minute
-          } else if (dateTime.ss !== pdt.ss) {
-            weight = TimeWeightConstants.Second
-          }
-        }
-        const currentTimeWeightTickList = timeWeightTicks.get(weight) ?? new Array<TimeWeightTick>
-        currentTimeWeightTickList.push({ dataIndex: i, weight, dateTime, timestamp })
-        timeWeightTicks.set(weight, currentTimeWeightTickList)
-        prevDateTime = dateTime
-        prevTimestamp = timestamp
-      }
-    }
-
-    let timeWeightTickList: TimeWeightTick[] = []
-    const sortWeights = Array.from(timeWeightTicks.keys()).sort((w1, w2) => w2 - w1)
-    
-    sortWeights.forEach(key => {
-      const prevTickList = timeWeightTickList
-      timeWeightTickList = []
-
-      const prevTickListLength = prevTickList.length
-      let prevTickListPointer = 0
-      const currentTicks = timeWeightTicks.get(key)!
-      const currentTicksLength = currentTicks.length
+      const prevOptTimeWeightTickListLength = prevOptTimeWeightTickList.length
+      let prevOptTimeWeightTickListPointer = 0
+      const currentTimeWeightTickListLength = currentTimeWeightTickList.length
 
       let rightIndex = Infinity
       let leftIndex = -Infinity
-      for (let i = 0; i < currentTicksLength; i++) {
-        const tick = currentTicks[i]
-        const currentIndex = tick.dataIndex
+      for (let i = 0; i < currentTimeWeightTickListLength; i++) {
+        const timeWeightTick = currentTimeWeightTickList[i]
+        const currentIndex = timeWeightTick.dataIndex
 
-        while (prevTickListPointer < prevTickListLength) {
-          const lastMark = prevTickList[prevTickListPointer]
-          const lastIndex = lastMark.dataIndex
+        while (prevOptTimeWeightTickListPointer < prevOptTimeWeightTickListLength) {
+          const lastTimeWeightTick = prevOptTimeWeightTickList[prevOptTimeWeightTickListPointer]
+          const lastIndex = lastTimeWeightTick.dataIndex
           if (lastIndex < currentIndex) {
-            prevTickListPointer++
-            timeWeightTickList.push(lastMark)
+            prevOptTimeWeightTickListPointer++
+            optTimeWeightTickList.push(lastTimeWeightTick)
             leftIndex = lastIndex
             rightIndex = Infinity
           } else {
@@ -190,20 +114,20 @@ export default abstract class XAxisImp extends AxisImp implements XAxis {
         }
 
         if (rightIndex - currentIndex >= barCount && currentIndex - leftIndex >= barCount) {
-          timeWeightTickList.push(tick)
+          optTimeWeightTickList.push(timeWeightTick)
           leftIndex = currentIndex
         }
       }
-      for (; prevTickListPointer < prevTickListLength; prevTickListPointer++) {
-        timeWeightTickList.push(prevTickList[prevTickListPointer])
+
+      for (; prevOptTimeWeightTickListPointer < prevOptTimeWeightTickListLength; prevOptTimeWeightTickListPointer++) {
+        optTimeWeightTickList.push(prevOptTimeWeightTickList[prevOptTimeWeightTickListPointer])
       }
     })
-
-    const formatDate = chartStore.getCustomApi().formatDate
     const ticks: AxisTick[] = []
-    for (const tick of timeWeightTickList) {
-      if (tick.dataIndex >= visibleFrom && tick.dataIndex < realTo) {
-        const { timestamp, weight, dataIndex } = tick
+    const formatDate = chartStore.getCustomApi().formatDate
+    for (const timeWeightTick of optTimeWeightTickList) {
+      if (timeWeightTick.dataIndex >= realFrom && timeWeightTick.dataIndex <= realTo) {
+        const { timestamp, weight, dataIndex } = timeWeightTick
         let text = ''
         switch (weight) {
           case TimeWeightConstants.Year: {
@@ -223,7 +147,7 @@ export default abstract class XAxisImp extends AxisImp implements XAxis {
             text = formatDate(timestamp, 'HH:mm', FormatDateType.XAxis)
             break
           }
-          case TimeWeightConstants.Second:  {
+          case TimeWeightConstants.Second: {
             text = formatDate(timestamp, 'mm:ss', FormatDateType.XAxis)
             break
           }
@@ -234,8 +158,8 @@ export default abstract class XAxisImp extends AxisImp implements XAxis {
         }
         ticks.push({
           coord: this.convertToPixel(dataIndex),
-          text,
-          value: timestamp
+          value: timestamp,
+          text
         })
       }
     }

@@ -15,16 +15,16 @@
 import type Nullable from './common/Nullable'
 import type DeepPartial from './common/DeepPartial'
 import type { KLineData, VisibleRangeData } from './common/Data'
-import type VisibleRange from './common/VisibleRange';
-import type Coordinate from './common/Coordinate';
+import type VisibleRange from './common/VisibleRange'
+import type Coordinate from './common/Coordinate'
 import { getDefaultVisibleRange } from './common/VisibleRange'
 import TaskScheduler, { generateTaskId } from './common/TaskScheduler'
-import type Crosshair from './common/Crosshair';
-import type BarSpace from './common/BarSpace';
+import type Crosshair from './common/Crosshair'
+import type BarSpace from './common/BarSpace'
 import type Precision from './common/Precision'
-import Action from './common/Action';
-import { ActionType, type ActionCallback } from './common/Action';
-import { formatValue, formatTimestampToString, formatBigNumber, formatThousands, formatFoldDecimal } from './common/utils/format'
+import Action from './common/Action'
+import { ActionType, type ActionCallback } from './common/Action'
+import { formatValue, type DateTime, formatTimestampToDateTime, formatTimestampToString, formatBigNumber, formatThousands, formatFoldDecimal } from './common/utils/format'
 import { getDefaultStyles, type Styles, type TooltipLegend } from './common/Styles'
 import { isArray, isString, isValid, isNumber, isBoolean, isFunction, merge } from './common/utils/typeChecks'
 import { createId } from './common/utils/id'
@@ -41,7 +41,7 @@ import type IndicatorImp from './component/Indicator'
 import { IndicatorSeries } from './component/Indicator'
 import { getIndicatorClass } from './extension/indicator/index'
 
-import type OverlayImp from './component/Overlay';
+import type OverlayImp from './component/Overlay'
 import { type OverlayCreate, OVERLAY_ID_PREFIX, type OverlayFilter } from './component/Overlay'
 import { getOverlayInnerClass } from './extension/overlay/index'
 
@@ -50,6 +50,22 @@ import { getStyles as getExtensionStyles } from './extension/styles/index'
 import { PaneIdConstants } from './pane/types'
 
 import type Chart from './Chart'
+
+export interface TimeWeightTick {
+  weight: number
+  dataIndex: number
+  dateTime: DateTime
+  timestamp: number
+}
+
+export const TimeWeightConstants = {
+  Year: 365 * 24 * 3600,
+  Month: 30 * 24 * 3600,
+  Day: 24 * 3600,
+  Hour: 3600,
+  Minute: 60,
+  Second: 1
+}
 
 const BarSpaceLimitConstants = {
   MIN: 1,
@@ -168,7 +184,7 @@ export default class StoreImp implements Store {
    */
   private readonly _decimalFold = {
     threshold: 3,
-    format: (value: string | number ) => formatFoldDecimal(value, this._decimalFold.threshold)
+    format: (value: string | number) => formatFoldDecimal(value, this._decimalFold.threshold)
   }
 
   /**
@@ -261,6 +277,9 @@ export default class StoreImp implements Store {
    */
   private _visibleRange = getDefaultVisibleRange()
 
+  private readonly _timeWeightTickMap = new Map<number, TimeWeightTick[]>()
+
+  private _timeWeightTickList: TimeWeightTick[][] = []
 
   /**
    * Visible data array
@@ -272,7 +291,7 @@ export default class StoreImp implements Store {
    */
   private _visibleRangeHighLowPrice = [
     { x: 0, price: Number.MIN_SAFE_INTEGER },
-    { x: 0, price: Number.MAX_SAFE_INTEGER },
+    { x: 0, price: Number.MAX_SAFE_INTEGER }
   ]
 
   /**
@@ -287,7 +306,7 @@ export default class StoreImp implements Store {
 
   /**
    * Actions
-   */ 
+   */
   private readonly _actions = new Map<ActionType, Action>()
 
   /**
@@ -407,7 +426,7 @@ export default class StoreImp implements Store {
         day: '2-digit',
         hour: '2-digit',
         minute: '2-digit',
-        second: '2-digit',
+        second: '2-digit'
       }
       if (timezone.length > 0) {
         options.timeZone = timezone
@@ -419,16 +438,13 @@ export default class StoreImp implements Store {
         logWarn('', '', 'Timezone is error!!!')
       }
       if (dateTimeFormat !== null) {
+        this._classifyTimeWeightTicks(this._dataList)
         this._dateTimeFormat = dateTimeFormat
       }
     }
   }
 
   getTimezone (): string { return this._dateTimeFormat.resolvedOptions().timeZone }
-
-  getDateTimeFormat (): Intl.DateTimeFormat {
-    return this._dateTimeFormat
-  }
 
   setThousandsSeparator (thousandsSeparator: Partial<ThousandsSeparator>): void {
     merge(this._thousandsSeparator, thousandsSeparator)
@@ -477,11 +493,13 @@ export default class StoreImp implements Store {
           this._dataList = data
           this._loadDataMore.backward = more?.forward ?? false
           this._loadDataMore.forward = more?.forward ?? false
+          this._classifyTimeWeightTicks(this._dataList)
           this.setOffsetRightDistance(this._offsetRightDistance)
           adjustFlag = true
           break
         }
         case LoadDataType.Backward: {
+          this._classifyTimeWeightTicks(data, true)
           this._dataList = this._dataList.concat(data)
           this._loadDataMore.backward = more?.backward ?? false
           adjustFlag = dataLengthChange > 0
@@ -489,8 +507,13 @@ export default class StoreImp implements Store {
         }
         case LoadDataType.Forward: {
           this._dataList = data.concat(this._dataList)
+          this._classifyTimeWeightTicks(this._dataList)
           this._loadDataMore.forward = more?.forward ?? false
           adjustFlag = dataLengthChange > 0
+          break
+        }
+        default: {
+          break
         }
       }
       this._loading = false
@@ -501,6 +524,7 @@ export default class StoreImp implements Store {
       const timestamp = data.timestamp
       const lastDataTimestamp = formatValue(this._dataList[dataCount - 1], 'timestamp', 0) as number
       if (timestamp > lastDataTimestamp) {
+        this._classifyTimeWeightTicks([data], true)
         this._dataList.push(data)
         let lastBarRightSideDiffBarCount = this.getLastBarRightSideDiffBarCount()
         if (lastBarRightSideDiffBarCount < 0) {
@@ -565,6 +589,47 @@ export default class StoreImp implements Store {
     this._gapBarSpace = Math.max(1, gapBarSpace)
   }
 
+  private _classifyTimeWeightTicks (newDataList: KLineData[], isUpdate?: boolean): void {
+    let baseDataIndex = 0
+    let prevKLineData: Nullable<KLineData> = null
+    if (isUpdate ?? false) {
+      baseDataIndex = this._dataList.length
+      prevKLineData = this._dataList[baseDataIndex - 1]
+    } else {
+      this._timeWeightTickMap.clear()
+    }
+    for (let i = 0; i < newDataList.length; i++) {
+      const kLineData = newDataList[i]
+      let weight = TimeWeightConstants.Second
+      const dateTime = formatTimestampToDateTime(this._dateTimeFormat, kLineData.timestamp)
+      if (isValid(prevKLineData)) {
+        const prevDateTime = formatTimestampToDateTime(this._dateTimeFormat, prevKLineData.timestamp)
+        if (dateTime.YYYY !== prevDateTime.YYYY) {
+          weight = TimeWeightConstants.Year
+        } else if (dateTime.MM !== prevDateTime.MM) {
+          weight = TimeWeightConstants.Month
+        } else if (dateTime.DD !== prevDateTime.DD) {
+          weight = TimeWeightConstants.Day
+        } else if (dateTime.HH !== prevDateTime.HH) {
+          weight = TimeWeightConstants.Hour
+        } else if (dateTime.mm !== prevDateTime.mm) {
+          weight = TimeWeightConstants.Minute
+        } else {
+          weight = TimeWeightConstants.Second
+        }
+      }
+      const currentTimeWeightList = this._timeWeightTickMap.get(weight) ?? []
+      currentTimeWeightList.push({ dataIndex: i + baseDataIndex, weight, dateTime, timestamp: kLineData.timestamp })
+      this._timeWeightTickMap.set(weight, currentTimeWeightList)
+      prevKLineData = kLineData
+    }
+    this._timeWeightTickList = Array.from(this._timeWeightTickMap.keys()).sort((w1, w2) => w2 - w1).map(key => (this._timeWeightTickMap.get(key) ?? []))
+  }
+
+  getTimeWeightTickList (): TimeWeightTick[][] {
+    return this._timeWeightTickList
+  }
+
   private _adjustVisibleRange (): void {
     const totalBarCount = this._dataList.length
     const visibleBarCount = this._totalBarSpace / this._barSpace
@@ -608,7 +673,7 @@ export default class StoreImp implements Store {
     this._visibleRangeDataList = []
     this._visibleRangeHighLowPrice = [
       { x: 0, price: Number.MIN_SAFE_INTEGER },
-      { x: 0, price: Number.MAX_SAFE_INTEGER },
+      { x: 0, price: Number.MAX_SAFE_INTEGER }
     ]
     for (let i = realFrom; i < realTo; i++) {
       const kLineData = this._dataList[i]
@@ -846,11 +911,6 @@ export default class StoreImp implements Store {
     return this._scrollEnabled
   }
 
-  /**
-    * 设置十字光标点信息
-    * @param crosshair
-    * @param notInvalidate
-    */
   setCrosshair (crosshair?: Crosshair, notInvalidate?: boolean): void {
     const cr = crosshair ?? {}
     let realDataIndex = 0
@@ -1117,15 +1177,15 @@ export default class StoreImp implements Store {
   getOverlaysByFilter (filter: OverlayFilter): Map<string, OverlayImp[]> {
     const { id, groupId, paneId, name } = filter
     const find: ((overlays: OverlayImp[]) => OverlayImp[]) = (overlays) => overlays.filter(overlay => {
-        if (isValid(id)) {
-          return overlay.id === id
-        } else {
-          if (isValid(groupId)) {
-            return overlay.groupId === groupId && (!isValid(name) || overlay.name === name)
-          }
+      if (isValid(id)) {
+        return overlay.id === id
+      } else {
+        if (isValid(groupId)) {
+          return overlay.groupId === groupId && (!isValid(name) || overlay.name === name)
         }
-        return !isValid(name) || overlay.name === name
-      })
+      }
+      return !isValid(name) || overlay.name === name
+    })
 
     const map = new Map<string, OverlayImp[]>()
     if (isValid(paneId)) {
@@ -1401,9 +1461,11 @@ export default class StoreImp implements Store {
     this._visibleRangeDataList = []
     this._visibleRangeHighLowPrice = [
       { x: 0, price: Number.MIN_SAFE_INTEGER },
-      { x: 0, price: Number.MAX_SAFE_INTEGER },
+      { x: 0, price: Number.MAX_SAFE_INTEGER }
     ]
     this._visibleRange = getDefaultVisibleRange()
+    this._timeWeightTickMap.clear()
+    this._timeWeightTickList = []
     this._crosshair = {}
     this._activeTooltipIcon = null
   }

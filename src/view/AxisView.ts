@@ -58,7 +58,6 @@ export default abstract class AxisView<C extends Axis = Axis> extends View<C> {
           })?.draw(ctx)
         }
       }
-     
     }
   }
 

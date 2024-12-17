@@ -41,7 +41,7 @@ import {
   formatBigNumber,
   formatTimestampToString,
   formatThousands,
-  formatFoldDecimal,
+  formatFoldDecimal
 } from './common/utils/format'
 import { calcTextWidth } from './common/utils/canvas'
 import { ActionType } from './common/Action'

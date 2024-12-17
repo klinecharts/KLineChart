@@ -78,7 +78,7 @@ export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
     merge(this._options, options)
     this._axis.override({
       ...this._options.axis,
-      name: options.axis?.name ?? 'normal',
+      name: options.axis?.name ?? 'normal'
     })
     let container: Nullable<HTMLElement> = null
     let cursor = 'default'

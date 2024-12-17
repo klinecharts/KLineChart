@@ -34,12 +34,12 @@ export default class OverlayYAxisView<C extends Axis = YAxis> extends OverlayVie
   override drawDefaultFigures (
     ctx: CanvasRenderingContext2D,
     overlay: OverlayImp,
-    coordinates: Coordinate[],
+    coordinates: Coordinate[]
   ): void {
     this.drawFigures(
       ctx,
       overlay,
-      this.getDefaultFigures(overlay, coordinates),
+      this.getDefaultFigures(overlay, coordinates)
     )
   }
 

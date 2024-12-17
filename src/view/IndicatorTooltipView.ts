@@ -51,7 +51,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
       const { offsetLeft, offsetTop, offsetRight } = chartStore.getStyles().indicator.tooltip
       this.drawIndicatorTooltip(
         ctx, offsetLeft, offsetTop,
-        bounding.width - offsetRight,
+        bounding.width - offsetRight
       )
     }
   }
@@ -60,7 +60,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
     ctx: CanvasRenderingContext2D,
     left: number,
     top: number,
-    maxWidth: number,
+    maxWidth: number
   ): number {
     const pane = this.getWidget().getPane()
     const chartStore = pane.getChart().getChartStore()
@@ -158,7 +158,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
       const pane = this.getWidget().getPane()
       const paneId = pane.getId()
       const activeIcon = pane.getChart().getChartStore().getActiveTooltipIcon()
-      
+
       icons.forEach(icon => {
         const {
           marginLeft = 0, marginTop = 0, marginRight = 0,

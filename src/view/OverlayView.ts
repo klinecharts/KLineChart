@@ -18,7 +18,6 @@ import type Point from '../common/Point'
 import type { EventHandler, EventName, MouseTouchEvent, MouseTouchEventCallback } from '../common/SyntheticEvent'
 import { isBoolean, isNumber, isValid } from '../common/utils/typeChecks'
 
-
 import type { Axis } from '../component/Axis'
 import type { YAxis } from '../component/YAxis'
 import type { OverlayFigure, OverlayFigureIgnoreEventType, Overlay } from '../component/Overlay'
@@ -412,7 +411,9 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
       return coordinate
     })
     if (coordinates.length > 0) {
-      const figures = new Array<OverlayFigure>().concat(this.getFigures(overlay, coordinates))
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- ignore
+      // @ts-expect-error
+      const figures = [].concat(this.getFigures(overlay, coordinates))
       this.drawFigures(
         ctx,
         overlay,
@@ -422,7 +423,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     this.drawDefaultFigures(
       ctx,
       overlay,
-      coordinates,
+      coordinates
     )
   }
 
@@ -476,7 +477,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
   protected drawDefaultFigures (
     ctx: CanvasRenderingContext2D,
     overlay: OverlayImp,
-    coordinates: Coordinate[],
+    coordinates: Coordinate[]
   ): void {
     if (overlay.needDefaultPointFigure) {
       const chartStore = this.getWidget().getPane().getChart().getChartStore()

@@ -121,7 +121,7 @@ export default class ChartImp implements Chart {
     measureWidth: true,
     update: true,
     buildYAxisTick: false,
-    forceBuildYAxisTick: false,
+    forceBuildYAxisTick: false
   }
 
   private _layoutPending = false
@@ -300,7 +300,7 @@ export default class ChartImp implements Chart {
         paneId !== PaneIdConstants.X_AXIS
       )
     })
-    
+
     const count = normalStatePanes.length
     if (count === 0) {
       return false
@@ -393,7 +393,7 @@ export default class ChartImp implements Chart {
       Promise.resolve().then(_ => {
         this._layout()
         this._layoutPending = false
-      }).catch(_ => {
+      }).catch((_: unknown) => {
         // to do it
       })
     }
@@ -428,7 +428,7 @@ export default class ChartImp implements Chart {
 
       this._candlePane.setBounding({ height: Math.max(remainingHeight, 0) })
       this._xAxisPane.setBounding({ height: xAxisHeight })
-  
+
       let top = 0
       this._drawPanes.forEach(pane => {
         const separatorPane = this._separatorPanes.get(pane)
@@ -444,9 +444,7 @@ export default class ChartImp implements Chart {
     if (buildYAxisTick || forceBuildYAxisTick) {
       this._drawPanes.forEach(pane => {
         const success = (pane.getAxisComponent() as AxisImp).buildTicks(forceBuildYAxisTick)
-        if (!forceMeasureWidth) {
-          forceMeasureWidth = success
-        }
+        forceMeasureWidth ||= success
       })
     }
     if (forceMeasureWidth) {
@@ -763,7 +761,7 @@ export default class ChartImp implements Chart {
     if (!isString(options.id)) {
       options.id = createId(PaneIdConstants.INDICATOR)
     }
-    
+
     let pane = this.getDrawPaneById(options.id)
     if (!isValid(pane)) {
       pane = this._createPane(IndicatorPane, options.id, options)
@@ -949,7 +947,7 @@ export default class ChartImp implements Chart {
               case PaneState.Minimize: {
                 const height = currentPane.getBounding().height
                 const currentState = currentPane.getOptions().state
-                let changeHeight =  height - PANE_MIN_HEIGHT
+                let changeHeight = height - PANE_MIN_HEIGHT
                 if (currentState === PaneState.Maximize) {
                   changeHeight = currentPane.getOriginalBounding().height - PANE_MIN_HEIGHT
                 }
@@ -1112,7 +1110,9 @@ export default class ChartImp implements Chart {
       const pane = this.getDrawPaneById(paneId)
       if (pane !== null) {
         const bounding = pane.getBounding()
-        const ps = new Array<Partial<Point>>().concat(points)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- ignore
+        // @ts-expect-error
+        const ps: Array<Partial<Point>> = [].concat(points)
         const xAxis = this._xAxisPane.getAxisComponent()
         const yAxis = pane.getAxisComponent()
         coordinates = ps.map(point => {
@@ -1142,7 +1142,9 @@ export default class ChartImp implements Chart {
       const pane = this.getDrawPaneById(paneId)
       if (pane !== null) {
         const bounding = pane.getBounding()
-        const cs = new Array<Partial<Coordinate>>().concat(coordinates)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- ignore
+        // @ts-expect-error
+        const cs: Array<Partial<Coordinate>> = [].concat(coordinates)
         const xAxis = this._xAxisPane.getAxisComponent()
         const yAxis = pane.getAxisComponent()
         points = cs.map(coordinate => {
@@ -1167,10 +1169,11 @@ export default class ChartImp implements Chart {
     switch (type) {
       case ActionType.OnCrosshairChange: {
         const crosshair: Crosshair = { ...data }
-        crosshair.paneId = crosshair.paneId ?? PaneIdConstants.CANDLE
+        crosshair.paneId ??= PaneIdConstants.CANDLE
         this._chartStore.setCrosshair(crosshair)
         break
       }
+      default: { break }
     }
   }
 
@@ -1224,7 +1227,7 @@ export default class ChartImp implements Chart {
       measureWidth: true,
       update: true,
       buildYAxisTick: true,
-      forceBuildYAxisTick: true,
+      forceBuildYAxisTick: true
 
     })
   }

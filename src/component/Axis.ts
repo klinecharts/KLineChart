@@ -67,15 +67,6 @@ export type AxisCreateTicksCallback = (params: AxisCreateTicksParams) => AxisTic
 
 export type AxisMinSpanCallback = (value?: number) => number
 
-export interface Axis {
-  override: (axis: AxisTemplate) => void
-  getTicks: () => AxisTick[]
-  getRange: () => AxisRange
-  getAutoSize: () => number
-  convertToPixel: (value: number) => number
-  convertFromPixel: (px: number) => number
-}
-
 export interface AxisTemplate {
   name: string
   reverse?: boolean
@@ -91,6 +82,15 @@ export interface AxisTemplate {
   minSpan?: AxisMinSpanCallback
   createRange?: AxisCreateRangeCallback
   createTicks?: AxisCreateTicksCallback
+}
+
+export interface Axis {
+  override: (axis: AxisTemplate) => void
+  getTicks: () => AxisTick[]
+  getRange: () => AxisRange
+  getAutoSize: () => number
+  convertToPixel: (value: number) => number
+  convertFromPixel: (px: number) => number
 }
 
 export type AxisCreate = Omit<AxisTemplate, 'displayValueToText' | 'valueToRealValue' | 'realValueToDisplayValue' | 'displayValueToRealValue' | 'realValueToValue'>

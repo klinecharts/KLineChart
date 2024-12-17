@@ -24,7 +24,6 @@ import type { YAxis } from '../component/YAxis'
 import type { OverlayFigure, Overlay } from '../component/Overlay'
 import type OverlayImp from '../component/Overlay'
 
-
 import OverlayYAxisView from './OverlayYAxisView'
 
 export default class OverlayXAxisView extends OverlayYAxisView<XAxis> {
@@ -46,7 +45,7 @@ export default class OverlayXAxisView extends OverlayYAxisView<XAxis> {
 
   override getDefaultFigures (
     overlay: Overlay,
-    coordinates: Coordinate[],
+    coordinates: Coordinate[]
   ): OverlayFigure[] {
     const figures: OverlayFigure[] = []
     const widget = this.getWidget()
@@ -74,7 +73,7 @@ export default class OverlayXAxisView extends OverlayYAxisView<XAxis> {
 
   override getFigures (
     o: Overlay,
-    coordinates: Coordinate[],
+    coordinates: Coordinate[]
   ): OverlayFigure | OverlayFigure[] {
     const widget = this.getWidget()
     const pane = widget.getPane()

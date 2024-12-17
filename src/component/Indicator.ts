@@ -39,7 +39,7 @@ export enum IndicatorSeries {
   Volume = 'volume'
 }
 
-export type IndicatorFigureStyle = Partial<Omit<SmoothLineStyle, 'style'>> & Partial<Omit<RectStyle, 'style'>> & Partial<TextStyle> & Partial<{ style: LineType[keyof LineType]   }> & Record<string, unknown>
+export type IndicatorFigureStyle = Partial<Omit<SmoothLineStyle, 'style'>> & Partial<Omit<RectStyle, 'style'>> & Partial<TextStyle> & Partial<{ style: LineType[keyof LineType] }> & Record<string, unknown>
 
 export type IndicatorFigureAttrs = Partial<ArcAttrs> & Partial<LineStyle> & Partial<RectAttrs> & Partial<TextAttrs> & Record<string, unknown>
 
@@ -60,6 +60,7 @@ export interface IndicatorFigureAttrsCallbackParams<D> {
 
 export interface IndicatorFigureStylesCallbackParams<D> {
   data: IndicatorFigureCallbackBrother<Nullable<D>>
+
   indicator: Indicator<D>
   defaultStyles?: IndicatorStyle
 }
@@ -87,6 +88,7 @@ export interface IndicatorTooltipData {
 
 export interface IndicatorCreateTooltipDataSourceParams<D> {
   chart: Chart
+
   indicator: Indicator<D>
   bounding: Bounding
   crosshair: Crosshair
@@ -99,6 +101,7 @@ export type IndicatorCreateTooltipDataSourceCallback<D> = (params: IndicatorCrea
 export interface IndicatorDrawParams<D> {
   ctx: CanvasRenderingContext2D
   chart: Chart
+
   indicator: Indicator<D>
   bounding: Bounding
   xAxis: XAxis
@@ -106,7 +109,9 @@ export interface IndicatorDrawParams<D> {
 }
 
 export type IndicatorDrawCallback<D> = (params: IndicatorDrawParams<D>) => boolean
+
 export type IndicatorCalcCallback<D> = (dataList: KLineData[], indicator: Indicator<D>) => Promise<D[]> | D[]
+
 export type IndicatorShouldUpdateCallback<D> = (prev: Indicator<D>, current: Indicator<D>) => (boolean | { calc: boolean, draw: boolean })
 
 export enum IndicatorDataState {
@@ -118,6 +123,7 @@ export enum IndicatorDataState {
 export interface IndicatorOnDataStateChangeParams<D> {
   state: IndicatorDataState
   type: LoadDataType
+
   indicator: Indicator<D>
 }
 export type IndicatorOnDataStateChangeCallback<D> = (params: IndicatorOnDataStateChangeParams<D>) => void

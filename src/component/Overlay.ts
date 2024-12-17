@@ -67,6 +67,7 @@ export interface OverlayFigure {
 
 export interface OverlayCreateFiguresCallbackParams {
   chart: Chart
+
   overlay: Overlay
   coordinates: Coordinate[]
   bounding: Bounding
@@ -77,6 +78,7 @@ export interface OverlayCreateFiguresCallbackParams {
 export interface OverlayEvent extends Partial<MouseTouchEvent> {
   figureKey?: string
   figureIndex?: number
+
   overlay: Overlay
   chart: Chart
 }
@@ -271,6 +273,7 @@ export type OverlayTemplate = ExcludePickPartial<Omit<Overlay, 'id' | 'groupId' 
 
 export type OverlayCreate = ExcludePickPartial<Omit<Overlay, 'currentStep' | 'totalStep' | 'createPointFigures' | 'createXAxisFigures' | 'createYAxisFigures' | 'performEventPressedMove' | 'performEventMoveForDrawing'>, 'name'>
 export type OverlayFilter = Partial<Pick<Overlay, 'id' | 'groupId' | 'name' | 'paneId'>>
+
 export type OverlayInnerConstructor = new () => OverlayImp
 export type OverlayConstructor = new () => Overlay
 

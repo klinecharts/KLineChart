@@ -21,19 +21,19 @@ const horizontalStraightLine: OverlayTemplate = {
   needDefaultXAxisFigure: true,
   needDefaultYAxisFigure: true,
   createPointFigures: ({ coordinates, bounding }) => [{
-      type: 'line',
-      attrs: {
-        coordinates: [
-          {
-            x: 0,
-            y: coordinates[0].y
-          }, {
-            x: bounding.width,
-            y: coordinates[0].y
-          }
-        ]
-      }
-    }]
+    type: 'line',
+    attrs: {
+      coordinates: [
+        {
+          x: 0,
+          y: coordinates[0].y
+        }, {
+          x: bounding.width,
+          y: coordinates[0].y
+        }
+      ]
+    }
+  }]
 }
 
 export default horizontalStraightLine

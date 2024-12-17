@@ -27,15 +27,15 @@ const simpleTag: OverlayTemplate = {
     line: { style: LineType.Dashed }
   },
   createPointFigures: ({ bounding, coordinates }) => ({
-      type: 'line',
-      attrs: {
-        coordinates: [
-          { x: 0, y: coordinates[0].y },
-          { x: bounding.width, y: coordinates[0].y }
-        ]
-      },
-      ignoreEvent: true
-    }),
+    type: 'line',
+    attrs: {
+      coordinates: [
+        { x: 0, y: coordinates[0].y },
+        { x: bounding.width, y: coordinates[0].y }
+      ]
+    },
+    ignoreEvent: true
+  }),
   createYAxisFigures: ({ chart, overlay, coordinates, bounding, yAxis }) => {
     const isFromZero = yAxis?.isFromZero() ?? false
     let textAlign: CanvasTextAlign = 'left'

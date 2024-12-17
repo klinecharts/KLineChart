@@ -90,9 +90,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
     let indicatorPrecision = Number.MAX_SAFE_INTEGER
     const indicators = chartStore.getIndicatorsByPaneId(paneId)
     indicators.forEach(indicator => {
-      if (!shouldOhlc) {
-        shouldOhlc = indicator.shouldOhlc
-      }
+      shouldOhlc ||= indicator.shouldOhlc
       indicatorPrecision = Math.min(indicatorPrecision, indicator.precision)
       if (isNumber(indicator.minValue)) {
         specifyMin = Math.min(specifyMin, indicator.minValue)
@@ -274,9 +272,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
     } else {
       indicators.forEach(indicator => {
         precision = Math.max(precision, indicator.precision)
-        if (!shouldFormatBigNumber) {
-          shouldFormatBigNumber = indicator.shouldFormatBigNumber
-        }
+        shouldFormatBigNumber ||= indicator.shouldFormatBigNumber
       })
     }
     const customApi = chartStore.getCustomApi()
@@ -353,9 +349,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
       let shouldFormatBigNumber = false
       indicators.forEach(indicator => {
         indicatorPrecision = Math.max(indicator.precision, indicatorPrecision)
-        if (!shouldFormatBigNumber) {
-          shouldFormatBigNumber = indicator.shouldFormatBigNumber
-        }
+        shouldFormatBigNumber ||= indicator.shouldFormatBigNumber
       })
       let precision = 2
       if (this.isInCandle()) {

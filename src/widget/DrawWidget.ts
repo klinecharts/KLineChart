@@ -27,7 +27,7 @@ export default abstract class DrawWidget<P extends DrawPane = DrawPane> extends 
   private readonly _mainCanvas: Canvas
   private readonly _overlayCanvas: Canvas
 
-  constructor(rootContainer: HTMLElement, pane: P) {
+  constructor (rootContainer: HTMLElement, pane: P) {
     super(rootContainer, pane)
     this._mainCanvas = new Canvas({
       position: 'absolute',
@@ -89,6 +89,9 @@ export default abstract class DrawWidget<P extends DrawPane = DrawPane> extends 
       case UpdateLevel.All: {
         this._mainCanvas.update(width, height)
         this._overlayCanvas.update(width, height)
+        break
+      }
+      default: {
         break
       }
     }

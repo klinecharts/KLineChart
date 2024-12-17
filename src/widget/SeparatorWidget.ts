@@ -113,7 +113,7 @@ export default class SeparatorWidget extends Widget<SeparatorPane> {
 
   private _pressedTouchMouseMoveEvent (event: MouseTouchEvent): boolean {
     const dragDistance = event.pageY - this._dragStartY
-    
+
     const isUpDrag = dragDistance < 0
     if (isValid(this._topPane) && isValid(this._bottomPane)) {
       const bottomPaneOptions = this._bottomPane.getOptions()
@@ -156,7 +156,7 @@ export default class SeparatorWidget extends Widget<SeparatorPane> {
         }
       }
     }
-    
+
     return true
   }
 

@@ -85,6 +85,7 @@ export function formatTimestampToDateTime (dateTimeFormat: Intl.DateTimeFormat, 
         date.ss = value
         break
       }
+      default: { break }
     }
   })
   return date as unknown as DateTime

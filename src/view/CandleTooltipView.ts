@@ -90,7 +90,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
     ctx: CanvasRenderingContext2D,
     left: number,
     top: number,
-    maxWidth: number,
+    maxWidth: number
   ): number {
     const chartStore = this.getWidget().getPane().getChart().getChartStore()
     const styles = chartStore.getStyles().candle
@@ -138,7 +138,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
     const widget = this.getWidget()
     const pane = widget.getPane()
     const chartStore = pane.getChart().getChartStore()
-    
+
     const styles = chartStore.getStyles()
     const candleStyles = styles.candle
     const indicatorStyles = styles.indicator
@@ -376,8 +376,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
     const textColor = tooltipStyles.text.color
     const prev = dataList[dataIndex - 1] ?? null
     const current = dataList[dataIndex]
-    
-    
+
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- ignore
     const prevClose = prev?.close ?? current.close
     const changeValue = current.close - prevClose

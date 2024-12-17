@@ -72,9 +72,7 @@ export default class CrosshairHorizontalLabelView<C extends Axis = YAxis> extend
       const indicators = chartStore.getIndicatorsByPaneId(crosshair.paneId!)
       indicators.forEach(indicator => {
         precision = Math.max(indicator.precision, precision)
-        if (!shouldFormatBigNumber) {
-          shouldFormatBigNumber = indicator.shouldFormatBigNumber
-        }
+        shouldFormatBigNumber ||= indicator.shouldFormatBigNumber
       })
     }
     const yAxisRange = yAxis.getRange()
