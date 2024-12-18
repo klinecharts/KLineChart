@@ -65,7 +65,7 @@ export interface AxisCreateTicksParams {
 
 export type AxisCreateTicksCallback = (params: AxisCreateTicksParams) => AxisTick[]
 
-export type AxisMinSpanCallback = (value?: number) => number
+export type AxisMinSpanCallback = (value: number) => number
 
 export interface AxisTemplate {
   name: string

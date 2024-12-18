@@ -24,7 +24,7 @@ import type BarSpace from './common/BarSpace'
 import type Precision from './common/Precision'
 import Action from './common/Action'
 import { ActionType, type ActionCallback } from './common/Action'
-import { formatValue, type DateTime, formatTimestampToDateTime, formatTimestampToString, formatBigNumber, formatThousands, formatFoldDecimal } from './common/utils/format'
+import { formatValue, formatTimestampToString, formatBigNumber, formatThousands, formatFoldDecimal } from './common/utils/format'
 import { getDefaultStyles, type Styles, type TooltipLegend } from './common/Styles'
 import { isArray, isString, isValid, isNumber, isBoolean, isFunction, merge } from './common/utils/typeChecks'
 import { createId } from './common/utils/id'
@@ -33,7 +33,8 @@ import { logWarn } from './common/utils/logger'
 import { UpdateLevel } from './common/Updater'
 import type { MouseTouchEvent } from './common/SyntheticEvent'
 import { type LoadDataCallback, type LoadDataParams, LoadDataType } from './common/LoadDataCallback'
-import { calcTextWidth } from './common/utils/canvas'
+import type TimeWeightTick from './common/TimeWeightTick'
+import { classifyTimeWeightTicks, createTimeWeightTickList } from './common/TimeWeightTick'
 
 import type { Options, CustomApi, ThousandsSeparator, DecimalFold } from './Options'
 
@@ -51,22 +52,6 @@ import { getStyles as getExtensionStyles } from './extension/styles/index'
 import { PaneIdConstants } from './pane/types'
 
 import type Chart from './Chart'
-
-export interface TimeWeightTick {
-  weight: number
-  dataIndex: number
-  dateTime: DateTime
-  timestamp: number
-}
-
-export const TimeWeightConstants = {
-  Year: 365 * 24 * 3600,
-  Month: 30 * 24 * 3600,
-  Day: 24 * 3600,
-  Hour: 3600,
-  Minute: 60,
-  Second: 1
-}
 
 const BarSpaceLimitConstants = {
   MIN: 1,
@@ -449,6 +434,10 @@ export default class StoreImp implements Store {
 
   getTimezone (): string { return this._dateTimeFormat.resolvedOptions().timeZone }
 
+  getDateTimeFormat (): Intl.DateTimeFormat {
+    return this._dateTimeFormat
+  }
+
   setThousandsSeparator (thousandsSeparator: Partial<ThousandsSeparator>): void {
     merge(this._thousandsSeparator, thousandsSeparator)
   }
@@ -577,92 +566,26 @@ export default class StoreImp implements Store {
 
   private _classifyTimeWeightTicks (newDataList: KLineData[], isUpdate?: boolean): void {
     let baseDataIndex = 0
-    let prevDateTime: Nullable<DateTime> = null
     let prevTimestamp: Nullable<number> = null
     if (isUpdate ?? false) {
       baseDataIndex = this._dataList.length
+      prevTimestamp = this._dataList[baseDataIndex - 1].timestamp
     } else {
       this._timeWeightTickMap.clear()
       this._minTimeDifference = Number.MAX_SAFE_INTEGER
     }
-    for (let i = 0; i < newDataList.length; i++) {
-      const timestamp = newDataList[i].timestamp
-      let weight = TimeWeightConstants.Second
-      const dateTime = formatTimestampToDateTime(this._dateTimeFormat, timestamp)
-      if (isValid(prevDateTime)) {
-        if (dateTime.YYYY !== prevDateTime.YYYY) {
-          weight = TimeWeightConstants.Year
-        } else if (dateTime.MM !== prevDateTime.MM) {
-          weight = TimeWeightConstants.Month
-        } else if (dateTime.DD !== prevDateTime.DD) {
-          weight = TimeWeightConstants.Day
-        } else if (dateTime.HH !== prevDateTime.HH) {
-          weight = TimeWeightConstants.Hour
-        } else if (dateTime.mm !== prevDateTime.mm) {
-          weight = TimeWeightConstants.Minute
-        } else {
-          weight = TimeWeightConstants.Second
-        }
-      }
-      if (isNumber(prevTimestamp)) {
-        this._minTimeDifference = Math.min(this._minTimeDifference, timestamp - prevTimestamp)
-      }
-      const currentTimeWeightList = this._timeWeightTickMap.get(weight) ?? []
-      currentTimeWeightList.push({ dataIndex: i + baseDataIndex, weight, dateTime, timestamp })
-      this._timeWeightTickMap.set(weight, currentTimeWeightList)
-      prevDateTime = dateTime
-      prevTimestamp = timestamp
-    }
-    this._buildTimeWeightTickList()
-  }
 
-  private _buildTimeWeightTickList (): void {
-    const styles = this._styles.xAxis.tickText
-    const space = Math.max(calcTextWidth('0000-00-00 00:00:00', styles.size, styles.weight, styles.family), 146)
-    const barCount = Math.ceil(
-      space / this._barSpace
+    const minTimeDifferenceObj = { value: this._minTimeDifference }
+    classifyTimeWeightTicks(
+      this._timeWeightTickMap,
+      newDataList,
+      this._dateTimeFormat,
+      baseDataIndex,
+      minTimeDifferenceObj,
+      prevTimestamp
     )
-    let optTimeWeightTickList: TimeWeightTick[] = []
-    Array.from(this._timeWeightTickMap.keys()).sort((w1, w2) => w2 - w1).forEach(weight => {
-      const currentTimeWeightTickList = this._timeWeightTickMap.get(weight)!
-      const prevOptTimeWeightTickList = optTimeWeightTickList
-      optTimeWeightTickList = []
-
-      const prevOptTimeWeightTickListLength = prevOptTimeWeightTickList.length
-      let prevOptTimeWeightTickListPointer = 0
-      const currentTimeWeightTickListLength = currentTimeWeightTickList.length
-
-      let rightIndex = Infinity
-      let leftIndex = -Infinity
-      for (let i = 0; i < currentTimeWeightTickListLength; i++) {
-        const timeWeightTick = currentTimeWeightTickList[i]
-        const currentIndex = timeWeightTick.dataIndex
-
-        while (prevOptTimeWeightTickListPointer < prevOptTimeWeightTickListLength) {
-          const lastTimeWeightTick = prevOptTimeWeightTickList[prevOptTimeWeightTickListPointer]
-          const lastIndex = lastTimeWeightTick.dataIndex
-          if (lastIndex < currentIndex) {
-            prevOptTimeWeightTickListPointer++
-            optTimeWeightTickList.push(lastTimeWeightTick)
-            leftIndex = lastIndex
-            rightIndex = Infinity
-          } else {
-            rightIndex = lastIndex
-            break
-          }
-        }
-
-        if (rightIndex - currentIndex >= barCount && currentIndex - leftIndex >= barCount) {
-          optTimeWeightTickList.push(timeWeightTick)
-          leftIndex = currentIndex
-        }
-      }
-
-      for (; prevOptTimeWeightTickListPointer < prevOptTimeWeightTickListLength; prevOptTimeWeightTickListPointer++) {
-        optTimeWeightTickList.push(prevOptTimeWeightTickList[prevOptTimeWeightTickListPointer])
-      }
-    })
-    this._timeWeightTickList = optTimeWeightTickList
+    this._minTimeDifference = minTimeDifferenceObj.value
+    this._timeWeightTickList = createTimeWeightTickList(this._timeWeightTickMap, this._barSpace, this._styles.xAxis.tickText)
   }
 
   getTimeWeightTickList (): TimeWeightTick[] {
@@ -779,7 +702,7 @@ export default class StoreImp implements Store {
       return
     }
     this._barSpace = barSpace
-    this._buildTimeWeightTickList()
+    this._timeWeightTickList = createTimeWeightTickList(this._timeWeightTickMap, this._barSpace, this._styles.xAxis.tickText)
     this._calcOptimalBarSpace()
     adjustBeforeFunc?.()
     this._adjustVisibleRange()

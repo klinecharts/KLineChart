@@ -52,7 +52,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
   }
 
   createRange: AxisCreateRangeCallback = params => params.defaultRange
-  minSpan: AxisMinSpanCallback = precision => index10(-(precision!))
+  minSpan: AxisMinSpanCallback = precision => index10(-precision)
   valueToRealValue: AxisValueToValueCallback = value => value
   realValueToDisplayValue: AxisValueToValueCallback = value => value
   displayValueToRealValue: AxisValueToValueCallback = value => value

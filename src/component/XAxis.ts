@@ -14,16 +14,17 @@
 
 import type Nullable from '../common/Nullable'
 import type Bounding from '../common/Bounding'
-import { isFunction, isString } from '../common/utils/typeChecks'
+import { isFunction, isNumber, isString } from '../common/utils/typeChecks'
+import type TimeWeightTick from '../common/TimeWeightTick'
+import { calcBetweenTimeWeightTickBarCount, classifyTimeWeightTicks, createTimeWeightTickList, TimeWeightConstants } from '../common/TimeWeightTick'
+import { FormatDateType } from '../Options'
+import type { KLineData } from '../common/Data'
 
-import AxisImp, { type AxisTemplate, type Axis, type AxisRange, type AxisTick, type AxisMinSpanCallback } from './Axis'
+import AxisImp, { type AxisTemplate, type Axis, type AxisRange, type AxisTick } from './Axis'
 
 import type DrawPane from '../pane/DrawPane'
 
-import { TimeWeightConstants } from '../Store'
-import { FormatDateType } from '../Options'
-
-export type XAxisTemplate = Pick<AxisTemplate, 'name' | 'scrollZoomEnabled' | 'createTicks' | 'minSpan'>
+export type XAxisTemplate = Pick<AxisTemplate, 'name' | 'scrollZoomEnabled' | 'createTicks'>
 
 export interface XAxis extends Axis, Required<XAxisTemplate> {
   convertTimestampFromPixel: (pixel: number) => Nullable<number>
@@ -33,8 +34,6 @@ export interface XAxis extends Axis, Required<XAxisTemplate> {
 export type XAxisConstructor = new (parent: DrawPane) => XAxis
 
 export default abstract class XAxisImp extends AxisImp implements XAxis {
-  minSpan: AxisMinSpanCallback
-
   constructor (parent: DrawPane, xAxis: XAxisTemplate) {
     super(parent)
     this.override(xAxis)
@@ -44,7 +43,6 @@ export default abstract class XAxisImp extends AxisImp implements XAxis {
     const {
       name,
       scrollZoomEnabled,
-      minSpan,
       createTicks
     } = xAxis
     if (!isString(this.name)) {
@@ -52,7 +50,6 @@ export default abstract class XAxisImp extends AxisImp implements XAxis {
     }
     this.scrollZoomEnabled = scrollZoomEnabled ?? this.scrollZoomEnabled
     this.createTicks = createTicks ?? this.createTicks
-    this.minSpan = minSpan ?? this.minSpan
   }
 
   protected override createRangeImp (): AxisRange {
@@ -82,42 +79,68 @@ export default abstract class XAxisImp extends AxisImp implements XAxis {
     const formatDate = chartStore.getCustomApi().formatDate
     const timeWeightTickList = chartStore.getTimeWeightTickList()
     const ticks: AxisTick[] = []
-    for (const timeWeightTick of timeWeightTickList) {
-      if (timeWeightTick.dataIndex >= realFrom && timeWeightTick.dataIndex <= realTo) {
-        const { timestamp, weight, dataIndex } = timeWeightTick
-        let text = ''
-        switch (weight) {
-          case TimeWeightConstants.Year: {
-            text = formatDate(timestamp, 'YYYY', FormatDateType.XAxis)
-            break
+
+    const fitTicks: ((list: TimeWeightTick[], start: number) => void) = (list, start) => {
+      for (const timeWeightTick of list) {
+        if (timeWeightTick.dataIndex >= start && timeWeightTick.dataIndex < realTo) {
+          const { timestamp, weight, dataIndex } = timeWeightTick
+          let text = ''
+          switch (weight) {
+            case TimeWeightConstants.Year: {
+              text = formatDate(timestamp, 'YYYY', FormatDateType.XAxis)
+              break
+            }
+            case TimeWeightConstants.Month: {
+              text = formatDate(timestamp, 'YYYY-MM', FormatDateType.XAxis)
+              break
+            }
+            case TimeWeightConstants.Day: {
+              text = formatDate(timestamp, 'MM-DD', FormatDateType.XAxis)
+              break
+            }
+            case TimeWeightConstants.Hour:
+            case TimeWeightConstants.Minute: {
+              text = formatDate(timestamp, 'HH:mm', FormatDateType.XAxis)
+              break
+            }
+            case TimeWeightConstants.Second: {
+              text = formatDate(timestamp, 'mm:ss', FormatDateType.XAxis)
+              break
+            }
+            default: {
+              text = formatDate(timestamp, 'YYYY-MM-DD HH:mm', FormatDateType.XAxis)
+              break
+            }
           }
-          case TimeWeightConstants.Month: {
-            text = formatDate(timestamp, 'YYYY-MM', FormatDateType.XAxis)
-            break
-          }
-          case TimeWeightConstants.Day: {
-            text = formatDate(timestamp, 'MM-DD', FormatDateType.XAxis)
-            break
-          }
-          case TimeWeightConstants.Hour:
-          case TimeWeightConstants.Minute: {
-            text = formatDate(timestamp, 'HH:mm', FormatDateType.XAxis)
-            break
-          }
-          case TimeWeightConstants.Second: {
-            text = formatDate(timestamp, 'mm:ss', FormatDateType.XAxis)
-            break
-          }
-          default: {
-            text = formatDate(timestamp, 'YYYY-MM-DD HH:mm', FormatDateType.XAxis)
-            break
-          }
+          ticks.push({
+            coord: this.convertToPixel(dataIndex),
+            value: timestamp,
+            text
+          })
         }
-        ticks.push({
-          coord: this.convertToPixel(dataIndex),
-          value: timestamp,
-          text
-        })
+      }
+    }
+
+    fitTicks(timeWeightTickList, realFrom)
+
+    // Future time tick
+    if (timeWeightTickList.length > 0) {
+      const barSpace = chartStore.getBarSpace().bar
+      const textStyles = chartStore.getStyles().xAxis.tickText
+      const barCount = calcBetweenTimeWeightTickBarCount(barSpace, textStyles)
+      const startDataIndex = timeWeightTickList[timeWeightTickList.length - 1].dataIndex + barCount - 1
+      const dataList: Array<Pick<KLineData, 'timestamp'>> = []
+      for (let i = startDataIndex; i < realTo; i++) {
+        const timestamp = chartStore.dataIndexToTimestamp(i)
+        if (isNumber(timestamp)) {
+          dataList.push({ timestamp })
+        }
+      }
+
+      if (dataList.length > 0) {
+        const map = new Map<number, TimeWeightTick[]>()
+        classifyTimeWeightTicks(map, dataList, chartStore.getDateTimeFormat(), startDataIndex)
+        fitTicks(createTimeWeightTickList(map, barSpace, textStyles), startDataIndex)
       }
     }
 
