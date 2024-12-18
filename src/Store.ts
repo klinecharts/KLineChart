@@ -282,6 +282,8 @@ export default class StoreImp implements Store {
 
   private _timeWeightTickList: TimeWeightTick[] = []
 
+  private _minTimeDifference = Number.MAX_SAFE_INTEGER
+
   /**
    * Visible data array
    */
@@ -541,23 +543,6 @@ export default class StoreImp implements Store {
       }
     }
     if (success) {
-      if (dataLengthChange > 0) {
-        this._overlays.forEach(overlays => {
-          overlays.forEach(overlay => {
-            const points = overlay.points
-            points.forEach(point => {
-              if (!isValid(point.timestamp) && isValid(point.dataIndex)) {
-                if (type === LoadDataType.Forward) {
-                  point.dataIndex = point.dataIndex + dataLengthChange
-                }
-                const data = this._dataList[point.dataIndex]
-                // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- ignore
-                point.timestamp = data?.timestamp
-              }
-            })
-          })
-        })
-      }
       if (adjustFlag) {
         this._adjustVisibleRange()
         this.setCrosshair(this._crosshair, true)
@@ -592,19 +577,19 @@ export default class StoreImp implements Store {
 
   private _classifyTimeWeightTicks (newDataList: KLineData[], isUpdate?: boolean): void {
     let baseDataIndex = 0
-    let prevKLineData: Nullable<KLineData> = null
+    let prevDateTime: Nullable<DateTime> = null
+    let prevTimestamp: Nullable<number> = null
     if (isUpdate ?? false) {
       baseDataIndex = this._dataList.length
-      prevKLineData = this._dataList[baseDataIndex - 1]
     } else {
       this._timeWeightTickMap.clear()
+      this._minTimeDifference = Number.MAX_SAFE_INTEGER
     }
     for (let i = 0; i < newDataList.length; i++) {
-      const kLineData = newDataList[i]
+      const timestamp = newDataList[i].timestamp
       let weight = TimeWeightConstants.Second
-      const dateTime = formatTimestampToDateTime(this._dateTimeFormat, kLineData.timestamp)
-      if (isValid(prevKLineData)) {
-        const prevDateTime = formatTimestampToDateTime(this._dateTimeFormat, prevKLineData.timestamp)
+      const dateTime = formatTimestampToDateTime(this._dateTimeFormat, timestamp)
+      if (isValid(prevDateTime)) {
         if (dateTime.YYYY !== prevDateTime.YYYY) {
           weight = TimeWeightConstants.Year
         } else if (dateTime.MM !== prevDateTime.MM) {
@@ -619,10 +604,14 @@ export default class StoreImp implements Store {
           weight = TimeWeightConstants.Second
         }
       }
+      if (isNumber(prevTimestamp)) {
+        this._minTimeDifference = Math.min(this._minTimeDifference, timestamp - prevTimestamp)
+      }
       const currentTimeWeightList = this._timeWeightTickMap.get(weight) ?? []
-      currentTimeWeightList.push({ dataIndex: i + baseDataIndex, weight, dateTime, timestamp: kLineData.timestamp })
+      currentTimeWeightList.push({ dataIndex: i + baseDataIndex, weight, dateTime, timestamp })
       this._timeWeightTickMap.set(weight, currentTimeWeightList)
-      prevKLineData = kLineData
+      prevDateTime = dateTime
+      prevTimestamp = timestamp
     }
     this._buildTimeWeightTickList()
   }
@@ -903,13 +892,37 @@ export default class StoreImp implements Store {
   }
 
   dataIndexToTimestamp (dataIndex: number): Nullable<number> {
+    const length = this._dataList.length
+    if (length === 0) {
+      return null
+    }
     const data = this.getDataByDataIndex(dataIndex)
-    return data?.timestamp ?? null
+    if (isValid(data)) {
+      return data.timestamp
+    }
+    const lastIndex = length - 1
+    if (dataIndex > lastIndex) {
+      return this._dataList[lastIndex].timestamp + this._minTimeDifference * (dataIndex - lastIndex)
+    }
+    if (dataIndex < 0) {
+      return this._dataList[0].timestamp - this._minTimeDifference * Math.abs(dataIndex)
+    }
+    return null
   }
 
   timestampToDataIndex (timestamp: number): number {
-    if (this._dataList.length === 0) {
+    const length = this._dataList.length
+    if (length === 0) {
       return 0
+    }
+    const lastIndex = length - 1
+    const lastTimestamp = this._dataList[lastIndex].timestamp
+    if (timestamp > lastTimestamp) {
+      return lastIndex + Math.floor((timestamp - lastTimestamp) / this._minTimeDifference)
+    }
+    const firstTimestamp = this._dataList[0].timestamp
+    if (timestamp < firstTimestamp) {
+      return Math.floor((timestamp - firstTimestamp) / this._minTimeDifference)
     }
     return binarySearchNearest(this._dataList, 'timestamp', timestamp)
   }
@@ -917,7 +930,6 @@ export default class StoreImp implements Store {
   dataIndexToCoordinate (dataIndex: number): number {
     const dataCount = this._dataList.length
     const deltaFromRight = dataCount + this._lastBarRightSideDiffBarCount - dataIndex
-    // return Math.floor(this._totalBarSpace - (deltaFromRight - 0.5) * this._barSpace) - 0.5
     return Math.floor(this._totalBarSpace - (deltaFromRight - 0.5) * this._barSpace + 0.5)
   }
 
@@ -982,7 +994,7 @@ export default class StoreImp implements Store {
     const kLineData: Nullable<KLineData> = this._dataList[dataIndex]
     const realX = this.dataIndexToCoordinate(realDataIndex)
     const prevCrosshair = { x: this._crosshair.x, y: this._crosshair.y, paneId: this._crosshair.paneId }
-    this._crosshair = { ...cr, realX, kLineData, realDataIndex, dataIndex }
+    this._crosshair = { ...cr, realX, kLineData, realDataIndex, dataIndex, timestamp: this.dataIndexToTimestamp(realDataIndex) ?? undefined }
     if (
       prevCrosshair.x !== cr.x || prevCrosshair.y !== cr.y || prevCrosshair.paneId !== cr.paneId
     ) {

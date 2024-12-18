@@ -296,8 +296,8 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
       const xAxis = chart.getXAxisPane().getAxisComponent()
       const dataIndex = xAxis.convertFromPixel(coordinate.x)
       const timestamp = chartStore.dataIndexToTimestamp(dataIndex) ?? undefined
-      point.dataIndex = dataIndex
       point.timestamp = timestamp
+      point.dataIndex = dataIndex
     }
     if (this.coordinateToPointValueFlag()) {
       const yAxis = pane.getAxisComponent()
@@ -397,7 +397,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     const yAxis = pane.getAxisComponent() as unknown as Nullable<YAxis>
     const xAxis = chart.getXAxisPane().getAxisComponent()
     const coordinates = points.map(point => {
-      let dataIndex = point.dataIndex
+      let dataIndex: Nullable<number> = null
       if (isNumber(point.timestamp)) {
         dataIndex = chartStore.timestampToDataIndex(point.timestamp)
       }

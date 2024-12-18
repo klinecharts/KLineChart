@@ -29,7 +29,7 @@ import type { TextAttrs } from '../extension/figure/text'
 
 export default class CrosshairVerticalLabelView extends CrosshairHorizontalLabelView<XAxis> {
   override compare (crosshair: Crosshair): boolean {
-    return isValid(crosshair.kLineData) && crosshair.dataIndex === crosshair.realDataIndex
+    return isValid(crosshair.timestamp)
   }
 
   override getDirectionStyles (styles: CrosshairStyle): CrosshairDirectionStyle {
@@ -37,8 +37,8 @@ export default class CrosshairVerticalLabelView extends CrosshairHorizontalLabel
   }
 
   override getText (crosshair: Crosshair, chartStore: ChartStore): string {
-    const timestamp = crosshair.kLineData?.timestamp
-    return chartStore.getCustomApi().formatDate(timestamp!, 'YYYY-MM-DD HH:mm', FormatDateType.Crosshair)
+    const timestamp = crosshair.timestamp!
+    return chartStore.getCustomApi().formatDate(timestamp, 'YYYY-MM-DD HH:mm', FormatDateType.Crosshair)
   }
 
   override getTextAttrs (text: string, textWidth: number, crosshair: Crosshair, bounding: Bounding, _axis: Axis, styles: StateTextStyle): TextAttrs {

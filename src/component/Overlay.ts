@@ -299,7 +299,7 @@ export default class OverlayImp implements Overlay {
   needDefaultYAxisFigure = false
   mode = OverlayMode.Normal
   modeSensitivity = 8
-  points: Array<Partial<Point>> = []
+  points: Array<Partial<Omit<Point, 'dataIndex'>>> = []
   extendData: unknown = null
   styles: Nullable<DeepPartial<OverlayStyle>> = null
   createPointFigures: Nullable<OverlayCreateFiguresCallback> = null
@@ -447,10 +447,7 @@ export default class OverlayImp implements Overlay {
   }
 
   eventPressedPointMove (point: Partial<Point>, pointIndex: number): void {
-    if (isNumber(point.dataIndex)) {
-      this.points[pointIndex].dataIndex = point.dataIndex
-      this.points[pointIndex].timestamp = point.timestamp
-    }
+    this.points[pointIndex].timestamp = point.timestamp
     if (isNumber(point.value)) {
       this.points[pointIndex].value = point.value
     }
