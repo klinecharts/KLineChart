@@ -1,12 +1,12 @@
 {
   "name": "klinecharts",
-  "version": "10.0.0-alpha1",
+  "version": "10.0.0-alpha2",
   "description": "Lightweight k-line chart built with html5 canvas",
+  "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.esm.js",
   "unpkg": "./dist/umd/klinecharts.min.js",
   "types": "./dist/index.d.ts",
-  "type": "module",
   "files": [
     "LICENSE",
     "README.md",
