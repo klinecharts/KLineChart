@@ -1,5 +1,10 @@
 # 📠 更新日志
 
+## 10.0.0-alpha2
+`2024-12-20`
++ 🆕 x轴支持显示未来时间。
++ 🐞 修复 `subscribeAction` 类型是 `ActionType.OnCandleBarClick` 不生效问题。
+
 ## 10.0.0-alpha1
 `2024-12-01`
 + 🆕 新特性

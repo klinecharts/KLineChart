@@ -1,5 +1,10 @@
 # 📠 Change Log
 
+## 10.0.0-alpha2
+`2024-12-20`
++ 🆕 The x-axis supports displaying future time.
++ 🐞 Fix the issue that `subscribeAction` type is `ActionType.OnCandleBarClick` and it does not work.
+
 ## 10.0.0-alpha1
 `2024-12-01`
 + 🆕 New features
