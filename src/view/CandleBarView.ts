@@ -34,7 +34,7 @@ export interface CandleBarOptions {
 
 export default class CandleBarView extends ChildrenView {
   private readonly _boundCandleBarClickEvent = (data: VisibleRangeData) => () => {
-    this.getWidget().getPane().getChart().executeAction(ActionType.OnCandleBarClick, data)
+    this.getWidget().getPane().getChart().getChartStore().executeAction(ActionType.OnCandleBarClick, data)
     return false
   }
 
