@@ -603,7 +603,7 @@ function getDefaultAxisStyle (): AxisStyle {
       family: 'Helvetica Neue',
       weight: 'normal',
       marginStart: 4,
-      marginEnd: 4
+      marginEnd: 6
     },
     tickLine: {
       show: true,
