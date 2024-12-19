@@ -1,7 +1,7 @@
 <template>
   <div class="banner" :class="{ 'top': y === 0 }" role="banner" v-if="isVisible">
-    <span v-if="lang === 'zh-CN'">🎉&nbsp;🎉&nbsp;🎉&nbsp;&nbsp;v10.0.0-alpha1 已发布。</span>
-    <span v-else>🎉&nbsp;🎉&nbsp;🎉&nbsp;&nbsp;v10.0.0-alpha1 has been released.</span>
+    <span v-if="lang === 'zh-CN'">🔔&nbsp;&nbsp;v9 将维护到 2025 年 3 月份，建议尽快迁移到新版本。</span>
+    <span v-else>🔔&nbsp;&nbsp;v9 will be maintained until March 2025. It is recommended to migrate to the new version as soon as possible.</span>
     <button class="banner-close" @click.prevent="closeBanner">
       <span class="close">&times;</span>
     </button>
