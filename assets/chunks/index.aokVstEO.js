@@ -1,0 +1,1 @@
+import{C as r}from"./theme.CexKBWwx.js";import{o as e,g as o,k as n}from"./framework.BkII0pUR.js";const s=JSON.parse(`{"js":"import { version } from 'klinecharts';\\n\\nconst v = version();"}`),_={__name:"index",setup(t){return(a,c)=>(e(),o(r,{hiddenChart:!0,code:n(s).js},null,8,["code"]))}};export{_};
