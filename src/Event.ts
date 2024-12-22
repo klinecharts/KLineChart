@@ -419,7 +419,7 @@ export default class Event implements EventHandler {
           if (widget.dispatchEvent('mouseDownEvent', event)) {
             this._touchCancelCrosshair = true
             this._touchCoordinate = null
-            tooltipStore.setCrosshair(undefined, true)
+            tooltipStore.setCrosshair(undefined, { notInvalidate: true })
             this._chart.updatePane(UpdateLevel.Overlay)
             return true
           }
@@ -470,7 +470,7 @@ export default class Event implements EventHandler {
         case WidgetNameConstants.MAIN: {
           if (widget.dispatchEvent('pressedMouseMoveEvent', event)) {
             event.preventDefault?.()
-            tooltipStore.setCrosshair(undefined, true)
+            tooltipStore.setCrosshair(undefined, { notInvalidate: true })
             this._chart.updatePane(UpdateLevel.Overlay)
             return true
           }
@@ -561,12 +561,12 @@ export default class Event implements EventHandler {
         if (result) {
           this._touchCancelCrosshair = true
           this._touchCoordinate = null
-          tooltipStore.setCrosshair(undefined, true)
+          tooltipStore.setCrosshair(undefined, { notInvalidate: true })
           consumed = true
         } else {
           if (!this._touchCancelCrosshair && !this._touchZoomed) {
             this._touchCoordinate = { x: event.x, y: event.y }
-            tooltipStore.setCrosshair({ x: event.x, y: event.y, paneId: pane?.getId() }, true)
+            tooltipStore.setCrosshair({ x: event.x, y: event.y, paneId: pane?.getId() }, { notInvalidate: true })
             consumed = true
           }
           this._touchCancelCrosshair = false

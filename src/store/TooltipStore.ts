@@ -38,9 +38,10 @@ export default class TooltipStore {
   /**
     * 设置十字光标点信息
     * @param crosshair
-    * @param notInvalidate
+    * @param options
     */
-  setCrosshair (crosshair?: Crosshair, notInvalidate?: boolean): void {
+  setCrosshair (crosshair?: Crosshair, options?: { notInvalidate?: boolean, notExecuteAction?: boolean }): void {
+    const { notInvalidate, notExecuteAction } = options ?? {}
     const dataList = this._chartStore.getDataList()
     const cr = crosshair ?? {}
     let realDataIndex: number
@@ -65,7 +66,7 @@ export default class TooltipStore {
     if (
       prevCrosshair.x !== cr.x || prevCrosshair.y !== cr.y || prevCrosshair.paneId !== cr.paneId
     ) {
-      if (kLineData !== null) {
+      if (kLineData !== null && !(notExecuteAction ?? false)) {
         this._chartStore.getChart().crosshairChange(this._crosshair)
       }
       if (!(notInvalidate ?? false)) {
@@ -79,7 +80,7 @@ export default class TooltipStore {
    * @param notInvalidate
    */
   recalculateCrosshair (notInvalidate: boolean): void {
-    this.setCrosshair(this._crosshair, notInvalidate)
+    this.setCrosshair(this._crosshair, { notInvalidate })
   }
 
   /**
@@ -99,7 +100,7 @@ export default class TooltipStore {
   }
 
   clear (): void {
-    this.setCrosshair({}, true)
+    this.setCrosshair({}, { notInvalidate: true })
     this.setActiveIcon()
   }
 }
