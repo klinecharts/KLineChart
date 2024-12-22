@@ -294,8 +294,6 @@ export const OVERLAY_ID_PREFIX = 'overlay_'
 
 export const OVERLAY_FIGURE_KEY_PREFIX = 'overlay_figure_'
 
-export const OVERLAY_ACTIVE_Z_LEVEL = Number.MAX_SAFE_INTEGER
-
 export default abstract class OverlayImp implements Overlay {
   id: string
   groupId: string

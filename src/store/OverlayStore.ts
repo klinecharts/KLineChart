@@ -21,7 +21,7 @@ import { LoadDataType } from '../common/LoadDataCallback'
 
 import { type OverlayCreate, type OverlayRemove } from '../component/Overlay'
 import type OverlayImp from '../component/Overlay'
-import { OVERLAY_ID_PREFIX, OVERLAY_ACTIVE_Z_LEVEL } from '../component/Overlay'
+import { OVERLAY_ID_PREFIX } from '../component/Overlay'
 
 import { getOverlayInnerClass } from '../extension/overlay/index'
 
@@ -210,6 +210,7 @@ export default class OverlayStore {
         paneInstances.sort((o1, o2) => o1.zLevel - o2.zLevel)
       })
     }
+    console.log(this._instances)
   }
 
   addInstances (overlays: OverlayCreate[], paneId: string, appointPaneFlag: boolean): Array<Nullable<string>> {
@@ -462,7 +463,6 @@ export default class OverlayStore {
 
         if (info.instance !== null) {
           sortFlag = true
-          info.instance.setZLevel(OVERLAY_ACTIVE_Z_LEVEL)
           if (isFunction(info.instance.onMouseEnter)) {
             info.instance.onMouseEnter({ overlay: info.instance, figureKey: info.figureKey, figureIndex: info.figureIndex, ...event })
             ignoreUpdateFlag = true
