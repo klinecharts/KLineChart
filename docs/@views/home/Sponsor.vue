@@ -17,6 +17,13 @@
       "logo": "/images/sponsors/flameOnYou.jpg",
       "website": "https://github.com/flameOnYou",
       "amount": 1600
+    },
+    {
+      "name": "糊涂",
+      "text": "糊涂",
+      "logo": "/images/sponsors/hutu.png",
+      "website": "https://hutu.live",
+      "amount": 18.8
     }
   ]
 
@@ -48,7 +55,7 @@
     :description="lang === 'zh-CN' ? '维护这样一个图表和开发新功能需要巨大精力，只有在我们的赞助者慷慨的财务支持下才得以持续。' : 'Maintaining such a chart and developing new features requires tremendous effort, which can only be sustained with the generous financial support of our sponsors.'">
     <div class="sponsor">
       <div class="sponsor-grid sponsor-top-grid">
-        <a class="sponsor-grid-item item-no2-no3" :href="sponsors[0].website" target="_blank" rel="noreferrer">
+        <a class="sponsor-grid-item item-no1" :href="sponsors[0].website" target="_blank" rel="noreferrer">
           <img class="image" :src="sponsors[0].logo"/>
           <span class="text" v-if="!!sponsors[0].text">{{ sponsors[0].text }}</span>
         </a>
@@ -56,15 +63,10 @@
           <img class="image" :src="sponsors[1].logo"/>
           <span class="text" v-if="!!sponsors[1].text">{{ sponsors[1].text }}</span>
         </a>
-        <!-- <a v-if="!!sponsors[1]" class="sponsor-grid-item item-no2-no3" :href="sponsors[1].website" target="_blank" rel="noreferrer">
-          <img class="image" :src="sponsors[1].logo"/>
-        </a>
         <a v-if="!!sponsors[2]" class="sponsor-grid-item item-no2-no3" :href="sponsors[2].website" target="_blank" rel="noreferrer">
           <img class="image" :src="sponsors[2].logo"/>
+          <span class="text" v-if="!!sponsors[2].text">{{ sponsors[2].text }}</span>
         </a>
-        <a class="sponsor-grid-item item-no1" href="./sponsor.html" target="_blank" rel="noreferrer">
-          {{ lang === 'zh-CN' ? '成为赞助商' : 'Become a sponsor' }}
-        </a> -->
       </div>
       <!-- <h4 v-if="platinum.length > 0">{{ lang === 'zh-CN' ? '铂金赞助商' : 'Platinum Sponsors' }}</h4> -->
       <div v-if="platinum.length > 0" class="sponsor-grid sponsor-platinum-grid">
@@ -106,7 +108,7 @@
   .sponsor-grid {
     display: flex;
     flex-wrap: wrap;
-    gap: 12px;
+    gap: 6px;
   }
 
   .sponsor-grid-item {
@@ -120,30 +122,29 @@
     transition: background-color .2s;
     cursor: pointer;
     color: inherit;
+    font-size: 32px;
   }
 
   .sponsor-grid-item .text {
-    font-size: 38px;
     font-weight: bold;
     padding-left: 12px;
   }
 
   .sponsor-top-grid .item-no1 {
-    height: 200px;
-    font-size: 16px;
+    height: 180px;
+    font-size: 36px;
   }
 
   .sponsor-top-grid .item-no1 .image {
-    height: 56px;
+    height: 62px;
   }
 
   .sponsor-top-grid .item-no2-no3 {
     height: 140px;
-    font-size: 14px;
   }
 
   .sponsor-top-grid .item-no2-no3 .image {
-    height: 46px;
+    height: 40px;
   }
 
   .sponsor-platinum-grid .item {
@@ -167,7 +168,7 @@
     display: flex;
     flex-direction: row;
     justify-content: center;
-    padding-top: 30px;
+    padding-top: 50px;
     font-size: 14px;
     color: var(--vp-c-indigo-1);
     font-weight: bold;
@@ -191,7 +192,7 @@
 
   @media (min-width: 640px) {
     .sponsor-grid {
-      gap: 20px;
+      gap: 4px;
     }
     .sponsor-platinum-grid .item {
       width: calc((100% - 12px) / 3);
@@ -204,12 +205,12 @@
 
   @media (min-width: 960px) {
     .sponsor-top-grid .item-no2-no3 {
-      width: calc((100% - 20px) / 2);
-      height: 200px;
+      width: calc((100% - 4px) / 2);
+      height: 140px;
     }
 
     .sponsor-top-grid .item-no2-no3 .image {
-      height: 72px;
+      height: 52px;
     }
 
     .sponsor-platinum-grid .item {
