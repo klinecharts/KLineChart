@@ -287,14 +287,15 @@ export default class IndicatorTooltipView extends View<YAxis> {
       eachFigures(dataList, indicator, dataIndex, styles, (figure: IndicatorFigure, figureStyles: Required<IndicatorFigureStyle>) => {
         if (isString(figure.title)) {
           const color = figureStyles.color
-          let value = indicatorData[figure.key]
+          let value = indicatorData[figure.key] ?? tooltipStyles.defaultValue
           if (isNumber(value)) {
             value = formatPrecision(value, indicator.precision)
             if (indicator.shouldFormatBigNumber) {
               value = customApi.formatBigNumber(value as string)
             }
+            value = formatFoldDecimal(formatThousands(value as string, thousandsSeparator), decimalFoldThreshold)
           }
-          legends.push({ title: { text: figure.title, color }, value: { text: formatFoldDecimal(formatThousands((value ?? tooltipStyles.defaultValue) as string, thousandsSeparator), decimalFoldThreshold), color } })
+          legends.push({ title: { text: figure.title, color }, value: { text: value, color } })
         }
       })
       tooltipData.values = legends
@@ -337,9 +338,16 @@ export default class IndicatorTooltipView extends View<YAxis> {
           if (isObject(data.value)) {
             value = data.value
           } else {
-            value.text = data.value
+            value.text = data.value ?? tooltipStyles.defaultValue
           }
-          value.text = formatFoldDecimal(formatThousands(value.text, thousandsSeparator), decimalFoldThreshold)
+          if (isNumber(value.text)) {
+            let text = formatPrecision(value.text, indicator.precision)
+            if (indicator.shouldFormatBigNumber) {
+              text = customApi.formatBigNumber(text)
+            }
+            text = formatFoldDecimal(formatThousands(text, thousandsSeparator), decimalFoldThreshold)
+            value.text = text
+          }
           optimizedLegends.push({ title, value })
         })
         tooltipData.values = optimizedLegends
