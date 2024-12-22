@@ -38,6 +38,8 @@ import {
 import { formatValue, formatPrecision, formatBigNumber, formatDate, formatThousands, formatFoldDecimal } from './common/utils/format'
 import { calcTextWidth } from './common/utils/canvas'
 import { ActionType } from './common/Action'
+import { LoadDataType } from './common/LoadDataCallback'
+
 import { IndicatorSeries } from './component/Indicator'
 import { OverlayMode } from './component/Overlay'
 
@@ -174,5 +176,5 @@ export {
   utils,
   LineType, PolygonType, TooltipShowRule, TooltipShowType, TooltipIconPosition, CandleTooltipRectPosition,
   CandleType, YAxisPosition, YAxisType, FormatDateType,
-  DomPosition, ActionType, IndicatorSeries, OverlayMode
+  DomPosition, ActionType, IndicatorSeries, OverlayMode, LoadDataType
 }
