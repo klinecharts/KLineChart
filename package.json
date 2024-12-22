@@ -1,6 +1,6 @@
 {
   "name": "klinecharts",
-  "version": "9.8.11",
+  "version": "9.8.12",
   "description": "Lightweight k-line chart built with html5 canvas",
   "main": "./dist/index.cjs",
   "module": "./dist/index.esm.js",

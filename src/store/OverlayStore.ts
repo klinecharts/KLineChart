@@ -210,7 +210,6 @@ export default class OverlayStore {
         paneInstances.sort((o1, o2) => o1.zLevel - o2.zLevel)
       })
     }
-    console.log(this._instances)
   }
 
   addInstances (overlays: OverlayCreate[], paneId: string, appointPaneFlag: boolean): Array<Nullable<string>> {
