@@ -1170,7 +1170,7 @@ export default class ChartImp implements Chart {
       case ActionType.OnCrosshairChange: {
         const crosshair: Crosshair = { ...data }
         crosshair.paneId ??= PaneIdConstants.CANDLE
-        this._chartStore.setCrosshair(crosshair)
+        this._chartStore.setCrosshair(crosshair, { notExecuteAction: true })
         break
       }
       default: { break }

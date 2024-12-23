@@ -534,7 +534,7 @@ export default class StoreImp implements Store {
     if (success) {
       if (adjustFlag) {
         this._adjustVisibleRange()
-        this.setCrosshair(this._crosshair, true)
+        this.setCrosshair(this._crosshair, { notInvalidate: true })
         const filterMap = this.getIndicatorsByFilter({})
         filterMap.forEach((indicators, paneId) => {
           indicators.forEach(indicator => {
@@ -706,7 +706,7 @@ export default class StoreImp implements Store {
     this._calcOptimalBarSpace()
     adjustBeforeFunc?.()
     this._adjustVisibleRange()
-    this.setCrosshair(this._crosshair, true)
+    this.setCrosshair(this._crosshair, { notInvalidate: true })
     this._chart.layout({
       measureWidth: true,
       update: true,
@@ -718,7 +718,7 @@ export default class StoreImp implements Store {
     if (this._totalBarSpace !== totalSpace) {
       this._totalBarSpace = totalSpace
       this._adjustVisibleRange()
-      this.setCrosshair(this._crosshair, true)
+      this.setCrosshair(this._crosshair, { notInvalidate: true })
     }
   }
 
@@ -727,7 +727,7 @@ export default class StoreImp implements Store {
     this._lastBarRightSideDiffBarCount = this._offsetRightDistance / this._barSpace
     if (isUpdate ?? false) {
       this._adjustVisibleRange()
-      this.setCrosshair(this._crosshair, true)
+      this.setCrosshair(this._crosshair, { notInvalidate: true })
       this._chart.layout({
         measureWidth: true,
         update: true,
@@ -789,7 +789,7 @@ export default class StoreImp implements Store {
     const prevLastBarRightSideDistance = this._lastBarRightSideDiffBarCount * this._barSpace
     this._lastBarRightSideDiffBarCount = this._startLastBarRightSideDiffBarCount - distanceBarCount
     this._adjustVisibleRange()
-    this.setCrosshair(this._crosshair, true)
+    this.setCrosshair(this._crosshair, { notInvalidate: true })
     this._chart.layout({
       measureWidth: true,
       update: true,
@@ -897,7 +897,11 @@ export default class StoreImp implements Store {
     return this._scrollEnabled
   }
 
-  setCrosshair (crosshair?: Crosshair, notInvalidate?: boolean): void {
+  setCrosshair (
+    crosshair?: Crosshair,
+    options?: { notInvalidate?: boolean, notExecuteAction?: boolean }
+  ): void {
+    const { notInvalidate, notExecuteAction } = options ?? {}
     const cr = crosshair ?? {}
     let realDataIndex = 0
     let dataIndex = 0
@@ -921,7 +925,7 @@ export default class StoreImp implements Store {
     if (
       prevCrosshair.x !== cr.x || prevCrosshair.y !== cr.y || prevCrosshair.paneId !== cr.paneId
     ) {
-      if (isValid(kLineData)) {
+      if (isValid(kLineData) && !(notExecuteAction ?? false)) {
         this._chart.crosshairChange(this._crosshair)
       }
       if (!(notInvalidate ?? false)) {
