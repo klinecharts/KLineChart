@@ -400,20 +400,18 @@ export default class CandleTooltipView extends IndicatorTooltipView {
         : tooltipStyles.custom
     )
     return legends.map(({ title, value }) => {
-      let t: TooltipLegendChild = { text: '', color: '' }
+      let t: TooltipLegendChild = { text: '', color: textColor }
       if (isObject(title)) {
         t = { ...title }
       } else {
         t.text = title
-        t.color = textColor
       }
       t.text = i18n(t.text, locale)
-      let v: TooltipLegendChild = { text: tooltipStyles.defaultValue, color: '' }
+      let v = { text: tooltipStyles.defaultValue, color: textColor }
       if (isObject(value)) {
         v = { ...value }
       } else {
         v.text = value
-        v.color = textColor
       }
       const match = /{(\S*)}/.exec(v.text)
       if (match !== null && match.length > 1) {

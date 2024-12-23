@@ -272,8 +272,9 @@ export default class IndicatorTooltipView extends View<YAxis> {
             if (indicator.shouldFormatBigNumber) {
               value = customApi.formatBigNumber(value as string)
             }
+            value = decimalFold.format(thousandsSeparator.format(value as string))
           }
-          legends.push({ title: { text: figure.title, color }, value: { text: decimalFold.format(thousandsSeparator.format((value ?? tooltipStyles.defaultValue) as string)), color } })
+          legends.push({ title: { text: figure.title, color }, value: { text: (value ?? tooltipStyles.defaultValue) as string, color } })
         }
       })
       tooltipData.legends = legends
