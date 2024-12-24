@@ -3,7 +3,7 @@ outline: deep
 ---
 
 # scrollToDataIndex(dataIndex, animationDuration?)
-`scrollToDataIndex` 滚动到指定数据索引位置。
+`scrollToDataIndex` 滚动图表最右侧到指定数据索引位置。
 
 ## 参考 {#reference}
 <!-- @include: @/@views/api/references/instance/scrollToDataIndex.md -->
