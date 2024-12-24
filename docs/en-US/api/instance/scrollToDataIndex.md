@@ -3,7 +3,7 @@ outline: deep
 ---
 
 # scrollToDataIndex(dataIndex, animationDuration?)
-`scrollToDataIndex` scroll to the specified data index position.
+`scrollToDataIndex` scroll the right side of the chart to the specified data index position.
 
 ## Reference {#reference}
 <!-- @include: @/@views/api/references/instance/scrollToDataIndex.md -->

@@ -3,7 +3,7 @@ outline: deep
 ---
 
 # scrollToTimestamp(timestamp, animationDuration?)
-`scrollToTimestamp` 滚动到指定的时间戳。
+`scrollToTimestamp` 滚动图表最右侧到指定的时间戳。
 
 ## 参考 {#reference}
 <!-- @include: @/@views/api/references/instance/scrollToTimestamp.md -->
