@@ -75,7 +75,7 @@ export interface PolygonStyle {
 }
 
 export interface RectStyle extends PolygonStyle {
-  borderRadius: number
+  borderRadius: number | number[]
 }
 
 export interface TextStyle extends Padding {
@@ -88,7 +88,7 @@ export interface TextStyle extends Padding {
   borderDashedValue: number[]
   borderSize: number
   borderColor: string
-  borderRadius: number
+  borderRadius: number | number[]
   backgroundColor: string | CanvasGradient
 }
 
