@@ -1236,10 +1236,12 @@ export default class StoreImp implements Store {
       if (isValid(OverlayClazz)) {
         const id = create.id ?? createId(OVERLAY_ID_PREFIX)
         const overlay = new OverlayClazz()
+        const paneId = overlay.paneId
         create.id = id
         create.groupId ??= id
+        const zLevel = this.getOverlaysByPaneId(paneId).length
+        create.zLevel ??= zLevel
         overlay.override(create)
-        const paneId = overlay.paneId
         if (!updatePaneIds.includes(paneId)) {
           updatePaneIds.push(paneId)
         }
@@ -1383,6 +1385,7 @@ export default class StoreImp implements Store {
         let ignoreUpdateFlag = false
         let sortFlag = false
         if (overlay !== null) {
+          overlay.override({ zLevel: overlay.getPrevZLevel() })
           sortFlag = true
           if (isFunction(overlay.onMouseLeave)) {
             overlay.onMouseLeave({ chart: this._chart, overlay, figureKey, figureIndex, ...event })
@@ -1391,6 +1394,8 @@ export default class StoreImp implements Store {
         }
 
         if (infoOverlay !== null) {
+          infoOverlay.setPrevZLevel(infoOverlay.zLevel)
+          infoOverlay.override({ zLevel: Number.MAX_SAFE_INTEGER })
           sortFlag = true
           if (isFunction(infoOverlay.onMouseEnter)) {
             infoOverlay.onMouseEnter({ chart: this._chart, overlay: infoOverlay, figureKey: info.figureKey, figureIndex: info.figureIndex, ...event })
