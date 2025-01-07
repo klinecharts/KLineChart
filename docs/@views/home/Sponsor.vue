@@ -16,7 +16,7 @@
       "text": "flameOnYou",
       "logo": "/images/sponsors/flameOnYou.jpg",
       "website": "https://github.com/flameOnYou",
-      "amount": 1600
+      "amount": 2100
     },
     {
       "name": "糊涂",
