@@ -44,7 +44,7 @@ import { IndicatorSeries } from './component/Indicator'
 import { getIndicatorClass } from './extension/indicator/index'
 
 import type OverlayImp from './component/Overlay'
-import { type OverlayCreate, OVERLAY_ID_PREFIX, type OverlayFilter } from './component/Overlay'
+import { type OverlayCreate, OVERLAY_ID_PREFIX, type OverlayFilter, type OverlayFigure, checkOverlayFigureEvent } from './component/Overlay'
 import { getOverlayInnerClass } from './extension/overlay/index'
 
 import { getStyles as getExtensionStyles } from './extension/styles/index'
@@ -83,9 +83,8 @@ export interface EventOverlayInfo {
   paneId: string
   overlay: Nullable<OverlayImp>
   figureType: EventOverlayInfoFigureType
-  figureKey: string
   figureIndex: number
-  attrsIndex: number
+  figure: Nullable<OverlayFigure>
 }
 
 const DEFAULT_BAR_SPACE = 10
@@ -324,9 +323,8 @@ export default class StoreImp implements Store {
     paneId: '',
     overlay: null,
     figureType: EventOverlayInfoFigureType.None,
-    figureKey: '',
     figureIndex: -1,
-    attrsIndex: -1
+    figure: null
   }
 
   /**
@@ -336,9 +334,8 @@ export default class StoreImp implements Store {
     paneId: '',
     overlay: null,
     figureType: EventOverlayInfoFigureType.None,
-    figureKey: '',
     figureIndex: -1,
-    attrsIndex: -1
+    figure: null
   }
 
   /**
@@ -348,9 +345,8 @@ export default class StoreImp implements Store {
     paneId: '',
     overlay: null,
     figureType: EventOverlayInfoFigureType.None,
-    figureKey: '',
     figureIndex: -1,
-    attrsIndex: -1
+    figure: null
   }
 
   constructor (chart: Chart, options?: Options) {
@@ -1373,7 +1369,7 @@ export default class StoreImp implements Store {
   }
 
   setHoverOverlayInfo (info: EventOverlayInfo, event: MouseTouchEvent): void {
-    const { overlay, figureType, figureKey, figureIndex } = this._hoverOverlayInfo
+    const { overlay, figureType, figureIndex, figure } = this._hoverOverlayInfo
     const infoOverlay = info.overlay
     if (
       overlay?.id !== infoOverlay?.id ||
@@ -1387,8 +1383,8 @@ export default class StoreImp implements Store {
         if (overlay !== null) {
           overlay.override({ zLevel: overlay.getPrevZLevel() })
           sortFlag = true
-          if (isFunction(overlay.onMouseLeave)) {
-            overlay.onMouseLeave({ chart: this._chart, overlay, figureKey, figureIndex, ...event })
+          if (isFunction(overlay.onMouseLeave) && checkOverlayFigureEvent('onMouseLeave', figure)) {
+            overlay.onMouseLeave({ chart: this._chart, overlay, figure: figure ?? undefined, ...event })
             ignoreUpdateFlag = true
           }
         }
@@ -1397,8 +1393,8 @@ export default class StoreImp implements Store {
           infoOverlay.setPrevZLevel(infoOverlay.zLevel)
           infoOverlay.override({ zLevel: Number.MAX_SAFE_INTEGER })
           sortFlag = true
-          if (isFunction(infoOverlay.onMouseEnter)) {
-            infoOverlay.onMouseEnter({ chart: this._chart, overlay: infoOverlay, figureKey: info.figureKey, figureIndex: info.figureIndex, ...event })
+          if (isFunction(infoOverlay.onMouseEnter) && checkOverlayFigureEvent('onMouseEnter', info.figure)) {
+            infoOverlay.onMouseEnter({ chart: this._chart, overlay: infoOverlay, figure: info.figure ?? undefined, ...event })
             ignoreUpdateFlag = true
           }
         }
@@ -1417,16 +1413,20 @@ export default class StoreImp implements Store {
   }
 
   setClickOverlayInfo (info: EventOverlayInfo, event: MouseTouchEvent): void {
-    const { paneId, overlay, figureType, figureKey, figureIndex } = this._clickOverlayInfo
+    const { paneId, overlay, figureType, figure, figureIndex } = this._clickOverlayInfo
     const infoOverlay = info.overlay
-    if (!(infoOverlay?.isDrawing() ?? false)) {
-      infoOverlay?.onClick?.({ chart: this._chart, overlay: infoOverlay, figureKey: info.figureKey, figureIndex: info.figureIndex, ...event })
+    if ((!(infoOverlay?.isDrawing() ?? false)) && checkOverlayFigureEvent('onClick', info.figure)) {
+      infoOverlay?.onClick?.({ chart: this._chart, overlay: infoOverlay, figure: info.figure ?? undefined, ...event })
     }
     if (overlay?.id !== infoOverlay?.id || figureType !== info.figureType || figureIndex !== info.figureIndex) {
       this._clickOverlayInfo = info
       if (overlay?.id !== infoOverlay?.id) {
-        overlay?.onDeselected?.({ chart: this._chart, overlay, figureKey, figureIndex, ...event })
-        infoOverlay?.onSelected?.({ chart: this._chart, overlay: infoOverlay, figureKey: info.figureKey, figureIndex: info.figureIndex, ...event })
+        if (checkOverlayFigureEvent('onDeselected', figure)) {
+          overlay?.onDeselected?.({ chart: this._chart, overlay, figure: figure ?? undefined, ...event })
+        }
+        if (checkOverlayFigureEvent('onSelected', info.figure)) {
+          infoOverlay?.onSelected?.({ chart: this._chart, overlay: infoOverlay, figure: info.figure ?? undefined, ...event })
+        }
         this._chart.updatePane(UpdateLevel.Overlay, info.paneId)
         if (paneId !== info.paneId) {
           this._chart.updatePane(UpdateLevel.Overlay, paneId)

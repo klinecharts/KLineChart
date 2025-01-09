@@ -20,7 +20,7 @@ import type Coordinate from '../common/Coordinate'
 import type Bounding from '../common/Bounding'
 import type { OverlayStyle } from '../common/Styles'
 import type { MouseTouchEvent } from '../common/SyntheticEvent'
-import { clone, isArray, isFunction, isNumber, isString, isValid, merge } from '../common/utils/typeChecks'
+import { clone, isArray, isBoolean, isFunction, isNumber, isString, isValid, merge } from '../common/utils/typeChecks'
 
 import type { XAxis } from './XAxis'
 import type { YAxis } from './YAxis'
@@ -41,20 +41,14 @@ export interface OverlayPerformEventParams {
   performPoint: Partial<Point>
 }
 
-export type OverlayFigureIgnoreEventType = 'mouseClickEvent' | 'mouseRightClickEvent' | 'tapEvent' | 'doubleTapEvent' | 'mouseDownEvent' | 'touchStartEvent' | 'mouseMoveEvent' | 'touchMoveEvent' | 'mouseDoubleClickEvent'
+export type OverlayEventType = 'onClick' | 'onDoubleClick' | 'onRightClick' | 'onPressedMoveStart' | 'onPressedMoving' | 'onPressedMoveEnd' | 'onMouseEnter' | 'onMouseLeave' | 'onSelected' | 'onDeselected'
 
-export function getAllOverlayFigureIgnoreEventTypes (): OverlayFigureIgnoreEventType[] {
-  return [
-    'mouseClickEvent',
-    'mouseDoubleClickEvent',
-    'mouseRightClickEvent',
-    'tapEvent',
-    'doubleTapEvent',
-    'mouseDownEvent',
-    'touchStartEvent',
-    'mouseMoveEvent',
-    'touchMoveEvent'
-  ]
+export function checkOverlayFigureEvent (targetEventType: OverlayEventType, figure: Nullable<OverlayFigure>): boolean {
+  const ignoreEvent = figure?.ignoreEvent ?? false
+  if (isBoolean(ignoreEvent)) {
+    return !ignoreEvent
+  }
+  return !ignoreEvent.includes(targetEventType)
 }
 
 export interface OverlayFigure {
@@ -62,12 +56,11 @@ export interface OverlayFigure {
   type: string
   attrs: unknown
   styles?: unknown
-  ignoreEvent?: boolean | OverlayFigureIgnoreEventType[]
+  ignoreEvent?: boolean | OverlayEventType[]
 }
 
 export interface OverlayCreateFiguresCallbackParams {
   chart: Chart
-
   overlay: Overlay
   coordinates: Coordinate[]
   bounding: Bounding
@@ -76,9 +69,7 @@ export interface OverlayCreateFiguresCallbackParams {
 }
 
 export interface OverlayEvent extends Partial<MouseTouchEvent> {
-  figureKey?: string
-  figureIndex?: number
-
+  figure?: OverlayFigure
   overlay: Overlay
   chart: Chart
 }
@@ -87,7 +78,7 @@ export type OverlayEventCallback = (event: OverlayEvent) => boolean
 
 export type OverlayCreateFiguresCallback = (params: OverlayCreateFiguresCallbackParams) => OverlayFigure | OverlayFigure[]
 
-export interface Overlay {
+export type Overlay = {
   /**
    * Unique identification
    */
@@ -214,60 +205,10 @@ export interface Overlay {
   onDrawEnd: Nullable<OverlayEventCallback>
 
   /**
-   * Click event
-   */
-  onClick: Nullable<OverlayEventCallback>
-
-  /**
-   * Double Click event
-   */
-  onDoubleClick: Nullable<OverlayEventCallback>
-
-  /**
-   * Right click event
-   */
-  onRightClick: Nullable<OverlayEventCallback>
-
-  /**
-   * Pressed move start event
-   */
-  onPressedMoveStart: Nullable<OverlayEventCallback>
-
-  /**
-   * Pressed moving event
-   */
-  onPressedMoving: Nullable<OverlayEventCallback>
-
-  /**
-   * Pressed move end event
-   */
-  onPressedMoveEnd: Nullable<OverlayEventCallback>
-
-  /**
-   * Mouse enter event
-   */
-  onMouseEnter: Nullable<OverlayEventCallback>
-
-  /**
-   * Mouse leave event
-   */
-  onMouseLeave: Nullable<OverlayEventCallback>
-
-  /**
    * Removed event
    */
   onRemoved: Nullable<OverlayEventCallback>
-
-  /**
-   * Selected event
-   */
-  onSelected: Nullable<OverlayEventCallback>
-
-  /**
-   * Deselected event
-   */
-  onDeselected: Nullable<OverlayEventCallback>
-}
+} & Record<OverlayEventType, Nullable<OverlayEventCallback>>
 
 export type OverlayTemplate = ExcludePickPartial<Omit<Overlay, 'id' | 'groupId' | 'paneId' | 'points' | 'currentStep'>, 'name'>
 
