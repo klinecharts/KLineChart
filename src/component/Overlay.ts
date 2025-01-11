@@ -41,9 +41,27 @@ export interface OverlayPerformEventParams {
   performPoint: Partial<Point>
 }
 
-export type OverlayEventType = 'onClick' | 'onDoubleClick' | 'onRightClick' | 'onPressedMoveStart' | 'onPressedMoving' | 'onPressedMoveEnd' | 'onMouseEnter' | 'onMouseLeave' | 'onSelected' | 'onDeselected'
+export interface OverlayEventCollection {
+  onDrawStart: Nullable<OverlayEventCallback>
+  onDrawing: Nullable<OverlayEventCallback>
+  onDrawEnd: Nullable<OverlayEventCallback>
+  onRemoved: Nullable<OverlayEventCallback>
+  onClick: Nullable<OverlayEventCallback>
+  onDoubleClick: Nullable<OverlayEventCallback>
+  onRightClick: Nullable<OverlayEventCallback>
+  onPressedMoveStart: Nullable<OverlayEventCallback>
+  onPressedMoving: Nullable<OverlayEventCallback>
+  onPressedMoveEnd: Nullable<OverlayEventCallback>
+  onMouseEnter: Nullable<OverlayEventCallback>
+  onMouseLeave: Nullable<OverlayEventCallback>
+  onSelected: Nullable<OverlayEventCallback>
+  onDeselected: Nullable<OverlayEventCallback>
+}
 
-export function checkOverlayFigureEvent (targetEventType: OverlayEventType, figure: Nullable<OverlayFigure>): boolean {
+export function checkOverlayFigureEvent (
+  targetEventType: keyof Omit<OverlayEventCollection, 'onDrawStart' | 'onDrawing' | 'onDrawEnd' | 'onRemoved'>,
+  figure: Nullable<OverlayFigure>
+): boolean {
   const ignoreEvent = figure?.ignoreEvent ?? false
   if (isBoolean(ignoreEvent)) {
     return !ignoreEvent
@@ -56,7 +74,7 @@ export interface OverlayFigure {
   type: string
   attrs: unknown
   styles?: unknown
-  ignoreEvent?: boolean | OverlayEventType[]
+  ignoreEvent?: boolean | Array<keyof Omit<OverlayEventCollection, 'onDrawStart' | 'onDrawing' | 'onDrawEnd' | 'onRemoved'>>
 }
 
 export interface OverlayCreateFiguresCallbackParams {
@@ -78,7 +96,7 @@ export type OverlayEventCallback = (event: OverlayEvent) => boolean
 
 export type OverlayCreateFiguresCallback = (params: OverlayCreateFiguresCallbackParams) => OverlayFigure | OverlayFigure[]
 
-export type Overlay = {
+export interface Overlay extends OverlayEventCollection {
   /**
    * Unique identification
    */
@@ -188,27 +206,7 @@ export type Overlay = {
    * In drawing, special handling callback when moving events
    */
   performEventMoveForDrawing: Nullable<(params: OverlayPerformEventParams) => void>
-
-  /**
-   * Start drawing event
-   */
-  onDrawStart: Nullable<OverlayEventCallback>
-
-  /**
-   * In drawing event
-   */
-  onDrawing: Nullable<OverlayEventCallback>
-
-  /**
-   * Draw End Event
-   */
-  onDrawEnd: Nullable<OverlayEventCallback>
-
-  /**
-   * Removed event
-   */
-  onRemoved: Nullable<OverlayEventCallback>
-} & Record<OverlayEventType, Nullable<OverlayEventCallback>>
+}
 
 export type OverlayTemplate = ExcludePickPartial<Omit<Overlay, 'id' | 'groupId' | 'paneId' | 'points' | 'currentStep'>, 'name'>
 
