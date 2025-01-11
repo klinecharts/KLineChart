@@ -12,11 +12,10 @@
  * limitations under the License.
  */
 
-import type { KLineData } from '../../common/Data'
 import { formatValue } from '../../common/utils/format'
 import { isValid } from '../../common/utils/typeChecks'
 
-import { type Indicator, type IndicatorTemplate, IndicatorSeries, type IndicatorFigure } from '../../component/Indicator'
+import { type IndicatorTemplate, IndicatorSeries, type IndicatorFigure } from '../../component/Indicator'
 
 interface Vol {
   open: number
@@ -48,7 +47,7 @@ function getVolumeFigure (): IndicatorFigure<Vol> {
   }
 }
 
-const volume: IndicatorTemplate<Vol, number[]> = {
+const volume: IndicatorTemplate<Vol, number> = {
   name: 'VOL',
   shortName: 'VOL',
   series: IndicatorSeries.Volume,
@@ -62,15 +61,15 @@ const volume: IndicatorTemplate<Vol, number[]> = {
     { key: 'ma3', title: 'MA20: ', type: 'line' },
     getVolumeFigure()
   ],
-  regenerateFigures: (params: number[]) => {
-    const figures: Array<IndicatorFigure<Vol>> = params.map((p: number, i: number) => ({ key: `ma${i + 1}`, title: `MA${p}: `, type: 'line' }))
+  regenerateFigures: (params) => {
+    const figures: Array<IndicatorFigure<Vol>> = params.map((p, i) => ({ key: `ma${i + 1}`, title: `MA${p}: `, type: 'line' }))
     figures.push(getVolumeFigure())
     return figures
   },
-  calc: (dataList: KLineData[], indicator: Indicator<Vol, number[]>) => {
+  calc: (dataList, indicator) => {
     const { calcParams: params, figures } = indicator
     const volSums: number[] = []
-    return dataList.map((kLineData: KLineData, i: number) => {
+    return dataList.map((kLineData, i) => {
       const volume = kLineData.volume ?? 0
       const vol: Vol = { volume, open: kLineData.open, close: kLineData.close }
       params.forEach((p, index) => {

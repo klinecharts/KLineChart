@@ -12,8 +12,7 @@
  * limitations under the License.
  */
 
-import type { KLineData } from '../../common/Data'
-import type { Indicator, IndicatorTemplate } from '../../component/Indicator'
+import type { IndicatorTemplate } from '../../component/Indicator'
 
 interface Cci {
   cci?: number
@@ -27,19 +26,19 @@ interface Cci {
  * MD=近N日TP - 当前MA绝对值的累计之和÷N
  *
  */
-const commodityChannelIndex: IndicatorTemplate<Cci, number[]> = {
+const commodityChannelIndex: IndicatorTemplate<Cci, number> = {
   name: 'CCI',
   shortName: 'CCI',
   calcParams: [20],
   figures: [
     { key: 'cci', title: 'CCI: ', type: 'line' }
   ],
-  calc: (dataList: KLineData[], indicator: Indicator<Cci, number[]>) => {
+  calc: (dataList, indicator) => {
     const params = indicator.calcParams
     const p = params[0] - 1
     let tpSum = 0
     const tpList: number[] = []
-    return dataList.map((kLineData: KLineData, i: number) => {
+    return dataList.map((kLineData, i) => {
       const cci: Cci = {}
       const tp = (kLineData.high + kLineData.low + kLineData.close) / 3
       tpSum += tp

@@ -12,8 +12,7 @@
  * limitations under the License.
  */
 
-import type { KLineData } from '../../common/Data'
-import type { Indicator, IndicatorTemplate } from '../../component/Indicator'
+import type { IndicatorTemplate } from '../../component/Indicator'
 
 interface Dma {
   dma?: number
@@ -24,7 +23,7 @@ interface Dma {
  * DMA
  * 公式：DIF:MA(CLOSE,N1)-MA(CLOSE,N2);DIFMA:MA(DIF,M)
  */
-const differentOfMovingAverage: IndicatorTemplate<Dma, number[]> = {
+const differentOfMovingAverage: IndicatorTemplate<Dma, number> = {
   name: 'DMA',
   shortName: 'DMA',
   calcParams: [10, 50, 10],
@@ -32,14 +31,14 @@ const differentOfMovingAverage: IndicatorTemplate<Dma, number[]> = {
     { key: 'dma', title: 'DMA: ', type: 'line' },
     { key: 'ama', title: 'AMA: ', type: 'line' }
   ],
-  calc: (dataList: KLineData[], indicator: Indicator<Dma, number[]>) => {
+  calc: (dataList, indicator) => {
     const params = indicator.calcParams
     const maxPeriod = Math.max(params[0], params[1])
     let closeSum1 = 0
     let closeSum2 = 0
     let dmaSum = 0
     const result: Dma[] = []
-    dataList.forEach((kLineData: KLineData, i: number) => {
+    dataList.forEach((kLineData, i) => {
       const dma: Dma = {}
       const close = kLineData.close
       closeSum1 += close

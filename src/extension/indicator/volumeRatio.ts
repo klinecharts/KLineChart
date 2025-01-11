@@ -12,8 +12,7 @@
  * limitations under the License.
  */
 
-import type { KLineData } from '../../common/Data'
-import type { Indicator, IndicatorTemplate } from '../../component/Indicator'
+import type { IndicatorTemplate } from '../../component/Indicator'
 
 interface Vr {
   vr?: number
@@ -28,7 +27,7 @@ interface Vr {
  * 24天以来凡是股价不涨不跌，则那一天的成交量都称为CV，将24天内的CV总和相加后称为PVS
  *
  */
-const volumeRatio: IndicatorTemplate<Vr, number[]> = {
+const volumeRatio: IndicatorTemplate<Vr, number> = {
   name: 'VR',
   shortName: 'VR',
   calcParams: [26, 6],
@@ -36,14 +35,14 @@ const volumeRatio: IndicatorTemplate<Vr, number[]> = {
     { key: 'vr', title: 'VR: ', type: 'line' },
     { key: 'maVr', title: 'MAVR: ', type: 'line' }
   ],
-  calc: (dataList: KLineData[], indicator: Indicator<Vr, number[]>) => {
+  calc: (dataList, indicator) => {
     const params = indicator.calcParams
     let uvs = 0
     let dvs = 0
     let pvs = 0
     let vrSum = 0
     const result: Vr[] = []
-    dataList.forEach((kLineData: KLineData, i: number) => {
+    dataList.forEach((kLineData, i) => {
       const vr: Vr = {}
       const close = kLineData.close
       const preClose = (dataList[i - 1] ?? kLineData).close

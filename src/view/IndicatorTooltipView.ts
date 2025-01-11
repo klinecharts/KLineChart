@@ -247,9 +247,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
     const name = tooltipStyles.showName ? indicator.shortName : ''
     let calcParamsText = ''
     if (tooltipStyles.showParams) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- ignore
-      // @ts-expect-error
-      const calcParams = [].concat(indicator.calcParams ?? [])
+      const calcParams = indicator.calcParams
       if (calcParams.length > 0) {
         calcParamsText = `(${calcParams.join(',')})`
       }

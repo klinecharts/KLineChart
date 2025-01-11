@@ -12,8 +12,7 @@
  * limitations under the License.
  */
 
-import type { KLineData } from '../../common/Data'
-import type { Indicator, IndicatorTemplate } from '../../component/Indicator'
+import type { IndicatorTemplate } from '../../component/Indicator'
 
 interface Obv {
   obv?: number
@@ -24,7 +23,7 @@ interface Obv {
  * OBV
  * OBV = REF(OBV) + sign * V
  */
-const onBalanceVolume: IndicatorTemplate<Obv, number[]> = {
+const onBalanceVolume: IndicatorTemplate<Obv, number> = {
   name: 'OBV',
   shortName: 'OBV',
   calcParams: [30],
@@ -32,12 +31,12 @@ const onBalanceVolume: IndicatorTemplate<Obv, number[]> = {
     { key: 'obv', title: 'OBV: ', type: 'line' },
     { key: 'maObv', title: 'MAOBV: ', type: 'line' }
   ],
-  calc: (dataList: KLineData[], indicator: Indicator<Obv, number[]>) => {
+  calc: (dataList, indicator) => {
     const params = indicator.calcParams
     let obvSum = 0
     let oldObv = 0
     const result: Obv[] = []
-    dataList.forEach((kLineData: KLineData, i: number) => {
+    dataList.forEach((kLineData, i) => {
       const prevKLineData = dataList[i - 1] ?? kLineData
       if (kLineData.close < prevKLineData.close) {
         oldObv -= (kLineData.volume ?? 0)

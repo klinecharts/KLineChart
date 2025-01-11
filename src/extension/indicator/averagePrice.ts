@@ -12,7 +12,6 @@
  * limitations under the License.
  */
 
-import type { KLineData } from '../../common/Data'
 import { type IndicatorTemplate, IndicatorSeries } from '../../component/Indicator'
 
 interface Avp {
@@ -30,10 +29,10 @@ const averagePrice: IndicatorTemplate<Avp> = {
   figures: [
     { key: 'avp', title: 'AVP: ', type: 'line' }
   ],
-  calc: (dataList: KLineData[]) => {
+  calc: (dataList) => {
     let totalTurnover = 0
     let totalVolume = 0
-    return dataList.map((kLineData: KLineData) => {
+    return dataList.map((kLineData) => {
       const avp: Avp = {}
       const turnover = kLineData.turnover ?? 0
       const volume = kLineData.volume ?? 0

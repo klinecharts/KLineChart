@@ -12,12 +12,11 @@
  * limitations under the License.
  */
 
-import type { KLineData } from '../../common/Data'
 import { PolygonType } from '../../common/Styles'
 
 import { formatValue } from '../../common/utils/format'
 
-import type { Indicator, IndicatorTemplate } from '../../component/Indicator'
+import type { IndicatorTemplate } from '../../component/Indicator'
 
 interface Macd {
   dif?: number
@@ -33,7 +32,7 @@ interface Macd {
  * ⒊再计算DIFF的M日的平均的指数平滑移动平均线，记为DEA。
  * ⒋最后用DIFF减DEA，得MACD。MACD通常绘制成围绕零轴线波动的柱形图。MACD柱状大于0涨颜色，小于0跌颜色。
  */
-const movingAverageConvergenceDivergence: IndicatorTemplate<Macd, number[]> = {
+const movingAverageConvergenceDivergence: IndicatorTemplate<Macd, number> = {
   name: 'MACD',
   shortName: 'MACD',
   calcParams: [12, 26, 9],
@@ -62,7 +61,7 @@ const movingAverageConvergenceDivergence: IndicatorTemplate<Macd, number[]> = {
       }
     }
   ],
-  calc: (dataList: KLineData[], indicator: Indicator<Macd, number[]>) => {
+  calc: (dataList, indicator) => {
     const params = indicator.calcParams
     let closeSum = 0
     let emaShort = 0
@@ -71,7 +70,7 @@ const movingAverageConvergenceDivergence: IndicatorTemplate<Macd, number[]> = {
     let difSum = 0
     let dea = 0
     const maxPeriod = Math.max(params[0], params[1])
-    return dataList.map((kLineData: KLineData, i: number) => {
+    return dataList.map((kLineData, i) => {
       const macd: Macd = {}
       const close = kLineData.close
       closeSum += close

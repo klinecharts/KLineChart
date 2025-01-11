@@ -12,8 +12,7 @@
  * limitations under the License.
  */
 
-import type { KLineData } from '../../common/Data'
-import type { Indicator, IndicatorTemplate } from '../../component/Indicator'
+import type { IndicatorTemplate } from '../../component/Indicator'
 
 interface Bias {
   bias1?: number
@@ -25,7 +24,7 @@ interface Bias {
  * BIAS
  * 乖离率=[(当日收盘价-N日平均价)/N日平均价]*100%
  */
-const bias: IndicatorTemplate<Bias, number[]> = {
+const bias: IndicatorTemplate<Bias, number> = {
   name: 'BIAS',
   shortName: 'BIAS',
   calcParams: [6, 12, 24],
@@ -34,11 +33,11 @@ const bias: IndicatorTemplate<Bias, number[]> = {
     { key: 'bias2', title: 'BIAS12: ', type: 'line' },
     { key: 'bias3', title: 'BIAS24: ', type: 'line' }
   ],
-  regenerateFigures: (params: number[]) => params.map((p: number, i: number) => ({ key: `bias${i + 1}`, title: `BIAS${p}: `, type: 'line' })),
-  calc: (dataList: KLineData[], indicator: Indicator<Bias, number[]>) => {
+  regenerateFigures: (params) => params.map((p, i) => ({ key: `bias${i + 1}`, title: `BIAS${p}: `, type: 'line' })),
+  calc: (dataList, indicator) => {
     const { calcParams: params, figures } = indicator
     const closeSums: number[] = []
-    return dataList.map((kLineData: KLineData, i: number) => {
+    return dataList.map((kLineData, i) => {
       const bias: Bias = {}
       const close = kLineData.close
       params.forEach((p, index) => {

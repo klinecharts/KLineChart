@@ -12,8 +12,7 @@
  * limitations under the License.
  */
 
-import type { KLineData } from '../../common/Data'
-import type { Indicator, IndicatorTemplate } from '../../component/Indicator'
+import type { IndicatorTemplate } from '../../component/Indicator'
 
 interface Mtm {
   mtm?: number
@@ -24,7 +23,7 @@ interface Mtm {
  * mtm
  * 公式 MTM（N日）=C－CN
  */
-const momentum: IndicatorTemplate<Mtm, number[]> = {
+const momentum: IndicatorTemplate<Mtm, number> = {
   name: 'MTM',
   shortName: 'MTM',
   calcParams: [12, 6],
@@ -32,11 +31,11 @@ const momentum: IndicatorTemplate<Mtm, number[]> = {
     { key: 'mtm', title: 'MTM: ', type: 'line' },
     { key: 'maMtm', title: 'MAMTM: ', type: 'line' }
   ],
-  calc: (dataList: KLineData[], indicator: Indicator<Mtm, number[]>) => {
+  calc: (dataList, indicator) => {
     const params = indicator.calcParams
     let mtmSum = 0
     const result: Mtm[] = []
-    dataList.forEach((kLineData: KLineData, i: number) => {
+    dataList.forEach((kLineData, i) => {
       const mtm: Mtm = {}
       if (i >= params[0]) {
         const close = kLineData.close

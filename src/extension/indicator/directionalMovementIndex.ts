@@ -12,8 +12,7 @@
  * limitations under the License.
  */
 
-import type { KLineData } from '../../common/Data'
-import type { Indicator, IndicatorTemplate } from '../../component/Indicator'
+import type { IndicatorTemplate } from '../../component/Indicator'
 
 interface Dmi {
   pdi?: number
@@ -47,7 +46,7 @@ interface Dmi {
  * 输出ADXR:ADX的MM日指数平滑移动平均
  *
  */
-const directionalMovementIndex: IndicatorTemplate<Dmi, number[]> = {
+const directionalMovementIndex: IndicatorTemplate<Dmi, number> = {
   name: 'DMI',
   shortName: 'DMI',
   calcParams: [14, 6],
@@ -57,7 +56,7 @@ const directionalMovementIndex: IndicatorTemplate<Dmi, number[]> = {
     { key: 'adx', title: 'ADX: ', type: 'line' },
     { key: 'adxr', title: 'ADXR: ', type: 'line' }
   ],
-  calc: (dataList: KLineData[], indicator: Indicator<Dmi, number[]>) => {
+  calc: (dataList, indicator) => {
     const params = indicator.calcParams
     let trSum = 0
     let hSum = 0
@@ -68,7 +67,7 @@ const directionalMovementIndex: IndicatorTemplate<Dmi, number[]> = {
     let dxSum = 0
     let adx = 0
     const result: Dmi[] = []
-    dataList.forEach((kLineData: KLineData, i: number) => {
+    dataList.forEach((kLineData, i) => {
       const dmi: Dmi = {}
       const prevKLineData = dataList[i - 1] ?? kLineData
       const preClose = prevKLineData.close

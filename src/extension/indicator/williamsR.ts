@@ -13,7 +13,7 @@
  */
 
 import type { KLineData } from '../../common/Data'
-import type { Indicator, IndicatorTemplate } from '../../component/Indicator'
+import type { IndicatorTemplate } from '../../component/Indicator'
 
 import { getMaxMin } from '../../common/utils/number'
 
@@ -27,7 +27,7 @@ interface Wr {
  * WR
  * 公式 WR(N) = 100 * [ C - HIGH(N) ] / [ HIGH(N)-LOW(N) ]
  */
-const williamsR: IndicatorTemplate<Wr, number[]> = {
+const williamsR: IndicatorTemplate<Wr, number> = {
   name: 'WR',
   shortName: 'WR',
   calcParams: [6, 10, 14],
@@ -36,8 +36,8 @@ const williamsR: IndicatorTemplate<Wr, number[]> = {
     { key: 'wr2', title: 'WR2: ', type: 'line' },
     { key: 'wr3', title: 'WR3: ', type: 'line' }
   ],
-  regenerateFigures: (params: number[]) => params.map((_, i: number) => ({ key: `wr${i + 1}`, title: `WR${i + 1}: `, type: 'line' })),
-  calc: (dataList: KLineData[], indicator: Indicator<Wr, number[]>) => {
+  regenerateFigures: (params) => params.map((_, i) => ({ key: `wr${i + 1}`, title: `WR${i + 1}: `, type: 'line' })),
+  calc: (dataList, indicator) => {
     const { calcParams: params, figures } = indicator
     return dataList.map((kLineData, i) => {
       const wr: Wr = {}

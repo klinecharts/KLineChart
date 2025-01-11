@@ -12,8 +12,7 @@
  * limitations under the License.
  */
 
-import type { KLineData } from '../../common/Data'
-import type { Indicator, IndicatorTemplate } from '../../component/Indicator'
+import type { IndicatorTemplate } from '../../component/Indicator'
 
 interface Roc {
   roc?: number
@@ -24,7 +23,7 @@ interface Roc {
  * 变动率指标
  * 公式：ROC = (CLOSE - REF(CLOSE, N)) / REF(CLOSE, N)
  */
-const rateOfChange: IndicatorTemplate<Roc, number[]> = {
+const rateOfChange: IndicatorTemplate<Roc, number> = {
   name: 'ROC',
   shortName: 'ROC',
   calcParams: [12, 6],
@@ -32,11 +31,11 @@ const rateOfChange: IndicatorTemplate<Roc, number[]> = {
     { key: 'roc', title: 'ROC: ', type: 'line' },
     { key: 'maRoc', title: 'MAROC: ', type: 'line' }
   ],
-  calc: (dataList: KLineData[], indicator: Indicator<Roc, number[]>) => {
+  calc: (dataList, indicator) => {
     const params = indicator.calcParams
     const result: Roc[] = []
     let rocSum = 0
-    dataList.forEach((kLineData: KLineData, i: number) => {
+    dataList.forEach((kLineData, i) => {
       const roc: Roc = {}
       if (i >= params[0] - 1) {
         const close = kLineData.close

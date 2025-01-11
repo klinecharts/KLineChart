@@ -77,7 +77,7 @@ export interface IndicatorFigure<D = unknown> {
   styles?: IndicatorFigureStylesCallback<D>
 }
 
-export type IndicatorRegenerateFiguresCallback<D, C> = (calcParams: C) => Array<IndicatorFigure<D>>
+export type IndicatorRegenerateFiguresCallback<D, C> = (calcParams: C[]) => Array<IndicatorFigure<D>>
 
 export interface IndicatorTooltipData {
   name: string
@@ -146,7 +146,7 @@ export interface Indicator<D = unknown, C = unknown, E = unknown> {
   /**
    * Calculation parameters
    */
-  calcParams: C
+  calcParams: C[]
 
   /**
    * Whether ohlc column is required
@@ -317,7 +317,7 @@ export default class IndicatorImp<D = unknown, C = unknown, E = unknown> impleme
   name: string
   shortName: string
   precision = 4
-  calcParams: C
+  calcParams: C[] = []
   shouldOhlc = false
   shouldFormatBigNumber = false
   visible = true

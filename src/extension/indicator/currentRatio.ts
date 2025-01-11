@@ -12,8 +12,7 @@
  * limitations under the License.
  */
 
-import type { KLineData } from '../../common/Data'
-import type { Indicator, IndicatorTemplate } from '../../component/Indicator'
+import type { IndicatorTemplate } from '../../component/Indicator'
 
 interface Cr {
   cr?: number
@@ -38,7 +37,7 @@ interface Cr {
  * 输出MA4:M4/2.5+1日前的CR的M4日简单移动平均
  *
  */
-const currentRatio: IndicatorTemplate<Cr, number[]> = {
+const currentRatio: IndicatorTemplate<Cr, number> = {
   name: 'CR',
   shortName: 'CR',
   calcParams: [26, 10, 20, 40, 60],
@@ -49,7 +48,7 @@ const currentRatio: IndicatorTemplate<Cr, number[]> = {
     { key: 'ma3', title: 'MA3: ', type: 'line' },
     { key: 'ma4', title: 'MA4: ', type: 'line' }
   ],
-  calc: (dataList: KLineData[], indicator: Indicator<Cr, number[]>) => {
+  calc: (dataList, indicator) => {
     const params = indicator.calcParams
 
     const ma1ForwardPeriod = Math.ceil(params[1] / 2.5 + 1)
@@ -65,7 +64,7 @@ const currentRatio: IndicatorTemplate<Cr, number[]> = {
     let ma4Sum = 0
     const ma4List: number[] = []
     const result: Cr[] = []
-    dataList.forEach((kLineData: KLineData, i: number) => {
+    dataList.forEach((kLineData, i) => {
       const cr: Cr = {}
       const prevData = dataList[i - 1] ?? kLineData
       const prevMid = (prevData.high + prevData.close + prevData.low + prevData.open) / 4
