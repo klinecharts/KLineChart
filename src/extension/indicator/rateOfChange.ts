@@ -24,7 +24,7 @@ interface Roc {
  * 变动率指标
  * 公式：ROC = (CLOSE - REF(CLOSE, N)) / REF(CLOSE, N)
  */
-const rateOfChange: IndicatorTemplate<Roc> = {
+const rateOfChange: IndicatorTemplate<Roc, number[]> = {
   name: 'ROC',
   shortName: 'ROC',
   calcParams: [12, 6],
@@ -32,8 +32,8 @@ const rateOfChange: IndicatorTemplate<Roc> = {
     { key: 'roc', title: 'ROC: ', type: 'line' },
     { key: 'maRoc', title: 'MAROC: ', type: 'line' }
   ],
-  calc: (dataList: KLineData[], indicator: Indicator<Roc>) => {
-    const params = indicator.calcParams as number[]
+  calc: (dataList: KLineData[], indicator: Indicator<Roc, number[]>) => {
+    const params = indicator.calcParams
     const result: Roc[] = []
     let rocSum = 0
     dataList.forEach((kLineData: KLineData, i: number) => {

@@ -23,7 +23,7 @@ interface Bbi {
  * 公式: BBI = (MA(CLOSE, M) + MA(CLOSE, N) + MA(CLOSE, O) + MA(CLOSE, P)) / 4
  *
  */
-const bullAndBearIndex: IndicatorTemplate<Bbi> = {
+const bullAndBearIndex: IndicatorTemplate<Bbi, number[]> = {
   name: 'BBI',
   shortName: 'BBI',
   series: IndicatorSeries.Price,
@@ -33,8 +33,8 @@ const bullAndBearIndex: IndicatorTemplate<Bbi> = {
   figures: [
     { key: 'bbi', title: 'BBI: ', type: 'line' }
   ],
-  calc: (dataList: KLineData[], indicator: Indicator<Bbi>) => {
-    const params = indicator.calcParams as number[]
+  calc: (dataList: KLineData[], indicator: Indicator<Bbi, number[]>) => {
+    const params = indicator.calcParams
     const maxPeriod = Math.max(...params)
     const closeSums: number[] = []
     const mas: number[] = []

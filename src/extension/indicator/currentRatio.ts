@@ -38,7 +38,7 @@ interface Cr {
  * 输出MA4:M4/2.5+1日前的CR的M4日简单移动平均
  *
  */
-const currentRatio: IndicatorTemplate<Cr> = {
+const currentRatio: IndicatorTemplate<Cr, number[]> = {
   name: 'CR',
   shortName: 'CR',
   calcParams: [26, 10, 20, 40, 60],
@@ -49,8 +49,8 @@ const currentRatio: IndicatorTemplate<Cr> = {
     { key: 'ma3', title: 'MA3: ', type: 'line' },
     { key: 'ma4', title: 'MA4: ', type: 'line' }
   ],
-  calc: (dataList: KLineData[], indicator: Indicator<Cr>) => {
-    const params = indicator.calcParams as number[]
+  calc: (dataList: KLineData[], indicator: Indicator<Cr, number[]>) => {
+    const params = indicator.calcParams
 
     const ma1ForwardPeriod = Math.ceil(params[1] / 2.5 + 1)
     const ma2ForwardPeriod = Math.ceil(params[2] / 2.5 + 1)

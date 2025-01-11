@@ -24,7 +24,7 @@ interface Ema {
 /**
  * EMA 指数移动平均
  */
-const exponentialMovingAverage: IndicatorTemplate<Ema> = {
+const exponentialMovingAverage: IndicatorTemplate<Ema, number[]> = {
   name: 'EMA',
   shortName: 'EMA',
   series: IndicatorSeries.Price,
@@ -36,8 +36,8 @@ const exponentialMovingAverage: IndicatorTemplate<Ema> = {
     { key: 'ema2', title: 'EMA12: ', type: 'line' },
     { key: 'ema3', title: 'EMA20: ', type: 'line' }
   ],
-  regenerateFigures: (params: unknown[]) => params.map((p: number, i: number) => ({ key: `ema${i + 1}`, title: `EMA${p}: `, type: 'line' })),
-  calc: (dataList: KLineData[], indicator: Indicator<Ema>) => {
+  regenerateFigures: (params: number[]) => params.map((p: number, i: number) => ({ key: `ema${i + 1}`, title: `EMA${p}: `, type: 'line' })),
+  calc: (dataList: KLineData[], indicator: Indicator<Ema, number[]>) => {
     const { calcParams: params, figures } = indicator
     let closeSum = 0
     const emaValues: number[] = []

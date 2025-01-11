@@ -27,15 +27,15 @@ interface Cci {
  * MD=近N日TP - 当前MA绝对值的累计之和÷N
  *
  */
-const commodityChannelIndex: IndicatorTemplate<Cci> = {
+const commodityChannelIndex: IndicatorTemplate<Cci, number[]> = {
   name: 'CCI',
   shortName: 'CCI',
   calcParams: [20],
   figures: [
     { key: 'cci', title: 'CCI: ', type: 'line' }
   ],
-  calc: (dataList: KLineData[], indicator: Indicator<Cci>) => {
-    const params = indicator.calcParams as number[]
+  calc: (dataList: KLineData[], indicator: Indicator<Cci, number[]>) => {
+    const params = indicator.calcParams
     const p = params[0] - 1
     let tpSum = 0
     const tpList: number[] = []

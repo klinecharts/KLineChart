@@ -77,7 +77,7 @@ export interface IndicatorFigure<D = unknown> {
   styles?: IndicatorFigureStylesCallback<D>
 }
 
-export type IndicatorRegenerateFiguresCallback<D> = (calcParams: unknown[]) => Array<IndicatorFigure<D>>
+export type IndicatorRegenerateFiguresCallback<D, C> = (calcParams: C) => Array<IndicatorFigure<D>>
 
 export interface IndicatorTooltipData {
   name: string
@@ -98,21 +98,20 @@ export interface IndicatorCreateTooltipDataSourceParams<D> {
 
 export type IndicatorCreateTooltipDataSourceCallback<D> = (params: IndicatorCreateTooltipDataSourceParams<D>) => IndicatorTooltipData
 
-export interface IndicatorDrawParams<D> {
+export interface IndicatorDrawParams<D, C, E> {
   ctx: CanvasRenderingContext2D
   chart: Chart
-
-  indicator: Indicator<D>
+  indicator: Indicator<D, C, E>
   bounding: Bounding
   xAxis: XAxis
   yAxis: YAxis
 }
 
-export type IndicatorDrawCallback<D> = (params: IndicatorDrawParams<D>) => boolean
+export type IndicatorDrawCallback<D, C, E> = (params: IndicatorDrawParams<D, C, E>) => boolean
 
-export type IndicatorCalcCallback<D> = (dataList: KLineData[], indicator: Indicator<D>) => Promise<D[]> | D[]
+export type IndicatorCalcCallback<D, C, E> = (dataList: KLineData[], indicator: Indicator<D, C, E>) => Promise<D[]> | D[]
 
-export type IndicatorShouldUpdateCallback<D> = (prev: Indicator<D>, current: Indicator<D>) => (boolean | { calc: boolean, draw: boolean })
+export type IndicatorShouldUpdateCallback<D, C, E> = (prev: Indicator<D, C, E>, current: Indicator<D, C, E>) => (boolean | { calc: boolean, draw: boolean })
 
 export enum IndicatorDataState {
   Loading = 'loading',
@@ -128,7 +127,7 @@ export interface IndicatorOnDataStateChangeParams<D> {
 }
 export type IndicatorOnDataStateChangeCallback<D> = (params: IndicatorOnDataStateChangeParams<D>) => void
 
-export interface Indicator<D = unknown> {
+export interface Indicator<D = unknown, C = unknown, E = unknown> {
   /**
    * Indicator name
    */
@@ -147,7 +146,7 @@ export interface Indicator<D = unknown> {
   /**
    * Calculation parameters
    */
-  calcParams: unknown[]
+  calcParams: C
 
   /**
    * Whether ohlc column is required
@@ -172,7 +171,7 @@ export interface Indicator<D = unknown> {
   /**
    * Extend data
    */
-  extendData: unknown
+  extendData: E
 
   /**
    * Indicator series
@@ -202,17 +201,17 @@ export interface Indicator<D = unknown> {
   /**
    *  Should update, should calc or draw
    */
-  shouldUpdate: Nullable<IndicatorShouldUpdateCallback<D>>
+  shouldUpdate: Nullable<IndicatorShouldUpdateCallback<D, C, E>>
 
   /**
    * Indicator calculation
    */
-  calc: IndicatorCalcCallback<D>
+  calc: IndicatorCalcCallback<D, C, E>
 
   /**
    * Regenerate figure configuration
    */
-  regenerateFigures: Nullable<IndicatorRegenerateFiguresCallback<D>>
+  regenerateFigures: Nullable<IndicatorRegenerateFiguresCallback<D, C>>
 
   /**
    * Create custom tooltip text
@@ -222,7 +221,7 @@ export interface Indicator<D = unknown> {
   /**
    * Custom draw
    */
-  draw: Nullable<IndicatorDrawCallback<D>>
+  draw: Nullable<IndicatorDrawCallback<D, C, E>>
 
   /**
    * Data state change
@@ -235,21 +234,21 @@ export interface Indicator<D = unknown> {
   result: D[]
 }
 
-export type IndicatorTemplate<D = unknown> = ExcludePickPartial<Omit<Indicator<D>, 'result'>, 'name' | 'calc'>
+export type IndicatorTemplate<D = unknown, C = unknown, E = unknown> = ExcludePickPartial<Omit<Indicator<D, C, E>, 'result'>, 'name' | 'calc'>
 
-export type IndicatorCreate<D = unknown> = ExcludePickPartial<Omit<Indicator<D>, 'result'>, 'name'>
+export type IndicatorCreate<D = unknown, C = unknown, E = unknown> = ExcludePickPartial<Omit<Indicator<D, C, E>, 'result'>, 'name'>
 
 export interface IndicatorFilter {
   name?: string
   paneId?: string
 }
 
-export type IndicatorConstructor<D = unknown> = new () => IndicatorImp<D>
+export type IndicatorConstructor<D = unknown, C = unknown, E = unknown> = new () => IndicatorImp<D, C, E>
 
 export type EachFigureCallback<D> = (figure: IndicatorFigure<D>, figureStyles: IndicatorFigureStyle, index: number) => void
 
 export function eachFigures<D = unknown> (
-  indicator: Indicator<D>,
+  indicator: Indicator,
   dataIndex: number,
   defaultStyles: IndicatorStyle,
   eachFigureCallback: EachFigureCallback<D>
@@ -314,22 +313,22 @@ export function eachFigures<D = unknown> (
   })
 }
 
-export default class IndicatorImp<D = unknown> implements Indicator<D> {
+export default class IndicatorImp<D = unknown, C = unknown, E = unknown> implements Indicator<D, C, E> {
   name: string
   shortName: string
   precision = 4
-  calcParams: unknown[] = []
+  calcParams: C
   shouldOhlc = false
   shouldFormatBigNumber = false
   visible = true
   zLevel = 0
-  extendData: unknown
+  extendData: E
   series = IndicatorSeries.Normal
   figures: Array<IndicatorFigure<D>> = []
   minValue: Nullable<number> = null
   maxValue: Nullable<number> = null
   styles: Nullable<Partial<IndicatorStyle>> = null
-  shouldUpdate: IndicatorShouldUpdateCallback<D> = (prev, current) => {
+  shouldUpdate: IndicatorShouldUpdateCallback<D, C, E> = (prev, current) => {
     const calc = JSON.stringify(prev.calcParams) !== JSON.stringify(current.calcParams) ||
       prev.figures !== current.figures ||
       prev.calc !== current.calc
@@ -351,24 +350,24 @@ export default class IndicatorImp<D = unknown> implements Indicator<D> {
     return { calc, draw }
   }
 
-  calc: IndicatorCalcCallback<D> = () => []
-  regenerateFigures: Nullable<IndicatorRegenerateFiguresCallback<D>> = null
+  calc: IndicatorCalcCallback<D, C, E> = () => []
+  regenerateFigures: Nullable<IndicatorRegenerateFiguresCallback<D, C>> = null
   createTooltipDataSource: Nullable<IndicatorCreateTooltipDataSourceCallback<D>> = null
-  draw: Nullable<IndicatorDrawCallback<D>> = null
+  draw: Nullable<IndicatorDrawCallback<D, C, E>> = null
 
   onDataStateChange: Nullable<IndicatorOnDataStateChangeCallback<D>> = null
 
   result: D[] = []
 
-  private _prevIndicator: Indicator<D>
+  private _prevIndicator: Indicator<D, C, E>
   private _lockSeriesPrecision = false
 
-  constructor (indicator: IndicatorTemplate<D>) {
+  constructor (indicator: IndicatorTemplate<D, C, E>) {
     this.override(indicator)
     this._lockSeriesPrecision = false
   }
 
-  override (indicator: Partial<Indicator<D>>): void {
+  override (indicator: Partial<Indicator<D, C, E>>): void {
     const { result, ...currentOthers } = this
     this._prevIndicator = { ...clone(currentOthers), result }
     const {

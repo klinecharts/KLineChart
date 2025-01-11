@@ -22,7 +22,7 @@ interface Sma {
 /**
  * sma
  */
-const simpleMovingAverage: IndicatorTemplate<Sma> = {
+const simpleMovingAverage: IndicatorTemplate<Sma, number[]> = {
   name: 'SMA',
   shortName: 'SMA',
   series: IndicatorSeries.Price,
@@ -32,8 +32,8 @@ const simpleMovingAverage: IndicatorTemplate<Sma> = {
     { key: 'sma', title: 'SMA: ', type: 'line' }
   ],
   shouldOhlc: true,
-  calc: (dataList: KLineData[], indicator: Indicator<Sma>) => {
-    const params = indicator.calcParams as number[]
+  calc: (dataList: KLineData[], indicator: Indicator<Sma, number[]>) => {
+    const params = indicator.calcParams
     let closeSum = 0
     let smaValue = 0
     return dataList.map((kLineData: KLineData, i: number) => {

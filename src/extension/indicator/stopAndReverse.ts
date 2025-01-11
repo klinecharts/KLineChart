@@ -23,7 +23,7 @@ interface Sar {
   low: number
 }
 
-const stopAndReverse: IndicatorTemplate<Sar> = {
+const stopAndReverse: IndicatorTemplate<Sar, number[]> = {
   name: 'SAR',
   shortName: 'SAR',
   series: IndicatorSeries.Price,
@@ -46,8 +46,8 @@ const stopAndReverse: IndicatorTemplate<Sar> = {
       }
     }
   ],
-  calc: (dataList: KLineData[], indicator: Indicator<Sar>) => {
-    const params = indicator.calcParams as number[]
+  calc: (dataList: KLineData[], indicator: Indicator<Sar, number[]>) => {
+    const params = indicator.calcParams
     const startAf = params[0] / 100
     const step = params[1] / 100
     const maxAf = params[2] / 100

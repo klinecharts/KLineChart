@@ -46,7 +46,7 @@ extensions.forEach((template: OverlayTemplate) => {
   overlays[template.name] = OverlayImp.extend(template)
 })
 
-function registerOverlay (template: OverlayTemplate): void {
+function registerOverlay<E = unknown> (template: OverlayTemplate<E>): void {
   overlays[template.name] = OverlayImp.extend(template)
 }
 

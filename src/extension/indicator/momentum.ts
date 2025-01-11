@@ -24,7 +24,7 @@ interface Mtm {
  * mtm
  * 公式 MTM（N日）=C－CN
  */
-const momentum: IndicatorTemplate<Mtm> = {
+const momentum: IndicatorTemplate<Mtm, number[]> = {
   name: 'MTM',
   shortName: 'MTM',
   calcParams: [12, 6],
@@ -32,8 +32,8 @@ const momentum: IndicatorTemplate<Mtm> = {
     { key: 'mtm', title: 'MTM: ', type: 'line' },
     { key: 'maMtm', title: 'MAMTM: ', type: 'line' }
   ],
-  calc: (dataList: KLineData[], indicator: Indicator<Mtm>) => {
-    const params = indicator.calcParams as number[]
+  calc: (dataList: KLineData[], indicator: Indicator<Mtm, number[]>) => {
+    const params = indicator.calcParams
     let mtmSum = 0
     const result: Mtm[] = []
     dataList.forEach((kLineData: KLineData, i: number) => {

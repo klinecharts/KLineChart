@@ -24,7 +24,7 @@ interface Psy {
  * PSY
  * 公式：PSY=N日内的上涨天数/N×100%。
  */
-const psychologicalLine: IndicatorTemplate<Psy> = {
+const psychologicalLine: IndicatorTemplate<Psy, number[]> = {
   name: 'PSY',
   shortName: 'PSY',
   calcParams: [12, 6],
@@ -32,8 +32,8 @@ const psychologicalLine: IndicatorTemplate<Psy> = {
     { key: 'psy', title: 'PSY: ', type: 'line' },
     { key: 'maPsy', title: 'MAPSY: ', type: 'line' }
   ],
-  calc: (dataList: KLineData[], indicator: Indicator<Psy>) => {
-    const params = indicator.calcParams as number[]
+  calc: (dataList: KLineData[], indicator: Indicator<Psy, number[]>) => {
+    const params = indicator.calcParams
     let upCount = 0
     let psySum = 0
     const upList: number[] = []

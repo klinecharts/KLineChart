@@ -31,7 +31,7 @@ interface Kdj {
  * 若无前一日K 值与D值，则可分别用50来代替。
  * J值=3*当日K值-2*当日D值
  */
-const stoch: IndicatorTemplate<Kdj> = {
+const stoch: IndicatorTemplate<Kdj, number[]> = {
   name: 'KDJ',
   shortName: 'KDJ',
   calcParams: [9, 3, 3],
@@ -40,8 +40,8 @@ const stoch: IndicatorTemplate<Kdj> = {
     { key: 'd', title: 'D: ', type: 'line' },
     { key: 'j', title: 'J: ', type: 'line' }
   ],
-  calc: (dataList: KLineData[], indicator: Indicator<Kdj>) => {
-    const params = indicator.calcParams as number[]
+  calc: (dataList: KLineData[], indicator: Indicator<Kdj, number[]>) => {
+    const params = indicator.calcParams
     const result: Kdj[] = []
     dataList.forEach((kLineData: KLineData, i: number) => {
       const kdj: Kdj = {}

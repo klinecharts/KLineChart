@@ -25,7 +25,7 @@ interface Ma {
 /**
  * MA 移动平均
  */
-const movingAverage: IndicatorTemplate<Ma> = {
+const movingAverage: IndicatorTemplate<Ma, number[]> = {
   name: 'MA',
   shortName: 'MA',
   series: IndicatorSeries.Price,
@@ -38,8 +38,8 @@ const movingAverage: IndicatorTemplate<Ma> = {
     { key: 'ma3', title: 'MA30: ', type: 'line' },
     { key: 'ma4', title: 'MA60: ', type: 'line' }
   ],
-  regenerateFigures: (params: unknown[]) => params.map((p: number, i: number) => ({ key: `ma${i + 1}`, title: `MA${p}: `, type: 'line' })),
-  calc: (dataList: KLineData[], indicator: Indicator<Ma>) => {
+  regenerateFigures: (params: number[]) => params.map((p: number, i: number) => ({ key: `ma${i + 1}`, title: `MA${p}: `, type: 'line' })),
+  calc: (dataList: KLineData[], indicator: Indicator<Ma, number[]>) => {
     const { calcParams: params, figures } = indicator
     const closeSums: number[] = []
     return dataList.map((kLineData: KLineData, i: number) => {

@@ -33,7 +33,7 @@ interface Macd {
  * ⒊再计算DIFF的M日的平均的指数平滑移动平均线，记为DEA。
  * ⒋最后用DIFF减DEA，得MACD。MACD通常绘制成围绕零轴线波动的柱形图。MACD柱状大于0涨颜色，小于0跌颜色。
  */
-const movingAverageConvergenceDivergence: IndicatorTemplate<Macd> = {
+const movingAverageConvergenceDivergence: IndicatorTemplate<Macd, number[]> = {
   name: 'MACD',
   shortName: 'MACD',
   calcParams: [12, 26, 9],
@@ -62,8 +62,8 @@ const movingAverageConvergenceDivergence: IndicatorTemplate<Macd> = {
       }
     }
   ],
-  calc: (dataList: KLineData[], indicator: Indicator<Macd>) => {
-    const params = indicator.calcParams as number[]
+  calc: (dataList: KLineData[], indicator: Indicator<Macd, number[]>) => {
+    const params = indicator.calcParams
     let closeSum = 0
     let emaShort = 0
     let emaLong = 0

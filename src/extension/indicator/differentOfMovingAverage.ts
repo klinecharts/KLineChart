@@ -24,7 +24,7 @@ interface Dma {
  * DMA
  * 公式：DIF:MA(CLOSE,N1)-MA(CLOSE,N2);DIFMA:MA(DIF,M)
  */
-const differentOfMovingAverage: IndicatorTemplate<Dma> = {
+const differentOfMovingAverage: IndicatorTemplate<Dma, number[]> = {
   name: 'DMA',
   shortName: 'DMA',
   calcParams: [10, 50, 10],
@@ -32,8 +32,8 @@ const differentOfMovingAverage: IndicatorTemplate<Dma> = {
     { key: 'dma', title: 'DMA: ', type: 'line' },
     { key: 'ama', title: 'AMA: ', type: 'line' }
   ],
-  calc: (dataList: KLineData[], indicator: Indicator<Dma>) => {
-    const params = indicator.calcParams as number[]
+  calc: (dataList: KLineData[], indicator: Indicator<Dma, number[]>) => {
+    const params = indicator.calcParams
     const maxPeriod = Math.max(params[0], params[1])
     let closeSum1 = 0
     let closeSum2 = 0

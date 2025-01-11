@@ -41,25 +41,25 @@ export interface OverlayPerformEventParams {
   performPoint: Partial<Point>
 }
 
-export interface OverlayEventCollection {
-  onDrawStart: Nullable<OverlayEventCallback>
-  onDrawing: Nullable<OverlayEventCallback>
-  onDrawEnd: Nullable<OverlayEventCallback>
-  onRemoved: Nullable<OverlayEventCallback>
-  onClick: Nullable<OverlayEventCallback>
-  onDoubleClick: Nullable<OverlayEventCallback>
-  onRightClick: Nullable<OverlayEventCallback>
-  onPressedMoveStart: Nullable<OverlayEventCallback>
-  onPressedMoving: Nullable<OverlayEventCallback>
-  onPressedMoveEnd: Nullable<OverlayEventCallback>
-  onMouseEnter: Nullable<OverlayEventCallback>
-  onMouseLeave: Nullable<OverlayEventCallback>
-  onSelected: Nullable<OverlayEventCallback>
-  onDeselected: Nullable<OverlayEventCallback>
+export interface OverlayEventCollection<E> {
+  onDrawStart: Nullable<OverlayEventCallback<E>>
+  onDrawing: Nullable<OverlayEventCallback<E>>
+  onDrawEnd: Nullable<OverlayEventCallback<E>>
+  onRemoved: Nullable<OverlayEventCallback<E>>
+  onClick: Nullable<OverlayEventCallback<E>>
+  onDoubleClick: Nullable<OverlayEventCallback<E>>
+  onRightClick: Nullable<OverlayEventCallback<E>>
+  onPressedMoveStart: Nullable<OverlayEventCallback<E>>
+  onPressedMoving: Nullable<OverlayEventCallback<E>>
+  onPressedMoveEnd: Nullable<OverlayEventCallback<E>>
+  onMouseEnter: Nullable<OverlayEventCallback<E>>
+  onMouseLeave: Nullable<OverlayEventCallback<E>>
+  onSelected: Nullable<OverlayEventCallback<E>>
+  onDeselected: Nullable<OverlayEventCallback<E>>
 }
 
 export function checkOverlayFigureEvent (
-  targetEventType: keyof Omit<OverlayEventCollection, 'onDrawStart' | 'onDrawing' | 'onDrawEnd' | 'onRemoved'>,
+  targetEventType: keyof Omit<OverlayEventCollection<unknown>, 'onDrawStart' | 'onDrawing' | 'onDrawEnd' | 'onRemoved'>,
   figure: Nullable<OverlayFigure>
 ): boolean {
   const ignoreEvent = figure?.ignoreEvent ?? false
@@ -74,29 +74,29 @@ export interface OverlayFigure {
   type: string
   attrs: unknown
   styles?: unknown
-  ignoreEvent?: boolean | Array<keyof Omit<OverlayEventCollection, 'onDrawStart' | 'onDrawing' | 'onDrawEnd' | 'onRemoved'>>
+  ignoreEvent?: boolean | Array<keyof Omit<OverlayEventCollection<unknown>, 'onDrawStart' | 'onDrawing' | 'onDrawEnd' | 'onRemoved'>>
 }
 
-export interface OverlayCreateFiguresCallbackParams {
+export interface OverlayCreateFiguresCallbackParams<E> {
   chart: Chart
-  overlay: Overlay
+  overlay: Overlay<E>
   coordinates: Coordinate[]
   bounding: Bounding
   xAxis: Nullable<XAxis>
   yAxis: Nullable<YAxis>
 }
 
-export interface OverlayEvent extends Partial<MouseTouchEvent> {
+export interface OverlayEvent<E> extends Partial<MouseTouchEvent> {
   figure?: OverlayFigure
-  overlay: Overlay
+  overlay: Overlay<E>
   chart: Chart
 }
 
-export type OverlayEventCallback = (event: OverlayEvent) => boolean
+export type OverlayEventCallback<E> = (event: OverlayEvent<E>) => boolean
 
-export type OverlayCreateFiguresCallback = (params: OverlayCreateFiguresCallbackParams) => OverlayFigure | OverlayFigure[]
+export type OverlayCreateFiguresCallback<E> = (params: OverlayCreateFiguresCallbackParams<E>) => OverlayFigure | OverlayFigure[]
 
-export interface Overlay extends OverlayEventCollection {
+export interface Overlay<E = unknown> extends OverlayEventCollection<E> {
   /**
    * Unique identification
    */
@@ -175,7 +175,7 @@ export interface Overlay extends OverlayEventCollection {
   /**
    * Extended Data
    */
-  extendData: unknown
+  extendData: E
 
   /**
    * The style information and format are consistent with the overlay in the unified configuration
@@ -185,17 +185,17 @@ export interface Overlay extends OverlayEventCollection {
   /**
    * Create figures corresponding to points
    */
-  createPointFigures: Nullable<OverlayCreateFiguresCallback>
+  createPointFigures: Nullable<OverlayCreateFiguresCallback<E>>
 
   /**
    * Create figures on the Y axis
    */
-  createXAxisFigures: Nullable<OverlayCreateFiguresCallback>
+  createXAxisFigures: Nullable<OverlayCreateFiguresCallback<E>>
 
   /**
    * Create figures on the X axis
    */
-  createYAxisFigures: Nullable<OverlayCreateFiguresCallback>
+  createYAxisFigures: Nullable<OverlayCreateFiguresCallback<E>>
 
   /**
    * Special handling callbacks when pressing events
@@ -208,13 +208,13 @@ export interface Overlay extends OverlayEventCollection {
   performEventMoveForDrawing: Nullable<(params: OverlayPerformEventParams) => void>
 }
 
-export type OverlayTemplate = ExcludePickPartial<Omit<Overlay, 'id' | 'groupId' | 'paneId' | 'points' | 'currentStep'>, 'name'>
+export type OverlayTemplate<E = unknown> = ExcludePickPartial<Omit<Overlay<E>, 'id' | 'groupId' | 'paneId' | 'points' | 'currentStep'>, 'name'>
 
-export type OverlayCreate = ExcludePickPartial<Omit<Overlay, 'currentStep' | 'totalStep' | 'createPointFigures' | 'createXAxisFigures' | 'createYAxisFigures' | 'performEventPressedMove' | 'performEventMoveForDrawing'>, 'name'>
-export type OverlayFilter = Partial<Pick<Overlay, 'id' | 'groupId' | 'name' | 'paneId'>>
+export type OverlayCreate<E = unknown> = ExcludePickPartial<Omit<Overlay<E>, 'currentStep' | 'totalStep' | 'createPointFigures' | 'createXAxisFigures' | 'createYAxisFigures' | 'performEventPressedMove' | 'performEventMoveForDrawing'>, 'name'>
+export type OverlayFilter<E = unknown> = Partial<Pick<Overlay<E>, 'id' | 'groupId' | 'name' | 'paneId'>>
 
-export type OverlayInnerConstructor = new () => OverlayImp
-export type OverlayConstructor = new () => Overlay
+export type OverlayInnerConstructor<E = unknown> = new () => OverlayImp<E>
+export type OverlayConstructor<E = unknown> = new () => Overlay<E>
 
 const OVERLAY_DRAW_STEP_START = 1
 const OVERLAY_DRAW_STEP_FINISHED = -1
@@ -223,7 +223,7 @@ export const OVERLAY_ID_PREFIX = 'overlay_'
 
 export const OVERLAY_FIGURE_KEY_PREFIX = 'overlay_figure_'
 
-export default class OverlayImp implements Overlay {
+export default class OverlayImp<E = unknown> implements Overlay<E> {
   id: string
   groupId = ''
   paneId: string
@@ -239,40 +239,40 @@ export default class OverlayImp implements Overlay {
   mode = OverlayMode.Normal
   modeSensitivity = 8
   points: Array<Partial<Omit<Point, 'dataIndex'>>> = []
-  extendData: unknown = null
+  extendData: E
   styles: Nullable<DeepPartial<OverlayStyle>> = null
-  createPointFigures: Nullable<OverlayCreateFiguresCallback> = null
-  createXAxisFigures: Nullable<OverlayCreateFiguresCallback> = null
-  createYAxisFigures: Nullable<OverlayCreateFiguresCallback> = null
+  createPointFigures: Nullable<OverlayCreateFiguresCallback<E>> = null
+  createXAxisFigures: Nullable<OverlayCreateFiguresCallback<E>> = null
+  createYAxisFigures: Nullable<OverlayCreateFiguresCallback<E>> = null
   performEventPressedMove: Nullable<(params: OverlayPerformEventParams) => void> = null
   performEventMoveForDrawing: Nullable<(params: OverlayPerformEventParams) => void> = null
-  onDrawStart: Nullable<OverlayEventCallback> = null
-  onDrawing: Nullable<OverlayEventCallback> = null
-  onDrawEnd: Nullable<OverlayEventCallback> = null
-  onClick: Nullable<OverlayEventCallback> = null
-  onDoubleClick: Nullable<OverlayEventCallback> = null
-  onRightClick: Nullable<OverlayEventCallback> = null
-  onPressedMoveStart: Nullable<OverlayEventCallback> = null
-  onPressedMoving: Nullable<OverlayEventCallback> = null
-  onPressedMoveEnd: Nullable<OverlayEventCallback> = null
-  onMouseEnter: Nullable<OverlayEventCallback> = null
-  onMouseLeave: Nullable<OverlayEventCallback> = null
-  onRemoved: Nullable<OverlayEventCallback> = null
-  onSelected: Nullable<OverlayEventCallback> = null
-  onDeselected: Nullable<OverlayEventCallback> = null
+  onDrawStart: Nullable<OverlayEventCallback<E>> = null
+  onDrawing: Nullable<OverlayEventCallback<E>> = null
+  onDrawEnd: Nullable<OverlayEventCallback<E>> = null
+  onClick: Nullable<OverlayEventCallback<E>> = null
+  onDoubleClick: Nullable<OverlayEventCallback<E>> = null
+  onRightClick: Nullable<OverlayEventCallback<E>> = null
+  onPressedMoveStart: Nullable<OverlayEventCallback<E>> = null
+  onPressedMoving: Nullable<OverlayEventCallback<E>> = null
+  onPressedMoveEnd: Nullable<OverlayEventCallback<E>> = null
+  onMouseEnter: Nullable<OverlayEventCallback<E>> = null
+  onMouseLeave: Nullable<OverlayEventCallback<E>> = null
+  onRemoved: Nullable<OverlayEventCallback<E>> = null
+  onSelected: Nullable<OverlayEventCallback<E>> = null
+  onDeselected: Nullable<OverlayEventCallback<E>> = null
 
   private _prevZLevel = 0
 
-  private _prevOverlay: Overlay
+  private _prevOverlay: Overlay<E>
 
   private _prevPressedPoint: Nullable<Partial<Point>> = null
   private _prevPressedPoints: Array<Partial<Point>> = []
 
-  constructor (overlay: OverlayTemplate) {
+  constructor (overlay: OverlayTemplate<E>) {
     this.override(overlay)
   }
 
-  override (overlay: Partial<Overlay>): void {
+  override (overlay: Partial<Overlay<E>>): void {
     this._prevOverlay = clone(this)
 
     const {
@@ -437,8 +437,8 @@ export default class OverlayImp implements Overlay {
     }
   }
 
-  static extend (template: OverlayTemplate): OverlayInnerConstructor {
-    class Custom extends OverlayImp {
+  static extend<E = unknown> (template: OverlayTemplate<E>): OverlayInnerConstructor<E> {
+    class Custom extends OverlayImp<E> {
       constructor () {
         super(template)
       }

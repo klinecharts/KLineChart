@@ -246,11 +246,14 @@ export default class IndicatorTooltipView extends View<YAxis> {
     const tooltipStyles = styles.tooltip
     const name = tooltipStyles.showName ? indicator.shortName : ''
     let calcParamsText = ''
-    const calcParams = indicator.calcParams
-    if (calcParams.length > 0 && tooltipStyles.showParams) {
-      calcParamsText = `(${calcParams.join(',')})`
+    if (tooltipStyles.showParams) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- ignore
+      // @ts-expect-error
+      const calcParams = [].concat(indicator.calcParams ?? [])
+      if (calcParams.length > 0) {
+        calcParamsText = `(${calcParams.join(',')})`
+      }
     }
-
     const tooltipData: IndicatorTooltipData = { name, calcParamsText, legends: [], icons: tooltipStyles.icons }
 
     const dataIndex = chartStore.getCrosshair().dataIndex!

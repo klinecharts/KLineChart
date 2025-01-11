@@ -33,7 +33,7 @@ interface Trix {
  * TRMA:MA(TRIX,M)
  *
  */
-const tripleExponentiallySmoothedAverage: IndicatorTemplate<Trix> = {
+const tripleExponentiallySmoothedAverage: IndicatorTemplate<Trix, number[]> = {
   name: 'TRIX',
   shortName: 'TRIX',
   calcParams: [12, 9],
@@ -41,8 +41,8 @@ const tripleExponentiallySmoothedAverage: IndicatorTemplate<Trix> = {
     { key: 'trix', title: 'TRIX: ', type: 'line' },
     { key: 'maTrix', title: 'MATRIX: ', type: 'line' }
   ],
-  calc: (dataList: KLineData[], indicator: Indicator<Trix>) => {
-    const params = indicator.calcParams as number[]
+  calc: (dataList: KLineData[], indicator: Indicator<Trix, number[]>) => {
+    const params = indicator.calcParams
     let closeSum = 0
     let ema1 = 0
     let ema2 = 0

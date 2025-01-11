@@ -24,7 +24,7 @@ interface Obv {
  * OBV
  * OBV = REF(OBV) + sign * V
  */
-const onBalanceVolume: IndicatorTemplate<Obv> = {
+const onBalanceVolume: IndicatorTemplate<Obv, number[]> = {
   name: 'OBV',
   shortName: 'OBV',
   calcParams: [30],
@@ -32,8 +32,8 @@ const onBalanceVolume: IndicatorTemplate<Obv> = {
     { key: 'obv', title: 'OBV: ', type: 'line' },
     { key: 'maObv', title: 'MAOBV: ', type: 'line' }
   ],
-  calc: (dataList: KLineData[], indicator: Indicator<Obv>) => {
-    const params = indicator.calcParams as number[]
+  calc: (dataList: KLineData[], indicator: Indicator<Obv, number[]>) => {
+    const params = indicator.calcParams
     let obvSum = 0
     let oldObv = 0
     const result: Obv[] = []

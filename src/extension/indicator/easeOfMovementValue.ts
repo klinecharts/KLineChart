@@ -32,7 +32,7 @@ interface Emv {
  * MAEMV=EMV的M日的简单移动平均
  *
  */
-const easeOfMovementValue: IndicatorTemplate<Emv> = {
+const easeOfMovementValue: IndicatorTemplate<Emv, number[]> = {
   name: 'EMV',
   shortName: 'EMV',
   calcParams: [14, 9],
@@ -40,8 +40,8 @@ const easeOfMovementValue: IndicatorTemplate<Emv> = {
     { key: 'emv', title: 'EMV: ', type: 'line' },
     { key: 'maEmv', title: 'MAEMV: ', type: 'line' }
   ],
-  calc: (dataList: KLineData[], indicator: Indicator<Emv>) => {
-    const params = indicator.calcParams as number[]
+  calc: (dataList: KLineData[], indicator: Indicator<Emv, number[]>) => {
+    const params = indicator.calcParams
     let emvValueSum = 0
     const emvValueList: number[] = []
     return dataList.map((kLineData: KLineData, i: number) => {

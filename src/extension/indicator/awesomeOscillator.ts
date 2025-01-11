@@ -22,7 +22,7 @@ interface Ao {
   ao?: number
 }
 
-const awesomeOscillator: IndicatorTemplate<Ao> = {
+const awesomeOscillator: IndicatorTemplate<Ao, number[]> = {
   name: 'AO',
   shortName: 'AO',
   calcParams: [5, 34],
@@ -45,8 +45,8 @@ const awesomeOscillator: IndicatorTemplate<Ao> = {
       return { color, style, borderColor: color }
     }
   }],
-  calc: (dataList: KLineData[], indicator: Indicator<Ao>) => {
-    const params = indicator.calcParams as number[]
+  calc: (dataList: KLineData[], indicator: Indicator<Ao, number[]>) => {
+    const params = indicator.calcParams
     const maxPeriod = Math.max(params[0], params[1])
     let shortSum = 0
     let longSum = 0

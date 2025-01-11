@@ -29,7 +29,7 @@ interface Brar {
  * 其中，H为当日最高价，L为当日最低价，O为当日开盘价，N为设定的时间参数
  *
  */
-const brar: IndicatorTemplate<Brar> = {
+const brar: IndicatorTemplate<Brar, number[]> = {
   name: 'BRAR',
   shortName: 'BRAR',
   calcParams: [26],
@@ -37,8 +37,8 @@ const brar: IndicatorTemplate<Brar> = {
     { key: 'br', title: 'BR: ', type: 'line' },
     { key: 'ar', title: 'AR: ', type: 'line' }
   ],
-  calc: (dataList: KLineData[], indicator: Indicator<Brar>) => {
-    const params = indicator.calcParams as number[]
+  calc: (dataList: KLineData[], indicator: Indicator<Brar, number[]>) => {
+    const params = indicator.calcParams
     let hcy = 0
     let cyl = 0
     let ho = 0

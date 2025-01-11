@@ -47,7 +47,7 @@ interface Dmi {
  * 输出ADXR:ADX的MM日指数平滑移动平均
  *
  */
-const directionalMovementIndex: IndicatorTemplate<Dmi> = {
+const directionalMovementIndex: IndicatorTemplate<Dmi, number[]> = {
   name: 'DMI',
   shortName: 'DMI',
   calcParams: [14, 6],
@@ -57,8 +57,8 @@ const directionalMovementIndex: IndicatorTemplate<Dmi> = {
     { key: 'adx', title: 'ADX: ', type: 'line' },
     { key: 'adxr', title: 'ADXR: ', type: 'line' }
   ],
-  calc: (dataList: KLineData[], indicator: Indicator<Dmi>) => {
-    const params = indicator.calcParams as number[]
+  calc: (dataList: KLineData[], indicator: Indicator<Dmi, number[]>) => {
+    const params = indicator.calcParams
     let trSum = 0
     let hSum = 0
     let lSum = 0

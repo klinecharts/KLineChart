@@ -48,7 +48,7 @@ function getVolumeFigure (): IndicatorFigure<Vol> {
   }
 }
 
-const volume: IndicatorTemplate<Vol> = {
+const volume: IndicatorTemplate<Vol, number[]> = {
   name: 'VOL',
   shortName: 'VOL',
   series: IndicatorSeries.Volume,
@@ -62,14 +62,13 @@ const volume: IndicatorTemplate<Vol> = {
     { key: 'ma3', title: 'MA20: ', type: 'line' },
     getVolumeFigure()
   ],
-  regenerateFigures: (params: unknown[]) => {
+  regenerateFigures: (params: number[]) => {
     const figures: Array<IndicatorFigure<Vol>> = params.map((p: number, i: number) => ({ key: `ma${i + 1}`, title: `MA${p}: `, type: 'line' }))
     figures.push(getVolumeFigure())
     return figures
   },
-  calc: (dataList: KLineData[], indicator: Indicator<Vol>) => {
-    const { calcParams, figures } = indicator
-    const params = calcParams as number[]
+  calc: (dataList: KLineData[], indicator: Indicator<Vol, number[]>) => {
+    const { calcParams: params, figures } = indicator
     const volSums: number[] = []
     return dataList.map((kLineData: KLineData, i: number) => {
       const volume = kLineData.volume ?? 0
