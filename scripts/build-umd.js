@@ -7,7 +7,7 @@ const index = resolvePath('index.ts', resolvePath('src'))
 
 build({
   index,
-  replaceValues: { "process.env.NODE_ENV": JSON.stringify(env) },
+  replaceValues: { 'process.env.NODE_ENV': JSON.stringify(env) },
   fileName,
   format: 'umd',
   parentDir: 'umd',

@@ -6,7 +6,7 @@ export default [
   ...new FlatCompat().extends('eslint-config-standard'),
   {
     ...love,
-    files: ['src/**/*.js', 'src/**/*.ts'],
+    files: ['src/**/*.js', 'src/**/*.ts']
   },
   {
     plugins: {
@@ -20,15 +20,15 @@ export default [
       'index.js'
     ],
     rules: {
-      "file-progress/activate": 1,
-      "complexity": "off",
-      "no-use-before-define": "off",
-      "@typescript-eslint/no-unsafe-type-assertion": "off",
-      "@typescript-eslint/no-non-null-assertion": "off",
-      "@typescript-eslint/class-methods-use-this": "off",
-      "@typescript-eslint/max-params": "off",
-      "@typescript-eslint/no-magic-numbers": "off",
-      "@typescript-eslint/prefer-destructuring": "off"
+      'file-progress/activate': 1,
+      complexity: 'off',
+      'no-use-before-define': 'off',
+      '@typescript-eslint/no-unsafe-type-assertion': 'off',
+      '@typescript-eslint/no-non-null-assertion': 'off',
+      '@typescript-eslint/class-methods-use-this': 'off',
+      '@typescript-eslint/max-params': 'off',
+      '@typescript-eslint/no-magic-numbers': 'off',
+      '@typescript-eslint/prefer-destructuring': 'off'
     }
   }
 ]
