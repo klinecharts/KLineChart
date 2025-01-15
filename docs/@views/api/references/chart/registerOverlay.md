@@ -19,39 +19,111 @@
       type: string
       attrs: any | any[]
       styles?: any
-      ignoreEvent?: boolean | OverlayFigureIgnoreEventType[]
+      ignoreEvent?: boolean |
+        Array<
+          'onClick' |
+          'onDoubleClick' |
+          'onRightClick' |
+          'onPressedMoveStart' |
+          'onPressedMoving' |
+          'onPressedMoveEnd' |
+          'onMouseEnter' |
+          'onMouseLeave' |
+          'onSelected' |
+          'onDeselected'
+        >
     } | Array<{
       key?: string
       type: string
       attrs: any | any[]
       styles?: any
-      ignoreEvent?: boolean | OverlayFigureIgnoreEventType[]
+      ignoreEvent?: boolean |
+        Array<
+          'onClick' |
+          'onDoubleClick' |
+          'onRightClick' |
+          'onPressedMoveStart' |
+          'onPressedMoving' |
+          'onPressedMoveEnd' |
+          'onMouseEnter' |
+          'onMouseLeave' |
+          'onSelected' |
+          'onDeselected'
+        >
     }>
     createXAxisFigures?: (params: object) => {
       key?: string
       type: string
       attrs: any | any[]
       styles?: any
-      ignoreEvent?: boolean | OverlayFigureIgnoreEventType[]
+      ignoreEvent?: boolean |
+        Array<
+          'onClick' |
+          'onDoubleClick' |
+          'onRightClick' |
+          'onPressedMoveStart' |
+          'onPressedMoving' |
+          'onPressedMoveEnd' |
+          'onMouseEnter' |
+          'onMouseLeave' |
+          'onSelected' |
+          'onDeselected'
+        >
     } | Array<{
       key?: string
       type: string
       attrs: any | any[]
       styles?: any
-      ignoreEvent?: boolean | OverlayFigureIgnoreEventType[]
+      ignoreEvent?: boolean |
+        Array<
+          'onClick' |
+          'onDoubleClick' |
+          'onRightClick' |
+          'onPressedMoveStart' |
+          'onPressedMoving' |
+          'onPressedMoveEnd' |
+          'onMouseEnter' |
+          'onMouseLeave' |
+          'onSelected' |
+          'onDeselected'
+        >
     }>
     createYAxisFigures?: (params: object) => {
       key?: string
       type: string
       attrs: any | any[]
       styles?: any
-      ignoreEvent?: boolean | OverlayFigureIgnoreEventType[]
+      ignoreEvent?: boolean |
+        Array<
+          'onClick' |
+          'onDoubleClick' |
+          'onRightClick' |
+          'onPressedMoveStart' |
+          'onPressedMoving' |
+          'onPressedMoveEnd' |
+          'onMouseEnter' |
+          'onMouseLeave' |
+          'onSelected' |
+          'onDeselected'
+        >
     } | Array<{
       key?: string
       type: string
       attrs: any | any[]
       styles?: any
-      ignoreEvent?: boolean | OverlayFigureIgnoreEventType[]
+      ignoreEvent?: boolean |
+        Array<
+          'onClick' |
+          'onDoubleClick' |
+          'onRightClick' |
+          'onPressedMoveStart' |
+          'onPressedMoving' |
+          'onPressedMoveEnd' |
+          'onMouseEnter' |
+          'onMouseLeave' |
+          'onSelected' |
+          'onDeselected'
+        >
     }>
     performEventPressedMove?: (params: object) => void
     performEventMoveForDrawing?: (params: object) => void
