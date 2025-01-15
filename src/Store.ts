@@ -1187,7 +1187,7 @@ export default class StoreImp implements Store {
       })
     }
     const progressOverlay = this._progressOverlayInfo?.overlay
-    if (isValid(progressOverlay)) {
+    if (isValid(progressOverlay) && find([progressOverlay]).length > 0) {
       const paneOverlays = map.get(progressOverlay.paneId) ?? []
       paneOverlays.push(progressOverlay)
       map.set(progressOverlay.paneId, paneOverlays)
