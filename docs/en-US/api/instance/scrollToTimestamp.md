@@ -3,7 +3,7 @@ outline: deep
 ---
 
 # scrollToTimestamp(timestamp, animationDuration?)
-`scrollToTimestamp` scroll to the specified timestamp.
+`scrollToTimestamp` scroll the right side of the chart to the specified timestamp.
 
 ## Reference {#reference}
 <!-- @include: @/@views/api/references/instance/scrollToTimestamp.md -->

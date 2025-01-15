@@ -1162,7 +1162,7 @@ export default class StoreImp implements Store {
 
   getOverlaysByFilter (filter: OverlayFilter): Map<string, OverlayImp[]> {
     const { id, groupId, paneId, name } = filter
-    const find: ((overlays: OverlayImp[]) => OverlayImp[]) = (overlays) => overlays.filter(overlay => {
+    const match: ((overlay: OverlayImp) => boolean) = overlay => {
       if (isValid(id)) {
         return overlay.id === id
       } else {
@@ -1171,19 +1171,19 @@ export default class StoreImp implements Store {
         }
       }
       return !isValid(name) || overlay.name === name
-    })
+    }
 
     const map = new Map<string, OverlayImp[]>()
     if (isValid(paneId)) {
       const overlays = this.getOverlaysByPaneId(paneId)
-      map.set(paneId, find(overlays))
+      map.set(paneId, overlays.filter(match))
     } else {
       this._overlays.forEach((overlays, paneId) => {
-        map.set(paneId, find(overlays))
+        map.set(paneId, overlays.filter(match))
       })
     }
     const progressOverlay = this._progressOverlayInfo?.overlay
-    if (isValid(progressOverlay)) {
+    if (isValid(progressOverlay) && match(progressOverlay)) {
       const paneOverlays = map.get(progressOverlay.paneId) ?? []
       paneOverlays.push(progressOverlay)
       map.set(progressOverlay.paneId, paneOverlays)
