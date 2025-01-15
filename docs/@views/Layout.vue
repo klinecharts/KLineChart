@@ -5,9 +5,11 @@ import { nextTick, provide } from 'vue'
 
 import Banner from './Banner.vue'
 import HomeHero from './home/Hero.vue'
+import HomeTopSponsor from './home/TopSponsor.vue'
 import HomeCreateChart from './home/create-chart/index.vue'
 import HomeFAQ from './home/FAQ.vue'
 import HomeSponsor from './home/Sponsor.vue'
+import AsideSponsor from './AsideSponsor.vue'
 import NotFound from './NotFound.vue'
 
 const { isDark } = useData()
@@ -53,11 +55,15 @@ provide('toggle-appearance', async ({ clientX: x, clientY: y }) => {
     </template>
     <template #home-hero-before>
       <HomeHero/>
+      <HomeTopSponsor/>
     </template>
     <template #home-features-after>
       <HomeCreateChart/>
       <HomeFAQ/>
       <HomeSponsor/>
+    </template>
+    <template #aside-bottom>
+      <AsideSponsor/>
     </template>
     <template #not-found>
       <NotFound/>
