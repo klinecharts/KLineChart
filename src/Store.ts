@@ -1232,7 +1232,7 @@ export default class StoreImp implements Store {
       if (isValid(OverlayClazz)) {
         const id = create.id ?? createId(OVERLAY_ID_PREFIX)
         const overlay = new OverlayClazz()
-        const paneId = overlay.paneId
+        const paneId = create.paneId ?? PaneIdConstants.CANDLE
         create.id = id
         create.groupId ??= id
         const zLevel = this.getOverlaysByPaneId(paneId).length
