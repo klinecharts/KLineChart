@@ -13,7 +13,7 @@
  */
 
 import type Nullable from './Nullable'
-import type { KLineData } from './Data'
+import type { KLineData, NeighborData } from './Data'
 
 export interface Margin {
   marginLeft: number
@@ -214,13 +214,7 @@ export interface CandleTooltipRectStyle extends Omit<RectStyle, 'style' | 'borde
   position: CandleTooltipRectPosition
 }
 
-export interface CandleTooltipCustomCallbackData {
-  prev: Nullable<KLineData>
-  current: KLineData
-  next: Nullable<KLineData>
-}
-
-export type CandleTooltipCustomCallback = (data: CandleTooltipCustomCallbackData, styles: CandleStyle) => TooltipLegend[]
+export type CandleTooltipCustomCallback = (data: NeighborData<Nullable<KLineData>>, styles: CandleStyle) => TooltipLegend[]
 
 export interface CandleTooltipStyle extends TooltipStyle, Offset {
   custom: CandleTooltipCustomCallback | TooltipLegend[]
@@ -236,7 +230,13 @@ export enum CandleType {
   Area = 'area'
 }
 
+export enum CandleBarColorCompareRule {
+  CurrentOpen = 'current_open',
+  PreviousClose = 'previous_close'
+}
+
 export interface CandleBarColor extends ChangeColor {
+  compareRule: CandleBarColorCompareRule
   upBorderColor: string
   downBorderColor: string
   noChangeBorderColor: string
@@ -266,7 +266,7 @@ export interface IndicatorTooltipStyle extends TooltipStyle, Offset {
 }
 
 export interface IndicatorStyle {
-  ohlc: ChangeColor
+  ohlc: Pick<CandleBarColor, 'compareRule' | 'upColor' | 'downColor' | 'noChangeColor'>
   bars: IndicatorPolygonStyle[]
   lines: SmoothLineStyle[]
   circles: IndicatorPolygonStyle[]
@@ -393,6 +393,7 @@ function getDefaultCandleStyle (): CandleStyle {
   return {
     type: CandleType.CandleSolid,
     bar: {
+      compareRule: CandleBarColorCompareRule.CurrentOpen,
       upColor: green,
       downColor: red,
       noChangeColor: grey,
@@ -519,6 +520,7 @@ function getDefaultIndicatorStyle (): IndicatorStyle {
 
   return {
     ohlc: {
+      compareRule: CandleBarColorCompareRule.CurrentOpen,
       upColor: alphaGreen,
       downColor: alphaRed,
       noChangeColor: grey

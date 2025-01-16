@@ -13,7 +13,6 @@
  */
 
 import type Coordinate from '../common/Coordinate'
-import type { VisibleRangeData } from '../common/Data'
 import type { GradientColor } from '../common/Styles'
 import Animation from '../common/Animation'
 import { isNumber, isArray, isValid } from '../common/utils/typeChecks'
@@ -58,8 +57,9 @@ export default class CandleAreaView extends ChildrenView {
     let minY = Number.MAX_SAFE_INTEGER
     let areaStartX: number = Number.MIN_SAFE_INTEGER
     let ripplePointCoordinate: Nullable<Coordinate> = null
-    this.eachChildren((data: VisibleRangeData) => {
-      const { data: kLineData, x } = data
+    this.eachChildren((data) => {
+      const x = data.x
+      const { current: kLineData } = data.data
       const value = kLineData?.[styles.value]
       if (isNumber(value)) {
         const y = yAxis.convertToPixel(value)
