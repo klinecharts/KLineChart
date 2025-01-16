@@ -15,7 +15,7 @@
 import type Nullable from '../common/Nullable'
 import type DeepPartial from '../common/DeepPartial'
 import type ExcludePickPartial from '../common/ExcludePickPartial'
-import type { KLineData } from '../common/Data'
+import type { KLineData, NeighborData } from '../common/Data'
 import type Bounding from '../common/Bounding'
 import type BarSpace from '../common/BarSpace'
 import type Crosshair from '../common/Crosshair'
@@ -43,15 +43,9 @@ export type IndicatorFigureStyle = Partial<Omit<SmoothLineStyle, 'style'>> & Par
 
 export type IndicatorFigureAttrs = Partial<ArcAttrs> & Partial<LineStyle> & Partial<RectAttrs> & Partial<TextAttrs> & Record<string, unknown>
 
-export interface IndicatorFigureCallbackBrother<PCN> {
-  prev: PCN
-  current: PCN
-  next: PCN
-}
-
 export interface IndicatorFigureAttrsCallbackParams<D> {
-  data: IndicatorFigureCallbackBrother<Nullable<D>>
-  coordinate: IndicatorFigureCallbackBrother<Record<keyof D, number> & { x: number }>
+  data: NeighborData<Nullable<D>>
+  coordinate: NeighborData<Record<keyof D, number> & { x: number }>
   bounding: Bounding
   barSpace: BarSpace
   xAxis: XAxis
@@ -59,8 +53,7 @@ export interface IndicatorFigureAttrsCallbackParams<D> {
 }
 
 export interface IndicatorFigureStylesCallbackParams<D> {
-  data: IndicatorFigureCallbackBrother<Nullable<D>>
-
+  data: NeighborData<Nullable<D>>
   indicator: Indicator<D>
   defaultStyles?: IndicatorStyle
 }

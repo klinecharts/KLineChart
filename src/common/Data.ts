@@ -14,6 +14,12 @@
 
 import type Nullable from './Nullable'
 
+export interface NeighborData<D> {
+  prev: D
+  current: D
+  next: D
+}
+
 export interface KLineData {
   timestamp: number
   open: number
@@ -28,5 +34,5 @@ export interface KLineData {
 export interface VisibleRangeData {
   dataIndex: number
   x: number
-  data: Nullable<KLineData>
+  data: NeighborData<Nullable<KLineData>>
 }
