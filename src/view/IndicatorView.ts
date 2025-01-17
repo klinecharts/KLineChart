@@ -13,7 +13,7 @@
  */
 
 import type Nullable from '../common/Nullable'
-import { type CandleBarColorCompareRule, CandleType, type SmoothLineStyle } from '../common/Styles'
+import { type CandleColorCompareRule, CandleType, type SmoothLineStyle } from '../common/Styles'
 import { formatValue } from '../common/utils/format'
 import { isNumber, isValid } from '../common/utils/typeChecks'
 import type Coordinate from '../common/Coordinate'
@@ -33,7 +33,7 @@ export default class IndicatorView extends CandleBarView {
         if (indicator.shouldOhlc && indicator.visible) {
           const indicatorStyles = indicator.styles
           const defaultStyles = chartStore.getStyles().indicator
-          const compareRule = formatValue(indicatorStyles, 'ohlc.compareRule', defaultStyles.ohlc.compareRule) as CandleBarColorCompareRule
+          const compareRule = formatValue(indicatorStyles, 'ohlc.compareRule', defaultStyles.ohlc.compareRule) as CandleColorCompareRule
           const upColor = formatValue(indicatorStyles, 'ohlc.upColor', defaultStyles.ohlc.upColor) as string
           const downColor = formatValue(indicatorStyles, 'ohlc.downColor', defaultStyles.ohlc.downColor) as string
           const noChangeColor = formatValue(indicatorStyles, 'ohlc.noChangeColor', defaultStyles.ohlc.noChangeColor) as string

@@ -75,6 +75,8 @@
       },
       last: {
         show: true,
+        // 'current_open' | 'previous_close'
+        compareRule: 'current_open',
         upColor: '#2DC08E',
         downColor: '#F92855',
         noChangeColor: '#888888',
@@ -177,6 +179,8 @@
   },
   indicator: {
     ohlc: {
+      // 'current_open' | 'previous_close'
+      compareRule: 'current_open',
       upColor: 'rgba(45, 192, 142, .7)',
       downColor: 'rgba(249, 40, 85, .7)',
       noChangeColor: '#888888'

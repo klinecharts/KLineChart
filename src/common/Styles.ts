@@ -194,6 +194,7 @@ export interface CandleHighLowPriceMarkStyle {
 export type CandleLastPriceMarkLineStyle = Omit<StateLineStyle, 'color'>
 export interface CandleLastPriceMarkStyle extends ChangeColor {
   show: boolean
+  compareRule: CandleColorCompareRule
   line: CandleLastPriceMarkLineStyle
   text: LastValueMarkTextStyle
 }
@@ -230,13 +231,13 @@ export enum CandleType {
   Area = 'area'
 }
 
-export enum CandleBarColorCompareRule {
+export enum CandleColorCompareRule {
   CurrentOpen = 'current_open',
   PreviousClose = 'previous_close'
 }
 
 export interface CandleBarColor extends ChangeColor {
-  compareRule: CandleBarColorCompareRule
+  compareRule: CandleColorCompareRule
   upBorderColor: string
   downBorderColor: string
   noChangeBorderColor: string
@@ -393,7 +394,7 @@ function getDefaultCandleStyle (): CandleStyle {
   return {
     type: CandleType.CandleSolid,
     bar: {
-      compareRule: CandleBarColorCompareRule.CurrentOpen,
+      compareRule: CandleColorCompareRule.CurrentOpen,
       upColor: green,
       downColor: red,
       noChangeColor: grey,
@@ -432,6 +433,7 @@ function getDefaultCandleStyle (): CandleStyle {
       low: { ...highLow },
       last: {
         show: true,
+        compareRule: CandleColorCompareRule.CurrentOpen,
         upColor: green,
         downColor: red,
         noChangeColor: grey,
@@ -520,7 +522,7 @@ function getDefaultIndicatorStyle (): IndicatorStyle {
 
   return {
     ohlc: {
-      compareRule: CandleBarColorCompareRule.CurrentOpen,
+      compareRule: CandleColorCompareRule.CurrentOpen,
       upColor: alphaGreen,
       downColor: alphaRed,
       noChangeColor: grey

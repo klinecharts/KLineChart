@@ -15,9 +15,10 @@
 import type Nullable from '../common/Nullable'
 import type { VisibleRangeData } from '../common/Data'
 import type BarSpace from '../common/BarSpace'
+import { isValid } from '../common/utils/typeChecks'
 import type { EventHandler } from '../common/SyntheticEvent'
 import { ActionType } from '../common/Action'
-import { CandleType, type CandleBarColor, type RectStyle, PolygonType, CandleBarColorCompareRule } from '../common/Styles'
+import { CandleType, type CandleBarColor, type RectStyle, PolygonType, CandleColorCompareRule } from '../common/Styles'
 
 import type { FigureCreate } from '../component/Figure'
 import type { RectAttrs } from '../extension/figure/rect'
@@ -25,7 +26,6 @@ import type { RectAttrs } from '../extension/figure/rect'
 import ChildrenView from './ChildrenView'
 
 import { PaneIdConstants } from '../pane/types'
-import { isValid } from '../common/utils/typeChecks'
 
 export interface CandleBarOptions {
   type: Exclude<CandleType, CandleType.Area>
@@ -60,7 +60,7 @@ export default class CandleBarView extends ChildrenView {
         const { x, data: { current, prev } } = visibleData
         if (isValid(current)) {
           const { open, high, low, close } = current
-          const comparePrice = styles.compareRule === CandleBarColorCompareRule.CurrentOpen ? open : (prev?.close ?? close)
+          const comparePrice = styles.compareRule === CandleColorCompareRule.CurrentOpen ? open : (prev?.close ?? close)
           const colors: string[] = []
           if (close > comparePrice) {
             colors[0] = styles.upColor
