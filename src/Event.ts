@@ -26,10 +26,10 @@ import type XAxis from './component/XAxis'
 
 import type Chart from './Chart'
 import type Pane from './pane/Pane'
+import type DrawPane from './pane/DrawPane'
 import { PaneIdConstants } from './pane/types'
 import type Widget from './widget/Widget'
 import { WidgetNameConstants, REAL_SEPARATOR_HEIGHT } from './widget/types'
-import type DrawPane from './pane/DrawPane'
 
 interface EventTriggerWidgetInfo {
   pane: Nullable<Pane>
@@ -162,23 +162,10 @@ export default class Event implements EventHandler {
           return widget.dispatchEvent('mouseDownEvent', event)
         }
         case WidgetNameConstants.X_AXIS: {
-          const consumed = widget.dispatchEvent('mouseDownEvent', event)
-          if (consumed) {
-            this._chart.updatePane(UpdateLevel.Overlay)
-          }
-          this._xAxisStartScaleCoordinate = { x: event.x, y: event.y }
-          this._xAxisStartScaleDistance = event.pageX
-          return consumed
+          return this._processXAxisScrollStartEvent(widget, event)
         }
         case WidgetNameConstants.Y_AXIS: {
-          const consumed = widget.dispatchEvent('mouseDownEvent', event)
-          if (consumed) {
-            this._chart.updatePane(UpdateLevel.Overlay)
-          }
-          const range = (pane as DrawPane<YAxis>).getAxisComponent().getRange()
-          this._prevYAxisRange = { ...range }
-          this._yAxisStartScaleDistance = event.pageY
-          return consumed
+          return this._processYAxisScaleStartEvent(widget as Widget<DrawPane<YAxis>>, event)
         }
       }
     }
@@ -236,97 +223,18 @@ export default class Event implements EventHandler {
       const name = widget.getName()
       switch (name) {
         case WidgetNameConstants.MAIN: {
-          const bounding = widget.getBounding()
           const consumed = widget.dispatchEvent('pressedMouseMoveEvent', event)
-          if (!consumed && this._startScrollCoordinate !== null) {
-            const yAxis = (pane as DrawPane<YAxis>).getAxisComponent()
-            if (this._prevYAxisRange !== null && !yAxis.getAutoCalcTickFlag() && yAxis.scrollZoomEnabled) {
-              const { from, to, range } = this._prevYAxisRange
-              let distance = 0
-              if (yAxis.reverse) {
-                distance = this._startScrollCoordinate.y - event.y
-              } else {
-                distance = event.y - this._startScrollCoordinate.y
-              }
-              const scale = distance / bounding.height
-              const difRange = range * scale
-              const newFrom = from + difRange
-              const newTo = to + difRange
-              const newRealFrom = yAxis.valueToRealValue(newFrom, { range: this._prevYAxisRange })
-              const newRealTo = yAxis.valueToRealValue(newTo, { range: this._prevYAxisRange })
-              const newDisplayFrom = yAxis.realValueToDisplayValue(newRealFrom, { range: this._prevYAxisRange })
-              const newDisplayTo = yAxis.realValueToDisplayValue(newRealTo, { range: this._prevYAxisRange })
-              yAxis.setRange({
-                from: newFrom,
-                to: newTo,
-                range: newTo - newFrom,
-                realFrom: newRealFrom,
-                realTo: newRealTo,
-                realRange: newRealTo - newRealFrom,
-                displayFrom: newDisplayFrom,
-                displayTo: newDisplayTo,
-                displayRange: newDisplayTo - newDisplayFrom
-              })
-            }
-            const distance = event.x - this._startScrollCoordinate.x
-            this._chart.getChartStore().scroll(distance)
+          if (!consumed) {
+            this._processMainScrollingEvent(widget as Widget<DrawPane<YAxis>>, event)
           }
           this._chart.getChartStore().setCrosshair({ x: event.x, y: event.y, paneId: pane?.getId() })
           return consumed
         }
         case WidgetNameConstants.X_AXIS: {
-          const consumed = widget.dispatchEvent('pressedMouseMoveEvent', event)
-          if (!consumed) {
-            const xAxis = (pane as DrawPane<XAxis>).getAxisComponent()
-            if ((xAxis.scrollZoomEnabled)) {
-              const scale = this._xAxisStartScaleDistance / event.pageX
-              if (Number.isFinite(scale)) {
-                const zoomScale = (scale - this._xAxisScale) * 10
-                this._xAxisScale = scale
-                this._chart.getChartStore().zoom(zoomScale, this._xAxisStartScaleCoordinate ?? undefined)
-              }
-            }
-          } else {
-            this._chart.updatePane(UpdateLevel.Overlay)
-          }
-          return consumed
+          return this._processXAxisScrollingEvent(widget as Widget<DrawPane<XAxis>>, event)
         }
         case WidgetNameConstants.Y_AXIS: {
-          const consumed = widget.dispatchEvent('pressedMouseMoveEvent', event)
-          if (!consumed) {
-            const yAxis = (pane as DrawPane<YAxis>).getAxisComponent()
-            if (this._prevYAxisRange !== null && yAxis.scrollZoomEnabled) {
-              const { from, to, range } = this._prevYAxisRange
-              const scale = event.pageY / this._yAxisStartScaleDistance
-              const newRange = range * scale
-              const difRange = (newRange - range) / 2
-              const newFrom = from - difRange
-              const newTo = to + difRange
-              const newRealFrom = yAxis.valueToRealValue(newFrom, { range: this._prevYAxisRange })
-              const newRealTo = yAxis.valueToRealValue(newTo, { range: this._prevYAxisRange })
-              const newDisplayFrom = yAxis.realValueToDisplayValue(newRealFrom, { range: this._prevYAxisRange })
-              const newDisplayTo = yAxis.realValueToDisplayValue(newRealTo, { range: this._prevYAxisRange })
-              yAxis.setRange({
-                from: newFrom,
-                to: newTo,
-                range: newRange,
-                realFrom: newRealFrom,
-                realTo: newRealTo,
-                realRange: newRealTo - newRealFrom,
-                displayFrom: newDisplayFrom,
-                displayTo: newDisplayTo,
-                displayRange: newDisplayTo - newDisplayFrom
-              })
-              this._chart.layout({
-                measureWidth: true,
-                update: true,
-                buildYAxisTick: true
-              })
-            }
-          } else {
-            this._chart.updatePane(UpdateLevel.Overlay)
-          }
-          return consumed
+          return this._processYAxisScalingEvent(widget as Widget<DrawPane<YAxis>>, event)
         }
       }
     }
@@ -444,6 +352,8 @@ export default class Event implements EventHandler {
             this._flingScrollRequestId = null
           }
           this._flingStartTime = new Date().getTime()
+          const range = (pane as DrawPane<YAxis>).getAxisComponent().getRange()
+          this._prevYAxisRange = { ...range }
           this._startScrollCoordinate = { x: event.x, y: event.y }
           chartStore.startScroll()
           this._touchZoomed = false
@@ -462,11 +372,17 @@ export default class Event implements EventHandler {
           }
           return true
         }
-        case WidgetNameConstants.X_AXIS:
-        case WidgetNameConstants.Y_AXIS: {
-          const consumed = widget.dispatchEvent('mouseDownEvent', event)
+        case WidgetNameConstants.X_AXIS: {
+          const consumed = this._processXAxisScrollStartEvent(widget, event)
           if (consumed) {
-            this._chart.updatePane(UpdateLevel.Overlay)
+            event.preventDefault?.()
+          }
+          return consumed
+        }
+        case WidgetNameConstants.Y_AXIS: {
+          const consumed = this._processYAxisScaleStartEvent(widget as Widget<DrawPane<YAxis>>, event)
+          if (consumed) {
+            event.preventDefault?.()
           }
           return consumed
         }
@@ -493,22 +409,21 @@ export default class Event implements EventHandler {
             event.preventDefault?.()
             chartStore.setCrosshair({ x: event.x, y: event.y, paneId: pane?.getId() })
           } else {
-            if (
-              this._startScrollCoordinate !== null &&
-              Math.abs(this._startScrollCoordinate.x - event.x) > this._startScrollCoordinate.y - event.y
-            ) {
-              const distance = event.x - this._startScrollCoordinate.x
-              chartStore.scroll(distance)
-            }
+            this._processMainScrollingEvent(widget as Widget<DrawPane<YAxis>>, event)
           }
           return true
         }
-        case WidgetNameConstants.X_AXIS:
-        case WidgetNameConstants.Y_AXIS: {
-          const consumed = widget.dispatchEvent('pressedMouseMoveEvent', event)
+        case WidgetNameConstants.X_AXIS: {
+          const consumed = this._processXAxisScrollingEvent(widget as Widget<DrawPane<XAxis>>, event)
           if (consumed) {
             event.preventDefault?.()
-            this._chart.updatePane(UpdateLevel.Overlay)
+          }
+          return consumed
+        }
+        case WidgetNameConstants.Y_AXIS: {
+          const consumed = this._processYAxisScalingEvent(widget as Widget<DrawPane<YAxis>>, event)
+          if (consumed) {
+            event.preventDefault?.()
           }
           return consumed
         }
@@ -559,6 +474,12 @@ export default class Event implements EventHandler {
           }
         }
       }
+      this._startScrollCoordinate = null
+      this._prevYAxisRange = null
+      this._xAxisStartScaleCoordinate = null
+      this._xAxisStartScaleDistance = 0
+      this._xAxisScale = 1
+      this._yAxisStartScaleDistance = 0
     }
     return false
   }
@@ -606,6 +527,120 @@ export default class Event implements EventHandler {
       return true
     }
     return false
+  }
+
+  private _processMainScrollingEvent (widget: Widget<DrawPane<YAxis>>, event: MouseTouchEvent): void {
+    if (this._startScrollCoordinate !== null) {
+      const yAxis = widget.getPane().getAxisComponent()
+      const bounding = widget.getBounding()
+      if (this._prevYAxisRange !== null && !yAxis.getAutoCalcTickFlag() && yAxis.scrollZoomEnabled) {
+        const { from, to, range } = this._prevYAxisRange
+        let distance = 0
+        if (yAxis.reverse) {
+          distance = this._startScrollCoordinate.y - event.y
+        } else {
+          distance = event.y - this._startScrollCoordinate.y
+        }
+        const scale = distance / bounding.height
+        const difRange = range * scale
+        const newFrom = from + difRange
+        const newTo = to + difRange
+        const newRealFrom = yAxis.valueToRealValue(newFrom, { range: this._prevYAxisRange })
+        const newRealTo = yAxis.valueToRealValue(newTo, { range: this._prevYAxisRange })
+        const newDisplayFrom = yAxis.realValueToDisplayValue(newRealFrom, { range: this._prevYAxisRange })
+        const newDisplayTo = yAxis.realValueToDisplayValue(newRealTo, { range: this._prevYAxisRange })
+        yAxis.setRange({
+          from: newFrom,
+          to: newTo,
+          range: newTo - newFrom,
+          realFrom: newRealFrom,
+          realTo: newRealTo,
+          realRange: newRealTo - newRealFrom,
+          displayFrom: newDisplayFrom,
+          displayTo: newDisplayTo,
+          displayRange: newDisplayTo - newDisplayFrom
+        })
+      }
+      const distance = event.x - this._startScrollCoordinate.x
+      this._chart.getChartStore().scroll(distance)
+    }
+  }
+
+  private _processXAxisScrollStartEvent (widget: Widget, event: MouseTouchEvent): boolean {
+    const consumed = widget.dispatchEvent('mouseDownEvent', event)
+    if (consumed) {
+      this._chart.updatePane(UpdateLevel.Overlay)
+    }
+    this._xAxisStartScaleCoordinate = { x: event.x, y: event.y }
+    this._xAxisStartScaleDistance = event.pageX
+    return consumed
+  }
+
+  private _processXAxisScrollingEvent (widget: Widget<DrawPane<XAxis>>, event: MouseTouchEvent): boolean {
+    const consumed = widget.dispatchEvent('pressedMouseMoveEvent', event)
+    if (!consumed) {
+      const xAxis = widget.getPane().getAxisComponent()
+      if ((xAxis.scrollZoomEnabled)) {
+        const scale = this._xAxisStartScaleDistance / event.pageX
+        if (Number.isFinite(scale)) {
+          const zoomScale = (scale - this._xAxisScale) * 10
+          this._xAxisScale = scale
+          this._chart.getChartStore().zoom(zoomScale, this._xAxisStartScaleCoordinate ?? undefined)
+        }
+      }
+    } else {
+      this._chart.updatePane(UpdateLevel.Overlay)
+    }
+    return consumed
+  }
+
+  private _processYAxisScaleStartEvent (widget: Widget<DrawPane<YAxis>>, event: MouseTouchEvent): boolean {
+    const consumed = widget.dispatchEvent('mouseDownEvent', event)
+    if (consumed) {
+      this._chart.updatePane(UpdateLevel.Overlay)
+    }
+    const range = widget.getPane().getAxisComponent().getRange()
+    this._prevYAxisRange = { ...range }
+    this._yAxisStartScaleDistance = event.pageY
+    return consumed
+  }
+
+  private _processYAxisScalingEvent (widget: Widget<DrawPane<YAxis>>, event: MouseTouchEvent): boolean {
+    const consumed = widget.dispatchEvent('pressedMouseMoveEvent', event)
+    if (!consumed) {
+      const yAxis = widget.getPane().getAxisComponent()
+      if (this._prevYAxisRange !== null && yAxis.scrollZoomEnabled) {
+        const { from, to, range } = this._prevYAxisRange
+        const scale = event.pageY / this._yAxisStartScaleDistance
+        const newRange = range * scale
+        const difRange = (newRange - range) / 2
+        const newFrom = from - difRange
+        const newTo = to + difRange
+        const newRealFrom = yAxis.valueToRealValue(newFrom, { range: this._prevYAxisRange })
+        const newRealTo = yAxis.valueToRealValue(newTo, { range: this._prevYAxisRange })
+        const newDisplayFrom = yAxis.realValueToDisplayValue(newRealFrom, { range: this._prevYAxisRange })
+        const newDisplayTo = yAxis.realValueToDisplayValue(newRealTo, { range: this._prevYAxisRange })
+        yAxis.setRange({
+          from: newFrom,
+          to: newTo,
+          range: newRange,
+          realFrom: newRealFrom,
+          realTo: newRealTo,
+          realRange: newRealTo - newRealFrom,
+          displayFrom: newDisplayFrom,
+          displayTo: newDisplayTo,
+          displayRange: newDisplayTo - newDisplayFrom
+        })
+        this._chart.layout({
+          measureWidth: true,
+          update: true,
+          buildYAxisTick: true
+        })
+      }
+    } else {
+      this._chart.updatePane(UpdateLevel.Overlay)
+    }
+    return consumed
   }
 
   private _findWidgetByEvent (event: MouseTouchEvent): EventTriggerWidgetInfo {
