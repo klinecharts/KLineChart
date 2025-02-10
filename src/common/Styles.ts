@@ -14,6 +14,7 @@
 
 import type Nullable from './Nullable'
 import type { KLineData, NeighborData } from './Data'
+import { hexToRgb } from './utils/color'
 
 export interface Margin {
   marginLeft: number
@@ -347,34 +348,31 @@ export interface Styles {
   overlay: OverlayStyle
 }
 
-const red = '#F92855'
-const alphaRed = 'rgba(249, 40, 85, .7)'
-const green = '#2DC08E'
-const alphaGreen = 'rgba(45, 192, 142, .7)'
-const grey = '#888888'
-const white = '#FFFFFF'
-const blue = '#1677FF'
-const textColor = '#76808F'
-const axisLineColor = '#DDDDDD'
-
-function getAlphaBlue (alpha: number): string {
-  return `rgba(22, 119, 255, ${alpha})`
+const Color = {
+  RED: '#F92855',
+  GREEN: '#2DC08E',
+  WHITE: '#FFFFFF',
+  GREY: '#76808F',
+  BLUE: '#1677FF'
 }
 
 function getDefaultGridStyle (): GridStyle {
-  function item (): StateLineStyle {
-    return {
+  return {
+    show: true,
+    horizontal: {
+      show: true,
+      size: 1,
+      color: '#EDEDED',
+      style: LineType.Dashed,
+      dashedValue: [2, 2]
+    },
+    vertical: {
       show: true,
       size: 1,
       color: '#EDEDED',
       style: LineType.Dashed,
       dashedValue: [2, 2]
     }
-  }
-  return {
-    show: true,
-    horizontal: item(),
-    vertical: item()
   }
 }
 
@@ -385,7 +383,7 @@ function getDefaultGridStyle (): GridStyle {
 function getDefaultCandleStyle (): CandleStyle {
   const highLow = {
     show: true,
-    color: textColor,
+    color: Color.GREY,
     textOffset: 5,
     textSize: 10,
     textFamily: 'Helvetica Neue',
@@ -395,33 +393,33 @@ function getDefaultCandleStyle (): CandleStyle {
     type: CandleType.CandleSolid,
     bar: {
       compareRule: CandleColorCompareRule.CurrentOpen,
-      upColor: green,
-      downColor: red,
-      noChangeColor: grey,
-      upBorderColor: green,
-      downBorderColor: red,
-      noChangeBorderColor: grey,
-      upWickColor: green,
-      downWickColor: red,
-      noChangeWickColor: grey
+      upColor: Color.GREEN,
+      downColor: Color.RED,
+      noChangeColor: Color.GREY,
+      upBorderColor: Color.GREEN,
+      downBorderColor: Color.RED,
+      noChangeBorderColor: Color.GREY,
+      upWickColor: Color.GREEN,
+      downWickColor: Color.RED,
+      noChangeWickColor: Color.GREY
     },
     area: {
       lineSize: 2,
-      lineColor: blue,
+      lineColor: Color.BLUE,
       smooth: false,
       value: 'close',
       backgroundColor: [{
         offset: 0,
-        color: getAlphaBlue(0.01)
+        color: hexToRgb(Color.BLUE, 0.01)
       }, {
         offset: 1,
-        color: getAlphaBlue(0.2)
+        color: hexToRgb(Color.BLUE, 0.2)
       }],
       point: {
         show: true,
-        color: blue,
+        color: Color.BLUE,
         radius: 4,
-        rippleColor: getAlphaBlue(0.3),
+        rippleColor: hexToRgb(Color.BLUE, 0.3),
         rippleRadius: 8,
         animation: true,
         animationDuration: 1000
@@ -434,9 +432,9 @@ function getDefaultCandleStyle (): CandleStyle {
       last: {
         show: true,
         compareRule: CandleColorCompareRule.CurrentOpen,
-        upColor: green,
-        downColor: red,
-        noChangeColor: grey,
+        upColor: Color.GREEN,
+        downColor: Color.RED,
+        noChangeColor: Color.GREY,
         line: {
           show: true,
           style: LineType.Dashed,
@@ -455,7 +453,7 @@ function getDefaultCandleStyle (): CandleStyle {
           borderStyle: LineType.Solid,
           borderSize: 0,
           borderDashedValue: [2, 2],
-          color: white,
+          color: Color.WHITE,
           family: 'Helvetica Neue',
           weight: 'normal',
           borderRadius: 2
@@ -497,7 +495,7 @@ function getDefaultCandleStyle (): CandleStyle {
         size: 12,
         family: 'Helvetica Neue',
         weight: 'normal',
-        color: textColor,
+        color: Color.GREY,
         marginLeft: 8,
         marginTop: 4,
         marginRight: 8,
@@ -512,20 +510,14 @@ function getDefaultCandleStyle (): CandleStyle {
  * Get default indicator style
  */
 function getDefaultIndicatorStyle (): IndicatorStyle {
-  const lines = ['#FF9600', '#935EBD', blue, '#E11D74', '#01C5C4'].map(color => ({
-    style: LineType.Solid,
-    smooth: false,
-    size: 1,
-    dashedValue: [2, 2],
-    color
-  }))
-
+  const alphaGreen = hexToRgb(Color.GREEN, 0.7)
+  const alphaRed = hexToRgb(Color.RED, 0.7)
   return {
     ohlc: {
       compareRule: CandleColorCompareRule.CurrentOpen,
       upColor: alphaGreen,
       downColor: alphaRed,
-      noChangeColor: grey
+      noChangeColor: Color.GREY
     },
     bars: [{
       style: PolygonType.Fill,
@@ -534,9 +526,15 @@ function getDefaultIndicatorStyle (): IndicatorStyle {
       borderDashedValue: [2, 2],
       upColor: alphaGreen,
       downColor: alphaRed,
-      noChangeColor: grey
+      noChangeColor: Color.GREY
     }],
-    lines,
+    lines: ['#FF9600', '#935EBD', Color.BLUE, '#E11D74', '#01C5C4'].map(color => ({
+      style: LineType.Solid,
+      smooth: false,
+      size: 1,
+      dashedValue: [2, 2],
+      color
+    })),
     circles: [{
       style: PolygonType.Fill,
       borderStyle: LineType.Solid,
@@ -544,14 +542,14 @@ function getDefaultIndicatorStyle (): IndicatorStyle {
       borderDashedValue: [2, 2],
       upColor: alphaGreen,
       downColor: alphaRed,
-      noChangeColor: grey
+      noChangeColor: Color.GREY
     }],
     lastValueMark: {
       show: false,
       text: {
         show: false,
         style: PolygonType.Fill,
-        color: white,
+        color: Color.WHITE,
         size: 12,
         family: 'Helvetica Neue',
         weight: 'normal',
@@ -580,7 +578,7 @@ function getDefaultIndicatorStyle (): IndicatorStyle {
         size: 12,
         family: 'Helvetica Neue',
         weight: 'normal',
-        color: textColor,
+        color: Color.GREY,
         marginLeft: 8,
         marginTop: 4,
         marginRight: 8,
@@ -597,12 +595,12 @@ function getDefaultAxisStyle (): AxisStyle {
     size: 'auto',
     axisLine: {
       show: true,
-      color: axisLineColor,
+      color: '#DDDDDD',
       size: 1
     },
     tickText: {
       show: true,
-      color: textColor,
+      color: Color.GREY,
       size: 12,
       family: 'Helvetica Neue',
       weight: 'normal',
@@ -613,7 +611,7 @@ function getDefaultAxisStyle (): AxisStyle {
       show: true,
       size: 1,
       length: 3,
-      color: axisLineColor
+      color: '#DDDDDD'
     }
   }
 }
@@ -627,25 +625,25 @@ function getDefaultCrosshairStyle (): CrosshairStyle {
         style: LineType.Dashed,
         dashedValue: [4, 2],
         size: 1,
-        color: textColor
+        color: Color.GREY
       },
       text: {
         show: true,
         style: PolygonType.Fill,
-        color: white,
+        color: Color.WHITE,
         size: 12,
         family: 'Helvetica Neue',
         weight: 'normal',
         borderStyle: LineType.Solid,
         borderDashedValue: [2, 2],
         borderSize: 1,
-        borderColor: textColor,
+        borderColor: Color.GREY,
         borderRadius: 2,
         paddingLeft: 4,
         paddingRight: 4,
         paddingTop: 4,
         paddingBottom: 4,
-        backgroundColor: textColor
+        backgroundColor: Color.GREY
       }
     }
   }
@@ -658,12 +656,12 @@ function getDefaultCrosshairStyle (): CrosshairStyle {
 }
 
 function getDefaultOverlayStyle (): OverlayStyle {
-  const pointBorderColor = getAlphaBlue(0.35)
-  const alphaBg = getAlphaBlue(0.25)
+  const pointBorderColor = hexToRgb(Color.BLUE, 0.35)
+  const alphaBg = hexToRgb(Color.BLUE, 0.25)
   function text (): TextStyle {
     return {
       style: PolygonType.Fill,
-      color: white,
+      color: Color.WHITE,
       size: 12,
       family: 'Helvetica Neue',
       weight: 'normal',
@@ -671,21 +669,21 @@ function getDefaultOverlayStyle (): OverlayStyle {
       borderDashedValue: [2, 2],
       borderSize: 1,
       borderRadius: 2,
-      borderColor: blue,
+      borderColor: Color.BLUE,
       paddingLeft: 4,
       paddingRight: 4,
       paddingTop: 4,
       paddingBottom: 4,
-      backgroundColor: blue
+      backgroundColor: Color.BLUE
     }
   }
   return {
     point: {
-      color: blue,
+      color: Color.BLUE,
       borderColor: pointBorderColor,
       borderSize: 1,
       radius: 5,
-      activeColor: blue,
+      activeColor: Color.BLUE,
       activeBorderColor: pointBorderColor,
       activeBorderSize: 3,
       activeRadius: 5
@@ -693,14 +691,14 @@ function getDefaultOverlayStyle (): OverlayStyle {
     line: {
       style: LineType.Solid,
       smooth: false,
-      color: blue,
+      color: Color.BLUE,
       size: 1,
       dashedValue: [2, 2]
     },
     rect: {
       style: PolygonType.Fill,
       color: alphaBg,
-      borderColor: blue,
+      borderColor: Color.BLUE,
       borderSize: 1,
       borderRadius: 0,
       borderStyle: LineType.Solid,
@@ -708,8 +706,8 @@ function getDefaultOverlayStyle (): OverlayStyle {
     },
     polygon: {
       style: PolygonType.Fill,
-      color: blue,
-      borderColor: blue,
+      color: Color.BLUE,
+      borderColor: Color.BLUE,
       borderSize: 1,
       borderStyle: LineType.Solid,
       borderDashedValue: [2, 2]
@@ -717,14 +715,14 @@ function getDefaultOverlayStyle (): OverlayStyle {
     circle: {
       style: PolygonType.Fill,
       color: alphaBg,
-      borderColor: blue,
+      borderColor: Color.BLUE,
       borderSize: 1,
       borderStyle: LineType.Solid,
       borderDashedValue: [2, 2]
     },
     arc: {
       style: LineType.Solid,
-      color: blue,
+      color: Color.BLUE,
       size: 1,
       dashedValue: [2, 2]
     },
@@ -735,9 +733,9 @@ function getDefaultOverlayStyle (): OverlayStyle {
 function getDefaultSeparatorStyle (): SeparatorStyle {
   return {
     size: 1,
-    color: axisLineColor,
+    color: '#DDDDDD',
     fill: true,
-    activeBackgroundColor: getAlphaBlue(0.08)
+    activeBackgroundColor: hexToRgb(Color.BLUE, 0.08)
   }
 }
 
