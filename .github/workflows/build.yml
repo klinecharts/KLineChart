@@ -17,5 +17,5 @@ jobs:
           node-version: 21
           cache: pnpm
       - run: pnpm install
-      - run: pnpm run lint
+      - run: pnpm run code-lint
       - run: pnpm run build

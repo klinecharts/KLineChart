@@ -11,6 +11,7 @@ export default {
         'style',
         'refactor',
         'perf',
+        'impr',
         'chore',
         'test',
         'revert',
