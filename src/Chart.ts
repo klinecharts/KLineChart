@@ -58,6 +58,7 @@ import Event from './Event'
 import type DeepPartial from './common/DeepPartial'
 import type { Styles } from './common/Styles'
 import type BarSpace from './common/BarSpace'
+import type PickRequired from './common/PickRequired'
 
 export enum DomPosition {
   Root = 'root',
@@ -82,7 +83,7 @@ export interface Chart extends Store {
   applyNewData: (dataList: KLineData[], more?: boolean | Partial<LoadDataMore>) => void
   updateData: (data: KLineData) => void
   createIndicator: (value: string | IndicatorCreate, isStack?: boolean, paneOptions?: PaneOptions) => Nullable<string>
-  getIndicators: (filter?: IndicatorFilter) => Map<string, Indicator[]>
+  getIndicators: (filter?: IndicatorFilter) => Indicator[]
   createOverlay: (value: string | OverlayCreate | Array<string | OverlayCreate>) => Nullable<string> | Array<Nullable<string>>
   getOverlays: (filter?: OverlayFilter) => Map<string, Overlay[]>
   setPaneOptions: (options: PaneOptions) => void
@@ -768,7 +769,11 @@ export default class ChartImp implements Chart {
       options.height ??= PANE_DEFAULT_HEIGHT
     }
     this.setPaneOptions(options)
-    const result = this._chartStore.addIndicator(indicator, options.id, isStack ?? false)
+    indicator.paneId = options.id
+    if (!isString(indicator.id)) {
+      indicator.id = createId(indicator.name)
+    }
+    const result = this._chartStore.addIndicator(indicator as PickRequired<IndicatorCreate, 'id' | 'name' | 'paneId'>, isStack ?? false)
     if (result) {
       this.layout({
         measureHeight: true,
@@ -782,11 +787,11 @@ export default class ChartImp implements Chart {
     return options.id
   }
 
-  overrideIndicator (override: IndicatorCreate, paneId?: string): boolean {
-    return this._chartStore.overrideIndicator(override, paneId)
+  overrideIndicator (override: IndicatorCreate): boolean {
+    return this._chartStore.overrideIndicator(override)
   }
 
-  getIndicators (filter?: IndicatorFilter): Map<string, Indicator[]> {
+  getIndicators (filter?: IndicatorFilter): Indicator[] {
     return this._chartStore.getIndicatorsByFilter(filter ?? {})
   }
 
