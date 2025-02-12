@@ -122,6 +122,16 @@ export type IndicatorOnDataStateChangeCallback<D> = (params: IndicatorOnDataStat
 
 export interface Indicator<D = unknown, C = unknown, E = unknown> {
   /**
+   * Unique id
+   */
+  id: string
+
+  /**
+   * Pane id
+   */
+  paneId: string
+
+  /**
    * Indicator name
    */
   name: string
@@ -231,10 +241,7 @@ export type IndicatorTemplate<D = unknown, C = unknown, E = unknown> = ExcludePi
 
 export type IndicatorCreate<D = unknown, C = unknown, E = unknown> = ExcludePickPartial<Omit<Indicator<D, C, E>, 'result'>, 'name'>
 
-export interface IndicatorFilter {
-  name?: string
-  paneId?: string
-}
+export type IndicatorFilter = Partial<Pick<Indicator, 'id' | 'paneId' | 'name'>>
 
 export type IndicatorConstructor<D = unknown, C = unknown, E = unknown> = new () => IndicatorImp<D, C, E>
 
@@ -307,6 +314,8 @@ export function eachFigures<D = unknown> (
 }
 
 export default class IndicatorImp<D = unknown, C = unknown, E = unknown> implements Indicator<D, C, E> {
+  id: string
+  paneId: string
   name: string
   shortName: string
   precision = 4
@@ -364,6 +373,7 @@ export default class IndicatorImp<D = unknown, C = unknown, E = unknown> impleme
     const { result, ...currentOthers } = this
     this._prevIndicator = { ...clone(currentOthers), result }
     const {
+      id,
       name,
       shortName,
       precision,
@@ -372,6 +382,9 @@ export default class IndicatorImp<D = unknown, C = unknown, E = unknown> impleme
       calcParams,
       ...others
     } = indicator
+    if (!isString(this.id) && isString(id)) {
+      this.id = id
+    }
     if (!isString(this.name)) {
       this.name = name ?? ''
     }

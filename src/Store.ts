@@ -52,6 +52,7 @@ import { getStyles as getExtensionStyles } from './extension/styles/index'
 import { PaneIdConstants } from './pane/types'
 
 import type Chart from './Chart'
+import type PickRequired from './common/PickRequired'
 
 const BarSpaceLimitConstants = {
   MIN: 1,
@@ -121,7 +122,7 @@ export interface Store {
   getBarSpace: () => BarSpace
   getVisibleRange: () => VisibleRange
   setLoadMoreDataCallback: (callback: LoadDataCallback) => void
-  overrideIndicator: (override: IndicatorCreate, paneId?: string) => boolean
+  overrideIndicator: (override: IndicatorCreate) => boolean
   removeIndicator: (filter?: IndicatorFilter) => boolean
   overrideOverlay: (override: Partial<OverlayCreate>) => boolean
   removeOverlay: (filter?: OverlayFilter) => boolean
@@ -531,11 +532,9 @@ export default class StoreImp implements Store {
       if (adjustFlag) {
         this._adjustVisibleRange()
         this.setCrosshair(this._crosshair, { notInvalidate: true })
-        const filterMap = this.getIndicatorsByFilter({})
-        filterMap.forEach((indicators, paneId) => {
-          indicators.forEach(indicator => {
-            this._addIndicatorCalcTask(paneId, indicator, type)
-          })
+        const filterIndicators = this.getIndicatorsByFilter({})
+        filterIndicators.forEach(indicator => {
+          this._addIndicatorCalcTask(indicator, type)
         })
         this._chart.layout({
           measureWidth: true,
@@ -986,9 +985,9 @@ export default class StoreImp implements Store {
     }
   }
 
-  private _addIndicatorCalcTask (paneId: string, indicator: IndicatorImp, loadDataType: LoadDataType): void {
+  private _addIndicatorCalcTask (indicator: IndicatorImp, loadDataType: LoadDataType): void {
     this._taskScheduler.addTask({
-      id: generateTaskId(paneId, indicator.name),
+      id: generateTaskId(indicator.id),
       handler: () => {
         indicator.onDataStateChange?.({
           state: IndicatorDataState.Loading,
@@ -1019,17 +1018,13 @@ export default class StoreImp implements Store {
     })
   }
 
-  addIndicator (create: IndicatorCreate, paneId: string, isStack: boolean): boolean {
-    const { name } = create
-    let paneIndicators = this._indicators.get(paneId)
-    if (isValid(paneIndicators)) {
-      if (isValid(paneIndicators.find(i => i.name === name))) {
-        return false
-      }
+  addIndicator (create: PickRequired<IndicatorCreate, 'id' | 'name' | 'paneId'>, isStack: boolean): boolean {
+    const { name, paneId } = create
+    const filterIndicators = this.getIndicatorsByFilter(create)
+    if (filterIndicators.length > 0) {
+      return false
     }
-    if (!isValid(paneIndicators)) {
-      paneIndicators = []
-    }
+    let paneIndicators = this.getIndicatorsByPaneId(paneId)
     const IndicatorClazz = getIndicatorClass(name)!
     const indicator = new IndicatorClazz()
 
@@ -1042,7 +1037,7 @@ export default class StoreImp implements Store {
     paneIndicators.push(indicator)
     this._indicators.set(paneId, paneIndicators)
     this._sortIndicators(paneId)
-    this._addIndicatorCalcTask(paneId, indicator, LoadDataType.Init)
+    this._addIndicatorCalcTask(indicator, LoadDataType.Init)
     return true
   }
 
@@ -1050,42 +1045,38 @@ export default class StoreImp implements Store {
     return this._indicators.get(paneId) ?? []
   }
 
-  getIndicatorsByFilter (filter: IndicatorFilter): Map<string, IndicatorImp[]> {
-    const find: ((indicators: IndicatorImp[], name?: string) => IndicatorImp[]) = (indicators, name) => indicators.filter(indicator => (!isValid(name) || indicator.name === name))
-    const { paneId, name } = filter
-    const map = new Map<string, IndicatorImp[]>()
-    if (isValid(paneId)) {
-      const indicators = this.getIndicatorsByPaneId(paneId)
-      map.set(paneId, find(indicators, name))
-    } else {
-      if (isValid(name)) {
-        this._indicators.forEach((indicators, paneId) => {
-          map.set(paneId, find(indicators, name))
-        })
-      } else {
-        this._indicators.forEach((indicators, paneId) => {
-          map.set(paneId, find(indicators))
-        })
+  getIndicatorsByFilter (filter: IndicatorFilter): IndicatorImp[] {
+    const { paneId, name, id } = filter
+    const match: ((overlay: IndicatorImp) => boolean) = indicator => {
+      if (isValid(id)) {
+        return indicator.id === id
       }
+      return !isValid(name) || indicator.name === name
     }
-    return map
+    let indicators: IndicatorImp[] = []
+    if (isValid(paneId)) {
+      indicators = indicators.concat(this.getIndicatorsByPaneId(paneId).filter(match))
+    } else {
+      this._indicators.forEach(paneIndicators => {
+        indicators = indicators.concat(paneIndicators.filter(match))
+      })
+    }
+    return indicators
   }
 
   removeIndicator (filter: IndicatorFilter): boolean {
     let removed = false
-    const filterMap = this.getIndicatorsByFilter(filter)
-    filterMap.forEach((indicators, paneId) => {
-      const paneIndicators = this.getIndicatorsByPaneId(paneId)
-      indicators.forEach(indicator => {
-        const index = paneIndicators.findIndex(ins => ins.name === indicator.name)
-        if (index > -1) {
-          this._taskScheduler.removeTask(generateTaskId(paneId, indicator.name))
-          paneIndicators.splice(index, 1)
-          removed = true
-        }
-      })
+    const filterIndicators = this.getIndicatorsByFilter(filter)
+    filterIndicators.forEach(indicator => {
+      const paneIndicators = this.getIndicatorsByPaneId(indicator.paneId)
+      const index = paneIndicators.findIndex(ins => ins.id === indicator.id)
+      if (index > -1) {
+        this._taskScheduler.removeTask(generateTaskId(indicator.id))
+        paneIndicators.splice(index, 1)
+        removed = true
+      }
       if (paneIndicators.length === 0) {
-        this._indicators.delete(paneId)
+        this._indicators.delete(indicator.paneId)
       }
     })
     return removed
@@ -1122,36 +1113,25 @@ export default class StoreImp implements Store {
     }
   }
 
-  overrideIndicator (create: IndicatorCreate, paneId?: string): boolean {
-    const { name } = create
-    let indictors = new Map<string, IndicatorImp[]>()
-    if (isValid(paneId)) {
-      const paneIndicators = this._indicators.get(paneId)
-      if (isValid(paneIndicators)) {
-        indictors.set(paneId, paneIndicators)
-      }
-    } else {
-      indictors = this._indicators
-    }
+  overrideIndicator (create: IndicatorCreate): boolean {
     let updateFlag = false
     let sortFlag = false
-    indictors.forEach((paneIndicators, paneId) => {
-      const indicator = paneIndicators.find(i => i.name === name)
-      if (isValid(indicator)) {
-        indicator.override(create)
-        const { calc, draw, sort } = indicator.shouldUpdateImp()
-        if (sort) {
-          sortFlag = true
-        }
-        if (calc) {
-          this._addIndicatorCalcTask(paneId, indicator, LoadDataType.Update)
-        } else {
-          if (draw) {
-            updateFlag = true
-          }
+    const filterIndicators = this.getIndicatorsByFilter(create)
+    filterIndicators.forEach(indicator => {
+      indicator.override(create)
+      const { calc, draw, sort } = indicator.shouldUpdateImp()
+      if (sort) {
+        sortFlag = true
+      }
+      if (calc) {
+        this._addIndicatorCalcTask(indicator, LoadDataType.Update)
+      } else {
+        if (draw) {
+          updateFlag = true
         }
       }
     })
+
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- ignore
     if (sortFlag) {
       this._sortIndicators()
