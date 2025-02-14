@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import type Nullable from '../common/Nullable'
+
 import type Updater from '../common/Updater'
 import { UpdateLevel } from '../common/Updater'
 import type Bounding from '../common/Bounding'
@@ -22,8 +22,7 @@ import { merge } from '../common/utils/typeChecks'
 import type Chart from '../Chart'
 
 export default abstract class Pane implements Updater {
-  private _rootContainer: HTMLElement
-  private _container: HTMLElement
+  private readonly _container: HTMLElement
   private readonly _id: string
   private readonly _chart: Chart
 
@@ -33,14 +32,9 @@ export default abstract class Pane implements Updater {
 
   private _visible = true
 
-  constructor (rootContainer: HTMLElement, afterElement: Nullable<HTMLElement>, chart: Chart, id: string) {
+  constructor (chart: Chart, id: string) {
     this._chart = chart
     this._id = id
-    this._init(rootContainer, afterElement)
-  }
-
-  private _init (rootContainer: HTMLElement, afterElement: Nullable<HTMLElement>): void {
-    this._rootContainer = rootContainer
     this._container = createDom('div', {
       width: '100%',
       margin: '0',
@@ -49,11 +43,6 @@ export default abstract class Pane implements Updater {
       overflow: 'hidden',
       boxSizing: 'border-box'
     })
-    if (afterElement !== null) {
-      rootContainer.insertBefore(this._container, afterElement)
-    } else {
-      rootContainer.appendChild(this._container)
-    }
   }
 
   getContainer (): HTMLElement {
@@ -96,10 +85,6 @@ export default abstract class Pane implements Updater {
       this._container.style.height = `${this._bounding.height}px`
     }
     this.updateImp(level ?? UpdateLevel.Drawer, this._container, this._bounding)
-  }
-
-  destroy (): void {
-    this._rootContainer.removeChild(this._container)
   }
 
   abstract setBounding (...bounding: Array<Partial<Bounding>>): Pane

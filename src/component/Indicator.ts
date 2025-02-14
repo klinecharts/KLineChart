@@ -237,9 +237,9 @@ export interface Indicator<D = unknown, C = unknown, E = unknown> {
   result: D[]
 }
 
-export type IndicatorTemplate<D = unknown, C = unknown, E = unknown> = ExcludePickPartial<Omit<Indicator<D, C, E>, 'result'>, 'name' | 'calc'>
+export type IndicatorTemplate<D = unknown, C = unknown, E = unknown> = ExcludePickPartial<Omit<Indicator<D, C, E>, 'result' | 'paneId'>, 'name' | 'calc'>
 
-export type IndicatorCreate<D = unknown, C = unknown, E = unknown> = ExcludePickPartial<Omit<Indicator<D, C, E>, 'result'>, 'name'>
+export type IndicatorCreate<D = unknown, C = unknown, E = unknown> = ExcludePickPartial<Omit<Indicator<D, C, E>, 'result' | 'paneId'>, 'name'>
 
 export type IndicatorFilter = Partial<Pick<Indicator, 'id' | 'paneId' | 'name'>>
 

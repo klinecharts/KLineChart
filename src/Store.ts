@@ -1018,8 +1018,8 @@ export default class StoreImp implements Store {
     })
   }
 
-  addIndicator (create: PickRequired<IndicatorCreate, 'id' | 'name' | 'paneId'>, isStack: boolean): boolean {
-    const { name, paneId } = create
+  addIndicator (create: PickRequired<IndicatorCreate, 'id' | 'name'>, paneId: string, isStack: boolean): boolean {
+    const { name } = create
     const filterIndicators = this.getIndicatorsByFilter(create)
     if (filterIndicators.length > 0) {
       return false
@@ -1029,6 +1029,7 @@ export default class StoreImp implements Store {
     const indicator = new IndicatorClazz()
 
     this._synchronizeIndicatorSeriesPrecision(indicator)
+    indicator.paneId = paneId
     indicator.override(create)
     if (!isStack) {
       this.removeIndicator({ paneId })
