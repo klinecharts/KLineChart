@@ -1,7 +1,9 @@
 ```typescript
 (
   indicator: {
-    name: string
+    id?: string
+    paneId?: string
+    name?: string
     shortName?: string
     precision?: number
     calcParams?: unknown[]
@@ -61,7 +63,6 @@
     })
     draw?: (params: object) => boolean
     onDataStateChange?: (params: object) => void
-  },
-  paneId?: string
+  }
 ) => void
 ```

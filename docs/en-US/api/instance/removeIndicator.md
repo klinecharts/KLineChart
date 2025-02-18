@@ -10,6 +10,7 @@ outline: deep
 
 ### Parameters {#parameters}
 - `filter` Filter conditions.
+  - `id` Indicator id.
   - `name` Indicator name.
   - `paneId` Pane id.
 

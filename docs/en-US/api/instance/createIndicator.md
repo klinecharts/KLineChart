@@ -11,6 +11,7 @@ outline: deep
 ### Parameters {#parameters}
 - `indicator` Indicator configuration can be an indicator name or an object. The object parameters are as follows.
   - `name` Name.
+  - `id` Indicator id.
   - `shortName` A short name, used for prompt display.
   - `precision` Precision.
   - `calcParams` Calculate the parameters.
@@ -56,7 +57,7 @@ outline: deep
     - `createTicks` Create ticks information callback method.
 
 ### Returns {#returns}
-`createIndicator` returns pane id `string` or `null` .
+`createIndicator` returns indicator id `string` or `null` .
 
 ## Usage {#usage}
 <script setup>

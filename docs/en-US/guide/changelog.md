@@ -1,5 +1,20 @@
 # 📠 Change Log
 
+## 10.0.0-alpha3
+`2025-02-19`
++ 👉 The return value of the instance api `createIndicator` is changed to return the indicator id.
++ 👉 The input parameter `paneId` of the instance api `overlayIndicator` is merged into the input parameter `indicator`.
++ 👉 The return value of the instance api `getIndicators` is changed to return an array.
++ 👉 The return value of the instance api `getOverlays` is changed to return an array.
++ 🆕 The style configuration adds `candle.bar.compareRule`, `indicator.ohlc.compareRule` and `candle.priceMark.last.compareRule`.
++ 🆕 Supports dragging the y-axis on mobile devices.
++ 🆕 Supports creating multiple indicators with the same name on the same window.
++ 💄 Optimize `figure` in `overlay` template to ignore event type, and the event name is consistent with the event name in `overlay`.
++ 🐞 Fix the problem that the indicator custom prompt information may be wrong.
++ 🐞 Fix the problem that the overlay being drawn may not be deleted correctly.
++ 🐞 Fix the problem that the api `createOverlay` may not be created correctly when `points` is specified.
++ 🐞 Fix the problem that the api `executeAction` may cause the `subscribeAction` to trigger infinitely.
+
 ## 10.0.0-alpha2
 `2024-12-20`
 + 🆕 The x-axis supports displaying future time.

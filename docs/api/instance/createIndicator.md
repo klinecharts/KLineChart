@@ -11,6 +11,7 @@ outline: deep
 ### 参数 {#parameters}
 - `indicator` 指标配置，可以是指标名，也可以是一个对象。对象参数如下。
   - `name` 名称。
+  - `id` 指标 id 。
   - `shortName` 简短名称，用于提示显示。
   - `precision` 精度。
   - `calcParams` 计算参数。
@@ -56,7 +57,7 @@ outline: deep
     - `createTicks` 创建分割信息回调方法。
 
 ### 返回值 {#returns}
-`createIndicator` 返回窗口id `string` 或者 `null`。
+`createIndicator` 返回指标id `string` 或者 `null`。
 
 ## 用法 {#usage}
 <script setup>

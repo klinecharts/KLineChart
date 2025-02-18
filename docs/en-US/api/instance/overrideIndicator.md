@@ -2,7 +2,7 @@
 outline: deep
 ---
 
-# overrideIndicator(indicator, paneId?)
+# overrideIndicator(indicator)
 `overrideIndicator` override indicator attrs.
 
 ## Reference {#reference}
@@ -10,6 +10,8 @@ outline: deep
 
 ### Parameters {#parameters}
 - `indicator` Indicator configuration.
+  - `id` ID.
+  - `paneId` Pane id.
   - `name` Name.
   - `shortName` A short name, used for prompt display.
   - `precision` Precision.
@@ -35,7 +37,10 @@ outline: deep
   - `createTooltipDataSource` Create custom prompts.
   - `draw` Custom drawing method, if the return value is `true`, it will override the default drawing.
   - `onDataStateChange` Data change callback notification.
-- `paneId` Pane id.
+  
+::: tip Tip
+Among them, `id`, `paneId` and `name` are indexes. If the input parameters contain these three parameters, the indicators that meet the conditions will be searched for overwriting based on these three parameters.
+:::
 
 ### Returns {#returns}
 `overrideIndicator` returns `undefined` .

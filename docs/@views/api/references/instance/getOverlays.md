@@ -6,5 +6,5 @@
     groupId?: string
     paneId?: string
   }
-) => Map<string, Overlay[]>
+) => Overlay[]
 ```

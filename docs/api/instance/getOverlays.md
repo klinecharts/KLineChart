@@ -17,7 +17,7 @@ outline: deep
 
 
 ### 返回值 {#returns}
-`getOverlays` 返回 `Map<string, Overlay[]>` 。
+`getOverlays` 返回 `Overlay[]` 。
 
 ## 用法 {#usage}
 <script setup>

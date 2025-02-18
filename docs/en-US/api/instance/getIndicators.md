@@ -10,12 +10,13 @@ outline: deep
 
 ### Parameters {#parameters}
 - `filter` Filter conditions.
+  - `id` Indicator id. 
   - `name` Indicator name.
   - `paneId` Pane id.
 
 
 ### Returns {#returns}
-`getIndicators` returns `Map<string, Indicator[]>` .
+`getIndicators` returns `Indicator[]` .
 
 ## Usage {#usage}
 <script setup>

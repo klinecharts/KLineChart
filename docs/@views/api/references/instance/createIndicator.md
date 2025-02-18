@@ -2,6 +2,7 @@
 (
   indicator: string | {
     name: string
+    id?: string
     shortName?: string
     precision?: number
     calcParams?: unknown[]
