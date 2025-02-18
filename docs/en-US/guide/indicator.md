@@ -2,6 +2,8 @@
 This document introduces the built-in technical indicators in the chart and how to customize a technical indicator.
 
 ## Built-in technical indicators
+It is important to note some indicators can be overlaid on the Candle using ```chart.createIndicator("WR", true, { id:'candle_pane' });``` and some cannot. Candle-compatible indicators are: BBI,BOLL,EMA,MA,SAR,SMA
+
 | **Name** | **Default calc params** | **Name** | **Default calc params** | **Name** | **Default calc params** |
 | :---: | :---: | :---: | :---: | :---: | :---: |
 | MA | [5, 10, 30, 60] | BIAS | [6, 12, 24] | VR | [24, 30] |
