@@ -49,7 +49,7 @@ import type AxisImp from './component/Axis'
 import { AxisPosition } from './component/Axis'
 import type { YAxis } from './component/YAxis'
 
-import type { IndicatorFilter, Indicator, IndicatorCreate } from './component/Indicator'
+import type { IndicatorFilter, Indicator, IndicatorCreate, IndicatorOverride } from './component/Indicator'
 import type { OverlayFilter, Overlay, OverlayCreate } from './component/Overlay'
 
 import { getIndicatorClass } from './extension/indicator/index'
@@ -750,7 +750,7 @@ export default class ChartImp implements Chart {
     return null
   }
 
-  overrideIndicator (override: IndicatorCreate): boolean {
+  overrideIndicator (override: IndicatorOverride): boolean {
     return this._chartStore.overrideIndicator(override)
   }
 

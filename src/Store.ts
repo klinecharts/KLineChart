@@ -38,7 +38,7 @@ import { classifyTimeWeightTicks, createTimeWeightTickList } from './common/Time
 
 import type { Options, CustomApi, ThousandsSeparator, DecimalFold } from './Options'
 
-import { IndicatorDataState, type IndicatorCreate, type IndicatorFilter } from './component/Indicator'
+import { IndicatorDataState, type IndicatorOverride, type IndicatorCreate, type IndicatorFilter } from './component/Indicator'
 import type IndicatorImp from './component/Indicator'
 import { IndicatorSeries } from './component/Indicator'
 import { getIndicatorClass } from './extension/indicator/index'
@@ -1114,12 +1114,12 @@ export default class StoreImp implements Store {
     }
   }
 
-  overrideIndicator (create: IndicatorCreate): boolean {
+  overrideIndicator (override: IndicatorOverride): boolean {
     let updateFlag = false
     let sortFlag = false
-    const filterIndicators = this.getIndicatorsByFilter(create)
+    const filterIndicators = this.getIndicatorsByFilter(override)
     filterIndicators.forEach(indicator => {
-      indicator.override(create)
+      indicator.override(override)
       const { calc, draw, sort } = indicator.shouldUpdateImp()
       if (sort) {
         sortFlag = true

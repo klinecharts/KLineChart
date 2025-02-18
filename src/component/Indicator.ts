@@ -239,7 +239,9 @@ export interface Indicator<D = unknown, C = unknown, E = unknown> {
 
 export type IndicatorTemplate<D = unknown, C = unknown, E = unknown> = ExcludePickPartial<Omit<Indicator<D, C, E>, 'result' | 'paneId'>, 'name' | 'calc'>
 
-export type IndicatorCreate<D = unknown, C = unknown, E = unknown> = ExcludePickPartial<Omit<Indicator<D, C, E>, 'result' | 'paneId'>, 'name'>
+export type IndicatorCreate<D = unknown, C = unknown, E = unknown> = ExcludePickPartial<Omit<Indicator<D, C, E>, 'result'>, 'name'>
+
+export type IndicatorOverride<D = unknown, C = unknown, E = unknown> = Partial<Omit<Indicator<D, C, E>, 'result'>>
 
 export type IndicatorFilter = Partial<Pick<Indicator, 'id' | 'paneId' | 'name'>>
 
@@ -369,7 +371,7 @@ export default class IndicatorImp<D = unknown, C = unknown, E = unknown> impleme
     this._lockSeriesPrecision = false
   }
 
-  override (indicator: Partial<Indicator<D, C, E>>): void {
+  override (indicator: IndicatorOverride<D, C, E>): void {
     const { result, ...currentOthers } = this
     this._prevIndicator = { ...clone(currentOthers), result }
     const {
