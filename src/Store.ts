@@ -44,7 +44,7 @@ import { IndicatorSeries } from './component/Indicator'
 import { getIndicatorClass } from './extension/indicator/index'
 
 import type OverlayImp from './component/Overlay'
-import { type OverlayCreate, OVERLAY_ID_PREFIX, type OverlayFilter, type OverlayFigure, checkOverlayFigureEvent } from './component/Overlay'
+import { type OverlayCreate, OVERLAY_ID_PREFIX, type OverlayFilter, type OverlayFigure, checkOverlayFigureEvent, type OverlayOverride } from './component/Overlay'
 import { getOverlayInnerClass } from './extension/overlay/index'
 
 import { getStyles as getExtensionStyles } from './extension/styles/index'
@@ -1276,12 +1276,12 @@ export default class StoreImp implements Store {
     }
   }
 
-  overrideOverlay (create: Partial<OverlayCreate>): boolean {
+  overrideOverlay (override: OverlayOverride): boolean {
     let sortFlag = false
     const updatePaneIds: string[] = []
-    const filterOverlays = this.getOverlaysByFilter(create)
+    const filterOverlays = this.getOverlaysByFilter(override)
     filterOverlays.forEach(overlay => {
-      overlay.override(create)
+      overlay.override(override)
       const { sort, draw } = overlay.shouldUpdate()
       if (sort) {
         sortFlag = true

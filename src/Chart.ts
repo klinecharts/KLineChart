@@ -50,7 +50,7 @@ import { AxisPosition } from './component/Axis'
 import type { YAxis } from './component/YAxis'
 
 import type { IndicatorFilter, Indicator, IndicatorCreate, IndicatorOverride } from './component/Indicator'
-import type { OverlayFilter, Overlay, OverlayCreate } from './component/Overlay'
+import type { OverlayFilter, Overlay, OverlayCreate, OverlayOverride } from './component/Overlay'
 
 import { getIndicatorClass } from './extension/indicator/index'
 
@@ -838,7 +838,7 @@ export default class ChartImp implements Chart {
     return this._chartStore.getOverlaysByFilter(filter ?? {})
   }
 
-  overrideOverlay (override: Partial<OverlayCreate>): boolean {
+  overrideOverlay (override: OverlayOverride): boolean {
     return this._chartStore.overrideOverlay(override)
   }
 
