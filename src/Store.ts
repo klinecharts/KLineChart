@@ -1145,7 +1145,7 @@ export default class StoreImp implements Store {
     return false
   }
 
-  getOverlaysByFilter (filter: OverlayFilter): Map<string, OverlayImp[]> {
+  getOverlaysByFilter (filter: OverlayFilter): OverlayImp[] {
     const { id, groupId, paneId, name } = filter
     const match: ((overlay: OverlayImp) => boolean) = overlay => {
       if (isValid(id)) {
@@ -1158,22 +1158,19 @@ export default class StoreImp implements Store {
       return !isValid(name) || overlay.name === name
     }
 
-    const map = new Map<string, OverlayImp[]>()
+    let overlays: OverlayImp[] = []
     if (isValid(paneId)) {
-      const overlays = this.getOverlaysByPaneId(paneId)
-      map.set(paneId, overlays.filter(match))
+      overlays = overlays.concat(this.getOverlaysByPaneId(paneId).filter(match))
     } else {
-      this._overlays.forEach((overlays, paneId) => {
-        map.set(paneId, overlays.filter(match))
+      this._overlays.forEach(paneOverlays => {
+        overlays = overlays.concat(paneOverlays.filter(match))
       })
     }
     const progressOverlay = this._progressOverlayInfo?.overlay
     if (isValid(progressOverlay) && match(progressOverlay)) {
-      const paneOverlays = map.get(progressOverlay.paneId) ?? []
-      paneOverlays.push(progressOverlay)
-      map.set(progressOverlay.paneId, paneOverlays)
+      overlays.push(progressOverlay)
     }
-    return map
+    return overlays
   }
 
   getOverlaysByPaneId (paneId?: string): OverlayImp[] {
@@ -1282,20 +1279,18 @@ export default class StoreImp implements Store {
   overrideOverlay (create: Partial<OverlayCreate>): boolean {
     let sortFlag = false
     const updatePaneIds: string[] = []
-    const filterMap = this.getOverlaysByFilter(create)
-    filterMap.forEach((overlays, paneId) => {
-      overlays.forEach(overlay => {
-        overlay.override(create)
-        const { sort, draw } = overlay.shouldUpdate()
-        if (sort) {
-          sortFlag = true
+    const filterOverlays = this.getOverlaysByFilter(create)
+    filterOverlays.forEach(overlay => {
+      overlay.override(create)
+      const { sort, draw } = overlay.shouldUpdate()
+      if (sort) {
+        sortFlag = true
+      }
+      if (sort || draw) {
+        if (!updatePaneIds.includes(overlay.paneId)) {
+          updatePaneIds.push(overlay.paneId)
         }
-        if (sort || draw) {
-          if (!updatePaneIds.includes(paneId)) {
-            updatePaneIds.push(paneId)
-          }
-        }
-      })
+      }
     })
 
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- ignore
@@ -1314,26 +1309,25 @@ export default class StoreImp implements Store {
 
   removeOverlay (filter: OverlayFilter): boolean {
     const updatePaneIds: string[] = []
-    const filterMap = this.getOverlaysByFilter(filter)
-    filterMap.forEach((overlays, paneId) => {
-      const paneOverlays = this.getOverlaysByPaneId(paneId)
-      overlays.forEach(overlay => {
-        overlay.onRemoved?.({ overlay, chart: this._chart })
-        if (!updatePaneIds.includes(paneId)) {
-          updatePaneIds.push(paneId)
+    const filterOverlays = this.getOverlaysByFilter(filter)
+    filterOverlays.forEach(overlay => {
+      const paneId = overlay.paneId
+      const paneOverlays = this.getOverlaysByPaneId(overlay.paneId)
+      overlay.onRemoved?.({ overlay, chart: this._chart })
+      if (!updatePaneIds.includes(paneId)) {
+        updatePaneIds.push(paneId)
+      }
+      if (overlay.isDrawing()) {
+        this._progressOverlayInfo = null
+      } else {
+        const index = paneOverlays.findIndex(o => o.id === overlay.id)
+        if (index > -1) {
+          paneOverlays.splice(index, 1)
         }
-        if (overlay.isDrawing()) {
-          this._progressOverlayInfo = null
-        } else {
-          const index = paneOverlays.findIndex(o => o.id === overlay.id)
-          if (index > -1) {
-            paneOverlays.splice(index, 1)
-          }
-        }
-        if (paneOverlays.length === 0) {
-          this._overlays.delete(paneId)
-        }
-      })
+      }
+      if (paneOverlays.length === 0) {
+        this._overlays.delete(paneId)
+      }
     })
     if (updatePaneIds.length > 0) {
       updatePaneIds.forEach(paneId => {

@@ -76,21 +76,16 @@ export interface DomFilter {
   position?: DomPosition
 }
 
-export interface CreateIndicatorOptions {
-  isStack?: boolean
-  paneOptions?: PaneOptions
-}
-
 export interface Chart extends Store {
   id: string
   getDom: (paneId?: string, position?: DomPosition) => Nullable<HTMLElement>
   getSize: (paneId?: string, position?: DomPosition) => Nullable<Bounding>
   applyNewData: (dataList: KLineData[], more?: boolean | Partial<LoadDataMore>) => void
   updateData: (data: KLineData) => void
-  createIndicator: (value: string | IndicatorCreate, options?: CreateIndicatorOptions) => Nullable<string>
+  createIndicator: (value: string | IndicatorCreate, isStack?: boolean, paneOptions?: PaneOptions) => Nullable<string>
   getIndicators: (filter?: IndicatorFilter) => Indicator[]
   createOverlay: (value: string | OverlayCreate | Array<string | OverlayCreate>) => Nullable<string> | Array<Nullable<string>>
-  getOverlays: (filter?: OverlayFilter) => Map<string, Overlay[]>
+  getOverlays: (filter?: OverlayFilter) => Overlay[]
   setPaneOptions: (options: PaneOptions) => void
   getPaneOptions: (id?: string) => Nullable<PaneOptions> | PaneOptions[]
   scrollByDistance: (distance: number, animationDuration?: number) => void
@@ -180,7 +175,7 @@ export default class ChartImp implements Chart {
         this._candlePane = this._createPane<CandlePane>(CandlePane, PaneIdConstants.CANDLE, paneOptions)
         const content = child.content ?? []
         content.forEach(v => {
-          this.createIndicator(v, { isStack: true, paneOptions })
+          this.createIndicator(v, true, paneOptions)
         })
       }
     }
@@ -201,13 +196,13 @@ export default class ChartImp implements Chart {
         case LayoutChildType.Indicator: {
           const content = child.content ?? []
           if (content.length > 0) {
-            let paneId: Nullable<string> = null
+            let paneId: Nullable<string> = child.options?.id ?? null
+            if (isValid(paneId)) {
+              paneId = createId(PaneIdConstants.INDICATOR)
+            }
+            const paneOptions = { ...child.options, id: paneId! }
             content.forEach(v => {
-              if (isValid(paneId)) {
-                this.createIndicator(v, { isStack: true, paneOptions: { id: paneId } })
-              } else {
-                paneId = this.createIndicator(v, { isStack: true, paneOptions: child.options })
-              }
+              this.createIndicator(v, true, paneOptions)
             })
           }
           break
@@ -718,14 +713,13 @@ export default class ChartImp implements Chart {
     this._chartStore.setLoadMoreDataCallback(cb)
   }
 
-  createIndicator (value: string | IndicatorCreate, options?: CreateIndicatorOptions): Nullable<string> {
+  createIndicator (value: string | IndicatorCreate, isStack?: boolean, paneOptions?: PaneOptions): Nullable<string> {
     const indicator = isString(value) ? { name: value } : value
     if (getIndicatorClass(indicator.name) === null) {
       logWarn('createIndicator', 'value', 'indicator not supported, you may need to use registerIndicator to add one!!!')
       return null
     }
 
-    const { isStack, paneOptions } = options ?? {}
     const paneOpts = paneOptions ?? {}
 
     if (!isString(paneOpts.id)) {
@@ -840,7 +834,7 @@ export default class ChartImp implements Chart {
     return ids[0]
   }
 
-  getOverlays (filter?: OverlayFilter): Map<string, Overlay[]> {
+  getOverlays (filter?: OverlayFilter): Overlay[] {
     return this._chartStore.getOverlaysByFilter(filter ?? {})
   }
 
