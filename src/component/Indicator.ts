@@ -371,7 +371,7 @@ export default class IndicatorImp<D = unknown, C = unknown, E = unknown> impleme
     this._lockSeriesPrecision = false
   }
 
-  override (indicator: IndicatorOverride<D, C, E>): void {
+  override (indicator: Partial<Indicator<D, C, E>>): void {
     const { result, ...currentOthers } = this
     this._prevIndicator = { ...clone(currentOthers), result }
     const {
