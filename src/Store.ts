@@ -480,7 +480,7 @@ export default class StoreImp implements Store {
         case LoadDataType.Init: {
           this.clearData()
           this._dataList = data
-          this._loadDataMore.backward = more?.forward ?? false
+          this._loadDataMore.backward = more?.backward ?? false
           this._loadDataMore.forward = more?.forward ?? false
           this._classifyTimeWeightTicks(this._dataList)
           this.setOffsetRightDistance(this._offsetRightDistance)
