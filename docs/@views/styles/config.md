@@ -1,5 +1,5 @@
 ```javascript
-{
+const styles = {
   grid: {
     show: true,
     horizontal: {
@@ -505,25 +505,6 @@
       paddingRight: 0,
       paddingTop: 0,
       paddingBottom: 0,
-      backgroundColor: 'transparent'
-    },
-    rectText: {
-      // 'fill' | 'stroke' | 'stroke_fill'
-      style: 'fill',
-      color: '#FFFFFF',
-      size: 12,
-      family: 'Helvetica Neue',
-      weight: 'normal',
-      // 'solid' | 'dashed'
-      borderStyle: 'solid',
-      borderDashedValue: [2, 2],
-      borderSize: 1,
-      borderRadius: 2,
-      borderColor: '#1677FF',
-      paddingLeft: 4,
-      paddingRight: 4,
-      paddingTop: 4,
-      paddingBottom: 4,
       backgroundColor: '#1677FF'
     }
   }
