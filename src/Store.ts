@@ -96,6 +96,8 @@ const BAR_GAP_RATIO = 0.2
 
 export const SCALE_MULTIPLIER = 10
 
+export const DEFAULT_MIN_TIME_SPAN = 15 * 60 * 1000
+
 export interface Store {
   setStyles: (value: string | DeepPartial<Styles>) => void
   getStyles: () => Styles
@@ -267,7 +269,7 @@ export default class StoreImp implements Store {
 
   private _timeWeightTickList: TimeWeightTick[] = []
 
-  private _minTimeDifference = Number.MAX_SAFE_INTEGER
+  private _minTimeSpan = { compare: Number.MAX_SAFE_INTEGER, calc: DEFAULT_MIN_TIME_SPAN }
 
   /**
    * Visible data array
@@ -567,19 +569,20 @@ export default class StoreImp implements Store {
       prevTimestamp = this._dataList[baseDataIndex - 1].timestamp
     } else {
       this._timeWeightTickMap.clear()
-      this._minTimeDifference = Number.MAX_SAFE_INTEGER
+      this._minTimeSpan = { compare: Number.MAX_SAFE_INTEGER, calc: DEFAULT_MIN_TIME_SPAN }
     }
 
-    const minTimeDifferenceObj = { value: this._minTimeDifference }
     classifyTimeWeightTicks(
       this._timeWeightTickMap,
       newDataList,
       this._dateTimeFormat,
       baseDataIndex,
-      minTimeDifferenceObj,
+      this._minTimeSpan,
       prevTimestamp
     )
-    this._minTimeDifference = minTimeDifferenceObj.value
+    if (this._minTimeSpan.compare !== Number.MAX_SAFE_INTEGER) {
+      this._minTimeSpan.calc = this._minTimeSpan.compare
+    }
     this._timeWeightTickList = createTimeWeightTickList(this._timeWeightTickMap, this._barSpace, this._styles.xAxis.tickText)
   }
 
@@ -824,10 +827,10 @@ export default class StoreImp implements Store {
     }
     const lastIndex = length - 1
     if (dataIndex > lastIndex) {
-      return this._dataList[lastIndex].timestamp + this._minTimeDifference * (dataIndex - lastIndex)
+      return this._dataList[lastIndex].timestamp + this._minTimeSpan.calc * (dataIndex - lastIndex)
     }
     if (dataIndex < 0) {
-      return this._dataList[0].timestamp - this._minTimeDifference * Math.abs(dataIndex)
+      return this._dataList[0].timestamp - this._minTimeSpan.calc * Math.abs(dataIndex)
     }
     return null
   }
@@ -840,11 +843,11 @@ export default class StoreImp implements Store {
     const lastIndex = length - 1
     const lastTimestamp = this._dataList[lastIndex].timestamp
     if (timestamp > lastTimestamp) {
-      return lastIndex + Math.floor((timestamp - lastTimestamp) / this._minTimeDifference)
+      return lastIndex + Math.floor((timestamp - lastTimestamp) / this._minTimeSpan.calc)
     }
     const firstTimestamp = this._dataList[0].timestamp
     if (timestamp < firstTimestamp) {
-      return Math.floor((timestamp - firstTimestamp) / this._minTimeDifference)
+      return Math.floor((timestamp - firstTimestamp) / this._minTimeSpan.calc)
     }
     return binarySearchNearest(this._dataList, 'timestamp', timestamp)
   }

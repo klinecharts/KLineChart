@@ -39,14 +39,14 @@ export function classifyTimeWeightTicks (
   dataList: Array<Pick<KLineData, 'timestamp'>>,
   dateTimeFormat: Intl.DateTimeFormat,
   baseDataIndex = 0,
-  minTimeDifference?: { value: number },
+  minTimeSpan?: { compare: number },
   startTimestamp?: Nullable<number>
 ): void {
   let prevDateTime: Nullable<DateTime> = null
   let prevTimestamp: Nullable<number> = startTimestamp ?? null
   for (let i = 0; i < dataList.length; i++) {
     const timestamp = dataList[i].timestamp
-    let weight = TimeWeightConstants.Second
+    let weight = TimeWeightConstants.Minute
     const dateTime = formatTimestampToDateTime(dateTimeFormat, timestamp)
     if (isValid(prevDateTime)) {
       if (dateTime.YYYY !== prevDateTime.YYYY) {
@@ -63,8 +63,8 @@ export function classifyTimeWeightTicks (
         weight = TimeWeightConstants.Second
       }
     }
-    if (isNumber(prevTimestamp) && isNumber(minTimeDifference?.value)) {
-      minTimeDifference.value = Math.min(minTimeDifference.value, timestamp - prevTimestamp)
+    if (isNumber(prevTimestamp) && isNumber(minTimeSpan?.compare)) {
+      minTimeSpan.compare = Math.min(minTimeSpan.compare, timestamp - prevTimestamp)
     }
     const currentTimeWeightList = map.get(weight) ?? []
     currentTimeWeightList.push({ dataIndex: i + baseDataIndex, weight, timestamp })
