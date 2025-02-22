@@ -26,7 +26,7 @@ export default defineConfig({
           { text: '9.x Docs', link: 'https://v9.klinecharts.com/en-US' },
           { text: '8.x Docs', link: 'https://v8.klinecharts.com' }
         ]
-      },
+      }
     ],
     sidebar: {
       '/en-US/guide/': [
@@ -35,7 +35,7 @@ export default defineConfig({
           collapsed: false,
           items: [
             { text: 'Introduction', link: '/en-US/guide/introduction' },
-            { text: 'Quick Start', link: '/en-US/guide/quick-start' },
+            { text: 'Quick Start', link: '/en-US/guide/quick-start' }
           ]
         },
         {
@@ -94,7 +94,7 @@ export const search = {
         footer: {
           selectText: 'to select',
           navigateText: 'to navigate',
-          closeText: 'to close',
+          closeText: 'to close'
         }
       }
     }

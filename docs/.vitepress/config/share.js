@@ -20,7 +20,7 @@ export function getChartApiMenus (lang = '') {
     { text: 'getSupportedOverlays', link: `${prefix}/getSupportedOverlays` },
     { text: 'registerXAxis', link: `${prefix}/registerXAxis` },
     { text: 'registerYAxis', link: `${prefix}/registerYAxis` },
-    { text: 'utils', link: `${prefix}/utils` },
+    { text: 'utils', link: `${prefix}/utils` }
   ]
 }
 
@@ -87,4 +87,3 @@ export function getInstanceApiMenus (lang = '') {
     { text: 'resize', link: `${prefix}/resize` }
   ]
 }
-

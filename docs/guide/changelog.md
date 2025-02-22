@@ -1,5 +1,11 @@
 # 📠 更新日志
 
+## 10.0.0-alpha4
+`2025-02-23`
++ 🐞 修复实例方法 `applyNewData` 入参 `more.backward` 不对问题。
++ 🐞 修复单条数据导致图表出错问题。
+
+
 ## 10.0.0-alpha3
 `2025-02-19`
 + 👉 实例api `createIndicator` 返回值变更为返回指标id。

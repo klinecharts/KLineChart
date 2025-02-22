@@ -1,5 +1,10 @@
 # 📠 Change Log
 
+## 10.0.0-alpha4
+`2025-02-23`
++ 🐞 Fix the issue that the parameter `more.backward` of `applyNewData` instance method is incorrect.
++ 🐞 Fix the issue that a single piece of data causes a chart error.
+
 ## 10.0.0-alpha3
 `2025-02-19`
 + 👉 The return value of the instance api `createIndicator` is changed to return the indicator id.

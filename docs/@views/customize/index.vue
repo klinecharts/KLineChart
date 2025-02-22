@@ -164,6 +164,7 @@ const { lang } = useData()
 .customize-content-item-price {
   display: flex;
   justify-content: center;
+  align-items: center;
   font-size: 32px;
   font-weight: bold;
   text-align: center;
