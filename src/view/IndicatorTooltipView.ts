@@ -79,7 +79,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
           const [leftIcons, middleIcons, rightIcons] = this.classifyTooltipIcons(icons)
           prevRowHeight = this.drawStandardTooltipIcons(
             ctx, leftIcons,
-            coordinate, indicator.name,
+            coordinate, indicator.name, indicator.id,
             left, prevRowHeight, maxWidth
           )
 
@@ -102,7 +102,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
 
           prevRowHeight = this.drawStandardTooltipIcons(
             ctx, middleIcons,
-            coordinate, indicator.name,
+            coordinate, indicator.name, indicator.id,
             left, prevRowHeight, maxWidth
           )
 
@@ -116,7 +116,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
           // draw right icons
           prevRowHeight = this.drawStandardTooltipIcons(
             ctx, rightIcons,
-            coordinate, indicator.name,
+            coordinate, indicator.name, indicator.id,
             left, prevRowHeight, maxWidth
           )
           top = coordinate.y + prevRowHeight
@@ -131,6 +131,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
     icons: TooltipIconStyle[],
     coordinate: Coordinate,
     indicatorName: string,
+    indicatorId: string,
     left: number,
     prevRowHeight: number,
     maxWidth: number
@@ -181,8 +182,8 @@ export default class IndicatorTooltipView extends View<YAxis> {
             backgroundColor: active ? activeBackgroundColor : backgroundColor
           }
         }, {
-          mouseClickEvent: this._boundIconClickEvent({ paneId, indicatorName, iconId: icon.id }),
-          mouseMoveEvent: this._boundIconMouseMoveEvent({ paneId, indicatorName, iconId: icon.id })
+          mouseClickEvent: this._boundIconClickEvent({ paneId, indicatorName, indicatorId, iconId: icon.id }),
+          mouseMoveEvent: this._boundIconMouseMoveEvent({ paneId, indicatorName, indicatorId, iconId: icon.id })
         })?.draw(ctx)
         coordinate.x += (marginLeft + paddingLeft + ctx.measureText(text).width + paddingRight + marginRight)
       })

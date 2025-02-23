@@ -67,6 +67,7 @@ const enum ScrollLimitRole {
 export interface TooltipIcon {
   paneId: string
   indicatorName: string
+  indicatorId: string
   iconId: string
 }
 
