@@ -61,7 +61,7 @@
   "engines": {
     "node": ">=0.10.0"
   },
-  "packageManager": "pnpm@9.12.3",
+  "packageManager": "pnpm@10.4.1",
   "devDependencies": {
     "@babel/standalone": "^7.24.4",
     "@commitlint/cli": "^19.6.1",
