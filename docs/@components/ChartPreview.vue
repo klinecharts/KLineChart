@@ -5,6 +5,11 @@ import { useData } from 'vitepress';
 import { codeToHtml } from 'shiki'
 
 import { transform } from '@babel/standalone'
+import { parse } from '@babel/parser'
+import generator from '@babel/generator'
+import traverse from "@babel/traverse"
+import * as t from '@babel/types'
+
 import ResizeObserver from 'resize-observer-polyfill'
 
 import stackBlitz from '@stackblitz/sdk'
@@ -32,6 +37,12 @@ const codeHtml = ref(null)
 const copied = ref(false)
 
 const version = ref(window.klinecharts.version())
+
+const handlerMessage = (e) => {
+  if (e.data === props.chartId) {
+    loading.value = false
+  }
+}
 
 function openStackBlitz () {
   const files = {
@@ -131,7 +142,7 @@ async function copyHandler () {
     }
 
     if (previouslyFocusedElement) {
-      ;(previouslyFocusedElement).focus()
+      previouslyFocusedElement.focus()
     }
   }
   setTimeout(() => {
@@ -142,7 +153,6 @@ async function copyHandler () {
 onMounted(() => {
   href.value = location.href
   loading.value = true
-
   const highlightCode = async () => {
     codeHtml.value = await codeToHtml(props.code, {
       lang: 'javascript',
@@ -153,12 +163,33 @@ onMounted(() => {
       defaultColor: 'light'
     })
   }
-
   if (props.code) {
     highlightCode()
     if (!!props.chartId) {
       const transformJs = props.code + '\n' + `window['chart_${props.chartId}'] = chart`
-      const { code } = transform(transformJs, {
+      const ast = parse(transformJs, { sourceType: 'module' })
+
+      traverse(ast, {
+        CallExpression(path) {
+          if (
+            t.isMemberExpression(path.node.callee) &&
+            t.isIdentifier(path.node.callee.object, { name: 'chart' }) &&
+            t.isIdentifier(path.node.callee.property, { name: 'applyNewData' })
+          ) {
+            const postMessageFun = t.expressionStatement(
+              t.callExpression(
+                t.memberExpression(t.identifier('window'), t.identifier('postMessage')),
+                [t.stringLiteral(props.chartId)]
+              )
+            )
+            path.insertBefore(postMessageFun);
+          }
+        }
+      })
+
+      window.addEventListener('message', handlerMessage, false);
+      
+      const { code } = transform(generator(ast, {}, transformJs).code, {
         presets: [
           'es2015',
           ['stage-3', { decoratorsBeforeExport: true }],
@@ -166,7 +197,8 @@ onMounted(() => {
         plugins: ['transform-modules-umd'],
       })
       const chartDom = document.createElement('div')
-      chartDom.style.height = `${props.chartHeight || 350}px`
+      const height = `${props.chartHeight || 350}px`
+      chartDom.style.height = height
       chartDom.id = props.chartId
       chartContainer.value.appendChild(chartDom)
       const script = document.createElement('script')
@@ -180,7 +212,6 @@ onMounted(() => {
       observer.value.observe(chartContainer.value)
     }
   }
-  loading.value = false
 })
 
 watch(isDark, (newValue) => {
@@ -202,6 +233,7 @@ onUnmounted(() => {
       window.klinecharts.dispose(props.chartId)
     }
   }
+  window.removeEventListener('message', handlerMessage)
 })
 </script>
 
@@ -301,6 +333,7 @@ h3 + .chart-preview {
 
 .chart {
   position: relative;
+  min-height: 350px;
 }
 
 .code-action-container {

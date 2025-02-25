@@ -51,7 +51,8 @@ function config () {
       'en-US': enUS
     },
     themeConfig: {
-      logo: '/images/logo.svg',
+      logo: '/images/logo-nav.svg',
+      siteTitle: false,
       search: {
         provider: 'local',
         options: {
