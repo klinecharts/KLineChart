@@ -217,7 +217,7 @@ onMounted(() => {
 watch(isDark, (newValue) => {
   if (!!props.chartId) {
     if (newValue) {
-    window[`chart_${props.chartId}`].setStyles('dark')
+      window[`chart_${props.chartId}`].setStyles('dark')
     } else {
       window[`chart_${props.chartId}`].setStyles('light')
     }
