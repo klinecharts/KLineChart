@@ -193,9 +193,11 @@ export default class Event implements EventHandler {
           const consumed = widget.dispatchEvent('mouseMoveEvent', event)
           const chartStore = this._chart.getChartStore()
           let crosshair: Crosshair | undefined = { x: event.x, y: event.y, paneId: pane?.getId() }
-          if (consumed && chartStore.getActiveTooltipIcon() !== null) {
+          if (consumed && !chartStore.isOverlayDrawing()) {
             crosshair = undefined
             widget.getContainer().style.cursor = 'pointer'
+          } else {
+            widget.getContainer().style.cursor = 'crosshair'
           }
           this._chart.getChartStore().setCrosshair(crosshair)
           return consumed
@@ -226,11 +228,14 @@ export default class Event implements EventHandler {
       const name = widget.getName()
       switch (name) {
         case WidgetNameConstants.MAIN: {
+          // eslint-disable-next-line @typescript-eslint/init-declarations -- ignore
+          let crosshair: Crosshair | undefined
           const consumed = widget.dispatchEvent('pressedMouseMoveEvent', event)
           if (!consumed) {
+            crosshair = { x: event.x, y: event.y, paneId: pane?.getId() }
             this._processMainScrollingEvent(widget as Widget<DrawPane<YAxis>>, event)
           }
-          this._chart.getChartStore().setCrosshair({ x: event.x, y: event.y, paneId: pane?.getId() })
+          this._chart.getChartStore().setCrosshair(crosshair, { forceInvalidate: true })
           return consumed
         }
         case WidgetNameConstants.X_AXIS: {

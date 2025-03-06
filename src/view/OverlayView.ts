@@ -215,7 +215,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
       pane.getChart().getChartStore().setHoverOverlayInfo(
         { paneId: pane.getId(), overlay, figureType, figure, figureIndex }, event
       )
-      return true
+      return checkOverlayFigureEvent('onMouseEnter', figure)
     }
   }
 
@@ -238,7 +238,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
       const pane = this.getWidget().getPane()
       const paneId = pane.getId()
       pane.getChart().getChartStore().setClickOverlayInfo({ paneId, overlay, figureType, figureIndex, figure }, event)
-      return true
+      return checkOverlayFigureEvent('onClick', figure)
     }
   }
 

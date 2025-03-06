@@ -901,9 +901,9 @@ export default class StoreImp implements Store {
 
   setCrosshair (
     crosshair?: Crosshair,
-    options?: { notInvalidate?: boolean, notExecuteAction?: boolean }
+    options?: { notInvalidate?: boolean, notExecuteAction?: boolean, forceInvalidate?: boolean }
   ): void {
-    const { notInvalidate, notExecuteAction } = options ?? {}
+    const { notInvalidate, notExecuteAction, forceInvalidate } = options ?? {}
     const cr = crosshair ?? {}
     let realDataIndex = 0
     let dataIndex = 0
@@ -925,7 +925,10 @@ export default class StoreImp implements Store {
     const prevCrosshair = { x: this._crosshair.x, y: this._crosshair.y, paneId: this._crosshair.paneId }
     this._crosshair = { ...cr, realX, kLineData, realDataIndex, dataIndex, timestamp: this.dataIndexToTimestamp(realDataIndex) ?? undefined }
     if (
-      prevCrosshair.x !== cr.x || prevCrosshair.y !== cr.y || prevCrosshair.paneId !== cr.paneId
+      prevCrosshair.x !== cr.x ||
+      prevCrosshair.y !== cr.y ||
+      prevCrosshair.paneId !== cr.paneId ||
+      (forceInvalidate ?? false)
     ) {
       if (isValid(kLineData) && !(notExecuteAction ?? false)) {
         this._chart.crosshairChange(this._crosshair)
