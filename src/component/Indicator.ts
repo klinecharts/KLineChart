@@ -94,12 +94,14 @@ export enum IndicatorEventTarget {
   Feature = 'feature'
 }
 
-export interface IndicatorEvent {
+export interface IndicatorEvent<D, C, E> {
   target: IndicatorEventTarget
+  chart: Chart
+  indicator: Indicator<D, C, E>
   [key: string]: unknown
 }
 
-export type IndicatorEventCallback = (params: IndicatorEvent) => void
+export type IndicatorEventCallback<D, C, E> = (params: IndicatorEvent<D, C, E>) => void
 
 export interface IndicatorDrawParams<D, C, E> {
   ctx: CanvasRenderingContext2D
@@ -244,7 +246,7 @@ export interface Indicator<D = unknown, C = unknown, E = unknown> {
   /**
    * Event
    */
-  onClick: Nullable<IndicatorEventCallback>
+  onClick: Nullable<IndicatorEventCallback<D, C, E>>
 
   /**
    * Calculation result
@@ -374,7 +376,7 @@ export default class IndicatorImp<D = unknown, C = unknown, E = unknown> impleme
   createTooltipDataSource: Nullable<IndicatorCreateTooltipDataSourceCallback<D>> = null
   draw: Nullable<IndicatorDrawCallback<D, C, E>> = null
 
-  onClick: Nullable<IndicatorEventCallback> = null
+  onClick: Nullable<IndicatorEventCallback<D, C, E>> = null
 
   onDataStateChange: Nullable<IndicatorOnDataStateChangeCallback<D>> = null
 

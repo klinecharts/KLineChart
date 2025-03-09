@@ -33,8 +33,14 @@ import View from './View'
 export default class IndicatorTooltipView extends View<YAxis> {
   private readonly _boundFeatureClickEvent = (currentFeatureInfo: TooltipFeatureInfo) => () => {
     const pane = this.getWidget().getPane()
-    if (isValid(currentFeatureInfo.indicator)) {
-      currentFeatureInfo.indicator.onClick?.({ target: IndicatorEventTarget.Feature, ...currentFeatureInfo })
+    const { indicator, ...others } = currentFeatureInfo
+    if (isValid(indicator)) {
+      indicator.onClick?.({
+        target: IndicatorEventTarget.Feature,
+        chart: pane.getChart(),
+        indicator,
+        ...others
+      })
     } else {
       pane.getChart().getChartStore().executeAction(ActionType.OnCandleTooltipFeatureClick, currentFeatureInfo)
     }
