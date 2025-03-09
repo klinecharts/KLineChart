@@ -88,6 +88,8 @@
     "eslint-config-love": "^112.0.0",
     "eslint-config-standard": "^17.1.0",
     "eslint-plugin-file-progress": "^1.5.0",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-n": "^17.16.2",
     "fs-extra": "^11.2.0",
     "gh-pages": "^6.1.1",
     "husky": "^8.0.3",
@@ -103,8 +105,5 @@
     "overrides": {
       "@rollup/plugin-eslint>eslint": "$eslint"
     }
-  },
-  "dependencies": {
-    "eslint-plugin-import": "^2.31.0"
   }
 }
