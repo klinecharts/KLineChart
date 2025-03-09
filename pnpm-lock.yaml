@@ -92,6 +92,9 @@ importers:
       eslint-plugin-n:
         specifier: ^17.16.2
         version: 17.16.2(eslint@9.20.0(jiti@2.4.2))
+      eslint-plugin-promise:
+        specifier: ^7.2.1
+        version: 7.2.1(eslint@9.20.0(jiti@2.4.2))
       fs-extra:
         specifier: ^11.2.0
         version: 11.3.0
