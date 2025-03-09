@@ -25,7 +25,7 @@ import type Precision from './common/Precision'
 import Action from './common/Action'
 import { ActionType, type ActionCallback } from './common/Action'
 import { formatValue, formatTimestampToString, formatBigNumber, formatThousands, formatFoldDecimal } from './common/utils/format'
-import { getDefaultStyles, type Styles, type TooltipLegend } from './common/Styles'
+import { getDefaultStyles, type TooltipFeatureStyle, type Styles, type TooltipLegend } from './common/Styles'
 import { isArray, isString, isValid, isNumber, isBoolean, isFunction, merge } from './common/utils/typeChecks'
 import { createId } from './common/utils/id'
 import { binarySearchNearest } from './common/utils/number'
@@ -38,7 +38,7 @@ import { classifyTimeWeightTicks, createTimeWeightTickList } from './common/Time
 
 import type { Options, CustomApi, ThousandsSeparator, DecimalFold } from './Options'
 
-import { IndicatorDataState, type IndicatorOverride, type IndicatorCreate, type IndicatorFilter } from './component/Indicator'
+import { IndicatorDataState, type IndicatorOverride, type IndicatorCreate, type IndicatorFilter, type Indicator } from './component/Indicator'
 import type IndicatorImp from './component/Indicator'
 import { IndicatorSeries } from './component/Indicator'
 import { getIndicatorClass } from './extension/indicator/index'
@@ -64,11 +64,10 @@ const enum ScrollLimitRole {
   Distance
 }
 
-export interface TooltipIcon {
+export interface TooltipFeatureInfo {
   paneId: string
-  indicatorName: string
-  indicatorId: string
-  iconId: string
+  indicator: Nullable<Indicator>
+  feature: TooltipFeatureStyle
 }
 
 export interface ProgressOverlayInfo {
@@ -293,7 +292,7 @@ export default class StoreImp implements Store {
   /**
    * Active tooltip icon info
    */
-  private _activeTooltipIcon: Nullable<TooltipIcon> = null
+  private _activeTooltipFeatureInfo: Nullable<TooltipFeatureInfo> = null
 
   /**
    * Actions
@@ -945,12 +944,12 @@ export default class StoreImp implements Store {
     return this._crosshair
   }
 
-  setActiveTooltipIcon (icon?: TooltipIcon): void {
-    this._activeTooltipIcon = icon ?? null
+  setActiveTooltipFeatureInfo (info?: TooltipFeatureInfo): void {
+    this._activeTooltipFeatureInfo = info ?? null
   }
 
-  getActiveTooltipIcon (): Nullable<TooltipIcon> {
-    return this._activeTooltipIcon
+  getActiveTooltipFeatureInfo (): Nullable<TooltipFeatureInfo> {
+    return this._activeTooltipFeatureInfo
   }
 
   executeAction (type: ActionType, data?: unknown): void {
@@ -1445,7 +1444,7 @@ export default class StoreImp implements Store {
     this._timeWeightTickMap.clear()
     this._timeWeightTickList = []
     this._crosshair = {}
-    this._activeTooltipIcon = null
+    this._activeTooltipFeatureInfo = null
   }
 
   getChart (): Chart {

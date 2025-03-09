@@ -60,6 +60,17 @@ export interface StateLineStyle extends LineStyle {
   show: boolean
 }
 
+export enum PathType {
+  Stroke = 'stroke',
+  Fill = 'fill',
+}
+
+export interface PathStyle {
+  style: PathType
+  color: string
+  lineWidth: number
+}
+
 export enum PolygonType {
   Stroke = 'stroke',
   Fill = 'fill',
@@ -139,21 +150,38 @@ export interface TooltipLegend {
   value: string | TooltipLegendChild
 }
 
-export enum TooltipIconPosition {
+export enum TooltipFeatureType {
+  Path = 'path',
+  IconFont = 'icon_font'
+}
+
+export enum TooltipFeaturePosition {
   Left = 'left',
   Middle = 'middle',
   Right = 'right'
 }
-export interface TooltipIconStyle extends Padding, Margin {
+
+export interface TooltipFeaturePathStyle extends Omit<PathStyle, 'color'> {
+  path: string
+}
+
+export interface TooltipFeatureIconFontStyle {
+  family: string
+  content: string
+}
+
+export interface TooltipFeatureStyle extends Padding, Margin {
   id: string
-  position: TooltipIconPosition
-  color: string
-  activeColor: string
-  size: number
-  fontFamily: string
-  icon: string
+  position: TooltipFeaturePosition
   backgroundColor: string
   activeBackgroundColor: string
+  size: number
+  color: string
+  activeColor: string
+  borderRadius: number | number[]
+  type: TooltipFeatureType
+  path: TooltipFeaturePathStyle
+  iconFont: TooltipFeatureIconFontStyle
 }
 
 export interface TooltipStyle {
@@ -161,7 +189,7 @@ export interface TooltipStyle {
   showType: TooltipShowType
   defaultValue: string
   text: TooltipTextStyle
-  icons: TooltipIconStyle[]
+  features: TooltipFeatureStyle[]
 }
 
 export interface CandleAreaPointStyle {
@@ -501,7 +529,7 @@ function getDefaultCandleStyle (): CandleStyle {
         marginRight: 8,
         marginBottom: 4
       },
-      icons: []
+      features: []
     }
   }
 }
@@ -584,7 +612,7 @@ function getDefaultIndicatorStyle (): IndicatorStyle {
         marginRight: 8,
         marginBottom: 4
       },
-      icons: []
+      features: []
     }
   }
 }

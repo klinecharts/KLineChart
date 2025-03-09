@@ -102,18 +102,16 @@ export default class CandleTooltipView extends IndicatorTooltipView {
     if (this.isDrawTooltip(crosshair, tooltipStyles)) {
       const legends = this._getCandleTooltipLegends()
 
-      const [leftIcons, middleIcons, rightIcons] = this.classifyTooltipIcons(tooltipStyles.icons)
+      const [leftFeatures, middleFeatures, rightFeatures] = this.classifyTooltipFeatures(tooltipStyles.features)
 
-      prevRowHeight = this.drawStandardTooltipIcons(
-        ctx, leftIcons, coordinate,
-        '', '', left, prevRowHeight, maxWidth
+      prevRowHeight = this.drawStandardTooltipFeatures(
+        ctx, leftFeatures, coordinate,
+        null, left, prevRowHeight, maxWidth
       )
-
-      prevRowHeight = this.drawStandardTooltipIcons(
-        ctx, middleIcons, coordinate,
-        '', '', left, prevRowHeight, maxWidth
+      prevRowHeight = this.drawStandardTooltipFeatures(
+        ctx, middleFeatures, coordinate,
+        null, left, prevRowHeight, maxWidth
       )
-
       if (legends.length > 0) {
         prevRowHeight = this.drawStandardTooltipLegends(
           ctx, legends, coordinate, left,
@@ -121,9 +119,9 @@ export default class CandleTooltipView extends IndicatorTooltipView {
         )
       }
 
-      prevRowHeight = this.drawStandardTooltipIcons(
-        ctx, rightIcons, coordinate,
-        '', '', left, prevRowHeight, maxWidth
+      prevRowHeight = this.drawStandardTooltipFeatures(
+        ctx, rightFeatures, coordinate,
+        null, left, prevRowHeight, maxWidth
       )
     }
     return coordinate.y + prevRowHeight
