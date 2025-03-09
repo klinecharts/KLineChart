@@ -215,7 +215,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
       pane.getChart().getChartStore().setHoverOverlayInfo(
         { paneId: pane.getId(), overlay, figureType, figure, figureIndex }, event
       )
-      return checkOverlayFigureEvent('onMouseEnter', figure)
+      return checkOverlayFigureEvent('onMouseEnter', figure) && !overlay.isDrawing()
     }
   }
 
@@ -227,7 +227,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
       if (checkOverlayFigureEvent('onPressedMoveStart', figure)) {
         overlay.onPressedMoveStart?.({ chart: pane.getChart(), overlay, figure, ...event })
         pane.getChart().getChartStore().setPressedOverlayInfo({ paneId, overlay, figureType, figureIndex, figure })
-        return true
+        return !overlay.isDrawing()
       }
       return false
     }
@@ -238,7 +238,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
       const pane = this.getWidget().getPane()
       const paneId = pane.getId()
       pane.getChart().getChartStore().setClickOverlayInfo({ paneId, overlay, figureType, figureIndex, figure }, event)
-      return checkOverlayFigureEvent('onClick', figure)
+      return checkOverlayFigureEvent('onClick', figure) && !overlay.isDrawing()
     }
   }
 
@@ -246,7 +246,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     return (event: MouseTouchEvent) => {
       if (checkOverlayFigureEvent('onDoubleClick', figure)) {
         overlay.onDoubleClick?.({ ...event, chart: this.getWidget().getPane().getChart(), figure, overlay })
-        return true
+        return !overlay.isDrawing()
       }
       return false
     }
@@ -258,7 +258,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
         if (!(overlay.onRightClick?.({ chart: this.getWidget().getPane().getChart(), overlay, figure, ...event }) ?? false)) {
           this.getWidget().getPane().getChart().getChartStore().removeOverlay(overlay)
         }
-        return true
+        return !overlay.isDrawing()
       }
       return false
     }

@@ -191,9 +191,8 @@ export default class Event implements EventHandler {
       switch (name) {
         case WidgetNameConstants.MAIN: {
           const consumed = widget.dispatchEvent('mouseMoveEvent', event)
-          const chartStore = this._chart.getChartStore()
           let crosshair: Crosshair | undefined = { x: event.x, y: event.y, paneId: pane?.getId() }
-          if (consumed && !chartStore.isOverlayDrawing()) {
+          if (consumed) {
             crosshair = undefined
             widget.getContainer().style.cursor = 'pointer'
           } else {
