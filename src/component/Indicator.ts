@@ -19,7 +19,7 @@ import type { KLineData, NeighborData } from '../common/Data'
 import type Bounding from '../common/Bounding'
 import type BarSpace from '../common/BarSpace'
 import type Crosshair from '../common/Crosshair'
-import type { IndicatorStyle, IndicatorPolygonStyle, SmoothLineStyle, RectStyle, TextStyle, TooltipIconStyle, LineStyle, LineType, TooltipLegend } from '../common/Styles'
+import type { IndicatorStyle, IndicatorPolygonStyle, SmoothLineStyle, RectStyle, TextStyle, TooltipFeatureStyle, LineStyle, LineType, TooltipLegend } from '../common/Styles'
 import { isNumber, isValid, merge, isBoolean, isString, clone, isFunction } from '../common/utils/typeChecks'
 
 import type { XAxis } from './XAxis'
@@ -75,13 +75,12 @@ export type IndicatorRegenerateFiguresCallback<D, C> = (calcParams: C[]) => Arra
 export interface IndicatorTooltipData {
   name: string
   calcParamsText: string
-  icons: TooltipIconStyle[]
+  features: TooltipFeatureStyle[]
   legends: TooltipLegend[]
 }
 
 export interface IndicatorCreateTooltipDataSourceParams<D> {
   chart: Chart
-
   indicator: Indicator<D>
   bounding: Bounding
   crosshair: Crosshair
@@ -90,6 +89,17 @@ export interface IndicatorCreateTooltipDataSourceParams<D> {
 }
 
 export type IndicatorCreateTooltipDataSourceCallback<D> = (params: IndicatorCreateTooltipDataSourceParams<D>) => IndicatorTooltipData
+
+export enum IndicatorEventTarget {
+  Feature = 'feature'
+}
+
+export interface IndicatorEvent {
+  target: IndicatorEventTarget
+  [key: string]: unknown
+}
+
+export type IndicatorEventCallback = (params: IndicatorEvent) => void
 
 export interface IndicatorDrawParams<D, C, E> {
   ctx: CanvasRenderingContext2D
@@ -232,6 +242,11 @@ export interface Indicator<D = unknown, C = unknown, E = unknown> {
   onDataStateChange: Nullable<IndicatorOnDataStateChangeCallback<D>>
 
   /**
+   * Event
+   */
+  onClick: Nullable<IndicatorEventCallback>
+
+  /**
    * Calculation result
    */
   result: D[]
@@ -358,6 +373,8 @@ export default class IndicatorImp<D = unknown, C = unknown, E = unknown> impleme
   regenerateFigures: Nullable<IndicatorRegenerateFiguresCallback<D, C>> = null
   createTooltipDataSource: Nullable<IndicatorCreateTooltipDataSourceCallback<D>> = null
   draw: Nullable<IndicatorDrawCallback<D, C, E>> = null
+
+  onClick: Nullable<IndicatorEventCallback> = null
 
   onDataStateChange: Nullable<IndicatorOnDataStateChangeCallback<D>> = null
 
