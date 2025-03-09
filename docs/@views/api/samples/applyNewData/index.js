@@ -1,7 +1,9 @@
-import { init } from 'klinecharts';
+import { init } from 'klinecharts'
 
-const chart = init('applyNewData-chart');
+const chart = init('applyNewData-chart')
 
 fetch('https://klinecharts.com/datas/kline.json')
   .then(res => res.json())
-  .then(dataList => { chart.applyNewData(dataList); });
+  .then(dataList => {
+    chart.applyNewData(dataList)
+  })

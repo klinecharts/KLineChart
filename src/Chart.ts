@@ -337,7 +337,7 @@ export default class ChartImp implements Chart {
         this._layout()
         this._layoutPending = false
       }).catch((_: unknown) => {
-        // to do it
+        // todo
       })
     }
   }

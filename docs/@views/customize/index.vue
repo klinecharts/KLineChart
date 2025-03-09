@@ -24,9 +24,9 @@
             </p>
         </div>
         
-        <FeatureList :features="lang === 'zh-CN' ? ['免费版所有服务', '更多的示例代码', '首页赞助商广告位', '一对一答疑'] : ['All services in the free version', 'More sample codes', 'Homepage sponsor advertising space', 'One-on-one Q&A']"/>
+        <FeatureList :features="lang === 'zh-CN' ? ['免费版所有服务', '首页赞助商广告位', '一对一答疑', '新功能优先支持'] : ['All services in the free version', 'Homepage sponsor advertising space', 'One-on-one Q&A', 'New features priority support']"/>
         <p class="customize-content-item-tip">
-          {{ lang === 'zh-CN' ? '在赞助页对项目进行捐赠，完成之后联系开发者加入专属答疑群。' : 'Sponsor to the project on the sponsorship page, and after completion, contact the developer to join the exclusive Q&A group.' }}
+          {{ lang === 'zh-CN' ? '在赞助页对项目进行捐赠，完成之后联系开发者获得一周时间的答疑。' : 'Donate to the project on the sponsorship page, and after completing the donation, contact the developer to get one week of answers to your questions.' }}
         </p>
       </div>
       <div class="customize-content-item customize-content-custom-item">

@@ -61,12 +61,16 @@
   "engines": {
     "node": ">=0.10.0"
   },
-  "packageManager": "pnpm@9.12.3",
+  "packageManager": "pnpm@10.4.1",
   "devDependencies": {
-    "@babel/standalone": "^7.24.4",
+    "@babel/generator": "^7.26.9",
+    "@babel/parser": "^7.26.9",
+    "@babel/standalone": "^7.26.9",
+    "@babel/traverse": "^7.26.9",
+    "@babel/types": "^7.26.9",
     "@commitlint/cli": "^19.6.1",
     "@commitlint/config-conventional": "^19.6.0",
-    "@eslint/eslintrc": "^3.2.0",
+    "@eslint/eslintrc": "^3.3.0",
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-eslint": "^9.0.5",
     "@rollup/plugin-node-resolve": "^15.2.3",
@@ -80,7 +84,7 @@
     "codesandbox": "^2.2.3",
     "cross-env": "^7.0.3",
     "dts-bundle-generator": "^9.5.1",
-    "eslint": "^9.17.0",
+    "eslint": "^9.20.0",
     "eslint-config-love": "^112.0.0",
     "eslint-config-standard": "^17.1.0",
     "eslint-plugin-file-progress": "^1.5.0",
@@ -93,11 +97,14 @@
     "shiki": "^1.22.1",
     "tslib": "^2.6.2",
     "typescript": "^5.5.4",
-    "vitepress": "^2.0.0-alpha.2"
+    "vitepress": "2.0.0-alpha.3"
   },
   "pnpm": {
     "overrides": {
       "@rollup/plugin-eslint>eslint": "$eslint"
     }
+  },
+  "dependencies": {
+    "eslint-plugin-import": "^2.31.0"
   }
 }

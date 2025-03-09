@@ -5,6 +5,7 @@
 </template>
 
 <style scoped>
+
 .loading {
   display: flex;
   position: absolute;
@@ -19,31 +20,18 @@
 }
 
 .loader {
-  width: 12px;
+  width: 16px;
   aspect-ratio: 1;
-  position: relative;
-}
-.loader::before, .loader::after {
-  content: "";
-  position: absolute;
-  inset: 0;
   border-radius: 50%;
-  background-color: var(--vp-c-indigo-1);
+  background: var(--custom-red);
+  animation: l2 1.5s infinite;
 }
-.loader::before {
-  box-shadow: -18px 0 var(--vp-c-indigo-1);
-  animation: l8-1 1s infinite linear;
-}
-.loader::after {
-  transform: rotate(0deg) translateX(18px);
-  animation: l8-2 1s infinite linear;
-}
-
-@keyframes l8-1 {
-    100% {transform: translateX(18px)}
-}
-@keyframes l8-2 {
-    100% {transform: rotate(-180deg) translateX(18px)}
+@keyframes l2 {
+  0%,
+  100%{transform:translate(-35px);box-shadow:  0     0 var(--vp-c-indigo-1), 0     0 var(--custom-green)}
+  40% {transform:translate( 35px);box-shadow: -15px  0 var(--vp-c-indigo-1), -30px  0 var(--custom-green)}
+  50% {transform:translate( 35px);box-shadow:  0     0 var(--vp-c-indigo-1), 0     0 var(--custom-green)}
+  90% {transform:translate(-35px);box-shadow:  15px  0 var(--vp-c-indigo-1), 30px  0 var(--custom-green)}
 }
 </style>
 
