@@ -10,10 +10,6 @@ overrides:
 importers:
 
   .:
-    dependencies:
-      eslint-plugin-n:
-        specifier: ^17.16.2
-        version: 17.16.2(eslint@9.20.0(jiti@2.4.2))
     devDependencies:
       '@babel/generator':
         specifier: ^7.26.9
@@ -93,6 +89,9 @@ importers:
       eslint-plugin-import:
         specifier: ^2.31.0
         version: 2.31.0(@typescript-eslint/parser@8.23.0(eslint@9.20.0(jiti@2.4.2))(typescript@5.7.3))(eslint@9.20.0(jiti@2.4.2))
+      eslint-plugin-n:
+        specifier: ^17.16.2
+        version: 17.16.2(eslint@9.20.0(jiti@2.4.2))
       fs-extra:
         specifier: ^11.2.0
         version: 11.3.0
