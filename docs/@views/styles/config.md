@@ -157,24 +157,33 @@ const styles = {
       },
       // e.g.
       // [{
-      //   id: 'icon_id',
-      //   position: 'left', // 'left', 'middle', 'right'
-      //   marginLeft: 8,
-      //   marginTop: 6,
-      //   marginRight: 0,
-      //   marginBottom: 0,
-      //   paddingLeft: 1,
-      //   paddingTop: 1,
-      //   paddingRight: 1,
-      //   paddingBottom: 1,
-      //   icon: '\ue900',
-      //   fontFamily: 'iconfont',
-      //   size: 12,
-      //   color: '#76808F',
-      //   backgroundColor: 'rgba(33, 150, 243, 0.2)',
-      //   activeBackgroundColor: 'rgba(33, 150, 243, 0.4)'
+      //    id: 'icon_id',
+      //    position: 'left', // 'left', 'middle', 'right'
+      //    marginLeft: 8,
+      //    marginTop: 6,
+      //    marginRight: 0,
+      //    marginBottom: 0,
+      //    paddingLeft: 1,
+      //    paddingTop: 1,
+      //    paddingRight: 1,
+      //    paddingBottom: 1,
+      //    size: 12,
+      //    color: '#76808F',
+      //    activeColor: '#76808F',
+      //    backgroundColor: 'rgba(33, 150, 243, 0.2)',
+      //    activeBackgroundColor: 'rgba(33, 150, 243, 0.4)',
+      //    type: 'path', // 'path', 'iconFont'
+      //    path: {
+      //      style: 'stroke', // 'stroke', 'fill'
+      //      path: 'M6.81029,6.02908L11.7878,1.02746C12.0193,0.79483,12.0193,0.445881,11.7878,0.213247C11.5563,-0.019386,11.209,-0.019386,10.9775,0.213247L6,5.21486L1.02251,0.174475C0.790997,-0.0581583,0.44373,-0.0581583,0.212219,0.174475C-0.0192925,0.407108,-0.0192925,0.756058,0.212219,0.988691L5.18971,6.02908L0.173633,11.0307C-0.0578778,11.2633,-0.0578778,11.6123,0.173633,11.8449C0.289389,11.9612,0.44373,12,0.598071,12C0.752411,12,0.906752,11.9612,1.02251,11.8449L6,6.8433L10.9775,11.8449C11.0932,11.9612,11.2476,12,11.4019,12C11.5563,12,11.7106,11.9612,11.8264,11.8449C12.0579,11.6123,12.0579,11.2633,11.8264,11.0307L6.81029,6.02908Z',
+      //      lineWidth: 1,
+      //    },
+      //    iconFont: {
+      //      content: '\ue900',
+      //      family: 'iconfont'
+      //    }
       // }]
-      icons: []
+      features: []
     }
   },
   indicator: {
@@ -286,24 +295,33 @@ const styles = {
       },
       // e.g.
       // [{
-      //   id: 'icon_id',
-      //   position: 'left', // 'left', 'middle', 'right'
-      //   marginLeft: 8,
-      //   marginTop: 6,
-      //   marginRight: 0,
-      //   marginBottom: 0,
-      //   paddingLeft: 1,
-      //   paddingTop: 1,
-      //   paddingRight: 1,
-      //   paddingBottom: 1,
-      //   icon: '\ue900',
-      //   fontFamily: 'iconfont',
-      //   size: 12,
-      //   color: '#76808F',
-      //   backgroundColor: 'rgba(33, 150, 243, 0.2)',
-      //   activeBackgroundColor: 'rgba(33, 150, 243, 0.4)'
+      //    id: 'icon_id',
+      //    position: 'left', // 'left', 'middle', 'right'
+      //    marginLeft: 8,
+      //    marginTop: 6,
+      //    marginRight: 0,
+      //    marginBottom: 0,
+      //    paddingLeft: 1,
+      //    paddingTop: 1,
+      //    paddingRight: 1,
+      //    paddingBottom: 1,
+      //    size: 12,
+      //    color: '#76808F',
+      //    activeColor: '#76808F',
+      //    backgroundColor: 'rgba(33, 150, 243, 0.2)',
+      //    activeBackgroundColor: 'rgba(33, 150, 243, 0.4)',
+      //    type: 'path', // 'path', 'iconFont'
+      //    path: {
+      //      style: 'stroke', // 'stroke', 'fill'
+      //      path: 'M6.81029,6.02908L11.7878,1.02746C12.0193,0.79483,12.0193,0.445881,11.7878,0.213247C11.5563,-0.019386,11.209,-0.019386,10.9775,0.213247L6,5.21486L1.02251,0.174475C0.790997,-0.0581583,0.44373,-0.0581583,0.212219,0.174475C-0.0192925,0.407108,-0.0192925,0.756058,0.212219,0.988691L5.18971,6.02908L0.173633,11.0307C-0.0578778,11.2633,-0.0578778,11.6123,0.173633,11.8449C0.289389,11.9612,0.44373,12,0.598071,12C0.752411,12,0.906752,11.9612,1.02251,11.8449L6,6.8433L10.9775,11.8449C11.0932,11.9612,11.2476,12,11.4019,12C11.5563,12,11.7106,11.9612,11.8264,11.8449C12.0579,11.6123,12.0579,11.2633,11.8264,11.0307L6.81029,6.02908Z',
+      //      lineWidth: 1,
+      //    },
+      //    iconFont: {
+      //      content: '\ue900',
+      //      family: 'iconfont'
+      //    }
       // }]
-      icons: []
+      features: []
     }
   },
   xAxis: {

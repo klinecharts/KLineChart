@@ -1,5 +1,13 @@
 # 📠 Change Log
 
+## 10.0.0-alpha5
+`2025-03-09`
++ 👉 Style configuration `candle.tooltip.icons` changed to `candle.tooltip.features`, `indicator.tooltip.icons` changed to `indicator.tooltip.features`.
++ 👉 `icons` in the return value of the `createTooltipDataSource` method in the indicator changed to `features`.
++ 👉 The instance api `subscribeAction` and `unsubscribeAction` input parameter `onTooltipIconClick` changed to `onCandleTooltipFeatureClick`, and the indicator event is replaced by `indicator.onClick`.
++ 🐞 Fixed the problem that scrolling cannot be performed in certain situations on mobile terminals.
++ 💄 Optimize the display of overlay event response.
+
 ## 10.0.0-alpha4
 `2025-02-23`
 + 🐞 Fix the issue that the parameter `more.backward` of `applyNewData` instance method is incorrect.

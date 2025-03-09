@@ -3,7 +3,7 @@
   type: 'onZoom' |
     'onScroll' |
     'onVisibleRangeChange' |
-    'onTooltipIconClick' |
+    'onCandleTooltipFeatureClick' |
     'onCrosshairChange' |
     'onCandleBarClick' |
     'onPaneDrag',

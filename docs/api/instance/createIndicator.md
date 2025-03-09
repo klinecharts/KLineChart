@@ -35,6 +35,7 @@ outline: deep
   - `regenerateFigures` 重新生成基础图形配置，当 `calcParams` 变化时触发，返回值类型同 `figures` 。
   - `createTooltipDataSource` 创建自定义的提示信息。
   - `draw` 自定义绘制方法，如果返回值是 `true` ，则会覆盖默认的绘制。
+  - `onClick` 点击事件。
   - `onDataStateChange` 数据变化回调通知。
 - `isStack` 是否叠加。
 - `paneOptions` 窗口配置。

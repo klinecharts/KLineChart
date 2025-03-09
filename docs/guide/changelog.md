@@ -1,5 +1,13 @@
 # 📠 更新日志
 
+## 10.0.0-alpha5
+`2025-03-09`
++ 👉 样式配置 `candle.tooltip.icons` 变更为 `candle.tooltip.features` ， `indicator.tooltip.icons` 变更为 `indicator.tooltip.features` 。
++ 👉 指标中的 `createTooltipDataSource` 方法返回值中的 `icons` 变更为 `features` 。
++ 👉 实例api `subscribeAction` 和 `unsubscribeAction` 入参 `onTooltipIconClick` 变更为 `onCandleTooltipFeatureClick` ，指标的事件用 `indicator.onClick` 代替。
++ 🐞 修复移动端特定情况下无法滚动问题。
++ 💄 优化覆盖物事件响应显示。
+
 ## 10.0.0-alpha4
 `2025-02-23`
 + 🐞 修复实例方法 `applyNewData` 入参 `more.backward` 不对问题。
