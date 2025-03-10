@@ -2,7 +2,7 @@
 outline: deep
 ---
 
-# overrideIndicator(indicator, paneId?)
+# overrideIndicator(indicator)
 `overrideIndicator` 覆盖指标属性。
 
 ## 参考 {#reference}
@@ -10,6 +10,8 @@ outline: deep
 
 ### 参数 {#parameters}
 - `indicator` 指标配置。
+  - `id` 指标id。
+  - `paneId` 窗口id。
   - `name` 名称。
   - `shortName` 简短名称，用于提示显示。
   - `precision` 精度。
@@ -34,8 +36,12 @@ outline: deep
   - `regenerateFigures` 重新生成基础图形配置，当 `calcParams` 变化时触发，返回值类型同 `figures` 。
   - `createTooltipDataSource` 创建自定义的提示信息。
   - `draw` 自定义绘制方法，如果返回值是 `true` ，则会覆盖默认的绘制。
+  - `onClick` 点击事件。
   - `onDataStateChange` 数据变化回调通知。
-- `paneId` 窗口id。
+
+::: tip 提示
+其中 `id`，`paneId` 和 `name` 是索引，如果入参包含这三个参数，会根据这三个参数查找符合条件的指标来覆盖。
+:::
 
 ### 返回值 {#returns}
 `overrideIndicator` 返回 `undefined` 。

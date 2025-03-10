@@ -13,7 +13,7 @@
  */
 
 import type { KLineData } from '../../common/Data'
-import type { Indicator, IndicatorTemplate } from '../../component/Indicator'
+import type { IndicatorTemplate } from '../../component/Indicator'
 
 import { getMaxMin } from '../../common/utils/number'
 
@@ -31,7 +31,7 @@ interface Kdj {
  * 若无前一日K 值与D值，则可分别用50来代替。
  * J值=3*当日K值-2*当日D值
  */
-const stoch: IndicatorTemplate<Kdj> = {
+const stoch: IndicatorTemplate<Kdj, number> = {
   name: 'KDJ',
   shortName: 'KDJ',
   calcParams: [9, 3, 3],
@@ -40,10 +40,10 @@ const stoch: IndicatorTemplate<Kdj> = {
     { key: 'd', title: 'D: ', type: 'line' },
     { key: 'j', title: 'J: ', type: 'line' }
   ],
-  calc: (dataList: KLineData[], indicator: Indicator<Kdj>) => {
-    const params = indicator.calcParams as number[]
+  calc: (dataList, indicator) => {
+    const params = indicator.calcParams
     const result: Kdj[] = []
-    dataList.forEach((kLineData: KLineData, i: number) => {
+    dataList.forEach((kLineData, i) => {
       const kdj: Kdj = {}
       const close = kLineData.close
       if (i >= params[0] - 1) {

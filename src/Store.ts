@@ -25,7 +25,7 @@ import type Precision from './common/Precision'
 import Action from './common/Action'
 import { ActionType, type ActionCallback } from './common/Action'
 import { formatValue, formatTimestampToString, formatBigNumber, formatThousands, formatFoldDecimal } from './common/utils/format'
-import { getDefaultStyles, type Styles, type TooltipLegend } from './common/Styles'
+import { getDefaultStyles, type TooltipFeatureStyle, type Styles, type TooltipLegend } from './common/Styles'
 import { isArray, isString, isValid, isNumber, isBoolean, isFunction, merge } from './common/utils/typeChecks'
 import { createId } from './common/utils/id'
 import { binarySearchNearest } from './common/utils/number'
@@ -38,13 +38,13 @@ import { classifyTimeWeightTicks, createTimeWeightTickList } from './common/Time
 
 import type { Options, CustomApi, ThousandsSeparator, DecimalFold } from './Options'
 
-import { IndicatorDataState, type IndicatorCreate, type IndicatorFilter } from './component/Indicator'
+import { IndicatorDataState, type IndicatorOverride, type IndicatorCreate, type IndicatorFilter, type Indicator } from './component/Indicator'
 import type IndicatorImp from './component/Indicator'
 import { IndicatorSeries } from './component/Indicator'
 import { getIndicatorClass } from './extension/indicator/index'
 
 import type OverlayImp from './component/Overlay'
-import { type OverlayCreate, OVERLAY_ID_PREFIX, type OverlayFilter } from './component/Overlay'
+import { type OverlayCreate, OVERLAY_ID_PREFIX, type OverlayFilter, type OverlayFigure, checkOverlayFigureEvent, type OverlayOverride } from './component/Overlay'
 import { getOverlayInnerClass } from './extension/overlay/index'
 
 import { getStyles as getExtensionStyles } from './extension/styles/index'
@@ -52,6 +52,7 @@ import { getStyles as getExtensionStyles } from './extension/styles/index'
 import { PaneIdConstants } from './pane/types'
 
 import type Chart from './Chart'
+import type PickRequired from './common/PickRequired'
 
 const BarSpaceLimitConstants = {
   MIN: 1,
@@ -63,10 +64,10 @@ const enum ScrollLimitRole {
   Distance
 }
 
-export interface TooltipIcon {
+export interface TooltipFeatureInfo {
   paneId: string
-  indicatorName: string
-  iconId: string
+  indicator: Nullable<Indicator>
+  feature: TooltipFeatureStyle
 }
 
 export interface ProgressOverlayInfo {
@@ -83,9 +84,8 @@ export interface EventOverlayInfo {
   paneId: string
   overlay: Nullable<OverlayImp>
   figureType: EventOverlayInfoFigureType
-  figureKey: string
   figureIndex: number
-  attrsIndex: number
+  figure: Nullable<OverlayFigure>
 }
 
 const DEFAULT_BAR_SPACE = 10
@@ -95,6 +95,8 @@ const DEFAULT_OFFSET_RIGHT_DISTANCE = 80
 const BAR_GAP_RATIO = 0.2
 
 export const SCALE_MULTIPLIER = 10
+
+export const DEFAULT_MIN_TIME_SPAN = 15 * 60 * 1000
 
 export interface Store {
   setStyles: (value: string | DeepPartial<Styles>) => void
@@ -122,7 +124,7 @@ export interface Store {
   getBarSpace: () => BarSpace
   getVisibleRange: () => VisibleRange
   setLoadMoreDataCallback: (callback: LoadDataCallback) => void
-  overrideIndicator: (override: IndicatorCreate, paneId?: string) => boolean
+  overrideIndicator: (override: IndicatorCreate) => boolean
   removeIndicator: (filter?: IndicatorFilter) => boolean
   overrideOverlay: (override: Partial<OverlayCreate>) => boolean
   removeOverlay: (filter?: OverlayFilter) => boolean
@@ -267,7 +269,7 @@ export default class StoreImp implements Store {
 
   private _timeWeightTickList: TimeWeightTick[] = []
 
-  private _minTimeDifference = Number.MAX_SAFE_INTEGER
+  private _minTimeSpan = { compare: Number.MAX_SAFE_INTEGER, calc: DEFAULT_MIN_TIME_SPAN }
 
   /**
    * Visible data array
@@ -290,7 +292,7 @@ export default class StoreImp implements Store {
   /**
    * Active tooltip icon info
    */
-  private _activeTooltipIcon: Nullable<TooltipIcon> = null
+  private _activeTooltipFeatureInfo: Nullable<TooltipFeatureInfo> = null
 
   /**
    * Actions
@@ -324,9 +326,8 @@ export default class StoreImp implements Store {
     paneId: '',
     overlay: null,
     figureType: EventOverlayInfoFigureType.None,
-    figureKey: '',
     figureIndex: -1,
-    attrsIndex: -1
+    figure: null
   }
 
   /**
@@ -336,9 +337,8 @@ export default class StoreImp implements Store {
     paneId: '',
     overlay: null,
     figureType: EventOverlayInfoFigureType.None,
-    figureKey: '',
     figureIndex: -1,
-    attrsIndex: -1
+    figure: null
   }
 
   /**
@@ -348,9 +348,8 @@ export default class StoreImp implements Store {
     paneId: '',
     overlay: null,
     figureType: EventOverlayInfoFigureType.None,
-    figureKey: '',
     figureIndex: -1,
-    attrsIndex: -1
+    figure: null
   }
 
   constructor (chart: Chart, options?: Options) {
@@ -483,7 +482,7 @@ export default class StoreImp implements Store {
         case LoadDataType.Init: {
           this.clearData()
           this._dataList = data
-          this._loadDataMore.backward = more?.forward ?? false
+          this._loadDataMore.backward = more?.backward ?? false
           this._loadDataMore.forward = more?.forward ?? false
           this._classifyTimeWeightTicks(this._dataList)
           this.setOffsetRightDistance(this._offsetRightDistance)
@@ -534,12 +533,10 @@ export default class StoreImp implements Store {
     if (success) {
       if (adjustFlag) {
         this._adjustVisibleRange()
-        this.setCrosshair(this._crosshair, true)
-        const filterMap = this.getIndicatorsByFilter({})
-        filterMap.forEach((indicators, paneId) => {
-          indicators.forEach(indicator => {
-            this._addIndicatorCalcTask(paneId, indicator, type)
-          })
+        this.setCrosshair(this._crosshair, { notInvalidate: true })
+        const filterIndicators = this.getIndicatorsByFilter({})
+        filterIndicators.forEach(indicator => {
+          this._addIndicatorCalcTask(indicator, type)
         })
         this._chart.layout({
           measureWidth: true,
@@ -572,19 +569,20 @@ export default class StoreImp implements Store {
       prevTimestamp = this._dataList[baseDataIndex - 1].timestamp
     } else {
       this._timeWeightTickMap.clear()
-      this._minTimeDifference = Number.MAX_SAFE_INTEGER
+      this._minTimeSpan = { compare: Number.MAX_SAFE_INTEGER, calc: DEFAULT_MIN_TIME_SPAN }
     }
 
-    const minTimeDifferenceObj = { value: this._minTimeDifference }
     classifyTimeWeightTicks(
       this._timeWeightTickMap,
       newDataList,
       this._dateTimeFormat,
       baseDataIndex,
-      minTimeDifferenceObj,
+      this._minTimeSpan,
       prevTimestamp
     )
-    this._minTimeDifference = minTimeDifferenceObj.value
+    if (this._minTimeSpan.compare !== Number.MAX_SAFE_INTEGER) {
+      this._minTimeSpan.calc = this._minTimeSpan.compare
+    }
     this._timeWeightTickList = createTimeWeightTickList(this._timeWeightTickMap, this._barSpace, this._styles.xAxis.tickText)
   }
 
@@ -643,7 +641,11 @@ export default class StoreImp implements Store {
       this._visibleRangeDataList.push({
         dataIndex: i,
         x,
-        data: kLineData
+        data: {
+          prev: this._dataList[i - 1] ?? kLineData,
+          current: kLineData,
+          next: this._dataList[i + 1] ?? kLineData
+        }
       })
       if (isValid(kLineData)) {
         if (this._visibleRangeHighLowPrice[0].price < kLineData.high) {
@@ -706,7 +708,7 @@ export default class StoreImp implements Store {
     this._calcOptimalBarSpace()
     adjustBeforeFunc?.()
     this._adjustVisibleRange()
-    this.setCrosshair(this._crosshair, true)
+    this.setCrosshair(this._crosshair, { notInvalidate: true })
     this._chart.layout({
       measureWidth: true,
       update: true,
@@ -718,7 +720,7 @@ export default class StoreImp implements Store {
     if (this._totalBarSpace !== totalSpace) {
       this._totalBarSpace = totalSpace
       this._adjustVisibleRange()
-      this.setCrosshair(this._crosshair, true)
+      this.setCrosshair(this._crosshair, { notInvalidate: true })
     }
   }
 
@@ -727,7 +729,7 @@ export default class StoreImp implements Store {
     this._lastBarRightSideDiffBarCount = this._offsetRightDistance / this._barSpace
     if (isUpdate ?? false) {
       this._adjustVisibleRange()
-      this.setCrosshair(this._crosshair, true)
+      this.setCrosshair(this._crosshair, { notInvalidate: true })
       this._chart.layout({
         measureWidth: true,
         update: true,
@@ -789,7 +791,7 @@ export default class StoreImp implements Store {
     const prevLastBarRightSideDistance = this._lastBarRightSideDiffBarCount * this._barSpace
     this._lastBarRightSideDiffBarCount = this._startLastBarRightSideDiffBarCount - distanceBarCount
     this._adjustVisibleRange()
-    this.setCrosshair(this._crosshair, true)
+    this.setCrosshair(this._crosshair, { notInvalidate: true })
     this._chart.layout({
       measureWidth: true,
       update: true,
@@ -825,10 +827,10 @@ export default class StoreImp implements Store {
     }
     const lastIndex = length - 1
     if (dataIndex > lastIndex) {
-      return this._dataList[lastIndex].timestamp + this._minTimeDifference * (dataIndex - lastIndex)
+      return this._dataList[lastIndex].timestamp + this._minTimeSpan.calc * (dataIndex - lastIndex)
     }
     if (dataIndex < 0) {
-      return this._dataList[0].timestamp - this._minTimeDifference * Math.abs(dataIndex)
+      return this._dataList[0].timestamp - this._minTimeSpan.calc * Math.abs(dataIndex)
     }
     return null
   }
@@ -841,11 +843,11 @@ export default class StoreImp implements Store {
     const lastIndex = length - 1
     const lastTimestamp = this._dataList[lastIndex].timestamp
     if (timestamp > lastTimestamp) {
-      return lastIndex + Math.floor((timestamp - lastTimestamp) / this._minTimeDifference)
+      return lastIndex + Math.floor((timestamp - lastTimestamp) / this._minTimeSpan.calc)
     }
     const firstTimestamp = this._dataList[0].timestamp
     if (timestamp < firstTimestamp) {
-      return Math.floor((timestamp - firstTimestamp) / this._minTimeDifference)
+      return Math.floor((timestamp - firstTimestamp) / this._minTimeSpan.calc)
     }
     return binarySearchNearest(this._dataList, 'timestamp', timestamp)
   }
@@ -897,7 +899,11 @@ export default class StoreImp implements Store {
     return this._scrollEnabled
   }
 
-  setCrosshair (crosshair?: Crosshair, notInvalidate?: boolean): void {
+  setCrosshair (
+    crosshair?: Crosshair,
+    options?: { notInvalidate?: boolean, notExecuteAction?: boolean, forceInvalidate?: boolean }
+  ): void {
+    const { notInvalidate, notExecuteAction, forceInvalidate } = options ?? {}
     const cr = crosshair ?? {}
     let realDataIndex = 0
     let dataIndex = 0
@@ -919,9 +925,12 @@ export default class StoreImp implements Store {
     const prevCrosshair = { x: this._crosshair.x, y: this._crosshair.y, paneId: this._crosshair.paneId }
     this._crosshair = { ...cr, realX, kLineData, realDataIndex, dataIndex, timestamp: this.dataIndexToTimestamp(realDataIndex) ?? undefined }
     if (
-      prevCrosshair.x !== cr.x || prevCrosshair.y !== cr.y || prevCrosshair.paneId !== cr.paneId
+      prevCrosshair.x !== cr.x ||
+      prevCrosshair.y !== cr.y ||
+      prevCrosshair.paneId !== cr.paneId ||
+      (forceInvalidate ?? false)
     ) {
-      if (isValid(kLineData)) {
+      if (isValid(kLineData) && !(notExecuteAction ?? false)) {
         this._chart.crosshairChange(this._crosshair)
       }
       if (!(notInvalidate ?? false)) {
@@ -938,12 +947,12 @@ export default class StoreImp implements Store {
     return this._crosshair
   }
 
-  setActiveTooltipIcon (icon?: TooltipIcon): void {
-    this._activeTooltipIcon = icon ?? null
+  setActiveTooltipFeatureInfo (info?: TooltipFeatureInfo): void {
+    this._activeTooltipFeatureInfo = info ?? null
   }
 
-  getActiveTooltipIcon (): Nullable<TooltipIcon> {
-    return this._activeTooltipIcon
+  getActiveTooltipFeatureInfo (): Nullable<TooltipFeatureInfo> {
+    return this._activeTooltipFeatureInfo
   }
 
   executeAction (type: ActionType, data?: unknown): void {
@@ -982,9 +991,9 @@ export default class StoreImp implements Store {
     }
   }
 
-  private _addIndicatorCalcTask (paneId: string, indicator: IndicatorImp, loadDataType: LoadDataType): void {
+  private _addIndicatorCalcTask (indicator: IndicatorImp, loadDataType: LoadDataType): void {
     this._taskScheduler.addTask({
-      id: generateTaskId(paneId, indicator.name),
+      id: generateTaskId(indicator.id),
       handler: () => {
         indicator.onDataStateChange?.({
           state: IndicatorDataState.Loading,
@@ -1015,21 +1024,18 @@ export default class StoreImp implements Store {
     })
   }
 
-  addIndicator (create: IndicatorCreate, paneId: string, isStack: boolean): boolean {
+  addIndicator (create: PickRequired<IndicatorCreate, 'id' | 'name'>, paneId: string, isStack: boolean): boolean {
     const { name } = create
-    let paneIndicators = this._indicators.get(paneId)
-    if (isValid(paneIndicators)) {
-      if (isValid(paneIndicators.find(i => i.name === name))) {
-        return false
-      }
+    const filterIndicators = this.getIndicatorsByFilter(create)
+    if (filterIndicators.length > 0) {
+      return false
     }
-    if (!isValid(paneIndicators)) {
-      paneIndicators = []
-    }
+    let paneIndicators = this.getIndicatorsByPaneId(paneId)
     const IndicatorClazz = getIndicatorClass(name)!
     const indicator = new IndicatorClazz()
 
     this._synchronizeIndicatorSeriesPrecision(indicator)
+    indicator.paneId = paneId
     indicator.override(create)
     if (!isStack) {
       this.removeIndicator({ paneId })
@@ -1038,7 +1044,7 @@ export default class StoreImp implements Store {
     paneIndicators.push(indicator)
     this._indicators.set(paneId, paneIndicators)
     this._sortIndicators(paneId)
-    this._addIndicatorCalcTask(paneId, indicator, LoadDataType.Init)
+    this._addIndicatorCalcTask(indicator, LoadDataType.Init)
     return true
   }
 
@@ -1046,42 +1052,38 @@ export default class StoreImp implements Store {
     return this._indicators.get(paneId) ?? []
   }
 
-  getIndicatorsByFilter (filter: IndicatorFilter): Map<string, IndicatorImp[]> {
-    const find: ((indicators: IndicatorImp[], name?: string) => IndicatorImp[]) = (indicators, name) => indicators.filter(indicator => (!isValid(name) || indicator.name === name))
-    const { paneId, name } = filter
-    const map = new Map<string, IndicatorImp[]>()
-    if (isValid(paneId)) {
-      const indicators = this.getIndicatorsByPaneId(paneId)
-      map.set(paneId, find(indicators, name))
-    } else {
-      if (isValid(name)) {
-        this._indicators.forEach((indicators, paneId) => {
-          map.set(paneId, find(indicators, name))
-        })
-      } else {
-        this._indicators.forEach((indicators, paneId) => {
-          map.set(paneId, find(indicators))
-        })
+  getIndicatorsByFilter (filter: IndicatorFilter): IndicatorImp[] {
+    const { paneId, name, id } = filter
+    const match: ((overlay: IndicatorImp) => boolean) = indicator => {
+      if (isValid(id)) {
+        return indicator.id === id
       }
+      return !isValid(name) || indicator.name === name
     }
-    return map
+    let indicators: IndicatorImp[] = []
+    if (isValid(paneId)) {
+      indicators = indicators.concat(this.getIndicatorsByPaneId(paneId).filter(match))
+    } else {
+      this._indicators.forEach(paneIndicators => {
+        indicators = indicators.concat(paneIndicators.filter(match))
+      })
+    }
+    return indicators
   }
 
   removeIndicator (filter: IndicatorFilter): boolean {
     let removed = false
-    const filterMap = this.getIndicatorsByFilter(filter)
-    filterMap.forEach((indicators, paneId) => {
-      const paneIndicators = this.getIndicatorsByPaneId(paneId)
-      indicators.forEach(indicator => {
-        const index = paneIndicators.findIndex(ins => ins.name === indicator.name)
-        if (index > -1) {
-          this._taskScheduler.removeTask(generateTaskId(paneId, indicator.name))
-          paneIndicators.splice(index, 1)
-          removed = true
-        }
-      })
+    const filterIndicators = this.getIndicatorsByFilter(filter)
+    filterIndicators.forEach(indicator => {
+      const paneIndicators = this.getIndicatorsByPaneId(indicator.paneId)
+      const index = paneIndicators.findIndex(ins => ins.id === indicator.id)
+      if (index > -1) {
+        this._taskScheduler.removeTask(generateTaskId(indicator.id))
+        paneIndicators.splice(index, 1)
+        removed = true
+      }
       if (paneIndicators.length === 0) {
-        this._indicators.delete(paneId)
+        this._indicators.delete(indicator.paneId)
       }
     })
     return removed
@@ -1118,36 +1120,25 @@ export default class StoreImp implements Store {
     }
   }
 
-  overrideIndicator (create: IndicatorCreate, paneId?: string): boolean {
-    const { name } = create
-    let indictors = new Map<string, IndicatorImp[]>()
-    if (isValid(paneId)) {
-      const paneIndicators = this._indicators.get(paneId)
-      if (isValid(paneIndicators)) {
-        indictors.set(paneId, paneIndicators)
-      }
-    } else {
-      indictors = this._indicators
-    }
+  overrideIndicator (override: IndicatorOverride): boolean {
     let updateFlag = false
     let sortFlag = false
-    indictors.forEach((paneIndicators, paneId) => {
-      const indicator = paneIndicators.find(i => i.name === name)
-      if (isValid(indicator)) {
-        indicator.override(create)
-        const { calc, draw, sort } = indicator.shouldUpdateImp()
-        if (sort) {
-          sortFlag = true
-        }
-        if (calc) {
-          this._addIndicatorCalcTask(paneId, indicator, LoadDataType.Update)
-        } else {
-          if (draw) {
-            updateFlag = true
-          }
+    const filterIndicators = this.getIndicatorsByFilter(override)
+    filterIndicators.forEach(indicator => {
+      indicator.override(override)
+      const { calc, draw, sort } = indicator.shouldUpdateImp()
+      if (sort) {
+        sortFlag = true
+      }
+      if (calc) {
+        this._addIndicatorCalcTask(indicator, LoadDataType.Update)
+      } else {
+        if (draw) {
+          updateFlag = true
         }
       }
     })
+
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- ignore
     if (sortFlag) {
       this._sortIndicators()
@@ -1160,9 +1151,9 @@ export default class StoreImp implements Store {
     return false
   }
 
-  getOverlaysByFilter (filter: OverlayFilter): Map<string, OverlayImp[]> {
+  getOverlaysByFilter (filter: OverlayFilter): OverlayImp[] {
     const { id, groupId, paneId, name } = filter
-    const find: ((overlays: OverlayImp[]) => OverlayImp[]) = (overlays) => overlays.filter(overlay => {
+    const match: ((overlay: OverlayImp) => boolean) = overlay => {
       if (isValid(id)) {
         return overlay.id === id
       } else {
@@ -1171,24 +1162,21 @@ export default class StoreImp implements Store {
         }
       }
       return !isValid(name) || overlay.name === name
-    })
+    }
 
-    const map = new Map<string, OverlayImp[]>()
+    let overlays: OverlayImp[] = []
     if (isValid(paneId)) {
-      const overlays = this.getOverlaysByPaneId(paneId)
-      map.set(paneId, find(overlays))
+      overlays = overlays.concat(this.getOverlaysByPaneId(paneId).filter(match))
     } else {
-      this._overlays.forEach((overlays, paneId) => {
-        map.set(paneId, find(overlays))
+      this._overlays.forEach(paneOverlays => {
+        overlays = overlays.concat(paneOverlays.filter(match))
       })
     }
     const progressOverlay = this._progressOverlayInfo?.overlay
-    if (isValid(progressOverlay)) {
-      const paneOverlays = map.get(progressOverlay.paneId) ?? []
-      paneOverlays.push(progressOverlay)
-      map.set(progressOverlay.paneId, paneOverlays)
+    if (isValid(progressOverlay) && match(progressOverlay)) {
+      overlays.push(progressOverlay)
     }
-    return map
+    return overlays
   }
 
   getOverlaysByPaneId (paneId?: string): OverlayImp[] {
@@ -1232,10 +1220,12 @@ export default class StoreImp implements Store {
       if (isValid(OverlayClazz)) {
         const id = create.id ?? createId(OVERLAY_ID_PREFIX)
         const overlay = new OverlayClazz()
+        const paneId = create.paneId ?? PaneIdConstants.CANDLE
         create.id = id
         create.groupId ??= id
+        const zLevel = this.getOverlaysByPaneId(paneId).length
+        create.zLevel ??= zLevel
         overlay.override(create)
-        const paneId = overlay.paneId
         if (!updatePaneIds.includes(paneId)) {
           updatePaneIds.push(paneId)
         }
@@ -1292,23 +1282,21 @@ export default class StoreImp implements Store {
     }
   }
 
-  overrideOverlay (create: Partial<OverlayCreate>): boolean {
+  overrideOverlay (override: OverlayOverride): boolean {
     let sortFlag = false
     const updatePaneIds: string[] = []
-    const filterMap = this.getOverlaysByFilter(create)
-    filterMap.forEach((overlays, paneId) => {
-      overlays.forEach(overlay => {
-        overlay.override(create)
-        const { sort, draw } = overlay.shouldUpdate()
-        if (sort) {
-          sortFlag = true
+    const filterOverlays = this.getOverlaysByFilter(override)
+    filterOverlays.forEach(overlay => {
+      overlay.override(override)
+      const { sort, draw } = overlay.shouldUpdate()
+      if (sort) {
+        sortFlag = true
+      }
+      if (sort || draw) {
+        if (!updatePaneIds.includes(overlay.paneId)) {
+          updatePaneIds.push(overlay.paneId)
         }
-        if (sort || draw) {
-          if (!updatePaneIds.includes(paneId)) {
-            updatePaneIds.push(paneId)
-          }
-        }
-      })
+      }
     })
 
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- ignore
@@ -1327,26 +1315,25 @@ export default class StoreImp implements Store {
 
   removeOverlay (filter: OverlayFilter): boolean {
     const updatePaneIds: string[] = []
-    const filterMap = this.getOverlaysByFilter(filter)
-    filterMap.forEach((overlays, paneId) => {
-      const paneOverlays = this.getOverlaysByPaneId(paneId)
-      overlays.forEach(overlay => {
-        overlay.onRemoved?.({ overlay, chart: this._chart })
-        if (!updatePaneIds.includes(paneId)) {
-          updatePaneIds.push(paneId)
+    const filterOverlays = this.getOverlaysByFilter(filter)
+    filterOverlays.forEach(overlay => {
+      const paneId = overlay.paneId
+      const paneOverlays = this.getOverlaysByPaneId(overlay.paneId)
+      overlay.onRemoved?.({ overlay, chart: this._chart })
+      if (!updatePaneIds.includes(paneId)) {
+        updatePaneIds.push(paneId)
+      }
+      if (overlay.isDrawing()) {
+        this._progressOverlayInfo = null
+      } else {
+        const index = paneOverlays.findIndex(o => o.id === overlay.id)
+        if (index > -1) {
+          paneOverlays.splice(index, 1)
         }
-        if (overlay.isDrawing()) {
-          this._progressOverlayInfo = null
-        } else {
-          const index = paneOverlays.findIndex(o => o.id === overlay.id)
-          if (index > -1) {
-            paneOverlays.splice(index, 1)
-          }
-        }
-        if (paneOverlays.length === 0) {
-          this._overlays.delete(paneId)
-        }
-      })
+      }
+      if (paneOverlays.length === 0) {
+        this._overlays.delete(paneId)
+      }
     })
     if (updatePaneIds.length > 0) {
       updatePaneIds.forEach(paneId => {
@@ -1367,7 +1354,7 @@ export default class StoreImp implements Store {
   }
 
   setHoverOverlayInfo (info: EventOverlayInfo, event: MouseTouchEvent): void {
-    const { overlay, figureType, figureKey, figureIndex } = this._hoverOverlayInfo
+    const { overlay, figureType, figureIndex, figure } = this._hoverOverlayInfo
     const infoOverlay = info.overlay
     if (
       overlay?.id !== infoOverlay?.id ||
@@ -1379,17 +1366,20 @@ export default class StoreImp implements Store {
         let ignoreUpdateFlag = false
         let sortFlag = false
         if (overlay !== null) {
+          overlay.override({ zLevel: overlay.getPrevZLevel() })
           sortFlag = true
-          if (isFunction(overlay.onMouseLeave)) {
-            overlay.onMouseLeave({ chart: this._chart, overlay, figureKey, figureIndex, ...event })
+          if (isFunction(overlay.onMouseLeave) && checkOverlayFigureEvent('onMouseLeave', figure)) {
+            overlay.onMouseLeave({ chart: this._chart, overlay, figure: figure ?? undefined, ...event })
             ignoreUpdateFlag = true
           }
         }
 
         if (infoOverlay !== null) {
+          infoOverlay.setPrevZLevel(infoOverlay.zLevel)
+          infoOverlay.override({ zLevel: Number.MAX_SAFE_INTEGER })
           sortFlag = true
-          if (isFunction(infoOverlay.onMouseEnter)) {
-            infoOverlay.onMouseEnter({ chart: this._chart, overlay: infoOverlay, figureKey: info.figureKey, figureIndex: info.figureIndex, ...event })
+          if (isFunction(infoOverlay.onMouseEnter) && checkOverlayFigureEvent('onMouseEnter', info.figure)) {
+            infoOverlay.onMouseEnter({ chart: this._chart, overlay: infoOverlay, figure: info.figure ?? undefined, ...event })
             ignoreUpdateFlag = true
           }
         }
@@ -1408,16 +1398,20 @@ export default class StoreImp implements Store {
   }
 
   setClickOverlayInfo (info: EventOverlayInfo, event: MouseTouchEvent): void {
-    const { paneId, overlay, figureType, figureKey, figureIndex } = this._clickOverlayInfo
+    const { paneId, overlay, figureType, figure, figureIndex } = this._clickOverlayInfo
     const infoOverlay = info.overlay
-    if (!(infoOverlay?.isDrawing() ?? false)) {
-      infoOverlay?.onClick?.({ chart: this._chart, overlay: infoOverlay, figureKey: info.figureKey, figureIndex: info.figureIndex, ...event })
+    if ((!(infoOverlay?.isDrawing() ?? false)) && checkOverlayFigureEvent('onClick', info.figure)) {
+      infoOverlay?.onClick?.({ chart: this._chart, overlay: infoOverlay, figure: info.figure ?? undefined, ...event })
     }
     if (overlay?.id !== infoOverlay?.id || figureType !== info.figureType || figureIndex !== info.figureIndex) {
       this._clickOverlayInfo = info
       if (overlay?.id !== infoOverlay?.id) {
-        overlay?.onDeselected?.({ chart: this._chart, overlay, figureKey, figureIndex, ...event })
-        infoOverlay?.onSelected?.({ chart: this._chart, overlay: infoOverlay, figureKey: info.figureKey, figureIndex: info.figureIndex, ...event })
+        if (checkOverlayFigureEvent('onDeselected', figure)) {
+          overlay?.onDeselected?.({ chart: this._chart, overlay, figure: figure ?? undefined, ...event })
+        }
+        if (checkOverlayFigureEvent('onSelected', info.figure)) {
+          infoOverlay?.onSelected?.({ chart: this._chart, overlay: infoOverlay, figure: info.figure ?? undefined, ...event })
+        }
         this._chart.updatePane(UpdateLevel.Overlay, info.paneId)
         if (paneId !== info.paneId) {
           this._chart.updatePane(UpdateLevel.Overlay, paneId)
@@ -1453,7 +1447,7 @@ export default class StoreImp implements Store {
     this._timeWeightTickMap.clear()
     this._timeWeightTickList = []
     this._crosshair = {}
-    this._activeTooltipIcon = null
+    this._activeTooltipFeatureInfo = null
   }
 
   getChart (): Chart {

@@ -7,7 +7,7 @@ import terser from '@rollup/plugin-terser'
 import fileSize from 'rollup-plugin-filesize'
 import eslint from '@rollup/plugin-eslint'
 
-import { resolvePath, getVersion } from './utils.js'
+import { resolvePath, getVersion } from '../utils.js'
 
 const version = getVersion()
 

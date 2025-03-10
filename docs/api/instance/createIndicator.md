@@ -11,6 +11,7 @@ outline: deep
 ### 参数 {#parameters}
 - `indicator` 指标配置，可以是指标名，也可以是一个对象。对象参数如下。
   - `name` 名称。
+  - `id` 指标 id 。
   - `shortName` 简短名称，用于提示显示。
   - `precision` 精度。
   - `calcParams` 计算参数。
@@ -34,6 +35,7 @@ outline: deep
   - `regenerateFigures` 重新生成基础图形配置，当 `calcParams` 变化时触发，返回值类型同 `figures` 。
   - `createTooltipDataSource` 创建自定义的提示信息。
   - `draw` 自定义绘制方法，如果返回值是 `true` ，则会覆盖默认的绘制。
+  - `onClick` 点击事件。
   - `onDataStateChange` 数据变化回调通知。
 - `isStack` 是否叠加。
 - `paneOptions` 窗口配置。
@@ -56,7 +58,7 @@ outline: deep
     - `createTicks` 创建分割信息回调方法。
 
 ### 返回值 {#returns}
-`createIndicator` 返回窗口id `string` 或者 `null`。
+`createIndicator` 返回指标id `string` 或者 `null`。
 
 ## 用法 {#usage}
 <script setup>

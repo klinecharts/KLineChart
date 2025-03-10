@@ -1,5 +1,34 @@
 # 📠 更新日志
 
+## 10.0.0-alpha5
+`2025-03-09`
++ 👉 样式配置 `candle.tooltip.icons` 变更为 `candle.tooltip.features` ， `indicator.tooltip.icons` 变更为 `indicator.tooltip.features` 。
++ 👉 指标中的 `createTooltipDataSource` 方法返回值中的 `icons` 变更为 `features` 。
++ 👉 实例api `subscribeAction` 和 `unsubscribeAction` 入参 `onTooltipIconClick` 变更为 `onCandleTooltipFeatureClick` ，指标的事件用 `indicator.onClick` 代替。
++ 🐞 修复移动端特定情况下无法滚动问题。
++ 💄 优化覆盖物事件响应显示。
+
+## 10.0.0-alpha4
+`2025-02-23`
++ 🐞 修复实例方法 `applyNewData` 入参 `more.backward` 不对问题。
++ 🐞 修复单条数据导致图表出错问题。
+
+
+## 10.0.0-alpha3
+`2025-02-19`
++ 👉 实例api `createIndicator` 返回值变更为返回指标id。
++ 👉 实例api `overlayIndicator` 入参 `paneId` 合并到入参 `indicator` 中。
++ 👉 实例api `getIndicators` 返回值变更为返回数组。
++ 👉 实例api `getOverlays` 返回值变更为返回数组。
++ 🆕 样式配置新增 `candle.bar.compareRule` ， `indicator.ohlc.compareRule` 和 `candle.priceMark.last.compareRule` 。
++ 🆕 支持在移动端y轴拖动。
++ 🆕 支持在同一窗口上创建多个相同名称的指标。
++ 💄 优化 `overlay` 模版中的 `figure` 忽略事件类型，事件名和 `overlay` 中的事件名称一致。
++ 🐞 修复指标自定义提示信息可能出错问题。
++ 🐞 修复正在绘制中的覆盖物可能不正确删除问题。
++ 🐞 修复api `createOverlay` 在指定 `points` 时，可能不能正确创建问题。
++ 🐞 修复api `executeAction` 可能导致 `subscribeAction` 无限触发问题。
+
 ## 10.0.0-alpha2
 `2024-12-20`
 + 🆕 x轴支持显示未来时间。

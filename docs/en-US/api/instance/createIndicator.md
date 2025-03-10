@@ -11,6 +11,7 @@ outline: deep
 ### Parameters {#parameters}
 - `indicator` Indicator configuration can be an indicator name or an object. The object parameters are as follows.
   - `name` Name.
+  - `id` Indicator id.
   - `shortName` A short name, used for prompt display.
   - `precision` Precision.
   - `calcParams` Calculate the parameters.
@@ -34,6 +35,7 @@ outline: deep
   - `regenerateFigures` Regenerates the basic graphics configuration. This is triggered when `calcParams` changes. The return value type is the same as `figures` .
   - `createTooltipDataSource` Create custom prompts.
   - `draw` Custom drawing method, if the return value is `true`, it will override the default drawing.
+  - `onClick` Click event.
   - `onDataStateChange` Data change callback notification.
 - `isStack` Whether to stack.
 - `paneOptions` Pane configuration.
@@ -56,7 +58,7 @@ outline: deep
     - `createTicks` Create ticks information callback method.
 
 ### Returns {#returns}
-`createIndicator` returns pane id `string` or `null` .
+`createIndicator` returns indicator id `string` or `null` .
 
 ## Usage {#usage}
 <script setup>

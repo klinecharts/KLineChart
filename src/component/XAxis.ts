@@ -104,7 +104,7 @@ export default abstract class XAxisImp extends AxisImp implements XAxis {
               break
             }
             case TimeWeightConstants.Second: {
-              text = formatDate(timestamp, 'mm:ss', FormatDateType.XAxis)
+              text = formatDate(timestamp, 'HH:mm:ss', FormatDateType.XAxis)
               break
             }
             default: {

@@ -13,6 +13,7 @@
  */
 
 import { isValid } from '../common/utils/typeChecks'
+import { CandleColorCompareRule } from '../common/Styles'
 
 import View from './View'
 
@@ -34,11 +35,12 @@ export default class CandleLastPriceLabelView extends View {
       const data = dataList[dataList.length - 1]
       if (isValid(data)) {
         const { close, open } = data
+        const comparePrice = lastPriceMarkStyles.compareRule === CandleColorCompareRule.CurrentOpen ? open : (dataList[dataList.length - 2]?.close ?? close)
         const priceY = yAxis.convertToNicePixel(close)
         let backgroundColor = ''
-        if (close > open) {
+        if (close > comparePrice) {
           backgroundColor = lastPriceMarkStyles.upColor
-        } else if (close < open) {
+        } else if (close < comparePrice) {
           backgroundColor = lastPriceMarkStyles.downColor
         } else {
           backgroundColor = lastPriceMarkStyles.noChangeColor

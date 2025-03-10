@@ -9,8 +9,8 @@ import './style.css'
 
 export default {
   extends: Theme,
-  Layout: Layout,
-  enhanceApp({ app }) {
+  Layout,
+  enhanceApp ({ app }) {
     app.component('Badge', Badge)
   }
 }

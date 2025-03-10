@@ -1,5 +1,33 @@
 # 📠 Change Log
 
+## 10.0.0-alpha5
+`2025-03-09`
++ 👉 Style configuration `candle.tooltip.icons` changed to `candle.tooltip.features`, `indicator.tooltip.icons` changed to `indicator.tooltip.features`.
++ 👉 `icons` in the return value of the `createTooltipDataSource` method in the indicator changed to `features`.
++ 👉 The instance api `subscribeAction` and `unsubscribeAction` input parameter `onTooltipIconClick` changed to `onCandleTooltipFeatureClick`, and the indicator event is replaced by `indicator.onClick`.
++ 🐞 Fixed the problem that scrolling cannot be performed in certain situations on mobile terminals.
++ 💄 Optimize the display of overlay event response.
+
+## 10.0.0-alpha4
+`2025-02-23`
++ 🐞 Fix the issue that the parameter `more.backward` of `applyNewData` instance method is incorrect.
++ 🐞 Fix the issue that a single piece of data causes a chart error.
+
+## 10.0.0-alpha3
+`2025-02-19`
++ 👉 The return value of the instance api `createIndicator` is changed to return the indicator id.
++ 👉 The input parameter `paneId` of the instance api `overlayIndicator` is merged into the input parameter `indicator`.
++ 👉 The return value of the instance api `getIndicators` is changed to return an array.
++ 👉 The return value of the instance api `getOverlays` is changed to return an array.
++ 🆕 The style configuration adds `candle.bar.compareRule`, `indicator.ohlc.compareRule` and `candle.priceMark.last.compareRule`.
++ 🆕 Supports dragging the y-axis on mobile devices.
++ 🆕 Supports creating multiple indicators with the same name on the same window.
++ 💄 Optimize `figure` in `overlay` template to ignore event type, and the event name is consistent with the event name in `overlay`.
++ 🐞 Fix the problem that the indicator custom prompt information may be wrong.
++ 🐞 Fix the problem that the overlay being drawn may not be deleted correctly.
++ 🐞 Fix the problem that the api `createOverlay` may not be created correctly when `points` is specified.
++ 🐞 Fix the problem that the api `executeAction` may cause the `subscribeAction` to trigger infinitely.
+
 ## 10.0.0-alpha2
 `2024-12-20`
 + 🆕 The x-axis supports displaying future time.

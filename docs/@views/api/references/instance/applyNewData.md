@@ -1,3 +1,9 @@
 ```typescript
-(dataList: KLineData[]) => void
+(
+  dataList: KLineData[],
+  more?: boolean | {
+    forward?: boolean
+    backward?: boolean
+  }
+) => void
 ```

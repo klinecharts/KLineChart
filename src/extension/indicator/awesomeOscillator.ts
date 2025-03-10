@@ -12,17 +12,16 @@
  * limitations under the License.
  */
 
-import type { KLineData } from '../../common/Data'
 import { PolygonType } from '../../common/Styles'
 import { formatValue } from '../../common/utils/format'
 
-import type { Indicator, IndicatorTemplate } from '../../component/Indicator'
+import type { IndicatorTemplate } from '../../component/Indicator'
 
 interface Ao {
   ao?: number
 }
 
-const awesomeOscillator: IndicatorTemplate<Ao> = {
+const awesomeOscillator: IndicatorTemplate<Ao, number> = {
   name: 'AO',
   shortName: 'AO',
   calcParams: [5, 34],
@@ -45,14 +44,14 @@ const awesomeOscillator: IndicatorTemplate<Ao> = {
       return { color, style, borderColor: color }
     }
   }],
-  calc: (dataList: KLineData[], indicator: Indicator<Ao>) => {
-    const params = indicator.calcParams as number[]
+  calc: (dataList, indicator) => {
+    const params = indicator.calcParams
     const maxPeriod = Math.max(params[0], params[1])
     let shortSum = 0
     let longSum = 0
     let short = 0
     let long = 0
-    return dataList.map((kLineData: KLineData, i: number) => {
+    return dataList.map((kLineData, i) => {
       const ao: Ao = {}
       const middle = (kLineData.low + kLineData.high) / 2
       shortSum += middle

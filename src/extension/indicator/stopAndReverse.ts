@@ -12,10 +12,9 @@
  * limitations under the License.
  */
 
-import type { KLineData } from '../../common/Data'
 import { formatValue } from '../../common/utils/format'
 
-import { type Indicator, type IndicatorTemplate, IndicatorSeries } from '../../component/Indicator'
+import { type IndicatorTemplate, IndicatorSeries } from '../../component/Indicator'
 
 interface Sar {
   sar?: number
@@ -23,7 +22,7 @@ interface Sar {
   low: number
 }
 
-const stopAndReverse: IndicatorTemplate<Sar> = {
+const stopAndReverse: IndicatorTemplate<Sar, number> = {
   name: 'SAR',
   shortName: 'SAR',
   series: IndicatorSeries.Price,
@@ -46,8 +45,8 @@ const stopAndReverse: IndicatorTemplate<Sar> = {
       }
     }
   ],
-  calc: (dataList: KLineData[], indicator: Indicator<Sar>) => {
-    const params = indicator.calcParams as number[]
+  calc: (dataList, indicator) => {
+    const params = indicator.calcParams
     const startAf = params[0] / 100
     const step = params[1] / 100
     const maxAf = params[2] / 100
@@ -59,7 +58,7 @@ const stopAndReverse: IndicatorTemplate<Sar> = {
     // 判断是上涨还是下跌  false：下跌
     let isIncreasing = false
     let sar = 0
-    return dataList.map((kLineData: KLineData, i: number) => {
+    return dataList.map((kLineData, i) => {
       // 上一个周期的sar
       const preSar = sar
       const high = kLineData.high

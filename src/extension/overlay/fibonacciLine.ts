@@ -33,7 +33,7 @@ const fibonacciLine: OverlayTemplate = {
       if (yAxis?.isInCandle() ?? true) {
         precision = chart.getPrecision().price
       } else {
-        const indicators = chart.getIndicators({ paneId: overlay.paneId }).get(overlay.paneId) ?? []
+        const indicators = chart.getIndicators({ paneId: overlay.paneId })
         indicators.forEach(indicator => {
           precision = Math.max(precision, indicator.precision)
         })

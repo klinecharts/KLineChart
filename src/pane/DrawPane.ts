@@ -49,8 +49,8 @@ export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
     axis: { name: 'normal', scrollZoomEnabled: true }
   }
 
-  constructor (rootContainer: HTMLElement, afterElement: Nullable<HTMLElement>, chart: Chart, id: string, options: Omit<PaneOptions, 'id' | 'height'>) {
-    super(rootContainer, afterElement, chart, id)
+  constructor (chart: Chart, id: string, options: Omit<PaneOptions, 'id' | 'height'>) {
+    super(chart, id)
     const container = this.getContainer()
     this._mainWidget = this.createMainWidget(container)
     this._yAxisWidget = this.createYAxisWidget(container)
@@ -156,7 +156,6 @@ export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
   }
 
   destroy (): void {
-    super.destroy()
     this._mainWidget.destroy()
     this._yAxisWidget?.destroy()
   }

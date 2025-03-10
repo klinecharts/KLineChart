@@ -31,7 +31,7 @@ export default defineConfig({
           { text: '9.x 文档', link: 'https://v9.klinecharts.com' },
           { text: '8.x 文档', link: 'https://v8.klinecharts.com/zh-CN' }
         ]
-      },
+      }
     ],
     sidebar: {
       '/guide/': [
@@ -118,7 +118,7 @@ export const search = {
         footer: {
           selectText: '选择',
           navigateText: '切换',
-          closeText: '关闭',
+          closeText: '关闭'
         }
       }
     }

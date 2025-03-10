@@ -15,11 +15,11 @@
 import type Nullable from '../common/Nullable'
 import type DeepPartial from '../common/DeepPartial'
 import type ExcludePickPartial from '../common/ExcludePickPartial'
-import type { KLineData } from '../common/Data'
+import type { KLineData, NeighborData } from '../common/Data'
 import type Bounding from '../common/Bounding'
 import type BarSpace from '../common/BarSpace'
 import type Crosshair from '../common/Crosshair'
-import type { IndicatorStyle, IndicatorPolygonStyle, SmoothLineStyle, RectStyle, TextStyle, TooltipIconStyle, LineStyle, LineType, TooltipLegend } from '../common/Styles'
+import type { IndicatorStyle, IndicatorPolygonStyle, SmoothLineStyle, RectStyle, TextStyle, TooltipFeatureStyle, LineStyle, LineType, TooltipLegend } from '../common/Styles'
 import { isNumber, isValid, merge, isBoolean, isString, clone, isFunction } from '../common/utils/typeChecks'
 
 import type { XAxis } from './XAxis'
@@ -43,15 +43,9 @@ export type IndicatorFigureStyle = Partial<Omit<SmoothLineStyle, 'style'>> & Par
 
 export type IndicatorFigureAttrs = Partial<ArcAttrs> & Partial<LineStyle> & Partial<RectAttrs> & Partial<TextAttrs> & Record<string, unknown>
 
-export interface IndicatorFigureCallbackBrother<PCN> {
-  prev: PCN
-  current: PCN
-  next: PCN
-}
-
 export interface IndicatorFigureAttrsCallbackParams<D> {
-  data: IndicatorFigureCallbackBrother<Nullable<D>>
-  coordinate: IndicatorFigureCallbackBrother<Record<keyof D, number> & { x: number }>
+  data: NeighborData<Nullable<D>>
+  coordinate: NeighborData<Record<keyof D, number> & { x: number }>
   bounding: Bounding
   barSpace: BarSpace
   xAxis: XAxis
@@ -59,8 +53,7 @@ export interface IndicatorFigureAttrsCallbackParams<D> {
 }
 
 export interface IndicatorFigureStylesCallbackParams<D> {
-  data: IndicatorFigureCallbackBrother<Nullable<D>>
-
+  data: NeighborData<Nullable<D>>
   indicator: Indicator<D>
   defaultStyles?: IndicatorStyle
 }
@@ -77,18 +70,17 @@ export interface IndicatorFigure<D = unknown> {
   styles?: IndicatorFigureStylesCallback<D>
 }
 
-export type IndicatorRegenerateFiguresCallback<D> = (calcParams: unknown[]) => Array<IndicatorFigure<D>>
+export type IndicatorRegenerateFiguresCallback<D, C> = (calcParams: C[]) => Array<IndicatorFigure<D>>
 
 export interface IndicatorTooltipData {
   name: string
   calcParamsText: string
-  icons: TooltipIconStyle[]
+  features: TooltipFeatureStyle[]
   legends: TooltipLegend[]
 }
 
 export interface IndicatorCreateTooltipDataSourceParams<D> {
   chart: Chart
-
   indicator: Indicator<D>
   bounding: Bounding
   crosshair: Crosshair
@@ -98,21 +90,33 @@ export interface IndicatorCreateTooltipDataSourceParams<D> {
 
 export type IndicatorCreateTooltipDataSourceCallback<D> = (params: IndicatorCreateTooltipDataSourceParams<D>) => IndicatorTooltipData
 
-export interface IndicatorDrawParams<D> {
+export enum IndicatorEventTarget {
+  Feature = 'feature'
+}
+
+export interface IndicatorEvent<D, C, E> {
+  target: IndicatorEventTarget
+  chart: Chart
+  indicator: Indicator<D, C, E>
+  [key: string]: unknown
+}
+
+export type IndicatorEventCallback<D, C, E> = (params: IndicatorEvent<D, C, E>) => void
+
+export interface IndicatorDrawParams<D, C, E> {
   ctx: CanvasRenderingContext2D
   chart: Chart
-
-  indicator: Indicator<D>
+  indicator: Indicator<D, C, E>
   bounding: Bounding
   xAxis: XAxis
   yAxis: YAxis
 }
 
-export type IndicatorDrawCallback<D> = (params: IndicatorDrawParams<D>) => boolean
+export type IndicatorDrawCallback<D, C, E> = (params: IndicatorDrawParams<D, C, E>) => boolean
 
-export type IndicatorCalcCallback<D> = (dataList: KLineData[], indicator: Indicator<D>) => Promise<D[]> | D[]
+export type IndicatorCalcCallback<D, C, E> = (dataList: KLineData[], indicator: Indicator<D, C, E>) => Promise<D[]> | D[]
 
-export type IndicatorShouldUpdateCallback<D> = (prev: Indicator<D>, current: Indicator<D>) => (boolean | { calc: boolean, draw: boolean })
+export type IndicatorShouldUpdateCallback<D, C, E> = (prev: Indicator<D, C, E>, current: Indicator<D, C, E>) => (boolean | { calc: boolean, draw: boolean })
 
 export enum IndicatorDataState {
   Loading = 'loading',
@@ -128,7 +132,17 @@ export interface IndicatorOnDataStateChangeParams<D> {
 }
 export type IndicatorOnDataStateChangeCallback<D> = (params: IndicatorOnDataStateChangeParams<D>) => void
 
-export interface Indicator<D = unknown> {
+export interface Indicator<D = unknown, C = unknown, E = unknown> {
+  /**
+   * Unique id
+   */
+  id: string
+
+  /**
+   * Pane id
+   */
+  paneId: string
+
   /**
    * Indicator name
    */
@@ -147,7 +161,7 @@ export interface Indicator<D = unknown> {
   /**
    * Calculation parameters
    */
-  calcParams: unknown[]
+  calcParams: C[]
 
   /**
    * Whether ohlc column is required
@@ -172,7 +186,7 @@ export interface Indicator<D = unknown> {
   /**
    * Extend data
    */
-  extendData: unknown
+  extendData: E
 
   /**
    * Indicator series
@@ -202,17 +216,17 @@ export interface Indicator<D = unknown> {
   /**
    *  Should update, should calc or draw
    */
-  shouldUpdate: Nullable<IndicatorShouldUpdateCallback<D>>
+  shouldUpdate: Nullable<IndicatorShouldUpdateCallback<D, C, E>>
 
   /**
    * Indicator calculation
    */
-  calc: IndicatorCalcCallback<D>
+  calc: IndicatorCalcCallback<D, C, E>
 
   /**
    * Regenerate figure configuration
    */
-  regenerateFigures: Nullable<IndicatorRegenerateFiguresCallback<D>>
+  regenerateFigures: Nullable<IndicatorRegenerateFiguresCallback<D, C>>
 
   /**
    * Create custom tooltip text
@@ -222,7 +236,7 @@ export interface Indicator<D = unknown> {
   /**
    * Custom draw
    */
-  draw: Nullable<IndicatorDrawCallback<D>>
+  draw: Nullable<IndicatorDrawCallback<D, C, E>>
 
   /**
    * Data state change
@@ -230,26 +244,30 @@ export interface Indicator<D = unknown> {
   onDataStateChange: Nullable<IndicatorOnDataStateChangeCallback<D>>
 
   /**
+   * Event
+   */
+  onClick: Nullable<IndicatorEventCallback<D, C, E>>
+
+  /**
    * Calculation result
    */
   result: D[]
 }
 
-export type IndicatorTemplate<D = unknown> = ExcludePickPartial<Omit<Indicator<D>, 'result'>, 'name' | 'calc'>
+export type IndicatorTemplate<D = unknown, C = unknown, E = unknown> = ExcludePickPartial<Omit<Indicator<D, C, E>, 'result' | 'paneId'>, 'name' | 'calc'>
 
-export type IndicatorCreate<D = unknown> = ExcludePickPartial<Omit<Indicator<D>, 'result'>, 'name'>
+export type IndicatorCreate<D = unknown, C = unknown, E = unknown> = ExcludePickPartial<Omit<Indicator<D, C, E>, 'result'>, 'name'>
 
-export interface IndicatorFilter {
-  name?: string
-  paneId?: string
-}
+export type IndicatorOverride<D = unknown, C = unknown, E = unknown> = Partial<Omit<Indicator<D, C, E>, 'result'>>
 
-export type IndicatorConstructor<D = unknown> = new () => IndicatorImp<D>
+export type IndicatorFilter = Partial<Pick<Indicator, 'id' | 'paneId' | 'name'>>
+
+export type IndicatorConstructor<D = unknown, C = unknown, E = unknown> = new () => IndicatorImp<D, C, E>
 
 export type EachFigureCallback<D> = (figure: IndicatorFigure<D>, figureStyles: IndicatorFigureStyle, index: number) => void
 
 export function eachFigures<D = unknown> (
-  indicator: Indicator<D>,
+  indicator: Indicator,
   dataIndex: number,
   defaultStyles: IndicatorStyle,
   eachFigureCallback: EachFigureCallback<D>
@@ -314,22 +332,24 @@ export function eachFigures<D = unknown> (
   })
 }
 
-export default class IndicatorImp<D = unknown> implements Indicator<D> {
+export default class IndicatorImp<D = unknown, C = unknown, E = unknown> implements Indicator<D, C, E> {
+  id: string
+  paneId: string
   name: string
   shortName: string
   precision = 4
-  calcParams: unknown[] = []
+  calcParams: C[] = []
   shouldOhlc = false
   shouldFormatBigNumber = false
   visible = true
   zLevel = 0
-  extendData: unknown
+  extendData: E
   series = IndicatorSeries.Normal
   figures: Array<IndicatorFigure<D>> = []
   minValue: Nullable<number> = null
   maxValue: Nullable<number> = null
   styles: Nullable<Partial<IndicatorStyle>> = null
-  shouldUpdate: IndicatorShouldUpdateCallback<D> = (prev, current) => {
+  shouldUpdate: IndicatorShouldUpdateCallback<D, C, E> = (prev, current) => {
     const calc = JSON.stringify(prev.calcParams) !== JSON.stringify(current.calcParams) ||
       prev.figures !== current.figures ||
       prev.calc !== current.calc
@@ -351,27 +371,30 @@ export default class IndicatorImp<D = unknown> implements Indicator<D> {
     return { calc, draw }
   }
 
-  calc: IndicatorCalcCallback<D> = () => []
-  regenerateFigures: Nullable<IndicatorRegenerateFiguresCallback<D>> = null
+  calc: IndicatorCalcCallback<D, C, E> = () => []
+  regenerateFigures: Nullable<IndicatorRegenerateFiguresCallback<D, C>> = null
   createTooltipDataSource: Nullable<IndicatorCreateTooltipDataSourceCallback<D>> = null
-  draw: Nullable<IndicatorDrawCallback<D>> = null
+  draw: Nullable<IndicatorDrawCallback<D, C, E>> = null
+
+  onClick: Nullable<IndicatorEventCallback<D, C, E>> = null
 
   onDataStateChange: Nullable<IndicatorOnDataStateChangeCallback<D>> = null
 
   result: D[] = []
 
-  private _prevIndicator: Indicator<D>
+  private _prevIndicator: Indicator<D, C, E>
   private _lockSeriesPrecision = false
 
-  constructor (indicator: IndicatorTemplate<D>) {
+  constructor (indicator: IndicatorTemplate<D, C, E>) {
     this.override(indicator)
     this._lockSeriesPrecision = false
   }
 
-  override (indicator: Partial<Indicator<D>>): void {
+  override (indicator: Partial<Indicator<D, C, E>>): void {
     const { result, ...currentOthers } = this
     this._prevIndicator = { ...clone(currentOthers), result }
     const {
+      id,
       name,
       shortName,
       precision,
@@ -380,6 +403,9 @@ export default class IndicatorImp<D = unknown> implements Indicator<D> {
       calcParams,
       ...others
     } = indicator
+    if (!isString(this.id) && isString(id)) {
+      this.id = id
+    }
     if (!isString(this.name)) {
       this.name = name ?? ''
     }

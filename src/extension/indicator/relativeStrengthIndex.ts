@@ -12,8 +12,7 @@
  * limitations under the License.
  */
 
-import type { KLineData } from '../../common/Data'
-import type { Indicator, IndicatorTemplate } from '../../component/Indicator'
+import type { IndicatorTemplate } from '../../component/Indicator'
 
 interface Rsi {
   rsi1?: number
@@ -25,7 +24,7 @@ interface Rsi {
  * RSI
  * RSI = SUM(MAX(CLOSE - REF(CLOSE,1),0),N) / SUM(ABS(CLOSE - REF(CLOSE,1)),N) × 100
  */
-const relativeStrengthIndex: IndicatorTemplate<Rsi> = {
+const relativeStrengthIndex: IndicatorTemplate<Rsi, number> = {
   name: 'RSI',
   shortName: 'RSI',
   calcParams: [6, 12, 24],
@@ -34,13 +33,12 @@ const relativeStrengthIndex: IndicatorTemplate<Rsi> = {
     { key: 'rsi2', title: 'RSI2: ', type: 'line' },
     { key: 'rsi3', title: 'RSI3: ', type: 'line' }
   ],
-  regenerateFigures: (params: unknown[]) => params.map((_: unknown, index: number) => {
+  regenerateFigures: (params) => params.map((_, index) => {
     const num = index + 1
     return { key: `rsi${num}`, title: `RSI${num}: `, type: 'line' }
   }),
-  calc: (dataList: KLineData[], indicator: Indicator<Rsi>) => {
-    const { calcParams, figures } = indicator
-    const params = calcParams as number[]
+  calc: (dataList, indicator) => {
+    const { calcParams: params, figures } = indicator
     const sumCloseAs: number[] = []
     const sumCloseBs: number[] = []
     return dataList.map((kLineData, i) => {

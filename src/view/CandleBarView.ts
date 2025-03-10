@@ -15,9 +15,10 @@
 import type Nullable from '../common/Nullable'
 import type { VisibleRangeData } from '../common/Data'
 import type BarSpace from '../common/BarSpace'
+import { isValid } from '../common/utils/typeChecks'
 import type { EventHandler } from '../common/SyntheticEvent'
 import { ActionType } from '../common/Action'
-import { CandleType, type CandleBarColor, type RectStyle, PolygonType } from '../common/Styles'
+import { CandleType, type CandleBarColor, type RectStyle, PolygonType, CandleColorCompareRule } from '../common/Styles'
 
 import type { FigureCreate } from '../component/Figure'
 import type { RectAttrs } from '../extension/figure/rect'
@@ -25,7 +26,6 @@ import type { RectAttrs } from '../extension/figure/rect'
 import ChildrenView from './ChildrenView'
 
 import { PaneIdConstants } from '../pane/types'
-import { isValid } from '../common/utils/typeChecks'
 
 export interface CandleBarOptions {
   type: Exclude<CandleType, CandleType.Area>
@@ -44,6 +44,7 @@ export default class CandleBarView extends ChildrenView {
     const chartStore = pane.getChart().getChartStore()
     const candleBarOptions = this.getCandleBarOptions()
     if (candleBarOptions !== null) {
+      const { type, styles } = candleBarOptions
       let ohlcSize = 0
       let halfOhlcSize = 0
       if (candleBarOptions.type === CandleType.Ohlc) {
@@ -55,17 +56,17 @@ export default class CandleBarView extends ChildrenView {
         halfOhlcSize = Math.floor(halfOhlcSize / 2)
       }
       const yAxis = pane.getAxisComponent()
-      this.eachChildren((data, barSpace) => {
-        const { data: kLineData, x } = data
-        if (isValid(kLineData)) {
-          const { open, high, low, close } = kLineData
-          const { type, styles } = candleBarOptions
+      this.eachChildren((visibleData, barSpace) => {
+        const { x, data: { current, prev } } = visibleData
+        if (isValid(current)) {
+          const { open, high, low, close } = current
+          const comparePrice = styles.compareRule === CandleColorCompareRule.CurrentOpen ? open : (prev?.close ?? close)
           const colors: string[] = []
-          if (close > open) {
+          if (close > comparePrice) {
             colors[0] = styles.upColor
             colors[1] = styles.upBorderColor
             colors[2] = styles.upWickColor
-          } else if (close < open) {
+          } else if (close < comparePrice) {
             colors[0] = styles.downColor
             colors[1] = styles.downBorderColor
             colors[2] = styles.downWickColor
@@ -144,7 +145,7 @@ export default class CandleBarView extends ChildrenView {
             let handler: Nullable<EventHandler> = null
             if (isMain) {
               handler = {
-                mouseClickEvent: this._boundCandleBarClickEvent(data)
+                mouseClickEvent: this._boundCandleBarClickEvent(visibleData)
               }
             }
             this.createFigure(rect, handler ?? undefined)?.draw(ctx)

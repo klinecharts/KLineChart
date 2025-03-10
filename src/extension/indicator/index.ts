@@ -59,7 +59,7 @@ extensions.forEach((indicator: IndicatorTemplate) => {
   indicators[indicator.name] = IndicatorImp.extend(indicator)
 })
 
-function registerIndicator<D> (indicator: IndicatorTemplate<D>): void {
+function registerIndicator<D = unknown, C = unknown, E = unknown> (indicator: IndicatorTemplate<D, C, E>): void {
   indicators[indicator.name] = IndicatorImp.extend(indicator)
 }
 

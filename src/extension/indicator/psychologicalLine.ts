@@ -12,8 +12,7 @@
  * limitations under the License.
  */
 
-import type { KLineData } from '../../common/Data'
-import type { Indicator, IndicatorTemplate } from '../../component/Indicator'
+import type { IndicatorTemplate } from '../../component/Indicator'
 
 interface Psy {
   psy?: number
@@ -24,7 +23,7 @@ interface Psy {
  * PSY
  * 公式：PSY=N日内的上涨天数/N×100%。
  */
-const psychologicalLine: IndicatorTemplate<Psy> = {
+const psychologicalLine: IndicatorTemplate<Psy, number> = {
   name: 'PSY',
   shortName: 'PSY',
   calcParams: [12, 6],
@@ -32,13 +31,13 @@ const psychologicalLine: IndicatorTemplate<Psy> = {
     { key: 'psy', title: 'PSY: ', type: 'line' },
     { key: 'maPsy', title: 'MAPSY: ', type: 'line' }
   ],
-  calc: (dataList: KLineData[], indicator: Indicator<Psy>) => {
-    const params = indicator.calcParams as number[]
+  calc: (dataList, indicator) => {
+    const params = indicator.calcParams
     let upCount = 0
     let psySum = 0
     const upList: number[] = []
     const result: Psy[] = []
-    dataList.forEach((kLineData: KLineData, i: number) => {
+    dataList.forEach((kLineData, i) => {
       const psy: Psy = {}
       const prevClose = (dataList[i - 1] ?? kLineData).close
       const upFlag = kLineData.close - prevClose > 0 ? 1 : 0

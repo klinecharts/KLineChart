@@ -102,18 +102,16 @@ export default class CandleTooltipView extends IndicatorTooltipView {
     if (this.isDrawTooltip(crosshair, tooltipStyles)) {
       const legends = this._getCandleTooltipLegends()
 
-      const [leftIcons, middleIcons, rightIcons] = this.classifyTooltipIcons(tooltipStyles.icons)
+      const [leftFeatures, middleFeatures, rightFeatures] = this.classifyTooltipFeatures(tooltipStyles.features)
 
-      prevRowHeight = this.drawStandardTooltipIcons(
-        ctx, leftIcons, coordinate,
-        '', left, prevRowHeight, maxWidth
+      prevRowHeight = this.drawStandardTooltipFeatures(
+        ctx, leftFeatures, coordinate,
+        null, left, prevRowHeight, maxWidth
       )
-
-      prevRowHeight = this.drawStandardTooltipIcons(
-        ctx, middleIcons, coordinate,
-        '', left, prevRowHeight, maxWidth
+      prevRowHeight = this.drawStandardTooltipFeatures(
+        ctx, middleFeatures, coordinate,
+        null, left, prevRowHeight, maxWidth
       )
-
       if (legends.length > 0) {
         prevRowHeight = this.drawStandardTooltipLegends(
           ctx, legends, coordinate, left,
@@ -121,9 +119,9 @@ export default class CandleTooltipView extends IndicatorTooltipView {
         )
       }
 
-      prevRowHeight = this.drawStandardTooltipIcons(
-        ctx, rightIcons, coordinate,
-        '', left, prevRowHeight, maxWidth
+      prevRowHeight = this.drawStandardTooltipFeatures(
+        ctx, rightFeatures, coordinate,
+        null, left, prevRowHeight, maxWidth
       )
     }
     return coordinate.y + prevRowHeight
@@ -400,20 +398,18 @@ export default class CandleTooltipView extends IndicatorTooltipView {
         : tooltipStyles.custom
     )
     return legends.map(({ title, value }) => {
-      let t: TooltipLegendChild = { text: '', color: '' }
+      let t: TooltipLegendChild = { text: '', color: textColor }
       if (isObject(title)) {
         t = { ...title }
       } else {
         t.text = title
-        t.color = textColor
       }
       t.text = i18n(t.text, locale)
-      let v: TooltipLegendChild = { text: tooltipStyles.defaultValue, color: '' }
+      let v = { text: tooltipStyles.defaultValue, color: textColor }
       if (isObject(value)) {
         v = { ...value }
       } else {
         v.text = value
-        v.color = textColor
       }
       const match = /{(\S*)}/.exec(v.text)
       if (match !== null && match.length > 1) {

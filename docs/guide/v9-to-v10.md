@@ -4,6 +4,7 @@
 ## 样式配置调整
 + 删除 `yAxis.position` ， `yAxis.type` ， `yAxis.inside` 和 `yAxis.inside` ，请使用窗口配置 `axis` 中的属性代替。详情参阅图表API [init(dcs, options)](/api/chart/init#parameters) ，实例API [createIndicator(value, isStack, paneOptions)](/api/instance/createIndicator#parameters) 和 [setPaneOptions(options)](/api/instance/setPaneOptions#parameters) 。
 + 删除 `overlay.rectText` 。
++ `candle.tooltip.icons` 变更为 `candle.tooltip.features` ， `indicator.tooltip.icons` 变更为 `indicator.tooltip.features` 。
 
 ## API调整
 
@@ -16,10 +17,12 @@
 + 删除 `applyMoreData(dataList, more, callback)` ， `setLoadDataCallback(cb)` 和 `loadMore(cb)` ，请使用 `setLoadMoreDataCallback(cb)` 代替。
 + 删除 `getIndicatorByPaneId(paneId, name)` ，请使用 `getIndicators(filter)` 代替。
 + 删除 `getOverlayById(id)` ，请使用 `getOverlays(filter)` 代替。
++ 删除 `subscribeAction` 和 `unsubscribeAction` 中的 `onTooltipIconClick` ，请使用 `onCandleTooltipFeatureClick` 和指标中的 `onClick` 代替。
 + `applyNewData(dataList, more, callback)` 变更为 `applyNewData(dataList, more)` 。
 + `updateData(data, callback)` 变更为 `updateData(data)` 。
 + `getBarSpace()` 返回值变更为对象。
++ `createIndicator` 返回值变更为返回指标id。
 
 ## 自定义扩展调整
-+ 指标 `createTooltipDataSource` 方法返回值 `values` 变更为 `legends` 。
++ 指标 `createTooltipDataSource` 方法返回值 `values` 变更为 `legends` ， `icons` 变更为 `features`。
 + 删除内置的基础图形 `rectText` ，请使用 `text` 代替。

@@ -10,12 +10,13 @@ outline: deep
 
 ### 参数 {#parameters}
 - `filter` 过滤参数。
+  - `id` 指标id。 
   - `name` 指标名称。
   - `paneId` 窗口id。
 
 
 ### 返回值 {#returns}
-`getIndicators` 返回 `Map<string, Indicator[]>` 。
+`getIndicators` 返回 `Indicator[]` 。
 
 ## 用法 {#usage}
 <script setup>

@@ -1,7 +1,7 @@
 import fs from 'fs'
 import chalk from 'chalk'
 
-import { resolvePath } from './utils.js'
+import { resolvePath } from '../utils.js'
 
 const buildDir = resolvePath('dist')
 

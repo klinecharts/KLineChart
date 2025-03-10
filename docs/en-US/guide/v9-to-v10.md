@@ -4,6 +4,7 @@ This document will help you upgrade from klinecharts version 9.x to klinecharts 
 ## Style configuration adjustment
 + Remove `yAxis.position` , `yAxis.type` , `yAxis.inside` and `yAxis.inside` . Please use the properties in the window configuration `axis` instead. For details, see the chart API [init(dcs, options)](/en-US/api/chart/init#parameters), instance API [createIndicator(value, isStack, paneOptions)](/en-US/api/instance/createIndicator#parameters) and [setPaneOptions(options)](/en-US/api/instance/setPaneOptions#parameters) .
 + Remove `overlay.rectText` .
++ `candle.tooltip.icons` changed to `candle.tooltip.features`, `indicator.tooltip.icons` changed to `indicator.tooltip.features`.
 
 ## API adjustment
 
@@ -16,10 +17,12 @@ This document will help you upgrade from klinecharts version 9.x to klinecharts 
 + Remove `applyMoreData(dataList, more, callback)` , `setLoadDataCallback(cb)` and `loadMore(cb)` , please use `setLoadMoreDataCallback(cb)` instead.
 + Remove `getIndicatorByPaneId(paneId, name)`, please use `getIndicators(filter)` instead.
 + Remove `getOverlayById(id)`, please use `getOverlays(filter)` instead.
++ Remove `onTooltipIconClick` in `subscribeAction` and `unsubscribeAction`, use `onCandleTooltipFeatureClick` and `onClick` in indicators instead.
 + `applyNewData(dataList, more, callback)` is changed to `applyNewData(dataList, more)` .
 + `updateData(data, callback)` is changed to `updateData(data)` .
 + `getBarSpace()` return value changed to object.
++ `createIndicator` return value changed to return indicator id.
 
 ## Extension adjustment
-+ The indicator `createTooltipDataSource` method return value `values` changed to `legends` .
++ The indicator `createTooltipDataSource` method return value `values` changed to `legends` , `icons` changed to `features` .
 + Remove the built-in basic graphic `rectText`, please use `text` instead.

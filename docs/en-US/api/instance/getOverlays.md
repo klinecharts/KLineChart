@@ -17,7 +17,7 @@ outline: deep
 
 
 ### Returns {#returns}
-`getOverlays` returns `Map<string, Overlay[]>` .
+`getOverlays` returns `Overlay[]` .
 
 ## Usage {#usage}
 <script setup>

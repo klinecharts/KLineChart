@@ -119,7 +119,9 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
     const isArea = candleStyles.type === CandleType.Area
     const areaValueKey = candleStyles.area.value
     const shouldCompareHighLow = (inCandle && !isArea) || (!inCandle && shouldOhlc)
-    visibleRangeDataList.forEach(({ dataIndex, data }) => {
+    visibleRangeDataList.forEach((visibleData) => {
+      const dataIndex = visibleData.dataIndex
+      const data = visibleData.data.current
       if (isValid(data)) {
         if (shouldCompareHighLow) {
           min = Math.min(min, data.low)

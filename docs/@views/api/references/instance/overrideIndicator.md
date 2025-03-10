@@ -1,7 +1,9 @@
 ```typescript
 (
   indicator: {
-    name: string
+    id?: string
+    paneId?: string
+    name?: string
     shortName?: string
     precision?: number
     calcParams?: unknown[]
@@ -35,16 +37,32 @@
     createTooltipDataSource?: (params: object) => ({
       name?: string
       calcParamsText?: string
-      icons?: Array<{
+      features?: Array<{
         id?: string
         position?: 'left' | 'middle' | 'right'
+        marginLeft?: number
+        marginTop?: number
+        marginRight?: number
+        marginBottom?: number
+        paddingLeft?: number
+        paddingTop?: number
+        paddingRight?: number
+        paddingBottom?: number
+        size?: number
         color?: string
         activeColor?: string
-        size?: number
-        fontFamily?: string
-        icon?: string
         backgroundColor?: string
         activeBackgroundColor?: string
+        type?: 'path' | 'iconFont'
+        path?: {
+          style?: 'stroke' | 'fill'
+          path?: string
+          lineWidth?: number
+        }
+        iconFont?: {
+          content?: string
+          family?: string
+        }
       }>
       legends?: Array<{
         title: string |
@@ -60,8 +78,8 @@
       }>
     })
     draw?: (params: object) => boolean
+    onClick?: (params: object) => void
     onDataStateChange?: (params: object) => void
-  },
-  paneId?: string
+  }
 ) => void
 ```

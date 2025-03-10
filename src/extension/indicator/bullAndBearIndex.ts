@@ -11,8 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import type { KLineData } from '../../common/Data'
-import { type Indicator, type IndicatorTemplate, IndicatorSeries } from '../../component/Indicator'
+import { type IndicatorTemplate, IndicatorSeries } from '../../component/Indicator'
 
 interface Bbi {
   bbi?: number
@@ -23,7 +22,7 @@ interface Bbi {
  * 公式: BBI = (MA(CLOSE, M) + MA(CLOSE, N) + MA(CLOSE, O) + MA(CLOSE, P)) / 4
  *
  */
-const bullAndBearIndex: IndicatorTemplate<Bbi> = {
+const bullAndBearIndex: IndicatorTemplate<Bbi, number> = {
   name: 'BBI',
   shortName: 'BBI',
   series: IndicatorSeries.Price,
@@ -33,15 +32,15 @@ const bullAndBearIndex: IndicatorTemplate<Bbi> = {
   figures: [
     { key: 'bbi', title: 'BBI: ', type: 'line' }
   ],
-  calc: (dataList: KLineData[], indicator: Indicator<Bbi>) => {
-    const params = indicator.calcParams as number[]
+  calc: (dataList, indicator) => {
+    const params = indicator.calcParams
     const maxPeriod = Math.max(...params)
     const closeSums: number[] = []
     const mas: number[] = []
-    return dataList.map((kLineData: KLineData, i: number) => {
+    return dataList.map((kLineData, i) => {
       const bbi: Bbi = {}
       const close = kLineData.close
-      params.forEach((p: number, index: number) => {
+      params.forEach((p, index) => {
         closeSums[index] = (closeSums[index] ?? 0) + close
         if (i >= p - 1) {
           mas[index] = closeSums[index] / p

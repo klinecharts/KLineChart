@@ -12,8 +12,7 @@
  * limitations under the License.
  */
 
-import type { KLineData } from '../../common/Data'
-import { type Indicator, type IndicatorTemplate, IndicatorSeries } from '../../component/Indicator'
+import { type IndicatorTemplate, IndicatorSeries } from '../../component/Indicator'
 
 interface Ma {
   ma1?: number
@@ -25,7 +24,7 @@ interface Ma {
 /**
  * MA 移动平均
  */
-const movingAverage: IndicatorTemplate<Ma> = {
+const movingAverage: IndicatorTemplate<Ma, number> = {
   name: 'MA',
   shortName: 'MA',
   series: IndicatorSeries.Price,
@@ -38,14 +37,14 @@ const movingAverage: IndicatorTemplate<Ma> = {
     { key: 'ma3', title: 'MA30: ', type: 'line' },
     { key: 'ma4', title: 'MA60: ', type: 'line' }
   ],
-  regenerateFigures: (params: unknown[]) => params.map((p: number, i: number) => ({ key: `ma${i + 1}`, title: `MA${p}: `, type: 'line' })),
-  calc: (dataList: KLineData[], indicator: Indicator<Ma>) => {
+  regenerateFigures: (params) => params.map((p, i) => ({ key: `ma${i + 1}`, title: `MA${p}: `, type: 'line' })),
+  calc: (dataList, indicator) => {
     const { calcParams: params, figures } = indicator
     const closeSums: number[] = []
-    return dataList.map((kLineData: KLineData, i: number) => {
+    return dataList.map((kLineData, i) => {
       const ma = {}
       const close = kLineData.close
-      params.forEach((p: number, index: number) => {
+      params.forEach((p, index) => {
         closeSums[index] = (closeSums[index] ?? 0) + close
         if (i >= p - 1) {
           ma[figures[index].key] = closeSums[index] / p

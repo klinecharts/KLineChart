@@ -12,8 +12,7 @@
  * limitations under the License.
  */
 
-import type { KLineData } from '../../common/Data'
-import type { Indicator, IndicatorTemplate } from '../../component/Indicator'
+import type { IndicatorTemplate } from '../../component/Indicator'
 
 interface Brar {
   br?: number
@@ -29,7 +28,7 @@ interface Brar {
  * 其中，H为当日最高价，L为当日最低价，O为当日开盘价，N为设定的时间参数
  *
  */
-const brar: IndicatorTemplate<Brar> = {
+const brar: IndicatorTemplate<Brar, number> = {
   name: 'BRAR',
   shortName: 'BRAR',
   calcParams: [26],
@@ -37,13 +36,13 @@ const brar: IndicatorTemplate<Brar> = {
     { key: 'br', title: 'BR: ', type: 'line' },
     { key: 'ar', title: 'AR: ', type: 'line' }
   ],
-  calc: (dataList: KLineData[], indicator: Indicator<Brar>) => {
-    const params = indicator.calcParams as number[]
+  calc: (dataList, indicator) => {
+    const params = indicator.calcParams
     let hcy = 0
     let cyl = 0
     let ho = 0
     let ol = 0
-    return dataList.map((kLineData: KLineData, i: number) => {
+    return dataList.map((kLineData, i) => {
       const brar: Brar = {}
       const high = kLineData.high
       const low = kLineData.low
