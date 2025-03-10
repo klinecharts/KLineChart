@@ -2,8 +2,6 @@
 This document introduces the built-in technical indicators in the chart and how to customize a technical indicator.
 
 ## Built-in technical indicators
-It is important to note some indicators can be overlaid on the Candle using ```chart.createIndicator("WR", true, { id:'candle_pane' });``` and some cannot. Candle-compatible indicators are: BBI,BOLL,EMA,MA,SAR,SMA
-
 | **Name** | **Default calc params** | **Name** | **Default calc params** | **Name** | **Default calc params** |
 | :---: | :---: | :---: | :---: | :---: | :---: |
 | MA | [5, 10, 30, 60] | BIAS | [6, 12, 24] | VR | [24, 30] |
@@ -15,6 +13,10 @@ It is important to note some indicators can be overlaid on the Candle using ```c
 | BOLL | [20, 2] | DMA | [10, 50, 10] | ROC | [12, 6] |
 | KDJ | [9, 3, 3] | TRIX | [12, 20] | PVT | None |
 | RSI | [6, 12, 24] | OBV | [30] | AVP | None |
+
+::: tip Tip
+Some indicators can be overlaid on the candlestick using `chart.createIndicator('MA', true, { id:'candle_pane' })` and some cannot. Compatible indicators are: BBI, BOLL, EMA, MA, SAR, SMA. You can use custom drawing of custom indicators to draw the indicator on the candlestick chart to make it compatible with the candlestick.
+:::
 
 
 ## Custom Indicators
