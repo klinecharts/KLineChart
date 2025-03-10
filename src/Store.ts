@@ -644,7 +644,7 @@ export default class StoreImp implements Store {
         data: {
           prev: this._dataList[i - 1] ?? kLineData,
           current: kLineData,
-          next: this._dataList[i - 1] ?? kLineData
+          next: this._dataList[i + 1] ?? kLineData
         }
       })
       if (isValid(kLineData)) {
