@@ -14,6 +14,10 @@ This document introduces the built-in technical indicators in the chart and how 
 | KDJ | [9, 3, 3] | TRIX | [12, 20] | PVT | None |
 | RSI | [6, 12, 24] | OBV | [30] | AVP | None |
 
+::: tip Tip
+Some indicators can be overlaid on the candlestick using `chart.createIndicator('MA', true, { id:'candle_pane' })` and some cannot. Compatible indicators are: BBI, BOLL, EMA, MA, SAR, SMA. You can use custom drawing of custom indicators to draw the indicator on the candlestick chart to make it compatible with the candlestick.
+:::
+
 
 ## Custom Indicators
 To create a custom indicator, you only need to generate a indicator information, and then add it globally through the chart API [registerIndicator](/api/chart/registerIndicator) , add it to the chart and use it like a built-in indicator. For more examples, refer to the files under [https://github.com/klinecharts/KLineChart/tree/main/src/extension/indicator](https://github.com/klinecharts/KLineChart/tree/main/src/extension/indicator) .
