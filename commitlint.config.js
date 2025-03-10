@@ -16,6 +16,7 @@ export default {
         'test',
         'revert',
         'ci',
+        'opt',
         'release'
       ]
     ],
