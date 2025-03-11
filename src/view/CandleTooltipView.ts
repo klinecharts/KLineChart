@@ -363,7 +363,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
     const chartStore = this.getWidget().getPane().getChart().getChartStore()
     const styles = chartStore.getStyles().candle
     const dataList = chartStore.getDataList()
-    const customApi = chartStore.getCustomApi()
+    const customApi = chartStore.getInnerCustomApi()
     const decimalFold = chartStore.getDecimalFold()
     const thousandsSeparator = chartStore.getThousandsSeparator()
     const locale = chartStore.getLocale()

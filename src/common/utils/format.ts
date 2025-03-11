@@ -91,10 +91,10 @@ export function formatTimestampToDateTime (dateTimeFormat: Intl.DateTimeFormat, 
   return date as unknown as DateTime
 }
 
-export function formatTimestampToString (dateTimeFormat: Intl.DateTimeFormat, timestamp: number, format: string): string {
+export function formatTimestampByTemplate (dateTimeFormat: Intl.DateTimeFormat, timestamp: number, template: string): string {
   const date = formatTimestampToDateTime(dateTimeFormat, timestamp)
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return -- ignore
-  return format.replace(/YYYY|MM|DD|HH|mm|ss/g, key => date[key])
+  return template.replace(/YYYY|MM|DD|HH|mm|ss/g, key => date[key])
 }
 
 export function formatPrecision (value: string | number, precision?: number): string {

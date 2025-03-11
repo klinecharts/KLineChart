@@ -1,28 +1,26 @@
-import { init } from 'klinecharts';
+import { init, utils } from 'klinecharts'
 
 const chart = init(
   'init-formatDate-chart',
   {
     customApi: {
-      formatDate: (timestamp, _, type) => {
-        const date = new Date(timestamp)
-        const year = date.getFullYear()
-        const month = `${date.getMonth() + 1}`.padStart(2, '0')
-        const day = `${date.getDate()}`.padStart(2, '0')
-        const hour = `${date.getHours()}`.padStart(2, '0')
-        const minute = `${date.getMinutes()}`.padStart(2, '0')
+      formatDate: ({
+        dateTimeFormat,
+        timestamp,
+        type
+      }) => {
         switch (type) {
-          case 0: {
-            return `${year}-${month}-${day} ${hour}:${minute}`
+          case 'tooltip': {
+            return utils.formatDate(dateTimeFormat, timestamp, 'YYYY-MM-DD HH:mm')
           }
-          case 1: {
-            return `${year}-${month}-${day}`
+          case 'crosshair': {
+            return utils.formatDate(dateTimeFormat, timestamp, 'YYYY-MM-DD')
           }
-          case 2: {
-            return `${month}-${day}`
+          case 'xAxis': {
+            return utils.formatDate(dateTimeFormat, timestamp, 'MM-DD')
           }
         }
-        return `${month}-${day} ${hour}-${minute}`
+        return utils.formatDate(dateTimeFormat, timestamp, 'MM-DD HH:mm')
       }
     }
   }
@@ -30,4 +28,4 @@ const chart = init(
 
 fetch('https://klinecharts.com/datas/kline.json')
   .then(res => res.json())
-  .then(dataList => { chart.applyNewData(dataList); });
+  .then(dataList => { chart.applyNewData(dataList) })

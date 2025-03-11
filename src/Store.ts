@@ -14,6 +14,7 @@
 
 import type Nullable from './common/Nullable'
 import type DeepPartial from './common/DeepPartial'
+import type PickRequired from './common/PickRequired'
 import type { KLineData, VisibleRangeData } from './common/Data'
 import type VisibleRange from './common/VisibleRange'
 import type Coordinate from './common/Coordinate'
@@ -24,7 +25,7 @@ import type BarSpace from './common/BarSpace'
 import type Precision from './common/Precision'
 import Action from './common/Action'
 import { ActionType, type ActionCallback } from './common/Action'
-import { formatValue, formatTimestampToString, formatBigNumber, formatThousands, formatFoldDecimal } from './common/utils/format'
+import { formatValue, formatTimestampByTemplate, formatBigNumber, formatThousands, formatFoldDecimal } from './common/utils/format'
 import { getDefaultStyles, type TooltipFeatureStyle, type Styles, type TooltipLegend } from './common/Styles'
 import { isArray, isString, isValid, isNumber, isBoolean, isFunction, merge } from './common/utils/typeChecks'
 import { createId } from './common/utils/id'
@@ -36,7 +37,7 @@ import { type LoadDataCallback, type LoadDataParams, LoadDataType } from './comm
 import type TimeWeightTick from './common/TimeWeightTick'
 import { classifyTimeWeightTicks, createTimeWeightTickList } from './common/TimeWeightTick'
 
-import type { Options, CustomApi, ThousandsSeparator, DecimalFold } from './Options'
+import type { Options, CustomApi, ThousandsSeparator, DecimalFold, FormatDateType, FormatDateParams, FormatBigNumber } from './Options'
 
 import { IndicatorDataState, type IndicatorOverride, type IndicatorCreate, type IndicatorFilter, type Indicator } from './component/Indicator'
 import type IndicatorImp from './component/Indicator'
@@ -52,7 +53,6 @@ import { getStyles as getExtensionStyles } from './extension/styles/index'
 import { PaneIdConstants } from './pane/types'
 
 import type Chart from './Chart'
-import type PickRequired from './common/PickRequired'
 
 const BarSpaceLimitConstants = {
   MIN: 1,
@@ -150,8 +150,21 @@ export default class StoreImp implements Store {
    * Custom api
    */
   private readonly _customApi = {
-    formatDate: (timestamp: number, format: string) => formatTimestampToString(this._dateTimeFormat, timestamp, format),
+    formatDate: ({
+      dateTimeFormat,
+      timestamp,
+      template
+    }: FormatDateParams) => formatTimestampByTemplate(dateTimeFormat, timestamp, template),
     formatBigNumber
+  }
+
+  /**
+   * Inner custom api
+   * @description Internal use only
+   */
+  private readonly _innerCustomApi = {
+    formatDate: (timestamp: number, template: string, type: FormatDateType) => this._customApi.formatDate({ dateTimeFormat: this._dateTimeFormat, timestamp, template, type }),
+    formatBigNumber: this._customApi.formatBigNumber
   }
 
   /**
@@ -396,6 +409,13 @@ export default class StoreImp implements Store {
   }
 
   getCustomApi (): CustomApi { return this._customApi }
+
+  getInnerCustomApi (): {
+    formatDate: (timestamp: number, template: string, type: FormatDateType) => string
+    formatBigNumber: FormatBigNumber
+    } {
+    return this._innerCustomApi
+  }
 
   setLocale (locale: string): void { this._locale = locale }
 

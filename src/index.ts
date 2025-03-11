@@ -39,9 +39,9 @@ import {
   formatValue,
   formatPrecision,
   formatBigNumber,
-  formatTimestampToString,
   formatThousands,
-  formatFoldDecimal
+  formatFoldDecimal,
+  formatTimestampByTemplate
 } from './common/utils/format'
 import { calcTextWidth } from './common/utils/canvas'
 import { ActionType } from './common/Action'
@@ -149,7 +149,7 @@ const utils = {
   formatValue,
   formatPrecision,
   formatBigNumber,
-  formatDate: formatTimestampToString,
+  formatDate: formatTimestampByTemplate,
   formatThousands,
   formatFoldDecimal,
   calcTextWidth,

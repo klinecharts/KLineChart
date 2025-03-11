@@ -76,7 +76,7 @@ export default abstract class XAxisImp extends AxisImp implements XAxis {
   protected override createTicksImp (): AxisTick[] {
     const { realFrom, realTo } = this.getRange()
     const chartStore = this.getParent().getChart().getChartStore()
-    const formatDate = chartStore.getCustomApi().formatDate
+    const formatDate = chartStore.getInnerCustomApi().formatDate
     const timeWeightTickList = chartStore.getTimeWeightTickList()
     const ticks: AxisTick[] = []
 
