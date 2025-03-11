@@ -1,6 +1,6 @@
 export default {
   extends: ['@commitlint/config-conventional'],
-  roles: {
+  rules: {
     'type-enum': [
       2,
       'always',
