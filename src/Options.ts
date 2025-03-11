@@ -19,12 +19,19 @@ import type { IndicatorCreate } from './component/Indicator'
 import type { PaneOptions } from './pane/types'
 
 export enum FormatDateType {
-  Tooltip,
-  Crosshair,
-  XAxis
+  Tooltip = 'tooltip',
+  Crosshair = 'crosshair',
+  XAxis = 'xAxis',
 }
 
-export type FormatDate = (timestamp: number, format: string, type: FormatDateType) => string
+export interface FormatDateParams {
+  dateTimeFormat: Intl.DateTimeFormat
+  timestamp: number
+  template: string
+  type: FormatDateType
+}
+
+export type FormatDate = (params: FormatDateParams) => string
 
 export type FormatBigNumber = (value: string | number) => string
 
