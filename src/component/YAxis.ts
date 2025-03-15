@@ -277,7 +277,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
         shouldFormatBigNumber ||= indicator.shouldFormatBigNumber
       })
     }
-    const customApi = chartStore.getCustomApi()
+    const formatter = chartStore.getInnerFormatter()
     const thousandsSeparator = chartStore.getThousandsSeparator()
     const decimalFold = chartStore.getDecimalFold()
     const textHeight = styles.xAxis.tickText.size
@@ -291,7 +291,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
         )
       )
       if (shouldFormatBigNumber) {
-        v = customApi.formatBigNumber(value)
+        v = formatter.formatBigNumber(value)
       }
       v = decimalFold.format(thousandsSeparator.format(v))
       const validYNumber = isNumber(validY)
@@ -368,7 +368,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
       let valueText = formatPrecision(this.getRange().displayTo, precision)
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- ignore
       if (shouldFormatBigNumber) {
-        valueText = chartStore.getCustomApi().formatBigNumber(valueText)
+        valueText = chartStore.getInnerFormatter().formatBigNumber(valueText)
       }
       valueText = chartStore.getDecimalFold().format(valueText)
       crosshairVerticalTextWidth += (

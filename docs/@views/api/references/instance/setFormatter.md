@@ -1,6 +1,6 @@
 ```typescript
 (
-  customApi: {
+  formatter: {
     formatDate?: (params: {
       dateTimeFormat: Intl.DateTimeFormat
       timestamp: number

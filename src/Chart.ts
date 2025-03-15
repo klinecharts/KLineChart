@@ -24,7 +24,7 @@ import { ActionType, type ActionCallback } from './common/Action'
 import type { LoadDataCallback, LoadDataMore } from './common/LoadDataCallback'
 import type Precision from './common/Precision'
 import type VisibleRange from './common/VisibleRange'
-import { type CustomApi, type DecimalFold, type LayoutChild, LayoutChildType, type Options, type ThousandsSeparator } from './Options'
+import { type Formatter, type DecimalFold, type LayoutChild, LayoutChildType, type Options, type ThousandsSeparator } from './Options'
 import Animation from './common/Animation'
 
 import { createId } from './common/utils/id'
@@ -580,13 +580,13 @@ export default class ChartImp implements Chart {
 
   getStyles (): Styles { return this._chartStore.getStyles() }
 
-  setCustomApi (api: Partial<CustomApi>): void {
+  setFormatter (formatter: Partial<Formatter>): void {
     this._setOptions(() => {
-      this._chartStore.setCustomApi(api)
+      this._chartStore.setFormatter(formatter)
     })
   }
 
-  getCustomApi (): CustomApi { return this._chartStore.getCustomApi() }
+  getFormatter (): Formatter { return this._chartStore.getFormatter() }
 
   setLocale (locale: string): void {
     this._setOptions(() => {

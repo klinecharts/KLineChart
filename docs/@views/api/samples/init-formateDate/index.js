@@ -3,7 +3,7 @@ import { init, utils } from 'klinecharts'
 const chart = init(
   'init-formatDate-chart',
   {
-    customApi: {
+    formatter: {
       formatDate: ({
         dateTimeFormat,
         timestamp,

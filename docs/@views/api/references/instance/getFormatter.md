@@ -1,3 +1,3 @@
 ```typescript
-() => CustomApi
+() => Formatter
 ```

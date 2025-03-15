@@ -37,7 +37,7 @@ import { type LoadDataCallback, type LoadDataParams, LoadDataType } from './comm
 import type TimeWeightTick from './common/TimeWeightTick'
 import { classifyTimeWeightTicks, createTimeWeightTickList } from './common/TimeWeightTick'
 
-import type { Options, CustomApi, ThousandsSeparator, DecimalFold, FormatDateType, FormatDateParams, FormatBigNumber } from './Options'
+import type { Options, Formatter, ThousandsSeparator, DecimalFold, FormatDateType, FormatDateParams, FormatBigNumber } from './Options'
 
 import { IndicatorDataState, type IndicatorOverride, type IndicatorCreate, type IndicatorFilter, type Indicator } from './component/Indicator'
 import type IndicatorImp from './component/Indicator'
@@ -101,8 +101,8 @@ export const DEFAULT_MIN_TIME_SPAN = 15 * 60 * 1000
 export interface Store {
   setStyles: (value: string | DeepPartial<Styles>) => void
   getStyles: () => Styles
-  setCustomApi: (api: Partial<CustomApi>) => void
-  getCustomApi: () => CustomApi
+  setFormatter: (formatter: Partial<Formatter>) => void
+  getFormatter: () => Formatter
   setLocale: (locale: string) => void
   getLocale: () => string
   setTimezone: (timezone: string) => void
@@ -149,7 +149,7 @@ export default class StoreImp implements Store {
   /**
    * Custom api
    */
-  private readonly _customApi = {
+  private readonly _formatter = {
     formatDate: ({
       dateTimeFormat,
       timestamp,
@@ -159,12 +159,12 @@ export default class StoreImp implements Store {
   }
 
   /**
-   * Inner custom api
+   * Inner formatter
    * @description Internal use only
    */
-  private readonly _innerCustomApi = {
-    formatDate: (timestamp: number, template: string, type: FormatDateType) => this._customApi.formatDate({ dateTimeFormat: this._dateTimeFormat, timestamp, template, type }),
-    formatBigNumber: this._customApi.formatBigNumber
+  private readonly _innerFormatter = {
+    formatDate: (timestamp: number, template: string, type: FormatDateType) => this._formatter.formatDate({ dateTimeFormat: this._dateTimeFormat, timestamp, template, type }),
+    formatBigNumber: this._formatter.formatBigNumber
   }
 
   /**
@@ -369,7 +369,7 @@ export default class StoreImp implements Store {
     this._chart = chart
     this._calcOptimalBarSpace()
     this._lastBarRightSideDiffBarCount = this._offsetRightDistance / this._barSpace
-    const { styles, locale, timezone, customApi, thousandsSeparator, decimalFold } = options ?? {}
+    const { styles, locale, timezone, formatter, thousandsSeparator, decimalFold } = options ?? {}
     if (isValid(styles)) {
       this.setStyles(styles)
     }
@@ -377,8 +377,8 @@ export default class StoreImp implements Store {
       this.setLocale(locale)
     }
     this.setTimezone(timezone ?? '')
-    if (isValid(customApi)) {
-      this.setCustomApi(customApi)
+    if (isValid(formatter)) {
+      this.setFormatter(formatter)
     }
     if (isValid(thousandsSeparator)) {
       this.setThousandsSeparator(thousandsSeparator)
@@ -404,17 +404,17 @@ export default class StoreImp implements Store {
 
   getStyles (): Styles { return this._styles }
 
-  setCustomApi (api: Partial<CustomApi>): void {
-    merge(this._customApi, api)
+  setFormatter (formatter: Partial<Formatter>): void {
+    merge(this._formatter, formatter)
   }
 
-  getCustomApi (): CustomApi { return this._customApi }
+  getFormatter (): Formatter { return this._formatter }
 
-  getInnerCustomApi (): {
+  getInnerFormatter (): {
     formatDate: (timestamp: number, template: string, type: FormatDateType) => string
     formatBigNumber: FormatBigNumber
     } {
-    return this._innerCustomApi
+    return this._innerFormatter
   }
 
   setLocale (locale: string): void { this._locale = locale }

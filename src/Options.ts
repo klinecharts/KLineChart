@@ -35,7 +35,7 @@ export type FormatDate = (params: FormatDateParams) => string
 
 export type FormatBigNumber = (value: string | number) => string
 
-export interface CustomApi {
+export interface Formatter {
   formatDate: FormatDate
   formatBigNumber: FormatBigNumber
 }
@@ -78,7 +78,7 @@ export interface Options {
   locale?: string
   timezone?: string
   styles?: string | DeepPartial<Styles>
-  customApi?: Partial<CustomApi>
+  formatter?: Partial<Formatter>
   thousandsSeparator?: Partial<ThousandsSeparator>
   decimalFold?: Partial<DecimalFold>
   layout?: LayoutChild[]

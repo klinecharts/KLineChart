@@ -363,7 +363,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
     const chartStore = this.getWidget().getPane().getChart().getChartStore()
     const styles = chartStore.getStyles().candle
     const dataList = chartStore.getDataList()
-    const customApi = chartStore.getInnerCustomApi()
+    const formatter = chartStore.getInnerFormatter()
     const decimalFold = chartStore.getDecimalFold()
     const thousandsSeparator = chartStore.getThousandsSeparator()
     const locale = chartStore.getLocale()
@@ -379,13 +379,13 @@ export default class CandleTooltipView extends IndicatorTooltipView {
     const prevClose = prev?.close ?? current.close
     const changeValue = current.close - prevClose
     const mapping = {
-      '{time}': customApi.formatDate(current.timestamp, 'YYYY-MM-DD HH:mm', FormatDateType.Tooltip),
+      '{time}': formatter.formatDate(current.timestamp, 'YYYY-MM-DD HH:mm', FormatDateType.Tooltip),
       '{open}': decimalFold.format(thousandsSeparator.format(formatPrecision(current.open, pricePrecision))),
       '{high}': decimalFold.format(thousandsSeparator.format(formatPrecision(current.high, pricePrecision))),
       '{low}': decimalFold.format(thousandsSeparator.format(formatPrecision(current.low, pricePrecision))),
       '{close}': decimalFold.format(thousandsSeparator.format(formatPrecision(current.close, pricePrecision))),
       '{volume}': decimalFold.format(thousandsSeparator.format(
-        customApi.formatBigNumber(formatPrecision(current.volume ?? tooltipStyles.defaultValue, volumePrecision))
+        formatter.formatBigNumber(formatPrecision(current.volume ?? tooltipStyles.defaultValue, volumePrecision))
       )),
       '{turnover}': decimalFold.format(thousandsSeparator.format(
         formatPrecision(current.turnover ?? tooltipStyles.defaultValue, pricePrecision)

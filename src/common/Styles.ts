@@ -221,6 +221,7 @@ export interface CandleHighLowPriceMarkStyle {
 }
 
 export type CandleLastPriceMarkLineStyle = Omit<StateLineStyle, 'color'>
+
 export interface CandleLastPriceMarkStyle extends ChangeColor {
   show: boolean
   compareRule: CandleColorCompareRule

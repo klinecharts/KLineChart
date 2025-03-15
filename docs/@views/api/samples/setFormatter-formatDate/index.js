@@ -1,8 +1,8 @@
 import { init, utils } from 'klinecharts'
 
-const chart = init('setCustomApi-formatDate-chart')
+const chart = init('setFormatter-formatDate-chart')
 
-chart.setCustomApi({
+chart.setFormatter({
   formatDate: ({
     dateTimeFormat,
     timestamp,

@@ -44,7 +44,7 @@
     locale?: string
     styles?: string | Styles
     timezone?: string
-    customApi?: {
+    formatter?: {
       formatDate?: (params: {
         dateTimeFormat: Intl.DateTimeFormat
         timestamp: number

@@ -35,7 +35,7 @@ export default class IndicatorLastValueView extends View<YAxis> {
       const dataList = chartStore.getDataList()
       const dataIndex = dataList.length - 1
       const indicators = chartStore.getIndicatorsByPaneId(pane.getId())
-      const customApi = chartStore.getCustomApi()
+      const formatter = chartStore.getInnerFormatter()
       const decimalFold = chartStore.getDecimalFold()
       const thousandsSeparator = chartStore.getThousandsSeparator()
       indicators.forEach(indicator => {
@@ -56,7 +56,7 @@ export default class IndicatorLastValueView extends View<YAxis> {
                 precision
               )
               if (indicator.shouldFormatBigNumber) {
-                text = customApi.formatBigNumber(text)
+                text = formatter.formatBigNumber(text)
               }
               text = decimalFold.format(thousandsSeparator.format(text))
               let x = 0

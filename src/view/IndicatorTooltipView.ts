@@ -309,7 +309,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
     const dataIndex = chartStore.getCrosshair().dataIndex!
     const result = indicator.result
 
-    const customApi = chartStore.getCustomApi()
+    const formatter = chartStore.getInnerFormatter()
     const decimalFold = chartStore.getDecimalFold()
     const thousandsSeparator = chartStore.getThousandsSeparator()
     const legends: TooltipLegend[] = []
@@ -323,7 +323,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
           if (isNumber(value)) {
             value = formatPrecision(value, indicator.precision)
             if (indicator.shouldFormatBigNumber) {
-              value = customApi.formatBigNumber(value as string)
+              value = formatter.formatBigNumber(value as string)
             }
             value = decimalFold.format(thousandsSeparator.format(value as string))
           }

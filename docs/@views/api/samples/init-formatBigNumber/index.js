@@ -1,9 +1,9 @@
-import { init } from 'klinecharts';
+import { init } from 'klinecharts'
 
 const chart = init(
   'init-formatBigNumber-chart',
   {
-    customApi: {
+    formatter: {
       formatBigNumber: value => {
         const v = +value
         if (typeof v === 'number') {
@@ -20,4 +20,4 @@ chart.createIndicator('VOL')
 
 fetch('https://klinecharts.com/datas/kline.json')
   .then(res => res.json())
-  .then(dataList => { chart.applyNewData(dataList); });
+  .then(dataList => { chart.applyNewData(dataList) })
