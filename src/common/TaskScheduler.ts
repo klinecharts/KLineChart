@@ -13,6 +13,7 @@
  */
 
 import { requestIdleCallback, cancelIdleCallback, DEFAULT_REQUEST_ID } from './utils/compatible'
+import { isValid } from './utils/typeChecks'
 interface Task {
   id: string
   handler: () => void
@@ -23,7 +24,7 @@ export function generateTaskId (...params: string[]): string {
 }
 
 export default class TaskScheduler {
-  private readonly _tasks: Task[]
+  private _tasks: Task[]
 
   private _requestIdleCallbackId = DEFAULT_REQUEST_ID
 
@@ -63,13 +64,19 @@ export default class TaskScheduler {
     return this
   }
 
-  removeTask (id: string): this {
-    this._operateTasks(() => {
-      const index = this._tasks.findIndex(t => t.id === id)
-      if (index > -1) {
-        this._tasks.splice(index, 1)
-      }
-    })
+  removeTask (id?: string): this {
+    if (isValid(id)) {
+      this._operateTasks(() => {
+        if (isValid(id)) {
+          const index = this._tasks.findIndex(t => t.id === id)
+          if (index > -1) {
+            this._tasks.splice(index, 1)
+          }
+        } else {
+          this._tasks = []
+        }
+      })
+    }
     return this
   }
 }

@@ -12,6 +12,7 @@
  * limitations under the License.
  */
 
+import type { KLineData } from './common/Data'
 import type DeepPartial from './common/DeepPartial'
 import type { Styles } from './common/Styles'
 
@@ -35,9 +36,17 @@ export type FormatDate = (params: FormatDateParams) => string
 
 export type FormatBigNumber = (value: string | number) => string
 
+export interface FormatLastPriceExtendTextParams {
+  data: KLineData
+  index: number
+}
+
+export type FormatLastPriceExtendText = (params: FormatLastPriceExtendTextParams) => string
+
 export interface Formatter {
   formatDate: FormatDate
   formatBigNumber: FormatBigNumber
+  formatLastPriceExtendText: FormatLastPriceExtendText
 }
 
 export interface Locales {

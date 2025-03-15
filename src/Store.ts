@@ -37,7 +37,7 @@ import { type LoadDataCallback, type LoadDataParams, LoadDataType } from './comm
 import type TimeWeightTick from './common/TimeWeightTick'
 import { classifyTimeWeightTicks, createTimeWeightTickList } from './common/TimeWeightTick'
 
-import type { Options, Formatter, ThousandsSeparator, DecimalFold, FormatDateType, FormatDateParams, FormatBigNumber } from './Options'
+import type { Options, Formatter, ThousandsSeparator, DecimalFold, FormatDateType, FormatDateParams, FormatBigNumber, FormatLastPriceExtendTextParams, FormatLastPriceExtendText } from './Options'
 
 import { IndicatorDataState, type IndicatorOverride, type IndicatorCreate, type IndicatorFilter, type Indicator } from './component/Indicator'
 import type IndicatorImp from './component/Indicator'
@@ -155,7 +155,8 @@ export default class StoreImp implements Store {
       timestamp,
       template
     }: FormatDateParams) => formatTimestampByTemplate(dateTimeFormat, timestamp, template),
-    formatBigNumber
+    formatBigNumber,
+    formatLastPriceExtendText: (_: FormatLastPriceExtendTextParams) => ''
   }
 
   /**
@@ -164,7 +165,8 @@ export default class StoreImp implements Store {
    */
   private readonly _innerFormatter = {
     formatDate: (timestamp: number, template: string, type: FormatDateType) => this._formatter.formatDate({ dateTimeFormat: this._dateTimeFormat, timestamp, template, type }),
-    formatBigNumber: this._formatter.formatBigNumber
+    formatBigNumber: (value: number | string) => this._formatter.formatBigNumber(value),
+    formatLastPriceExtendText: (params: FormatLastPriceExtendTextParams) => this._formatter.formatLastPriceExtendText(params)
   }
 
   /**
@@ -332,6 +334,8 @@ export default class StoreImp implements Store {
    */
   private _progressOverlayInfo: Nullable<ProgressOverlayInfo> = null
 
+  private _lastPriceMarkExtendTextUpdateTimers: Array<ReturnType<typeof setTimeout>> = []
+
   /**
    * Overlay information by the mouse pressed
    */
@@ -400,6 +404,22 @@ export default class StoreImp implements Store {
     if (isArray(styles?.candle?.tooltip?.custom)) {
       this._styles.candle.tooltip.custom = styles.candle.tooltip.custom as TooltipLegend[]
     }
+    if (isValid(styles?.candle?.priceMark?.last?.extendTexts)) {
+      this._clearLastPriceMarkExtendTextUpdateTimer()
+      const intervals: number[] = []
+      this._styles.candle.priceMark.last.extendTexts.forEach(item => {
+        const updateInterval = item.updateInterval
+        console.log(11111, item.show && updateInterval > 0 && !intervals.includes(updateInterval))
+        if (item.show && updateInterval > 0 && !intervals.includes(updateInterval)) {
+          intervals.push(updateInterval)
+          const timer = setInterval(() => {
+            console.log(11111)
+            this._chart.updatePane(UpdateLevel.Main, PaneIdConstants.CANDLE)
+          }, updateInterval)
+          this._lastPriceMarkExtendTextUpdateTimers.push(timer)
+        }
+      })
+    }
   }
 
   getStyles (): Styles { return this._styles }
@@ -412,7 +432,8 @@ export default class StoreImp implements Store {
 
   getInnerFormatter (): {
     formatDate: (timestamp: number, template: string, type: FormatDateType) => string
-    formatBigNumber: FormatBigNumber
+    formatBigNumber: FormatBigNumber,
+    formatLastPriceExtendText: FormatLastPriceExtendText
     } {
     return this._innerFormatter
   }
@@ -1453,6 +1474,13 @@ export default class StoreImp implements Store {
     return this._progressOverlayInfo?.overlay.isDrawing() ?? false
   }
 
+  private _clearLastPriceMarkExtendTextUpdateTimer (): void {
+    this._lastPriceMarkExtendTextUpdateTimers.forEach(timer => {
+      clearInterval(timer)
+    })
+    this._lastPriceMarkExtendTextUpdateTimers = []
+  }
+
   clearData (): void {
     this._loadDataMore.backward = false
     this._loadDataMore.forward = false
@@ -1472,5 +1500,14 @@ export default class StoreImp implements Store {
 
   getChart (): Chart {
     return this._chart
+  }
+
+  destroy (): void {
+    this.clearData()
+    this._clearLastPriceMarkExtendTextUpdateTimer()
+    this._taskScheduler.removeTask()
+    this._overlays.clear()
+    this._indicators.clear()
+    this._actions.clear()
   }
 }

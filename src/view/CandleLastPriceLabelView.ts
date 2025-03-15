@@ -13,7 +13,8 @@
  */
 
 import { isValid } from '../common/utils/typeChecks'
-import { CandleColorCompareRule } from '../common/Styles'
+import { CandleColorCompareRule, CandleLastPriceMarkExtendTextPosition } from '../common/Styles'
+import { calcTextWidth } from '../common/utils/canvas'
 
 import View from './View'
 
@@ -45,15 +46,6 @@ export default class CandleLastPriceLabelView extends View {
         } else {
           backgroundColor = lastPriceMarkStyles.noChangeColor
         }
-        const yAxisRange = yAxis.getRange()
-        let text = yAxis.displayValueToText(
-          yAxis.realValueToDisplayValue(
-            yAxis.valueToRealValue(close, { range: yAxisRange }),
-            { range: yAxisRange }
-          ),
-          precision.price
-        )
-        text = chartStore.getDecimalFold().format(chartStore.getThousandsSeparator().format(text))
         let x = 0
         let textAlgin: CanvasTextAlign = 'left'
         if (yAxis.isFromZero()) {
@@ -63,12 +55,26 @@ export default class CandleLastPriceLabelView extends View {
           x = bounding.width
           textAlgin = 'right'
         }
+
+        const yAxisRange = yAxis.getRange()
+        let priceText = yAxis.displayValueToText(
+          yAxis.realValueToDisplayValue(
+            yAxis.valueToRealValue(close, { range: yAxisRange }),
+            { range: yAxisRange }
+          ),
+          precision.price
+        )
+        priceText = chartStore.getDecimalFold().format(chartStore.getThousandsSeparator().format(priceText))
+        const priceTextWidth = lastPriceMarkTextStyles.paddingLeft + calcTextWidth(priceText, lastPriceMarkTextStyles.size, lastPriceMarkTextStyles.weight, lastPriceMarkTextStyles.family)
+        const priceTextHeight = lastPriceMarkTextStyles.paddingTop + lastPriceMarkTextStyles.size + lastPriceMarkTextStyles.paddingBottom
         this.createFigure({
           name: 'text',
           attrs: {
             x,
             y: priceY,
-            text,
+            width: priceTextWidth,
+            height: priceTextHeight,
+            text: priceText,
             align: textAlgin,
             baseline: 'middle'
           },
@@ -77,6 +83,40 @@ export default class CandleLastPriceLabelView extends View {
             backgroundColor
           }
         })?.draw(ctx)
+
+        const formatLastPriceExtendText = chartStore.getInnerFormatter().formatLastPriceExtendText
+        const priceTextHalfHeight = lastPriceMarkTextStyles.size / 2
+        let aboveY = priceY - priceTextHalfHeight - lastPriceMarkTextStyles.paddingTop
+        let belowY = priceY + priceTextHalfHeight + lastPriceMarkTextStyles.paddingBottom
+        lastPriceMarkStyles.extendTexts.forEach((item, index) => {
+          const text = formatLastPriceExtendText({ data, index })
+          if (text.length > 0 && item.show) {
+            const textHalfHeight = item.size / 2
+            let textY = 0
+            if (item.position === CandleLastPriceMarkExtendTextPosition.AbovePrice) {
+              aboveY -= (item.paddingBottom + textHalfHeight)
+              textY = aboveY
+              aboveY -= (textHalfHeight + item.paddingTop)
+            } else {
+              belowY += (item.paddingTop + textHalfHeight)
+              textY = belowY
+              belowY += (textHalfHeight + item.paddingBottom)
+            }
+            this.createFigure({
+              name: 'text',
+              attrs: {
+                x,
+                y: textY,
+                width: priceTextWidth,
+                height: item.paddingTop + item.size + item.paddingBottom,
+                text,
+                align: textAlgin,
+                baseline: 'middle'
+              },
+              styles: { ...item, backgroundColor }
+            })?.draw(ctx)
+          }
+        })
       }
     }
   }

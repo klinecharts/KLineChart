@@ -222,11 +222,21 @@ export interface CandleHighLowPriceMarkStyle {
 
 export type CandleLastPriceMarkLineStyle = Omit<StateLineStyle, 'color'>
 
+export enum CandleLastPriceMarkExtendTextPosition {
+  AbovePrice = 'above_price',
+  BelowPrice = 'below_price'
+}
+
+export type CandleLastPriceMarkExtendTextStyle = LastValueMarkTextStyle & {
+  position: CandleLastPriceMarkExtendTextPosition
+  updateInterval: number
+}
 export interface CandleLastPriceMarkStyle extends ChangeColor {
   show: boolean
   compareRule: CandleColorCompareRule
   line: CandleLastPriceMarkLineStyle
   text: LastValueMarkTextStyle
+  extendTexts: CandleLastPriceMarkExtendTextStyle[]
 }
 
 export interface CandlePriceMarkStyle {
@@ -486,7 +496,8 @@ function getDefaultCandleStyle (): CandleStyle {
           family: 'Helvetica Neue',
           weight: 'normal',
           borderRadius: 2
-        }
+        },
+        extendTexts: []
       }
     },
     tooltip: {

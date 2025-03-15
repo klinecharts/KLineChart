@@ -1187,6 +1187,7 @@ export default class ChartImp implements Chart {
     })
     this._drawPanes = []
     this._separatorPanes.clear()
+    this._chartStore.destroy()
     this._container.removeChild(this._chartContainer)
   }
 }
