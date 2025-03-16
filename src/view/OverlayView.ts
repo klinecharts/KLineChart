@@ -16,7 +16,7 @@ import type Nullable from '../common/Nullable'
 import type Coordinate from '../common/Coordinate'
 import type Point from '../common/Point'
 import type { EventHandler, EventName, MouseTouchEvent, MouseTouchEventCallback } from '../common/SyntheticEvent'
-import { isNumber, isValid } from '../common/utils/typeChecks'
+import { isFunction, isNumber, isValid } from '../common/utils/typeChecks'
 
 import type { Axis } from '../component/Axis'
 import type { YAxis } from '../component/YAxis'
@@ -65,13 +65,17 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
           { key: `${OVERLAY_FIGURE_KEY_PREFIX}point_${index}`, type: 'circle', attrs: {} }
         )(event)
       }
-      chartStore.setHoverOverlayInfo({
-        paneId,
-        overlay: null,
-        figureType: EventOverlayInfoFigureType.None,
-        figureIndex: -1,
-        figure: null
-      }, event)
+      chartStore.setHoverOverlayInfo(
+        {
+          paneId,
+          overlay: null,
+          figureType: EventOverlayInfoFigureType.None,
+          figureIndex: -1,
+          figure: null
+        },
+        (o, f) => this._processOverlayMouseEnterEvent(o, f, event),
+        (o, f) => this._processOverlayMouseLeaveEvent(o, f, event)
+      )
       return false
     }).registerEvent('mouseClickEvent', (event: MouseTouchEvent) => {
       const progressOverlayInfo = chartStore.getProgressOverlayInfo()
@@ -103,13 +107,18 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
           }
         )(event)
       }
-      chartStore.setClickOverlayInfo({
-        paneId,
-        overlay: null,
-        figureType: EventOverlayInfoFigureType.None,
-        figureIndex: -1,
-        figure: null
-      }, event)
+      chartStore.setClickOverlayInfo(
+        {
+          paneId,
+          overlay: null,
+          figureType: EventOverlayInfoFigureType.None,
+          figureIndex: -1,
+          figure: null
+        },
+        (o, f) => this._processOverlayClickEvent(o, f, event),
+        (o, f) => this._processOverlaySelectedEvent(o, f, event),
+        (o, f) => this._processOverlayUnselectedEvent(o, f, event)
+      )
       return false
     }).registerEvent('mouseDoubleClickEvent', (event: MouseTouchEvent) => {
       const progressOverlayInfo = chartStore.getProgressOverlayInfo()
@@ -209,11 +218,53 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     }
   }
 
+  private _processOverlayMouseEnterEvent (overlay: OverlayImp, figure: Nullable<OverlayFigure>, event: MouseTouchEvent): boolean {
+    if (isFunction(overlay.onMouseEnter) && checkOverlayFigureEvent('onMouseEnter', figure)) {
+      overlay.onMouseEnter({ chart: this.getWidget().getPane().getChart(), overlay, figure: figure ?? undefined, ...event })
+      return true
+    }
+    return false
+  }
+
+  private _processOverlayMouseLeaveEvent (overlay: OverlayImp, figure: Nullable<OverlayFigure>, event: MouseTouchEvent): boolean {
+    if (isFunction(overlay.onMouseLeave) && checkOverlayFigureEvent('onMouseLeave', figure)) {
+      overlay.onMouseLeave({ chart: this.getWidget().getPane().getChart(), overlay, figure: figure ?? undefined, ...event })
+      return true
+    }
+    return false
+  }
+
+  private _processOverlayClickEvent (overlay: OverlayImp, figure: Nullable<OverlayFigure>, event: MouseTouchEvent): boolean {
+    if ((!(overlay.isDrawing())) && checkOverlayFigureEvent('onClick', figure)) {
+      overlay.onClick?.({ chart: this.getWidget().getPane().getChart(), overlay, figure: figure ?? undefined, ...event })
+      return true
+    }
+    return false
+  }
+
+  private _processOverlaySelectedEvent (overlay: OverlayImp, figure: Nullable<OverlayFigure>, event: MouseTouchEvent): boolean {
+    if (checkOverlayFigureEvent('onDeselected', figure)) {
+      overlay.onDeselected?.({ chart: this.getWidget().getPane().getChart(), overlay, figure: figure ?? undefined, ...event })
+      return true
+    }
+    return false
+  }
+
+  private _processOverlayUnselectedEvent (overlay: OverlayImp, figure: Nullable<OverlayFigure>, event: MouseTouchEvent): boolean {
+    if (checkOverlayFigureEvent('onSelected', figure)) {
+      overlay.onSelected?.({ chart: this.getWidget().getPane().getChart(), overlay, figure: figure ?? undefined, ...event })
+      return true
+    }
+    return false
+  }
+
   private _figureMouseMoveEvent (overlay: OverlayImp, figureType: EventOverlayInfoFigureType, figureIndex: number, figure: OverlayFigure): MouseTouchEventCallback {
     return (event: MouseTouchEvent) => {
       const pane = this.getWidget().getPane()
       pane.getChart().getChartStore().setHoverOverlayInfo(
-        { paneId: pane.getId(), overlay, figureType, figure, figureIndex }, event
+        { paneId: pane.getId(), overlay, figureType, figure, figureIndex },
+        (o, f) => this._processOverlayMouseEnterEvent(o, f, event),
+        (o, f) => this._processOverlayMouseLeaveEvent(o, f, event)
       )
       return checkOverlayFigureEvent('onMouseEnter', figure) && !overlay.isDrawing()
     }
@@ -237,7 +288,12 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     return (event: MouseTouchEvent) => {
       const pane = this.getWidget().getPane()
       const paneId = pane.getId()
-      pane.getChart().getChartStore().setClickOverlayInfo({ paneId, overlay, figureType, figureIndex, figure }, event)
+      pane.getChart().getChartStore().setClickOverlayInfo(
+        { paneId, overlay, figureType, figureIndex, figure },
+        (o, f) => this._processOverlayClickEvent(o, f, event),
+        (o, f) => this._processOverlaySelectedEvent(o, f, event),
+        (o, f) => this._processOverlayUnselectedEvent(o, f, event)
+      )
       return checkOverlayFigureEvent('onClick', figure) && !overlay.isDrawing()
     }
   }
@@ -340,11 +396,11 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     return true
   }
 
-  override dispatchEvent (name: EventName, event: MouseTouchEvent, other?: number): boolean {
+  override dispatchEvent (name: EventName, event: MouseTouchEvent): boolean {
     if (this.getWidget().getPane().getChart().getChartStore().isOverlayDrawing()) {
-      return this.onEvent(name, event, other)
+      return this.onEvent(name, event)
     }
-    return super.dispatchEvent(name, event, other)
+    return super.dispatchEvent(name, event)
   }
 
   override checkEventOn (): boolean {
