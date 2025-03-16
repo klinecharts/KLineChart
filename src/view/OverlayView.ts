@@ -44,7 +44,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     const paneId = pane.getId()
     const chart = pane.getChart()
     const chartStore = chart.getChartStore()
-    this.registerEvent('mouseMoveEvent', (event: MouseTouchEvent) => {
+    this.registerEvent('mouseMoveEvent', event => {
       const progressOverlayInfo = chartStore.getProgressOverlayInfo()
       if (progressOverlayInfo !== null) {
         const overlay = progressOverlayInfo.overlay
@@ -77,7 +77,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
         (o, f) => this._processOverlayMouseLeaveEvent(o, f, event)
       )
       return false
-    }).registerEvent('mouseClickEvent', (event: MouseTouchEvent) => {
+    }).registerEvent('mouseClickEvent', event => {
       const progressOverlayInfo = chartStore.getProgressOverlayInfo()
       if (progressOverlayInfo !== null) {
         const overlay = progressOverlayInfo.overlay
@@ -120,7 +120,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
         (o, f) => this._processOverlayUnselectedEvent(o, f, event)
       )
       return false
-    }).registerEvent('mouseDoubleClickEvent', (event: MouseTouchEvent) => {
+    }).registerEvent('mouseDoubleClickEvent', event => {
       const progressOverlayInfo = chartStore.getProgressOverlayInfo()
       if (progressOverlayInfo !== null) {
         const overlay = progressOverlayInfo.overlay
@@ -145,7 +145,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
         )(event)
       }
       return false
-    }).registerEvent('mouseRightClickEvent', (event: MouseTouchEvent) => {
+    }).registerEvent('mouseRightClickEvent', event => {
       const progressOverlayInfo = chartStore.getProgressOverlayInfo()
       if (progressOverlayInfo !== null) {
         const overlay = progressOverlayInfo.overlay
@@ -164,7 +164,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
         }
       }
       return false
-    }).registerEvent('mouseUpEvent', (event: MouseTouchEvent) => {
+    }).registerEvent('mouseUpEvent', event => {
       const { overlay, figure } = chartStore.getPressedOverlayInfo()
       if (overlay !== null) {
         if (checkOverlayFigureEvent('onPressedMoveEnd', figure)) {
@@ -179,7 +179,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
         figure: null
       })
       return false
-    }).registerEvent('pressedMouseMoveEvent', (event: MouseTouchEvent) => {
+    }).registerEvent('pressedMouseMoveEvent', event => {
       const { overlay, figureType, figureIndex, figure } = chartStore.getPressedOverlayInfo()
       if (overlay !== null) {
         if (checkOverlayFigureEvent('onPressedMoving', figure)) {
