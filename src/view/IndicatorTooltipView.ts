@@ -20,6 +20,7 @@ import { isValid, isObject, isString, isNumber, isFunction } from '../common/uti
 import { createFont } from '../common/utils/canvas'
 import type Coordinate from '../common/Coordinate'
 import type Nullable from '../common/Nullable'
+import type { MouseTouchEvent } from '../common/SyntheticEvent'
 
 import type { YAxis } from '../component/YAxis'
 
@@ -28,12 +29,13 @@ import { eachFigures, IndicatorEventTarget } from '../component/Indicator'
 
 import type { TooltipFeatureInfo } from '../Store'
 
+import type DrawPane from '../pane/DrawPane'
+import type DrawWidget from '../widget/DrawWidget'
 import View from './View'
-
 export default class IndicatorTooltipView extends View<YAxis> {
-  private readonly _boundFeatureClickEvent = (currentFeatureInfo: TooltipFeatureInfo) => () => {
+  private readonly _featureClickEvent = (featureInfo: TooltipFeatureInfo) => () => {
     const pane = this.getWidget().getPane()
-    const { indicator, ...others } = currentFeatureInfo
+    const { indicator, ...others } = featureInfo
     if (isValid(indicator)) {
       indicator.onClick?.({
         target: IndicatorEventTarget.Feature,
@@ -42,13 +44,25 @@ export default class IndicatorTooltipView extends View<YAxis> {
         ...others
       })
     } else {
-      pane.getChart().getChartStore().executeAction(ActionType.OnCandleTooltipFeatureClick, currentFeatureInfo)
+      pane.getChart().getChartStore().executeAction(ActionType.OnCandleTooltipFeatureClick, featureInfo)
     }
     return true
   }
 
-  private readonly _boundFeatureMouseMoveEvent = (currentFeatureInfo: TooltipFeatureInfo) => () => {
-    this.getWidget().getPane().getChart().getChartStore().setActiveTooltipFeatureInfo(currentFeatureInfo)
+  private readonly _featureMouseMoveEvent = (featureInfo: TooltipFeatureInfo) => () => {
+    this.getWidget().getPane().getChart().getChartStore().setActiveTooltipFeatureInfo(featureInfo)
+    return true
+  }
+
+  constructor (widget: DrawWidget<DrawPane<YAxis>>) {
+    super(widget)
+    this.registerEvent('mouseMoveEvent', _ => {
+      this.getWidget().getPane().getChart().getChartStore().setActiveTooltipFeatureInfo()
+      return false
+    })
+  }
+
+  override checkEventOn (_: MouseTouchEvent): boolean {
     return true
   }
 
@@ -187,8 +201,8 @@ export default class IndicatorTooltipView extends View<YAxis> {
 
         let contentWidth = 0
         const eventHandler = {
-          mouseClickEvent: this._boundFeatureClickEvent({ paneId, indicator, feature }),
-          mouseMoveEvent: this._boundFeatureMouseMoveEvent({ paneId, indicator, feature })
+          mouseClickEvent: this._featureClickEvent({ paneId, indicator, feature }),
+          mouseMoveEvent: this._featureMouseMoveEvent({ paneId, indicator, feature })
         }
 
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- ignore
