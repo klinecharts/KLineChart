@@ -31,15 +31,15 @@ export default class CrosshairHorizontalLabelView<C extends Axis = YAxis> extend
   override drawImp (ctx: CanvasRenderingContext2D): void {
     const widget = this.getWidget()
     const pane = widget.getPane()
-    const bounding = widget.getBounding()
     const chartStore = widget.getPane().getChart().getChartStore()
     const crosshair = chartStore.getCrosshair()
-    const styles = chartStore.getStyles().crosshair
     if (isString(crosshair.paneId) && this.compare(crosshair, pane.getId())) {
+      const styles = chartStore.getStyles().crosshair
       if (styles.show) {
         const directionStyles = this.getDirectionStyles(styles)
         const textStyles = directionStyles.text
         if (directionStyles.show && textStyles.show) {
+          const bounding = widget.getBounding()
           const axis = pane.getAxisComponent()
           const text = this.getText(crosshair, chartStore, axis)
           ctx.font = createFont(textStyles.size, textStyles.weight, textStyles.family)

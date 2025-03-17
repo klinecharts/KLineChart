@@ -21,6 +21,7 @@ export enum ActionType {
   OnScroll = 'onScroll',
   OnVisibleRangeChange = 'onVisibleRangeChange',
   OnCandleTooltipFeatureClick = 'onCandleTooltipFeatureClick',
+  OnCrosshairFeatureClick = 'onCrosshairFeatureClick',
   OnCrosshairChange = 'onCrosshairChange',
   OnCandleBarClick = 'onCandleBarClick',
   OnPaneDrag = 'onPaneDrag'

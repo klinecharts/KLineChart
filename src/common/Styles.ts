@@ -132,6 +132,33 @@ export interface GradientColor {
   color: string
 }
 
+export enum FeatureType {
+  Path = 'path',
+  IconFont = 'icon_font'
+}
+
+export interface FeaturePathStyle extends Omit<PathStyle, 'color'> {
+  path: string
+}
+
+export interface FeatureIconFontStyle {
+  family: string
+  code: string
+}
+
+export interface FeatureStyle extends Padding, Margin {
+  id: string
+  show: boolean
+  backgroundColor: string
+  activeBackgroundColor: string
+  size: number
+  color: string
+  activeColor: string
+  borderRadius: number | number[]
+  type: FeatureType
+  content: FeaturePathStyle | FeatureIconFontStyle
+}
+
 export interface GridStyle {
   show: boolean
   horizontal: StateLineStyle
@@ -150,38 +177,14 @@ export interface TooltipLegend {
   value: string | TooltipLegendChild
 }
 
-export enum TooltipFeatureType {
-  Path = 'path',
-  IconFont = 'icon_font'
-}
-
 export enum TooltipFeaturePosition {
   Left = 'left',
   Middle = 'middle',
   Right = 'right'
 }
 
-export interface TooltipFeaturePathStyle extends Omit<PathStyle, 'color'> {
-  path: string
-}
-
-export interface TooltipFeatureIconFontStyle {
-  family: string
-  content: string
-}
-
-export interface TooltipFeatureStyle extends Padding, Margin {
-  id: string
+export interface TooltipFeatureStyle extends FeatureStyle {
   position: TooltipFeaturePosition
-  backgroundColor: string
-  activeBackgroundColor: string
-  size: number
-  color: string
-  activeColor: string
-  borderRadius: number | number[]
-  type: TooltipFeatureType
-  path: TooltipFeaturePathStyle
-  iconFont: TooltipFeatureIconFontStyle
 }
 
 export interface TooltipStyle {
@@ -343,7 +346,7 @@ export interface CrosshairDirectionStyle {
 
 export interface CrosshairStyle {
   show: boolean
-  horizontal: CrosshairDirectionStyle
+  horizontal: CrosshairDirectionStyle & { features: TooltipFeatureStyle[] }
   vertical: CrosshairDirectionStyle
 }
 
@@ -657,8 +660,38 @@ function getDefaultAxisStyle (): AxisStyle {
 }
 
 function getDefaultCrosshairStyle (): CrosshairStyle {
-  function item (): CrosshairDirectionStyle {
-    return {
+  return {
+    show: true,
+    horizontal: {
+      show: true,
+      line: {
+        show: true,
+        style: LineType.Dashed,
+        dashedValue: [4, 2],
+        size: 1,
+        color: Color.GREY
+      },
+      text: {
+        show: true,
+        style: PolygonType.Fill,
+        color: Color.WHITE,
+        size: 12,
+        family: 'Helvetica Neue',
+        weight: 'normal',
+        borderStyle: LineType.Solid,
+        borderDashedValue: [2, 2],
+        borderSize: 1,
+        borderColor: Color.GREY,
+        borderRadius: 2,
+        paddingLeft: 4,
+        paddingRight: 4,
+        paddingTop: 4,
+        paddingBottom: 4,
+        backgroundColor: Color.GREY
+      },
+      features: []
+    },
+    vertical: {
       show: true,
       line: {
         show: true,
@@ -686,12 +719,6 @@ function getDefaultCrosshairStyle (): CrosshairStyle {
         backgroundColor: Color.GREY
       }
     }
-  }
-
-  return {
-    show: true,
-    horizontal: item(),
-    vertical: item()
   }
 }
 

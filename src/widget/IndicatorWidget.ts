@@ -60,10 +60,15 @@ export default class IndicatorWidget extends DrawWidget<DrawPane<YAxis>> {
     // to do it
   }
 
+  protected updateOverlayContent (_ctx: CanvasRenderingContext2D): void {
+    // to do it
+  }
+
   override updateOverlay (ctx: CanvasRenderingContext2D): void {
     if (this.getPane().getOptions().state !== PaneState.Minimize) {
       this._overlayView.draw(ctx)
       this._crosshairLineView.draw(ctx)
+      this.updateOverlayContent(ctx)
     }
     this._tooltipView.draw(ctx)
   }

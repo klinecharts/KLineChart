@@ -21,6 +21,7 @@ import CandleLastPriceLineView from '../view/CandleLastPriceLineView'
 
 import type IndicatorTooltipView from '../view/IndicatorTooltipView'
 import CandleTooltipView from '../view/CandleTooltipView'
+import CrosshairFeatureView from '../view/CrosshairFeatureView'
 
 import { CandleType } from '../common/Styles'
 
@@ -33,10 +34,12 @@ export default class CandleWidget extends IndicatorWidget {
   private readonly _candleAreaView = new CandleAreaView(this)
   private readonly _candleHighLowPriceView = new CandleHighLowPriceView(this)
   private readonly _candleLastPriceLineView = new CandleLastPriceLineView(this)
+  private readonly _crosshairFeatureView = new CrosshairFeatureView(this)
 
   constructor (rootContainer: HTMLElement, pane: AxisPane<YAxis>) {
     super(rootContainer, pane)
     this.addChild(this._candleBarView)
+    this.addChild(this._crosshairFeatureView)
   }
 
   override updateMainContent (ctx: CanvasRenderingContext2D): void {
@@ -49,6 +52,10 @@ export default class CandleWidget extends IndicatorWidget {
       this._candleAreaView.draw(ctx)
     }
     this._candleLastPriceLineView.draw(ctx)
+  }
+
+  override updateOverlayContent (ctx: CanvasRenderingContext2D): void {
+    this._crosshairFeatureView.draw(ctx)
   }
 
   override createTooltipView (): IndicatorTooltipView {

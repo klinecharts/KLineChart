@@ -13,7 +13,7 @@
  */
 
 import type Crosshair from '../common/Crosshair'
-import { type TooltipStyle, type TooltipTextStyle, type TooltipLegend, TooltipShowRule, type TooltipLegendChild, TooltipFeaturePosition, type TooltipFeatureStyle, TooltipFeatureType } from '../common/Styles'
+import { type TooltipStyle, type TooltipTextStyle, type TooltipLegend, TooltipShowRule, type TooltipLegendChild, TooltipFeaturePosition, type TooltipFeatureStyle, FeatureType, type FeatureIconFontStyle, type FeaturePathStyle } from '../common/Styles'
 import { ActionType } from '../common/Action'
 import { formatPrecision } from '../common/utils/format'
 import { isValid, isObject, isString, isNumber, isFunction } from '../common/utils/typeChecks'
@@ -27,13 +27,20 @@ import type { YAxis } from '../component/YAxis'
 import type { Indicator, IndicatorFigure, IndicatorFigureStyle, IndicatorTooltipData } from '../component/Indicator'
 import { eachFigures, IndicatorEventTarget } from '../component/Indicator'
 
-import type { TooltipFeatureInfo } from '../Store'
-
 import type DrawPane from '../pane/DrawPane'
 import type DrawWidget from '../widget/DrawWidget'
 import View from './View'
+
+interface FeatureInfo {
+  paneId: string
+  indicator: Nullable<Indicator>
+  feature: TooltipFeatureStyle
+}
+
 export default class IndicatorTooltipView extends View<YAxis> {
-  private readonly _featureClickEvent = (featureInfo: TooltipFeatureInfo) => () => {
+  private _activeFeatureInfo: Nullable<FeatureInfo> = null
+
+  private readonly _featureClickEvent = (featureInfo: FeatureInfo) => () => {
     const pane = this.getWidget().getPane()
     const { indicator, ...others } = featureInfo
     if (isValid(indicator)) {
@@ -49,15 +56,15 @@ export default class IndicatorTooltipView extends View<YAxis> {
     return true
   }
 
-  private readonly _featureMouseMoveEvent = (featureInfo: TooltipFeatureInfo) => () => {
-    this.getWidget().getPane().getChart().getChartStore().setActiveTooltipFeatureInfo(featureInfo)
+  private readonly _featureMouseMoveEvent = (featureInfo: FeatureInfo) => () => {
+    this._activeFeatureInfo = featureInfo
     return true
   }
 
   constructor (widget: DrawWidget<DrawPane<YAxis>>) {
     super(widget)
     this.registerEvent('mouseMoveEvent', _ => {
-      this.getWidget().getPane().getChart().getChartStore().setActiveTooltipFeatureInfo()
+      this._activeFeatureInfo = null
       return false
     })
   }
@@ -167,12 +174,13 @@ export default class IndicatorTooltipView extends View<YAxis> {
         const {
           marginLeft = 0, marginTop = 0, marginRight = 0, marginBottom = 0,
           paddingLeft = 0, paddingTop = 0, paddingRight = 0, paddingBottom = 0,
-          size = 0, type, iconFont
+          size = 0, type, content
         } = feature
         let contentWidth = 0
-        if (type === TooltipFeatureType.IconFont) {
+        if (type === FeatureType.IconFont) {
+          const iconFont = content as FeatureIconFontStyle
           ctx.font = createFont(size, 'normal', iconFont.family)
-          contentWidth = ctx.measureText(iconFont.content).width
+          contentWidth = ctx.measureText(iconFont.code).width
         } else {
           contentWidth = size
         }
@@ -188,31 +196,37 @@ export default class IndicatorTooltipView extends View<YAxis> {
       }
       const pane = this.getWidget().getPane()
       const paneId = pane.getId()
-      const activeFeatureInfo = pane.getChart().getChartStore().getActiveTooltipFeatureInfo()
 
       features.forEach(feature => {
         const {
           marginLeft = 0, marginTop = 0, marginRight = 0,
           paddingLeft = 0, paddingTop = 0, paddingRight = 0, paddingBottom = 0,
           backgroundColor, activeBackgroundColor, borderRadius,
-          size = 0, color, activeColor, type, iconFont, path
+          size = 0, color, activeColor, type, content
         } = feature
-        const active = activeFeatureInfo?.paneId === paneId && activeFeatureInfo.indicator?.id === indicator?.id && activeFeatureInfo.feature.id === feature.id
 
-        let contentWidth = 0
+        let finalColor = color
+        let finalBackgroundColor = backgroundColor
+        if (
+          this._activeFeatureInfo?.paneId === paneId &&
+          this._activeFeatureInfo.indicator?.id === indicator?.id &&
+          this._activeFeatureInfo.feature.id === feature.id
+        ) {
+          // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- ignore
+          finalColor = activeColor ?? color
+          // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- ignore
+          finalBackgroundColor = activeBackgroundColor ?? backgroundColor
+        }
         const eventHandler = {
           mouseClickEvent: this._featureClickEvent({ paneId, indicator, feature }),
           mouseMoveEvent: this._featureMouseMoveEvent({ paneId, indicator, feature })
         }
-
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- ignore
-        const finalColor = active ? (activeColor ?? color) : color
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- ignore
-        const finalBackgroundColor = active ? (activeBackgroundColor ?? backgroundColor) : backgroundColor
-        if (type === TooltipFeatureType.IconFont) {
+        let contentWidth = 0
+        if (type === FeatureType.IconFont) {
+          const iconFont = content as FeatureIconFontStyle
           this.createFigure({
             name: 'text',
-            attrs: { text: iconFont.content, x: coordinate.x + marginLeft, y: coordinate.y + marginTop },
+            attrs: { text: iconFont.code, x: coordinate.x + marginLeft, y: coordinate.y + marginTop },
             styles: {
               paddingLeft,
               paddingTop,
@@ -225,7 +239,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
               backgroundColor: finalBackgroundColor
             }
           }, eventHandler)?.draw(ctx)
-          contentWidth = ctx.measureText(iconFont.content).width
+          contentWidth = ctx.measureText(iconFont.code).width
         } else {
           this.createFigure({
             name: 'rect',
@@ -238,7 +252,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
               color: finalBackgroundColor
             }
           }, eventHandler)?.draw(ctx)
-
+          const path = content as FeaturePathStyle
           this.createFigure({
             name: 'path',
             attrs: { path: path.path, x: coordinate.x + marginLeft + paddingLeft, y: coordinate.y + marginTop + paddingTop, width: size, height: size },
