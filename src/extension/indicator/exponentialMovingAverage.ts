@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import { type IndicatorTemplate, IndicatorSeries } from '../../component/Indicator'
+import type { IndicatorTemplate } from '../../component/Indicator'
 
 interface Ema {
   ema1?: number
@@ -26,7 +26,7 @@ interface Ema {
 const exponentialMovingAverage: IndicatorTemplate<Ema, number> = {
   name: 'EMA',
   shortName: 'EMA',
-  series: IndicatorSeries.Price,
+  series: 'price',
   calcParams: [6, 12, 20],
   precision: 2,
   shouldOhlc: true,

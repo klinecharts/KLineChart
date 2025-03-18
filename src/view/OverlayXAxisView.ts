@@ -17,8 +17,6 @@ import type Coordinate from '../common/Coordinate'
 
 import { isNumber } from '../common/utils/typeChecks'
 
-import { FormatDateType } from '../Options'
-
 import type { XAxis } from '../component/XAxis'
 import type { YAxis } from '../component/YAxis'
 import type { OverlayFigure, Overlay } from '../component/Overlay'
@@ -60,7 +58,7 @@ export default class OverlayXAxisView extends OverlayYAxisView<XAxis> {
         rightX = Math.max(rightX, coordinate.x)
         const point = overlay.points[index]
         if (isNumber(point.timestamp)) {
-          const text = chartStore.getInnerFormatter().formatDate(point.timestamp, 'YYYY-MM-DD HH:mm', FormatDateType.Crosshair)
+          const text = chartStore.getInnerFormatter().formatDate(point.timestamp, 'YYYY-MM-DD HH:mm', 'crosshair')
           figures.push({ type: 'text', attrs: { x: coordinate.x, y: 0, text, align: 'center' }, ignoreEvent: true })
         }
       })

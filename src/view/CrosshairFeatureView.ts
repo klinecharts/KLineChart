@@ -14,13 +14,11 @@
 
 import type Nullable from '../common/Nullable'
 import type Crosshair from '../common/Crosshair'
-import { type CrosshairStyle, type CrosshairDirectionStyle, FeatureType, type FeatureIconFontStyle, type FeaturePathStyle, type FeatureStyle } from '../common/Styles'
+import type { CrosshairStyle, CrosshairDirectionStyle, FeatureIconFontStyle, FeaturePathStyle, FeatureStyle } from '../common/Styles'
 import { isString } from '../common/utils/typeChecks'
 import { calcTextWidth } from '../common/utils/canvas'
 import type { MouseTouchEvent } from '../common/SyntheticEvent'
-import { ActionType } from '../common/Action'
 
-import { AxisPosition } from '../component/Axis'
 import type { YAxis } from '../component/YAxis'
 
 import type DrawPane from '../pane/DrawPane'
@@ -37,7 +35,7 @@ export default class CrosshairFeatureView extends View<YAxis> {
 
   private readonly _featureClickEvent = (featureInfo: FeatureInfo) => () => {
     const pane = this.getWidget().getPane()
-    pane.getChart().getChartStore().executeAction(ActionType.OnCrosshairFeatureClick, featureInfo)
+    pane.getChart().getChartStore().executeAction('onCrosshairFeatureClick', featureInfo)
     return false
   }
 
@@ -69,7 +67,7 @@ export default class CrosshairFeatureView extends View<YAxis> {
       const styles = chartStore.getStyles().crosshair
       const features = styles.horizontal.features
       if (styles.show && styles.horizontal.show && features.length > 0) {
-        const isRight = yAxis.position === AxisPosition.Right
+        const isRight = yAxis.position === 'right'
         const bounding = weight.getBounding()
 
         let yAxisTextWidth = 0
@@ -104,7 +102,7 @@ export default class CrosshairFeatureView extends View<YAxis> {
               borderRadius, size = 0, type, content
             } = feature
             let width = size
-            if (type === FeatureType.IconFont) {
+            if (type === 'icon_font') {
               const iconFont = content as FeatureIconFontStyle
               width = paddingLeft + calcTextWidth(iconFont.code, size, 'normal', iconFont.family) + paddingRight
             }
@@ -125,7 +123,7 @@ export default class CrosshairFeatureView extends View<YAxis> {
               mouseClickEvent: this._featureClickEvent({ crosshair, feature }),
               mouseMoveEvent: this._featureMouseMoveEvent({ crosshair, feature })
             }
-            if (type === FeatureType.IconFont) {
+            if (type === 'icon_font') {
               const iconFont = content as FeatureIconFontStyle
               this.createFigure({
                 name: 'text',

@@ -13,7 +13,7 @@
  */
 
 import type { KLineData } from '../../common/Data'
-import { type IndicatorTemplate, IndicatorSeries } from '../../component/Indicator'
+import type { IndicatorTemplate } from '../../component/Indicator'
 
 interface Boll {
   up?: number
@@ -44,7 +44,7 @@ function getBollMd (dataList: KLineData[], ma: number): number {
 const bollingerBands: IndicatorTemplate<Boll, number> = {
   name: 'BOLL',
   shortName: 'BOLL',
-  series: IndicatorSeries.Price,
+  series: 'price',
   calcParams: [20, 2],
   precision: 2,
   shouldOhlc: true,

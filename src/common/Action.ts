@@ -16,17 +16,7 @@ import { isFunction } from './utils/typeChecks'
 
 export type ActionCallback = (data?: unknown) => void
 
-export enum ActionType {
-  OnZoom = 'onZoom',
-  OnScroll = 'onScroll',
-  OnVisibleRangeChange = 'onVisibleRangeChange',
-  OnCandleTooltipFeatureClick = 'onCandleTooltipFeatureClick',
-  OnCrosshairFeatureClick = 'onCrosshairFeatureClick',
-  OnCrosshairChange = 'onCrosshairChange',
-  OnCandleBarClick = 'onCandleBarClick',
-  OnPaneDrag = 'onPaneDrag'
-}
-
+export type ActionType = 'onZoom' | 'onScroll' | 'onVisibleRangeChange' | 'onCandleTooltipFeatureClick' | 'onCrosshairFeatureClick' | 'onCrosshairChange' | 'onCandleBarClick' | 'onPaneDrag'
 export default class Action {
   private _callbacks: ActionCallback[] = []
 

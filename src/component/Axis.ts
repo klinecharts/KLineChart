@@ -38,10 +38,7 @@ export interface AxisGap {
   bottom?: number
 }
 
-export enum AxisPosition {
-  Left = 'left',
-  Right = 'right'
-}
+export type AxisPosition = 'left' | 'right'
 
 export interface AxisValueToValueParams {
   range: AxisRange

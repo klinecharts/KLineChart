@@ -13,7 +13,6 @@
  */
 
 import { isValid } from '../common/utils/typeChecks'
-import { CandleColorCompareRule, CandleLastPriceMarkExtendTextPosition } from '../common/Styles'
 import { calcTextWidth } from '../common/utils/canvas'
 
 import View from './View'
@@ -36,7 +35,7 @@ export default class CandleLastPriceLabelView extends View {
       const data = dataList[dataList.length - 1]
       if (isValid(data)) {
         const { close, open } = data
-        const comparePrice = lastPriceMarkStyles.compareRule === CandleColorCompareRule.CurrentOpen ? open : (dataList[dataList.length - 2]?.close ?? close)
+        const comparePrice = lastPriceMarkStyles.compareRule === 'current_open' ? open : (dataList[dataList.length - 2]?.close ?? close)
         const priceY = yAxis.convertToNicePixel(close)
         let backgroundColor = ''
         if (close > comparePrice) {
@@ -93,7 +92,7 @@ export default class CandleLastPriceLabelView extends View {
           if (text.length > 0 && item.show) {
             const textHalfHeight = item.size / 2
             let textY = 0
-            if (item.position === CandleLastPriceMarkExtendTextPosition.AbovePrice) {
+            if (item.position === 'above_price') {
               aboveY -= (item.paddingBottom + textHalfHeight)
               textY = aboveY
               aboveY -= (textHalfHeight + item.paddingTop)

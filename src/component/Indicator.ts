@@ -33,11 +33,7 @@ import type { TextAttrs } from '../extension/figure/text'
 import type { LoadDataType } from '../common/LoadDataCallback'
 import type { Chart } from '../Chart'
 
-export enum IndicatorSeries {
-  Normal = 'normal',
-  Price = 'price',
-  Volume = 'volume'
-}
+export type IndicatorSeries = 'normal' | 'price' | 'volume'
 
 export type IndicatorFigureStyle = Partial<Omit<SmoothLineStyle, 'style'>> & Partial<Omit<RectStyle, 'style'>> & Partial<TextStyle> & Partial<{ style: LineType[keyof LineType] }> & Record<string, unknown>
 
@@ -90,9 +86,7 @@ export interface IndicatorCreateTooltipDataSourceParams<D> {
 
 export type IndicatorCreateTooltipDataSourceCallback<D> = (params: IndicatorCreateTooltipDataSourceParams<D>) => IndicatorTooltipData
 
-export enum IndicatorEventTarget {
-  Feature = 'feature'
-}
+export type IndicatorEventTarget = 'feature'
 
 export interface IndicatorEvent<D, C, E> {
   target: IndicatorEventTarget
@@ -118,11 +112,7 @@ export type IndicatorCalcCallback<D, C, E> = (dataList: KLineData[], indicator: 
 
 export type IndicatorShouldUpdateCallback<D, C, E> = (prev: Indicator<D, C, E>, current: Indicator<D, C, E>) => (boolean | { calc: boolean, draw: boolean })
 
-export enum IndicatorDataState {
-  Loading = 'loading',
-  Error = 'error',
-  Ready = 'ready'
-}
+export type IndicatorDataState = 'loading' | 'error' | 'ready'
 
 export interface IndicatorOnDataStateChangeParams<D> {
   state: IndicatorDataState
@@ -344,7 +334,7 @@ export default class IndicatorImp<D = unknown, C = unknown, E = unknown> impleme
   visible = true
   zLevel = 0
   extendData: E
-  series = IndicatorSeries.Normal
+  series: IndicatorSeries = 'normal'
   figures: Array<IndicatorFigure<D>> = []
   minValue: Nullable<number> = null
   maxValue: Nullable<number> = null

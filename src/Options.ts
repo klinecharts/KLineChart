@@ -19,11 +19,7 @@ import type { Styles } from './common/Styles'
 import type { IndicatorCreate } from './component/Indicator'
 import type { PaneOptions } from './pane/types'
 
-export enum FormatDateType {
-  Tooltip = 'tooltip',
-  Crosshair = 'crosshair',
-  XAxis = 'xAxis',
-}
+export type FormatDateType = 'tooltip' | 'crosshair' | 'xAxis'
 
 export interface FormatDateParams {
   dateTimeFormat: Intl.DateTimeFormat
@@ -61,11 +57,7 @@ export interface Locales {
   [key: string]: string
 }
 
-export const enum LayoutChildType {
-  Candle = 'candle',
-  Indicator = 'indicator',
-  XAxis = 'xAxis'
-}
+export type LayoutChildType = 'candle' | 'indicator' | 'xAxis'
 
 export interface LayoutChild {
   type: LayoutChildType

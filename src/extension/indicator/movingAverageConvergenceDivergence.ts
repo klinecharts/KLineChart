@@ -12,8 +12,6 @@
  * limitations under the License.
  */
 
-import { PolygonType } from '../../common/Styles'
-
 import { formatValue } from '../../common/utils/format'
 
 import type { IndicatorTemplate } from '../../component/Indicator'
@@ -56,7 +54,7 @@ const movingAverageConvergenceDivergence: IndicatorTemplate<Macd, number> = {
         } else {
           color = formatValue(indicator.styles, 'bars[0].noChangeColor', (defaultStyles!.bars)[0].noChangeColor) as string
         }
-        const style = prevMacd < currentMacd ? PolygonType.Stroke : PolygonType.Fill
+        const style = prevMacd < currentMacd ? 'stroke' : 'fill'
         return { style, color, borderColor: color }
       }
     }

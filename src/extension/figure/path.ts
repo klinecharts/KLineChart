@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import { type PathStyle, PathType } from '../../common/Styles'
+import type { PathStyle } from '../../common/Styles'
 import { isValid } from '../../common/utils/typeChecks'
 
 import type { FigureTemplate } from '../../component/Figure'
@@ -268,7 +268,7 @@ export function drawPath (ctx: CanvasRenderingContext2D, attrs: PathAttrs | Path
           default: { break }
         }
       })
-      if (styles.style === PathType.Fill) {
+      if (styles.style === 'fill') {
         ctx.fill()
       } else {
         ctx.stroke()

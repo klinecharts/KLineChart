@@ -27,11 +27,7 @@ import type { YAxis } from './YAxis'
 import type ChartStore from '../Store'
 import type { Chart } from '../Chart'
 
-export enum OverlayMode {
-  Normal = 'normal',
-  WeakMagnet = 'weak_magnet',
-  StrongMagnet = 'strong_magnet'
-}
+export type OverlayMode = 'normal' | 'weak_magnet' | 'strong_magnet'
 
 export interface OverlayPerformEventParams {
   currentStep: number
@@ -238,7 +234,7 @@ export default class OverlayImp<E = unknown> implements Overlay<E> {
   needDefaultPointFigure = false
   needDefaultXAxisFigure = false
   needDefaultYAxisFigure = false
-  mode = OverlayMode.Normal
+  mode: OverlayMode = 'normal'
   modeSensitivity = 8
   points: Array<Partial<Omit<Point, 'dataIndex'>>> = []
   extendData: E

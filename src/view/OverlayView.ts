@@ -22,9 +22,9 @@ import type { Axis } from '../component/Axis'
 import type { YAxis } from '../component/YAxis'
 import type { OverlayFigure, Overlay } from '../component/Overlay'
 import type OverlayImp from '../component/Overlay'
-import { checkOverlayFigureEvent, OVERLAY_FIGURE_KEY_PREFIX, OverlayMode } from '../component/Overlay'
+import { checkOverlayFigureEvent, OVERLAY_FIGURE_KEY_PREFIX } from '../component/Overlay'
 
-import { EventOverlayInfoFigureType } from '../Store'
+import type { EventOverlayInfoFigureType } from '../Store'
 
 import { PaneIdConstants } from '../pane/types'
 
@@ -60,7 +60,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
         }
         return this._figureMouseMoveEvent(
           overlay,
-          EventOverlayInfoFigureType.Point,
+          'point',
           index,
           { key: `${OVERLAY_FIGURE_KEY_PREFIX}point_${index}`, type: 'circle', attrs: {} }
         )(event)
@@ -69,7 +69,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
         {
           paneId,
           overlay: null,
-          figureType: EventOverlayInfoFigureType.None,
+          figureType: 'none',
           figureIndex: -1,
           figure: null
         },
@@ -98,7 +98,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
         }
         return this._figureMouseClickEvent(
           overlay,
-          EventOverlayInfoFigureType.Point,
+          'point',
           index,
           {
             key: `${OVERLAY_FIGURE_KEY_PREFIX}point_${index}`,
@@ -111,7 +111,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
         {
           paneId,
           overlay: null,
-          figureType: EventOverlayInfoFigureType.None,
+          figureType: 'none',
           figureIndex: -1,
           figure: null
         },
@@ -135,7 +135,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
         const index = overlay.points.length - 1
         return this._figureMouseClickEvent(
           overlay,
-          EventOverlayInfoFigureType.Point,
+          'point',
           index,
           {
             key: `${OVERLAY_FIGURE_KEY_PREFIX}point_${index}`,
@@ -153,7 +153,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
           const index = overlay.points.length - 1
           return this._figureMouseRightClickEvent(
             overlay,
-            EventOverlayInfoFigureType.Point,
+            'point',
             index,
             {
               key: `${OVERLAY_FIGURE_KEY_PREFIX}point_${index}`,
@@ -174,7 +174,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
       chartStore.setPressedOverlayInfo({
         paneId,
         overlay: null,
-        figureType: EventOverlayInfoFigureType.None,
+        figureType: 'none',
         figureIndex: -1,
         figure: null
       })
@@ -186,7 +186,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
           if (!overlay.lock) {
             if (!(overlay.onPressedMoving?.({ chart, overlay, figure: figure ?? undefined, ...event }) ?? false)) {
               const point = this._coordinateToPoint(overlay, event)
-              if (figureType === EventOverlayInfoFigureType.Point) {
+              if (figureType === 'point') {
                 overlay.eventPressedPointMove(point, figureIndex)
               } else {
                 overlay.eventPressedOtherMove(point, this.getWidget().getPane().getChart().getChartStore())
@@ -336,12 +336,12 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     if (this.coordinateToPointValueFlag()) {
       const yAxis = pane.getAxisComponent()
       let value = yAxis.convertFromPixel(coordinate.y)
-      if (o.mode !== OverlayMode.Normal && paneId === PaneIdConstants.CANDLE && isNumber(point.dataIndex)) {
+      if (o.mode !== 'normal' && paneId === PaneIdConstants.CANDLE && isNumber(point.dataIndex)) {
         const kLineData = chartStore.getDataByDataIndex(point.dataIndex)
         if (kLineData !== null) {
           const modeSensitivity = o.modeSensitivity
           if (value > kLineData.high) {
-            if (o.mode === OverlayMode.WeakMagnet) {
+            if (o.mode === 'weak_magnet') {
               const highY = yAxis.convertToPixel(kLineData.high)
               const buffValue = yAxis.convertFromPixel(highY - modeSensitivity)
               if (value < buffValue) {
@@ -351,7 +351,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
               value = kLineData.high
             }
           } else if (value < kLineData.low) {
-            if (o.mode === OverlayMode.WeakMagnet) {
+            if (o.mode === 'weak_magnet') {
               const lowY = yAxis.convertToPixel(kLineData.low)
               const buffValue = yAxis.convertFromPixel(lowY - modeSensitivity)
               if (value > buffValue) {
@@ -469,7 +469,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
       // @ts-expect-error
       const attrsArray = [].concat(attrs)
       attrsArray.forEach((ats) => {
-        const events = this._createFigureEvents(overlay, EventOverlayInfoFigureType.Other, figureIndex, figure)
+        const events = this._createFigureEvents(overlay, 'other', figureIndex, figure)
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- ignore
         // @ts-expect-error
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- ignore
@@ -518,8 +518,8 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
       const hoverOverlayInfo = chartStore.getHoverOverlayInfo()
       const clickOverlayInfo = chartStore.getClickOverlayInfo()
       if (
-        (hoverOverlayInfo.overlay?.id === overlay.id && hoverOverlayInfo.figureType !== EventOverlayInfoFigureType.None) ||
-        (clickOverlayInfo.overlay?.id === overlay.id && clickOverlayInfo.figureType !== EventOverlayInfoFigureType.None)
+        (hoverOverlayInfo.overlay?.id === overlay.id && hoverOverlayInfo.figureType !== 'none') ||
+        (clickOverlayInfo.overlay?.id === overlay.id && clickOverlayInfo.figureType !== 'none')
       ) {
         const defaultStyles = chartStore.getStyles().overlay
         const styles = overlay.styles
@@ -531,7 +531,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
           let borderSize = pointStyles.borderSize
           if (
             hoverOverlayInfo.overlay?.id === overlay.id &&
-            hoverOverlayInfo.figureType === EventOverlayInfoFigureType.Point &&
+            hoverOverlayInfo.figureType === 'point' &&
             hoverOverlayInfo.figure?.key === `${OVERLAY_FIGURE_KEY_PREFIX}point_${index}`
           ) {
             radius = pointStyles.activeRadius
@@ -548,7 +548,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
             },
             this._createFigureEvents(
               overlay,
-              EventOverlayInfoFigureType.Point,
+              'point',
               index,
               {
                 key: `${OVERLAY_FIGURE_KEY_PREFIX}point_${index}`,

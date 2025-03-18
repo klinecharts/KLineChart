@@ -40,10 +40,7 @@ export interface Offset {
 /**
  * line type
  */
-export enum LineType {
-  Dashed = 'dashed',
-  Solid = 'solid'
-}
+export type LineType = 'dashed' | 'solid'
 
 export interface LineStyle {
   style: LineType
@@ -60,10 +57,7 @@ export interface StateLineStyle extends LineStyle {
   show: boolean
 }
 
-export enum PathType {
-  Stroke = 'stroke',
-  Fill = 'fill',
-}
+export type PathType = 'stroke' | 'fill'
 
 export interface PathStyle {
   style: PathType
@@ -71,11 +65,7 @@ export interface PathStyle {
   lineWidth: number
 }
 
-export enum PolygonType {
-  Stroke = 'stroke',
-  Fill = 'fill',
-  StrokeFill = 'stroke_fill'
-}
+export type PolygonType = PathType | 'stroke_fill'
 
 export interface PolygonStyle {
   style: PolygonType
@@ -110,16 +100,9 @@ export interface StateTextStyle extends TextStyle {
 
 export type LastValueMarkTextStyle = Omit<StateTextStyle, 'backgroundColor'>
 
-export enum TooltipShowRule {
-  Always = 'always',
-  FollowCross = 'follow_cross',
-  None = 'none'
-}
+export type TooltipShowRule = 'always' | 'follow_cross' | 'none'
 
-export enum TooltipShowType {
-  Standard = 'standard',
-  Rect = 'rect'
-}
+export type TooltipShowType = 'standard' | 'rect'
 
 export interface ChangeColor {
   upColor: string
@@ -132,10 +115,7 @@ export interface GradientColor {
   color: string
 }
 
-export enum FeatureType {
-  Path = 'path',
-  IconFont = 'icon_font'
-}
+export type FeatureType = 'path' | 'icon_font'
 
 export interface FeaturePathStyle extends Omit<PathStyle, 'color'> {
   path: string
@@ -177,11 +157,7 @@ export interface TooltipLegend {
   value: string | TooltipLegendChild
 }
 
-export enum TooltipFeaturePosition {
-  Left = 'left',
-  Middle = 'middle',
-  Right = 'right'
-}
+export type TooltipFeaturePosition = 'left' | 'middle' | 'right'
 
 export interface TooltipFeatureStyle extends FeatureStyle {
   position: TooltipFeaturePosition
@@ -225,10 +201,7 @@ export interface CandleHighLowPriceMarkStyle {
 
 export type CandleLastPriceMarkLineStyle = Omit<StateLineStyle, 'color'>
 
-export enum CandleLastPriceMarkExtendTextPosition {
-  AbovePrice = 'above_price',
-  BelowPrice = 'below_price'
-}
+export type CandleLastPriceMarkExtendTextPosition = 'above_price' | 'below_price'
 
 export type CandleLastPriceMarkExtendTextStyle = LastValueMarkTextStyle & {
   position: CandleLastPriceMarkExtendTextPosition
@@ -249,10 +222,7 @@ export interface CandlePriceMarkStyle {
   last: CandleLastPriceMarkStyle
 }
 
-export enum CandleTooltipRectPosition {
-  Fixed = 'fixed',
-  Pointer = 'pointer'
-}
+export type CandleTooltipRectPosition = 'fixed' | 'pointer'
 
 export interface CandleTooltipRectStyle extends Omit<RectStyle, 'style' | 'borderDashedValue' | 'borderStyle'>, Padding, Offset {
   position: CandleTooltipRectPosition
@@ -265,19 +235,9 @@ export interface CandleTooltipStyle extends TooltipStyle, Offset {
   rect: CandleTooltipRectStyle
 }
 
-export enum CandleType {
-  CandleSolid = 'candle_solid',
-  CandleStroke = 'candle_stroke',
-  CandleUpStroke = 'candle_up_stroke',
-  CandleDownStroke = 'candle_down_stroke',
-  Ohlc = 'ohlc',
-  Area = 'area'
-}
+export type CandleType = 'candle_solid' | 'candle_stroke' | 'candle_up_stroke' | 'candle_down_stroke' | 'ohlc' | 'area'
 
-export enum CandleColorCompareRule {
-  CurrentOpen = 'current_open',
-  PreviousClose = 'previous_close'
-}
+export type CandleColorCompareRule = 'current_open' | 'previous_close'
 
 export interface CandleBarColor extends ChangeColor {
   compareRule: CandleColorCompareRule
@@ -405,14 +365,14 @@ function getDefaultGridStyle (): GridStyle {
       show: true,
       size: 1,
       color: '#EDEDED',
-      style: LineType.Dashed,
+      style: 'dashed',
       dashedValue: [2, 2]
     },
     vertical: {
       show: true,
       size: 1,
       color: '#EDEDED',
-      style: LineType.Dashed,
+      style: 'dashed',
       dashedValue: [2, 2]
     }
   }
@@ -432,9 +392,9 @@ function getDefaultCandleStyle (): CandleStyle {
     textWeight: 'normal'
   }
   return {
-    type: CandleType.CandleSolid,
+    type: 'candle_solid',
     bar: {
-      compareRule: CandleColorCompareRule.CurrentOpen,
+      compareRule: 'current_open',
       upColor: Color.GREEN,
       downColor: Color.RED,
       noChangeColor: Color.GREY,
@@ -473,26 +433,26 @@ function getDefaultCandleStyle (): CandleStyle {
       low: { ...highLow },
       last: {
         show: true,
-        compareRule: CandleColorCompareRule.CurrentOpen,
+        compareRule: 'current_open',
         upColor: Color.GREEN,
         downColor: Color.RED,
         noChangeColor: Color.GREY,
         line: {
           show: true,
-          style: LineType.Dashed,
+          style: 'dashed',
           dashedValue: [4, 4],
           size: 1
         },
         text: {
           show: true,
-          style: PolygonType.Fill,
+          style: 'fill',
           size: 12,
           paddingLeft: 4,
           paddingTop: 4,
           paddingRight: 4,
           paddingBottom: 4,
           borderColor: 'transparent',
-          borderStyle: LineType.Solid,
+          borderStyle: 'solid',
           borderSize: 0,
           borderDashedValue: [2, 2],
           color: Color.WHITE,
@@ -508,8 +468,8 @@ function getDefaultCandleStyle (): CandleStyle {
       offsetTop: 6,
       offsetRight: 4,
       offsetBottom: 6,
-      showRule: TooltipShowRule.Always,
-      showType: TooltipShowType.Standard,
+      showRule: 'always',
+      showType: 'standard',
       custom: [
         { title: 'time', value: '{time}' },
         { title: 'open', value: '{open}' },
@@ -520,7 +480,7 @@ function getDefaultCandleStyle (): CandleStyle {
       ],
       defaultValue: 'n/a',
       rect: {
-        position: CandleTooltipRectPosition.Fixed,
+        position: 'fixed',
         paddingLeft: 4,
         paddingRight: 4,
         paddingTop: 4,
@@ -557,14 +517,14 @@ function getDefaultIndicatorStyle (): IndicatorStyle {
   const alphaRed = hexToRgb(Color.RED, 0.7)
   return {
     ohlc: {
-      compareRule: CandleColorCompareRule.CurrentOpen,
+      compareRule: 'current_open',
       upColor: alphaGreen,
       downColor: alphaRed,
       noChangeColor: Color.GREY
     },
     bars: [{
-      style: PolygonType.Fill,
-      borderStyle: LineType.Solid,
+      style: 'fill',
+      borderStyle: 'solid',
       borderSize: 1,
       borderDashedValue: [2, 2],
       upColor: alphaGreen,
@@ -572,15 +532,15 @@ function getDefaultIndicatorStyle (): IndicatorStyle {
       noChangeColor: Color.GREY
     }],
     lines: ['#FF9600', '#935EBD', Color.BLUE, '#E11D74', '#01C5C4'].map(color => ({
-      style: LineType.Solid,
+      style: 'solid',
       smooth: false,
       size: 1,
       dashedValue: [2, 2],
       color
     })),
     circles: [{
-      style: PolygonType.Fill,
-      borderStyle: LineType.Solid,
+      style: 'fill',
+      borderStyle: 'solid',
       borderSize: 1,
       borderDashedValue: [2, 2],
       upColor: alphaGreen,
@@ -591,12 +551,12 @@ function getDefaultIndicatorStyle (): IndicatorStyle {
       show: false,
       text: {
         show: false,
-        style: PolygonType.Fill,
+        style: 'fill',
         color: Color.WHITE,
         size: 12,
         family: 'Helvetica Neue',
         weight: 'normal',
-        borderStyle: LineType.Solid,
+        borderStyle: 'solid',
         borderColor: 'transparent',
         borderSize: 0,
         borderDashedValue: [2, 2],
@@ -612,8 +572,8 @@ function getDefaultIndicatorStyle (): IndicatorStyle {
       offsetTop: 6,
       offsetRight: 4,
       offsetBottom: 6,
-      showRule: TooltipShowRule.Always,
-      showType: TooltipShowType.Standard,
+      showRule: 'always',
+      showType: 'standard',
       showName: true,
       showParams: true,
       defaultValue: 'n/a',
@@ -666,19 +626,19 @@ function getDefaultCrosshairStyle (): CrosshairStyle {
       show: true,
       line: {
         show: true,
-        style: LineType.Dashed,
+        style: 'dashed',
         dashedValue: [4, 2],
         size: 1,
         color: Color.GREY
       },
       text: {
         show: true,
-        style: PolygonType.Fill,
+        style: 'fill',
         color: Color.WHITE,
         size: 12,
         family: 'Helvetica Neue',
         weight: 'normal',
-        borderStyle: LineType.Solid,
+        borderStyle: 'solid',
         borderDashedValue: [2, 2],
         borderSize: 1,
         borderColor: Color.GREY,
@@ -695,19 +655,19 @@ function getDefaultCrosshairStyle (): CrosshairStyle {
       show: true,
       line: {
         show: true,
-        style: LineType.Dashed,
+        style: 'dashed',
         dashedValue: [4, 2],
         size: 1,
         color: Color.GREY
       },
       text: {
         show: true,
-        style: PolygonType.Fill,
+        style: 'fill',
         color: Color.WHITE,
         size: 12,
         family: 'Helvetica Neue',
         weight: 'normal',
-        borderStyle: LineType.Solid,
+        borderStyle: 'solid',
         borderDashedValue: [2, 2],
         borderSize: 1,
         borderColor: Color.GREY,
@@ -727,12 +687,12 @@ function getDefaultOverlayStyle (): OverlayStyle {
   const alphaBg = hexToRgb(Color.BLUE, 0.25)
   function text (): TextStyle {
     return {
-      style: PolygonType.Fill,
+      style: 'fill',
       color: Color.WHITE,
       size: 12,
       family: 'Helvetica Neue',
       weight: 'normal',
-      borderStyle: LineType.Solid,
+      borderStyle: 'solid',
       borderDashedValue: [2, 2],
       borderSize: 1,
       borderRadius: 2,
@@ -756,39 +716,39 @@ function getDefaultOverlayStyle (): OverlayStyle {
       activeRadius: 5
     },
     line: {
-      style: LineType.Solid,
+      style: 'solid',
       smooth: false,
       color: Color.BLUE,
       size: 1,
       dashedValue: [2, 2]
     },
     rect: {
-      style: PolygonType.Fill,
+      style: 'fill',
       color: alphaBg,
       borderColor: Color.BLUE,
       borderSize: 1,
       borderRadius: 0,
-      borderStyle: LineType.Solid,
+      borderStyle: 'solid',
       borderDashedValue: [2, 2]
     },
     polygon: {
-      style: PolygonType.Fill,
+      style: 'fill',
       color: Color.BLUE,
       borderColor: Color.BLUE,
       borderSize: 1,
-      borderStyle: LineType.Solid,
+      borderStyle: 'solid',
       borderDashedValue: [2, 2]
     },
     circle: {
-      style: PolygonType.Fill,
+      style: 'fill',
       color: alphaBg,
       borderColor: Color.BLUE,
       borderSize: 1,
-      borderStyle: LineType.Solid,
+      borderStyle: 'solid',
       borderDashedValue: [2, 2]
     },
     arc: {
-      style: LineType.Solid,
+      style: 'solid',
       color: Color.BLUE,
       size: 1,
       dashedValue: [2, 2]

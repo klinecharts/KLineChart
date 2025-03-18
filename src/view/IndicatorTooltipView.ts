@@ -13,8 +13,7 @@
  */
 
 import type Crosshair from '../common/Crosshair'
-import { type TooltipStyle, type TooltipTextStyle, type TooltipLegend, TooltipShowRule, type TooltipLegendChild, TooltipFeaturePosition, type TooltipFeatureStyle, FeatureType, type FeatureIconFontStyle, type FeaturePathStyle } from '../common/Styles'
-import { ActionType } from '../common/Action'
+import type { TooltipStyle, TooltipTextStyle, TooltipLegend, TooltipLegendChild, TooltipFeatureStyle, FeatureIconFontStyle, FeaturePathStyle } from '../common/Styles'
 import { formatPrecision } from '../common/utils/format'
 import { isValid, isObject, isString, isNumber, isFunction } from '../common/utils/typeChecks'
 import { createFont } from '../common/utils/canvas'
@@ -25,7 +24,7 @@ import type { MouseTouchEvent } from '../common/SyntheticEvent'
 import type { YAxis } from '../component/YAxis'
 
 import type { Indicator, IndicatorFigure, IndicatorFigureStyle, IndicatorTooltipData } from '../component/Indicator'
-import { eachFigures, IndicatorEventTarget } from '../component/Indicator'
+import { eachFigures } from '../component/Indicator'
 
 import type DrawPane from '../pane/DrawPane'
 import type DrawWidget from '../widget/DrawWidget'
@@ -45,13 +44,13 @@ export default class IndicatorTooltipView extends View<YAxis> {
     const { indicator, ...others } = featureInfo
     if (isValid(indicator)) {
       indicator.onClick?.({
-        target: IndicatorEventTarget.Feature,
+        target: 'feature',
         chart: pane.getChart(),
         indicator,
         ...others
       })
     } else {
-      pane.getChart().getChartStore().executeAction(ActionType.OnCandleTooltipFeatureClick, featureInfo)
+      pane.getChart().getChartStore().executeAction('onCandleTooltipFeatureClick', featureInfo)
     }
     return true
   }
@@ -177,7 +176,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
           size = 0, type, content
         } = feature
         let contentWidth = 0
-        if (type === FeatureType.IconFont) {
+        if (type === 'icon_font') {
           const iconFont = content as FeatureIconFontStyle
           ctx.font = createFont(size, 'normal', iconFont.family)
           contentWidth = ctx.measureText(iconFont.code).width
@@ -222,7 +221,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
           mouseMoveEvent: this._featureMouseMoveEvent({ paneId, indicator, feature })
         }
         let contentWidth = 0
-        if (type === FeatureType.IconFont) {
+        if (type === 'icon_font') {
           const iconFont = content as FeatureIconFontStyle
           this.createFigure({
             name: 'text',
@@ -316,8 +315,8 @@ export default class IndicatorTooltipView extends View<YAxis> {
 
   protected isDrawTooltip (crosshair: Crosshair, styles: TooltipStyle): boolean {
     const showRule = styles.showRule
-    return showRule === TooltipShowRule.Always ||
-      (showRule === TooltipShowRule.FollowCross && isString(crosshair.paneId))
+    return showRule === 'always' ||
+      (showRule === 'follow_cross' && isString(crosshair.paneId))
   }
 
   protected getIndicatorTooltipData (indicator: Indicator): IndicatorTooltipData {
@@ -414,18 +413,20 @@ export default class IndicatorTooltipView extends View<YAxis> {
     const middleFeatures: TooltipFeatureStyle[] = []
     const rightFeatures: TooltipFeatureStyle[] = []
     features.forEach(feature => {
-      switch (feature.position) {
-        case TooltipFeaturePosition.Left: {
-          leftFeatures.push(feature)
-          break
-        }
-        case TooltipFeaturePosition.Middle: {
-          middleFeatures.push(feature)
-          break
-        }
-        case TooltipFeaturePosition.Right: {
-          rightFeatures.push(feature)
-          break
+      if (feature.show) {
+        switch (feature.position) {
+          case 'left': {
+            leftFeatures.push(feature)
+            break
+          }
+          case 'middle': {
+            middleFeatures.push(feature)
+            break
+          }
+          case 'right': {
+            rightFeatures.push(feature)
+            break
+          }
         }
       }
     })

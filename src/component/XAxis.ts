@@ -17,7 +17,6 @@ import type Bounding from '../common/Bounding'
 import { isFunction, isNumber, isString } from '../common/utils/typeChecks'
 import type TimeWeightTick from '../common/TimeWeightTick'
 import { calcBetweenTimeWeightTickBarCount, classifyTimeWeightTicks, createTimeWeightTickList, TimeWeightConstants } from '../common/TimeWeightTick'
-import { FormatDateType } from '../Options'
 import type { KLineData } from '../common/Data'
 
 import AxisImp, { type AxisTemplate, type Axis, type AxisRange, type AxisTick } from './Axis'
@@ -87,28 +86,28 @@ export default abstract class XAxisImp extends AxisImp implements XAxis {
           let text = ''
           switch (weight) {
             case TimeWeightConstants.Year: {
-              text = formatDate(timestamp, 'YYYY', FormatDateType.XAxis)
+              text = formatDate(timestamp, 'YYYY', 'xAxis')
               break
             }
             case TimeWeightConstants.Month: {
-              text = formatDate(timestamp, 'YYYY-MM', FormatDateType.XAxis)
+              text = formatDate(timestamp, 'YYYY-MM', 'xAxis')
               break
             }
             case TimeWeightConstants.Day: {
-              text = formatDate(timestamp, 'MM-DD', FormatDateType.XAxis)
+              text = formatDate(timestamp, 'MM-DD', 'xAxis')
               break
             }
             case TimeWeightConstants.Hour:
             case TimeWeightConstants.Minute: {
-              text = formatDate(timestamp, 'HH:mm', FormatDateType.XAxis)
+              text = formatDate(timestamp, 'HH:mm', 'xAxis')
               break
             }
             case TimeWeightConstants.Second: {
-              text = formatDate(timestamp, 'HH:mm:ss', FormatDateType.XAxis)
+              text = formatDate(timestamp, 'HH:mm:ss', 'xAxis')
               break
             }
             default: {
-              text = formatDate(timestamp, 'YYYY-MM-DD HH:mm', FormatDateType.XAxis)
+              text = formatDate(timestamp, 'YYYY-MM-DD HH:mm', 'xAxis')
               break
             }
           }

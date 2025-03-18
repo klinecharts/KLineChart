@@ -12,7 +12,6 @@
  * limitations under the License.
  */
 
-import { CandleColorCompareRule } from '../common/Styles'
 import { isValid } from '../common/utils/typeChecks'
 import type YAxis from '../component/YAxis'
 
@@ -33,7 +32,7 @@ export default class CandleLastPriceView extends View {
       const data = dataList[dataList.length - 1]
       if (isValid(data)) {
         const { close, open } = data
-        const comparePrice = lastPriceMarkStyles.compareRule === CandleColorCompareRule.CurrentOpen ? open : (dataList[dataList.length - 2]?.close ?? close)
+        const comparePrice = lastPriceMarkStyles.compareRule === 'current_open' ? open : (dataList[dataList.length - 2]?.close ?? close)
         const priceY = yAxis.convertToNicePixel(close)
         let color = ''
         if (close > comparePrice) {

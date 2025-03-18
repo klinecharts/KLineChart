@@ -19,13 +19,13 @@ import type Bounding from '../common/Bounding'
 
 import { isValid, merge } from '../common/utils/typeChecks'
 
-import { AxisPosition, type Axis } from '../component/Axis'
+import type { Axis } from '../component/Axis'
 
 import type DrawWidget from '../widget/DrawWidget'
 import type YAxisWidget from '../widget/YAxisWidget'
 
 import Pane from './Pane'
-import { type PaneOptions, PANE_DEFAULT_HEIGHT, PANE_MIN_HEIGHT, PaneIdConstants, PaneState } from './types'
+import { type PaneOptions, PANE_DEFAULT_HEIGHT, PANE_MIN_HEIGHT, PaneIdConstants } from './types'
 
 import type Chart from '../Chart'
 
@@ -45,7 +45,7 @@ export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
     dragEnabled: true,
     order: 0,
     height: PANE_DEFAULT_HEIGHT,
-    state: PaneState.Normal,
+    state: 'normal',
     axis: { name: 'normal', scrollZoomEnabled: true }
   }
 
@@ -125,7 +125,7 @@ export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
     if (isValid(this._yAxisWidget)) {
       this._yAxisWidget.setBounding(contentBounding)
       const yAxis = this._axis as unknown as YAxis
-      if (yAxis.position === AxisPosition.Left) {
+      if (yAxis.position === 'left') {
         if (isValid(leftYAxisBounding)) {
           this._yAxisWidget.setBounding({ ...leftYAxisBounding, left: 0 })
         }

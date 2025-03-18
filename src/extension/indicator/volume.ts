@@ -15,7 +15,7 @@
 import { formatValue } from '../../common/utils/format'
 import { isValid } from '../../common/utils/typeChecks'
 
-import { type IndicatorTemplate, IndicatorSeries, type IndicatorFigure } from '../../component/Indicator'
+import type { IndicatorTemplate, IndicatorFigure } from '../../component/Indicator'
 
 interface Vol {
   open: number
@@ -50,7 +50,7 @@ function getVolumeFigure (): IndicatorFigure<Vol> {
 const volume: IndicatorTemplate<Vol, number> = {
   name: 'VOL',
   shortName: 'VOL',
-  series: IndicatorSeries.Volume,
+  series: 'volume',
   calcParams: [5, 10, 20],
   shouldFormatBigNumber: true,
   precision: 0,

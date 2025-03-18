@@ -15,18 +15,16 @@
 import type Bounding from '../common/Bounding'
 import { UpdateLevel } from '../common/Updater'
 import type { MouseTouchEvent } from '../common/SyntheticEvent'
-import { ActionType } from '../common/Action'
 import { createDom } from '../common/utils/dom'
 import { throttle } from '../common/utils/performance'
 import type Nullable from '../common/Nullable'
+import { isValid } from '../common/utils/typeChecks'
 
 import Widget from './Widget'
 import { WidgetNameConstants, REAL_SEPARATOR_HEIGHT } from './types'
 
 import type SeparatorPane from '../pane/SeparatorPane'
 import type DrawPane from '../pane/DrawPane'
-import { PaneState } from '../pane/types'
-import { isValid } from '../common/utils/typeChecks'
 
 export default class SeparatorWidget extends Widget<SeparatorPane> {
   private _dragFlag = false
@@ -74,21 +72,21 @@ export default class SeparatorWidget extends Widget<SeparatorPane> {
     this._topPane = pane.getTopPane()
     this._bottomPane = pane.getBottomPane()
     const drawPanes = chart.getDrawPanes()
-    if (this._topPane.getOptions().state === PaneState.Minimize) {
+    if (this._topPane.getOptions().state === 'minimize') {
       const index = drawPanes.findIndex(pane => pane.getId() === this._topPane?.getId())
       for (let i = index - 1; i > -1; i--) {
         const pane = drawPanes[i]
-        if (pane.getOptions().state !== PaneState.Minimize) {
+        if (pane.getOptions().state !== 'minimize') {
           this._topPane = pane
           break
         }
       }
     }
-    if (this._bottomPane.getOptions().state === PaneState.Minimize) {
+    if (this._bottomPane.getOptions().state === 'minimize') {
       const index = drawPanes.findIndex(pane => pane.getId() === this._bottomPane?.getId())
       for (let i = index + 1; i < drawPanes.length; i++) {
         const pane = drawPanes[i]
-        if (pane.getOptions().state !== PaneState.Minimize) {
+        if (pane.getOptions().state !== 'minimize') {
           this._bottomPane = pane
           break
         }
@@ -118,8 +116,8 @@ export default class SeparatorWidget extends Widget<SeparatorPane> {
     if (isValid(this._topPane) && isValid(this._bottomPane)) {
       const bottomPaneOptions = this._bottomPane.getOptions()
       if (
-        this._topPane.getOptions().state !== PaneState.Minimize &&
-        bottomPaneOptions.state !== PaneState.Minimize &&
+        this._topPane.getOptions().state !== 'minimize' &&
+        bottomPaneOptions.state !== 'minimize' &&
         bottomPaneOptions.dragEnabled
       ) {
         let reducedPane: Nullable<DrawPane> = null
@@ -145,7 +143,7 @@ export default class SeparatorWidget extends Widget<SeparatorPane> {
           increasedPane.setBounding({ height: startDragIncreasedPaneHeight + diffHeight })
           const currentPane = this.getPane()
           const chart = currentPane.getChart()
-          chart.getChartStore().executeAction(ActionType.OnPaneDrag, { paneId: currentPane.getId() })
+          chart.getChartStore().executeAction('onPaneDrag', { paneId: currentPane.getId() })
           chart.layout({
             measureHeight: true,
             measureWidth: true,

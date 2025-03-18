@@ -12,7 +12,6 @@
  * limitations under the License.
  */
 
-import { CandleType } from '../common/Styles'
 import type Bounding from '../common/Bounding'
 import { isFunction, isNumber, isString, isValid, merge } from '../common/utils/typeChecks'
 import { index10, getPrecision, nice, round } from '../common/utils/number'
@@ -23,7 +22,7 @@ import AxisImp, {
   type AxisTemplate, type Axis, type AxisRange,
   type AxisTick, type AxisValueToValueCallback,
   type AxisMinSpanCallback, type AxisCreateRangeCallback,
-  AxisPosition
+  type AxisPosition
 } from './Axis'
 
 import type DrawPane from '../pane/DrawPane'
@@ -45,7 +44,7 @@ export type YAxisConstructor = new (parent: DrawPane) => YAxis
 export default abstract class YAxisImp extends AxisImp implements YAxis {
   reverse = false
   inside = false
-  position = AxisPosition.Right
+  position: AxisPosition = 'right'
   gap = {
     top: 0.2,
     bottom: 0.1
@@ -116,7 +115,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
     }
     const visibleRangeDataList = chartStore.getVisibleRangeDataList()
     const candleStyles = chart.getStyles().candle
-    const isArea = candleStyles.type === CandleType.Area
+    const isArea = candleStyles.type === 'area'
     const areaValueKey = candleStyles.area.value
     const shouldCompareHighLow = (inCandle && !isArea) || (!inCandle && shouldOhlc)
     visibleRangeDataList.forEach((visibleData) => {
@@ -232,8 +231,8 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
    */
   isFromZero (): boolean {
     return (
-      (this.position === AxisPosition.Left && this.inside) ||
-      (this.position === AxisPosition.Right && !this.inside)
+      (this.position === 'left' && this.inside) ||
+      (this.position === 'right' && !this.inside)
     )
   }
 

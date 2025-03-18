@@ -12,18 +12,14 @@
  * limitations under the License.
  */
 
-import {
-  type TooltipLegend, type TooltipLegendChild, TooltipShowType, CandleTooltipRectPosition, PolygonType
+import type {
+  TooltipLegend, TooltipLegendChild
 } from '../common/Styles'
 import { formatPrecision } from '../common/utils/format'
 import { createFont } from '../common/utils/canvas'
 import { isFunction, isObject, isValid } from '../common/utils/typeChecks'
 
-import { FormatDateType } from '../Options'
-
 import { PaneIdConstants } from '../pane/types'
-
-import { AxisPosition } from '../component/Axis'
 
 import IndicatorTooltipView from './IndicatorTooltipView'
 
@@ -40,8 +36,8 @@ export default class CandleTooltipView extends IndicatorTooltipView {
       const candleStyles = styles.candle
       const indicatorStyles = styles.indicator
       if (
-        candleStyles.tooltip.showType === TooltipShowType.Rect &&
-        indicatorStyles.tooltip.showType === TooltipShowType.Rect
+        candleStyles.tooltip.showType === 'rect' &&
+        indicatorStyles.tooltip.showType === 'rect'
       ) {
         const isDrawCandleTooltip = this.isDrawTooltip(crosshair, candleStyles.tooltip)
         const isDrawIndicatorTooltip = this.isDrawTooltip(crosshair, indicatorStyles.tooltip)
@@ -50,8 +46,8 @@ export default class CandleTooltipView extends IndicatorTooltipView {
           candleStyles.tooltip.offsetTop
         )
       } else if (
-        candleStyles.tooltip.showType === TooltipShowType.Standard &&
-        indicatorStyles.tooltip.showType === TooltipShowType.Standard
+        candleStyles.tooltip.showType === 'standard' &&
+        indicatorStyles.tooltip.showType === 'standard'
       ) {
         const { offsetLeft, offsetTop, offsetRight } = candleStyles.tooltip
         const maxWidth = bounding.width - offsetRight
@@ -60,8 +56,8 @@ export default class CandleTooltipView extends IndicatorTooltipView {
         )
         this.drawIndicatorTooltip(ctx, offsetLeft, top, maxWidth)
       } else if (
-        candleStyles.tooltip.showType === TooltipShowType.Rect &&
-        indicatorStyles.tooltip.showType === TooltipShowType.Standard
+        candleStyles.tooltip.showType === 'rect' &&
+        indicatorStyles.tooltip.showType === 'standard'
       ) {
         const { offsetLeft, offsetTop, offsetRight } = candleStyles.tooltip
         const maxWidth = bounding.width - offsetRight
@@ -221,7 +217,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
         rectWidth += (rectBorderSize * 2 + rectPaddingLeft + rectPaddingRight)
         rectHeight += (rectBorderSize * 2 + rectPaddingTop + rectPaddingBottom)
         const centerX = bounding.width / 2
-        const isPointer = rectPosition === CandleTooltipRectPosition.Pointer && crosshair.paneId === PaneIdConstants.CANDLE
+        const isPointer = rectPosition === 'pointer' && crosshair.paneId === PaneIdConstants.CANDLE
         const isLeft = (crosshair.realX ?? 0) > centerX
         let rectX = 0
         if (isPointer) {
@@ -235,12 +231,12 @@ export default class CandleTooltipView extends IndicatorTooltipView {
           const yAxis = this.getWidget().getPane().getAxisComponent()
           if (isLeft) {
             rectX = rectOffsetLeft + offsetLeft
-            if (yAxis.inside && yAxis.position === AxisPosition.Left) {
+            if (yAxis.inside && yAxis.position === 'left') {
               rectX += yAxisBounding.width
             }
           } else {
             rectX = bounding.width - rectOffsetRight - rectWidth - offsetRight
-            if (yAxis.inside && yAxis.position === AxisPosition.Right) {
+            if (yAxis.inside && yAxis.position === 'right') {
               rectX -= yAxisBounding.width
             }
           }
@@ -266,7 +262,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
             height: rectHeight
           },
           styles: {
-            style: PolygonType.StrokeFill,
+            style: 'stroke_fill',
             color: rectBackgroundColor,
             borderColor: rectBorderColor,
             borderSize: rectBorderSize,
@@ -379,7 +375,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
     const prevClose = prev?.close ?? current.close
     const changeValue = current.close - prevClose
     const mapping = {
-      '{time}': formatter.formatDate(current.timestamp, 'YYYY-MM-DD HH:mm', FormatDateType.Tooltip),
+      '{time}': formatter.formatDate(current.timestamp, 'YYYY-MM-DD HH:mm', 'tooltip'),
       '{open}': decimalFold.format(thousandsSeparator.format(formatPrecision(current.open, pricePrecision))),
       '{high}': decimalFold.format(thousandsSeparator.format(formatPrecision(current.high, pricePrecision))),
       '{low}': decimalFold.format(thousandsSeparator.format(formatPrecision(current.low, pricePrecision))),

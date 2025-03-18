@@ -13,7 +13,7 @@
  */
 
 import type Coordinate from '../../common/Coordinate'
-import { type RectStyle, PolygonType, LineType } from '../../common/Styles'
+import type { RectStyle } from '../../common/Styles'
 import { isTransparent } from '../../common/utils/color'
 import { isString } from '../../common/utils/typeChecks'
 
@@ -51,17 +51,17 @@ export function drawRect (ctx: CanvasRenderingContext2D, attrs: RectAttrs | Rect
   let rects: RectAttrs[] = []
   rects = rects.concat(attrs)
   const {
-    style = PolygonType.Fill,
+    style = 'fill',
     color = 'transparent',
     borderSize = 1,
     borderColor = 'transparent',
-    borderStyle = LineType.Solid,
+    borderStyle = 'solid',
     borderRadius: r = 0,
     borderDashedValue = [2, 2]
   } = styles
   // eslint-disable-next-line @typescript-eslint/unbound-method, @typescript-eslint/no-unnecessary-condition -- ignore
   const draw = ctx.roundRect ?? ctx.rect
-  const solid = (style === PolygonType.Fill || styles.style === PolygonType.StrokeFill) && (!isString(color) || !isTransparent(color))
+  const solid = (style === 'fill' || styles.style === 'stroke_fill') && (!isString(color) || !isTransparent(color))
   if (solid) {
     ctx.fillStyle = color
     rects.forEach(({ x, y, width: w, height: h }) => {
@@ -71,11 +71,11 @@ export function drawRect (ctx: CanvasRenderingContext2D, attrs: RectAttrs | Rect
       ctx.fill()
     })
   }
-  if ((style === PolygonType.Stroke || styles.style === PolygonType.StrokeFill) && borderSize > 0 && !isTransparent(borderColor)) {
+  if ((style === 'stroke' || styles.style === 'stroke_fill') && borderSize > 0 && !isTransparent(borderColor)) {
     ctx.strokeStyle = borderColor
     ctx.fillStyle = borderColor
     ctx.lineWidth = borderSize
-    if (borderStyle === LineType.Dashed) {
+    if (borderStyle === 'dashed') {
       ctx.setLineDash(borderDashedValue)
     } else {
       ctx.setLineDash([])

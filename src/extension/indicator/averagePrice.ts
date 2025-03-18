@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import { type IndicatorTemplate, IndicatorSeries } from '../../component/Indicator'
+import type { IndicatorTemplate } from '../../component/Indicator'
 
 interface Avp {
   avp?: number
@@ -24,7 +24,7 @@ interface Avp {
 const averagePrice: IndicatorTemplate<Avp> = {
   name: 'AVP',
   shortName: 'AVP',
-  series: IndicatorSeries.Price,
+  series: 'price',
   precision: 2,
   figures: [
     { key: 'avp', title: 'AVP: ', type: 'line' }

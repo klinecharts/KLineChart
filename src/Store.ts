@@ -24,7 +24,7 @@ import type Crosshair from './common/Crosshair'
 import type BarSpace from './common/BarSpace'
 import type Precision from './common/Precision'
 import Action from './common/Action'
-import { ActionType, type ActionCallback } from './common/Action'
+import type { ActionType, ActionCallback } from './common/Action'
 import { formatValue, formatTimestampByTemplate, formatBigNumber, formatThousands, formatFoldDecimal } from './common/utils/format'
 import { getDefaultStyles, type Styles, type TooltipLegend } from './common/Styles'
 import { isArray, isString, isValid, isNumber, isBoolean, merge } from './common/utils/typeChecks'
@@ -32,13 +32,13 @@ import { createId } from './common/utils/id'
 import { binarySearchNearest } from './common/utils/number'
 import { logWarn } from './common/utils/logger'
 import { UpdateLevel } from './common/Updater'
-import { type LoadDataCallback, type LoadDataParams, LoadDataType } from './common/LoadDataCallback'
+import type { LoadDataCallback, LoadDataParams, LoadDataType } from './common/LoadDataCallback'
 import type TimeWeightTick from './common/TimeWeightTick'
 import { classifyTimeWeightTicks, createTimeWeightTickList } from './common/TimeWeightTick'
 
 import type { Options, Formatter, ThousandsSeparator, DecimalFold, FormatDateType, FormatDateParams, FormatBigNumber, FormatLastPriceExtendTextParams, FormatLastPriceExtendText } from './Options'
 
-import { IndicatorDataState, IndicatorSeries, type IndicatorOverride, type IndicatorCreate, type IndicatorFilter } from './component/Indicator'
+import type { IndicatorOverride, IndicatorCreate, IndicatorFilter } from './component/Indicator'
 import type IndicatorImp from './component/Indicator'
 import { getIndicatorClass } from './extension/indicator/index'
 
@@ -57,10 +57,7 @@ const BarSpaceLimitConstants = {
   MAX: 50
 }
 
-const enum ScrollLimitRole {
-  BarCount,
-  Distance
-}
+type ScrollLimitRole = 'bar_count' | 'distance'
 
 export interface ProgressOverlayInfo {
   paneId: string
@@ -68,9 +65,7 @@ export interface ProgressOverlayInfo {
   appointPaneFlag: boolean
 }
 
-export const enum EventOverlayInfoFigureType {
-  None, Point, Other
-}
+export type EventOverlayInfoFigureType = 'none' | 'point' | 'other'
 
 export interface EventOverlayInfo {
   paneId: string
@@ -257,7 +252,7 @@ export default class StoreImp implements Store {
   /**
    * Scroll limit role
    */
-  private _scrollLimitRole = ScrollLimitRole.BarCount
+  private _scrollLimitRole: ScrollLimitRole = 'bar_count'
 
   /**
    * Scroll to the leftmost and rightmost visible bar
@@ -331,7 +326,7 @@ export default class StoreImp implements Store {
   private _pressedOverlayInfo: EventOverlayInfo = {
     paneId: '',
     overlay: null,
-    figureType: EventOverlayInfoFigureType.None,
+    figureType: 'none',
     figureIndex: -1,
     figure: null
   }
@@ -342,7 +337,7 @@ export default class StoreImp implements Store {
   private _hoverOverlayInfo: EventOverlayInfo = {
     paneId: '',
     overlay: null,
-    figureType: EventOverlayInfoFigureType.None,
+    figureType: 'none',
     figureIndex: -1,
     figure: null
   }
@@ -353,7 +348,7 @@ export default class StoreImp implements Store {
   private _clickOverlayInfo: EventOverlayInfo = {
     paneId: '',
     overlay: null,
-    figureType: EventOverlayInfoFigureType.None,
+    figureType: 'none',
     figureIndex: -1,
     figure: null
   }
@@ -507,7 +502,7 @@ export default class StoreImp implements Store {
     if (isArray<KLineData>(data)) {
       dataLengthChange = data.length
       switch (type) {
-        case LoadDataType.Init: {
+        case 'init': {
           this.clearData()
           this._dataList = data
           this._loadDataMore.backward = more?.backward ?? false
@@ -517,14 +512,14 @@ export default class StoreImp implements Store {
           adjustFlag = true
           break
         }
-        case LoadDataType.Backward: {
+        case 'backward': {
           this._classifyTimeWeightTicks(data, true)
           this._dataList = this._dataList.concat(data)
           this._loadDataMore.backward = more?.backward ?? false
           adjustFlag = dataLengthChange > 0
           break
         }
-        case LoadDataType.Forward: {
+        case 'forward': {
           this._dataList = data.concat(this._dataList)
           this._classifyTimeWeightTicks(this._dataList)
           this._loadDataMore.forward = more?.forward ?? false
@@ -625,7 +620,7 @@ export default class StoreImp implements Store {
     let leftMinVisibleBarCount = 0
     let rightMinVisibleBarCount = 0
 
-    if (this._scrollLimitRole === ScrollLimitRole.Distance) {
+    if (this._scrollLimitRole === 'distance') {
       leftMinVisibleBarCount = (this._totalBarSpace - this._maxOffsetDistance.right) / this._barSpace
       rightMinVisibleBarCount = (this._totalBarSpace - this._maxOffsetDistance.left) / this._barSpace
     } else {
@@ -657,7 +652,7 @@ export default class StoreImp implements Store {
     }
     const realFrom = this._lastBarRightSideDiffBarCount > 0 ? Math.round(totalBarCount + this._lastBarRightSideDiffBarCount - visibleBarCount) - 1 : from
     this._visibleRange = { from, to, realFrom, realTo }
-    this.executeAction(ActionType.OnVisibleRangeChange, this._visibleRange)
+    this.executeAction('onVisibleRangeChange', this._visibleRange)
     this._visibleRangeDataList = []
     this._visibleRangeHighLowPrice = [
       { x: 0, price: Number.MIN_SAFE_INTEGER },
@@ -693,10 +688,10 @@ export default class StoreImp implements Store {
         if (this._loadDataMore.forward) {
           this._loading = true
           params = {
-            type: LoadDataType.Forward,
+            type: 'forward',
             data: this._dataList[0] ?? null,
             callback: (data: KLineData[], more?: boolean) => {
-              this.addData(data, LoadDataType.Forward, { forward: more ?? false, backward: more ?? false })
+              this.addData(data, 'forward', { forward: more ?? false, backward: more ?? false })
             }
           }
         }
@@ -704,10 +699,10 @@ export default class StoreImp implements Store {
         if (this._loadDataMore.backward) {
           this._loading = true
           params = {
-            type: LoadDataType.Backward,
+            type: 'backward',
             data: this._dataList[totalBarCount - 1] ?? null,
             callback: (data: KLineData[], more?: boolean) => {
-              this.addData(data, LoadDataType.Backward, { forward: more ?? false, backward: more ?? false })
+              this.addData(data, 'backward', { forward: more ?? false, backward: more ?? false })
             }
           }
         }
@@ -753,7 +748,7 @@ export default class StoreImp implements Store {
   }
 
   setOffsetRightDistance (distance: number, isUpdate?: boolean): this {
-    this._offsetRightDistance = this._scrollLimitRole === ScrollLimitRole.Distance ? Math.min(this._maxOffsetDistance.right, distance) : distance
+    this._offsetRightDistance = this._scrollLimitRole === 'distance' ? Math.min(this._maxOffsetDistance.right, distance) : distance
     this._lastBarRightSideDiffBarCount = this._offsetRightDistance / this._barSpace
     if (isUpdate ?? false) {
       this._adjustVisibleRange()
@@ -784,22 +779,22 @@ export default class StoreImp implements Store {
   }
 
   setMaxOffsetLeftDistance (distance: number): void {
-    this._scrollLimitRole = ScrollLimitRole.Distance
+    this._scrollLimitRole = 'distance'
     this._maxOffsetDistance.left = distance
   }
 
   setMaxOffsetRightDistance (distance: number): void {
-    this._scrollLimitRole = ScrollLimitRole.Distance
+    this._scrollLimitRole = 'distance'
     this._maxOffsetDistance.right = distance
   }
 
   setLeftMinVisibleBarCount (barCount: number): void {
-    this._scrollLimitRole = ScrollLimitRole.BarCount
+    this._scrollLimitRole = 'bar_count'
     this._minVisibleBarCount.left = barCount
   }
 
   setRightMinVisibleBarCount (barCount: number): void {
-    this._scrollLimitRole = ScrollLimitRole.BarCount
+    this._scrollLimitRole = 'bar_count'
     this._minVisibleBarCount.right = barCount
   }
 
@@ -829,7 +824,7 @@ export default class StoreImp implements Store {
       prevLastBarRightSideDistance - this._lastBarRightSideDiffBarCount * this._barSpace
     )
     if (realDistance !== 0) {
-      this.executeAction(ActionType.OnScroll, { distance: realDistance })
+      this.executeAction('onScroll', { distance: realDistance })
     }
   }
 
@@ -907,7 +902,7 @@ export default class StoreImp implements Store {
     })
     const realScale = this._barSpace / prevBarSpace
     if (realScale !== 1) {
-      this.executeAction(ActionType.OnZoom, { scale: realScale })
+      this.executeAction('onZoom', { scale: realScale })
     }
   }
 
@@ -1016,7 +1011,7 @@ export default class StoreImp implements Store {
       id: generateTaskId(indicator.id),
       handler: () => {
         indicator.onDataStateChange?.({
-          state: IndicatorDataState.Loading,
+          state: 'loading',
           type: loadDataType,
           indicator
         })
@@ -1028,14 +1023,14 @@ export default class StoreImp implements Store {
               buildYAxisTick: true
             })
             indicator.onDataStateChange?.({
-              state: IndicatorDataState.Ready,
+              state: 'ready',
               type: loadDataType,
               indicator
             })
           }
         }).catch(() => {
           indicator.onDataStateChange?.({
-            state: IndicatorDataState.Error,
+            state: 'error',
             type: loadDataType,
             indicator
           })
@@ -1064,7 +1059,7 @@ export default class StoreImp implements Store {
     paneIndicators.push(indicator)
     this._indicators.set(paneId, paneIndicators)
     this._sortIndicators(paneId)
-    this._addIndicatorCalcTask(indicator, LoadDataType.Init)
+    this._addIndicatorCalcTask(indicator, 'init')
     return true
   }
 
@@ -1117,11 +1112,11 @@ export default class StoreImp implements Store {
     const { price: pricePrecision, volume: volumePrecision } = this._precision
     const synchronize: ((indicator: IndicatorImp) => void) = indicator => {
       switch (indicator.series) {
-        case IndicatorSeries.Price: {
+        case 'price': {
           indicator.setSeriesPrecision(pricePrecision)
           break
         }
-        case IndicatorSeries.Volume: {
+        case 'volume': {
           indicator.setSeriesPrecision(volumePrecision)
           break
         }
@@ -1151,7 +1146,7 @@ export default class StoreImp implements Store {
         sortFlag = true
       }
       if (calc) {
-        this._addIndicatorCalcTask(indicator, LoadDataType.Update)
+        this._addIndicatorCalcTask(indicator, 'update')
       } else {
         if (draw) {
           updateFlag = true

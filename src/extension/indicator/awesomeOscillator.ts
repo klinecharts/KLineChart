@@ -12,7 +12,6 @@
  * limitations under the License.
  */
 
-import { PolygonType } from '../../common/Styles'
 import { formatValue } from '../../common/utils/format'
 
 import type { IndicatorTemplate } from '../../component/Indicator'
@@ -40,7 +39,7 @@ const awesomeOscillator: IndicatorTemplate<Ao, number> = {
       } else {
         color = formatValue(indicator.styles, 'bars[0].downColor', (defaultStyles!.bars)[0].downColor) as string
       }
-      const style = currentAo > prevAo ? PolygonType.Stroke : PolygonType.Fill
+      const style = currentAo > prevAo ? 'stroke' : 'fill'
       return { color, style, borderColor: color }
     }
   }],

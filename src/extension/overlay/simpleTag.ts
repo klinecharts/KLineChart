@@ -18,13 +18,11 @@ import type { OverlayTemplate } from '../../component/Overlay'
 
 import { isFunction, isNumber, isValid } from '../../common/utils/typeChecks'
 
-import { LineType } from '../../common/Styles'
-
 const simpleTag: OverlayTemplate = {
   name: 'simpleTag',
   totalStep: 2,
   styles: {
-    line: { style: LineType.Dashed }
+    line: { style: 'dashed' }
   },
   createPointFigures: ({ bounding, coordinates }) => ({
     type: 'line',

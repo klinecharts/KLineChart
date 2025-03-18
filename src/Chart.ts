@@ -20,11 +20,11 @@ import type Coordinate from './common/Coordinate'
 import type Point from './common/Point'
 import { UpdateLevel } from './common/Updater'
 import type Crosshair from './common/Crosshair'
-import { ActionType, type ActionCallback } from './common/Action'
+import type { ActionType, ActionCallback } from './common/Action'
 import type { LoadDataCallback, LoadDataMore } from './common/LoadDataCallback'
 import type Precision from './common/Precision'
 import type VisibleRange from './common/VisibleRange'
-import { type Formatter, type DecimalFold, type LayoutChild, LayoutChildType, type Options, type ThousandsSeparator } from './Options'
+import type { Formatter, DecimalFold, LayoutChild, Options, ThousandsSeparator } from './Options'
 import Animation from './common/Animation'
 
 import { createId } from './common/utils/id'
@@ -33,7 +33,6 @@ import { getPixelRatio } from './common/utils/canvas'
 import { isString, isArray, isValid, merge, isNumber, isBoolean } from './common/utils/typeChecks'
 import { logWarn } from './common/utils/logger'
 import { binarySearchNearest } from './common/utils/number'
-import { LoadDataType } from './common/LoadDataCallback'
 
 import ChartStore, { SCALE_MULTIPLIER, type Store } from './Store'
 
@@ -43,10 +42,9 @@ import XAxisPane from './pane/XAxisPane'
 import type DrawPane from './pane/DrawPane'
 import SeparatorPane from './pane/SeparatorPane'
 
-import { type PaneOptions, PANE_DEFAULT_HEIGHT, PaneIdConstants, PaneState, PANE_MIN_HEIGHT } from './pane/types'
+import { type PaneOptions, PANE_DEFAULT_HEIGHT, PaneIdConstants, PANE_MIN_HEIGHT } from './pane/types'
 
 import type AxisImp from './component/Axis'
-import { AxisPosition } from './component/Axis'
 import type { YAxis } from './component/YAxis'
 
 import type { IndicatorFilter, Indicator, IndicatorCreate, IndicatorOverride } from './component/Indicator'
@@ -60,11 +58,7 @@ import type { Styles } from './common/Styles'
 import type BarSpace from './common/BarSpace'
 import type PickRequired from './common/PickRequired'
 
-export enum DomPosition {
-  Root = 'root',
-  Main = 'main',
-  YAxis = 'yAxis'
-}
+export type DomPosition = 'root' | 'main' | 'yAxis'
 
 export interface ConvertFilter {
   paneId?: string
@@ -166,7 +160,7 @@ export default class ChartImp implements Chart {
   }
 
   private _initPanes (options?: Options): void {
-    const layout = options?.layout ?? [{ type: LayoutChildType.Candle }]
+    const layout = options?.layout ?? [{ type: 'candle' }]
 
     const createCandlePane: ((child: LayoutChild) => void) = child => {
       if (!isValid(this._candlePane)) {
@@ -189,11 +183,11 @@ export default class ChartImp implements Chart {
 
     layout.forEach(child => {
       switch (child.type) {
-        case LayoutChildType.Candle: {
+        case 'candle': {
           createCandlePane(child)
           break
         }
-        case LayoutChildType.Indicator: {
+        case 'indicator': {
           const content = child.content ?? []
           if (content.length > 0) {
             let paneId: Nullable<string> = child.options?.id ?? null
@@ -207,13 +201,13 @@ export default class ChartImp implements Chart {
           }
           break
         }
-        case LayoutChildType.XAxis: {
+        case 'xAxis': {
           createXAxisPane(child.options)
           break
         }
       }
     })
-    createCandlePane({ type: LayoutChildType.Candle })
+    createCandlePane({ type: 'candle' })
     createXAxisPane({ order: Number.MAX_SAFE_INTEGER })
   }
 
@@ -234,7 +228,7 @@ export default class ChartImp implements Chart {
     const normalStatePanes = this._drawPanes.filter(pane => {
       const paneId = pane.getId()
       return (
-        pane.getOptions().state === PaneState.Normal &&
+        pane.getOptions().state === 'normal' &&
         paneId !== currentPane.getId() &&
         paneId !== PaneIdConstants.X_AXIS
       )
@@ -247,7 +241,7 @@ export default class ChartImp implements Chart {
     if (
       currentPane.getId() !== PaneIdConstants.CANDLE &&
       isValid(this._candlePane) &&
-      this._candlePane.getOptions().state === PaneState.Normal
+      this._candlePane.getOptions().state === 'normal'
     ) {
       const height = this._candlePane.getBounding().height
       if (height > 0) {
@@ -423,7 +417,7 @@ export default class ChartImp implements Chart {
           const yAxis = pane.getAxisComponent() as YAxis
           const inside = yAxis.inside
           const yAxisWidth = yAxis.getAutoSize()
-          if (yAxis.position === AxisPosition.Left) {
+          if (yAxis.position === 'left') {
             leftYAxisWidth = Math.max(leftYAxisWidth, yAxisWidth)
             if (inside) {
               leftYAxisOutside = false
@@ -497,7 +491,7 @@ export default class ChartImp implements Chart {
   }
 
   crosshairChange (crosshair: Crosshair): void {
-    if (this._chartStore.hasAction(ActionType.OnCrosshairChange)) {
+    if (this._chartStore.hasAction('onCrosshairChange')) {
       const indicatorData = {}
       this._drawPanes.forEach(pane => {
         const id = pane.getId()
@@ -510,7 +504,7 @@ export default class ChartImp implements Chart {
         indicatorData[id] = paneIndicatorData
       })
       if (isString(crosshair.paneId)) {
-        this._chartStore.executeAction(ActionType.OnCrosshairChange, {
+        this._chartStore.executeAction('onCrosshairChange', {
           ...crosshair,
           indicatorData
         })
@@ -522,15 +516,15 @@ export default class ChartImp implements Chart {
     if (isValid(paneId)) {
       const pane = this.getDrawPaneById(paneId)
       if (isValid(pane)) {
-        const pos = position ?? DomPosition.Root
+        const pos = position ?? 'root'
         switch (pos) {
-          case DomPosition.Root: {
+          case 'root': {
             return pane.getContainer()
           }
-          case DomPosition.Main: {
+          case 'main': {
             return pane.getMainWidget().getContainer()
           }
-          case DomPosition.YAxis: {
+          case 'yAxis': {
             return pane.getYAxisWidget()?.getContainer() ?? null
           }
         }
@@ -545,15 +539,15 @@ export default class ChartImp implements Chart {
     if (isValid(paneId)) {
       const pane = this.getDrawPaneById(paneId)
       if (isValid(pane)) {
-        const pos = position ?? DomPosition.Root
+        const pos = position ?? 'root'
         switch (pos) {
-          case DomPosition.Root: {
+          case 'root': {
             return pane.getBounding()
           }
-          case DomPosition.Main: {
+          case 'main': {
             return pane.getMainWidget().getBounding()
           }
-          case DomPosition.YAxis: {
+          case 'yAxis': {
             return pane.getYAxisWidget()?.getBounding() ?? null
           }
         }
@@ -702,11 +696,11 @@ export default class ChartImp implements Chart {
     } else {
       loadDataMore = { ...loadDataMore, ...more }
     }
-    this._chartStore.addData(data, LoadDataType.Init, loadDataMore)
+    this._chartStore.addData(data, 'init', loadDataMore)
   }
 
   updateData (data: KLineData): void {
-    this._chartStore.addData(data, LoadDataType.Update)
+    this._chartStore.addData(data, 'update')
   }
 
   setLoadMoreDataCallback (cb: LoadDataCallback): void {
@@ -870,13 +864,13 @@ export default class ChartImp implements Chart {
             shouldLayout = true
             const state = options.state
             switch (state) {
-              case PaneState.Maximize: {
+              case 'maximize': {
                 const maximizePane = this._drawPanes.find(pane => {
                   const paneId = pane.getId()
-                  return pane.getOptions().state === PaneState.Maximize && paneId !== PaneIdConstants.X_AXIS
+                  return pane.getOptions().state === 'maximize' && paneId !== PaneIdConstants.X_AXIS
                 })
                 if (!isValid(maximizePane)) {
-                  if (currentPane.getOptions().state === PaneState.Normal) {
+                  if (currentPane.getOptions().state === 'normal') {
                     currentPane.setOriginalBounding({ height: currentPane.getBounding().height })
                   }
                   currentPane.setOptions({ state })
@@ -892,11 +886,11 @@ export default class ChartImp implements Chart {
                 }
                 break
               }
-              case PaneState.Minimize: {
+              case 'minimize': {
                 const height = currentPane.getBounding().height
                 const currentState = currentPane.getOptions().state
                 let changeHeight = height - PANE_MIN_HEIGHT
-                if (currentState === PaneState.Maximize) {
+                if (currentState === 'maximize') {
                   changeHeight = currentPane.getOriginalBounding().height - PANE_MIN_HEIGHT
                 }
                 if (
@@ -906,7 +900,7 @@ export default class ChartImp implements Chart {
                     changeHeight
                   )
                 ) {
-                  if (currentState === PaneState.Normal) {
+                  if (currentState === 'normal') {
                     currentPane.setOriginalBounding({ height })
                   }
                   currentPane.setOptions({ state })
@@ -1115,7 +1109,7 @@ export default class ChartImp implements Chart {
 
   executeAction (type: ActionType, data: Crosshair): void {
     switch (type) {
-      case ActionType.OnCrosshairChange: {
+      case 'onCrosshairChange': {
         const crosshair: Crosshair = { ...data }
         crosshair.paneId ??= PaneIdConstants.CANDLE
         this._chartStore.setCrosshair(crosshair, { notExecuteAction: true })

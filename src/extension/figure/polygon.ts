@@ -13,7 +13,7 @@
  */
 
 import type Coordinate from '../../common/Coordinate'
-import { type PolygonStyle, PolygonType, LineType } from '../../common/Styles'
+import type { PolygonStyle } from '../../common/Styles'
 import { isString } from '../../common/utils/typeChecks'
 import { isTransparent } from '../../common/utils/color'
 
@@ -44,15 +44,15 @@ export function drawPolygon (ctx: CanvasRenderingContext2D, attrs: PolygonAttrs 
   let polygons: PolygonAttrs[] = []
   polygons = polygons.concat(attrs)
   const {
-    style = PolygonType.Fill,
+    style = 'fill',
     color = 'currentColor',
     borderSize = 1,
     borderColor = 'currentColor',
-    borderStyle = LineType.Solid,
+    borderStyle = 'solid',
     borderDashedValue = [2, 2]
   } = styles
   if (
-    (style === PolygonType.Fill || styles.style === PolygonType.StrokeFill) &&
+    (style === 'fill' || styles.style === 'stroke_fill') &&
     (!isString(color) || !isTransparent(color))) {
     ctx.fillStyle = color
     polygons.forEach(({ coordinates }) => {
@@ -65,10 +65,10 @@ export function drawPolygon (ctx: CanvasRenderingContext2D, attrs: PolygonAttrs 
       ctx.fill()
     })
   }
-  if ((style === PolygonType.Stroke || styles.style === PolygonType.StrokeFill) && borderSize > 0 && !isTransparent(borderColor)) {
+  if ((style === 'stroke' || styles.style === 'stroke_fill') && borderSize > 0 && !isTransparent(borderColor)) {
     ctx.strokeStyle = borderColor
     ctx.lineWidth = borderSize
-    if (borderStyle === LineType.Dashed) {
+    if (borderStyle === 'dashed') {
       ctx.setLineDash(borderDashedValue)
     } else {
       ctx.setLineDash([])

@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { type IndicatorTemplate, IndicatorSeries } from '../../component/Indicator'
+import type { IndicatorTemplate } from '../../component/Indicator'
 
 interface Bbi {
   bbi?: number
@@ -25,7 +25,7 @@ interface Bbi {
 const bullAndBearIndex: IndicatorTemplate<Bbi, number> = {
   name: 'BBI',
   shortName: 'BBI',
-  series: IndicatorSeries.Price,
+  series: 'price',
   precision: 2,
   calcParams: [3, 6, 12, 24],
   shouldOhlc: true,

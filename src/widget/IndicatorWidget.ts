@@ -16,7 +16,6 @@ import type DrawPane from '../pane/DrawPane'
 
 import { WidgetNameConstants } from './types'
 import DrawWidget from './DrawWidget'
-import { PaneState } from '../pane/types'
 
 import type { YAxis } from '../component/YAxis'
 
@@ -45,7 +44,7 @@ export default class IndicatorWidget extends DrawWidget<DrawPane<YAxis>> {
   }
 
   protected updateMain (ctx: CanvasRenderingContext2D): void {
-    if (this.getPane().getOptions().state !== PaneState.Minimize) {
+    if (this.getPane().getOptions().state !== 'minimize') {
       this.updateMainContent(ctx)
       this._indicatorView.draw(ctx)
       this._gridView.draw(ctx)
@@ -65,7 +64,7 @@ export default class IndicatorWidget extends DrawWidget<DrawPane<YAxis>> {
   }
 
   override updateOverlay (ctx: CanvasRenderingContext2D): void {
-    if (this.getPane().getOptions().state !== PaneState.Minimize) {
+    if (this.getPane().getOptions().state !== 'minimize') {
       this._overlayView.draw(ctx)
       this._crosshairLineView.draw(ctx)
       this.updateOverlayContent(ctx)

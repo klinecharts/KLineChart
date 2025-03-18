@@ -23,8 +23,6 @@ import type IndicatorTooltipView from '../view/IndicatorTooltipView'
 import CandleTooltipView from '../view/CandleTooltipView'
 import CrosshairFeatureView from '../view/CrosshairFeatureView'
 
-import { CandleType } from '../common/Styles'
-
 import type AxisPane from '../pane/DrawPane'
 
 import type { YAxis } from '../component/YAxis'
@@ -44,7 +42,7 @@ export default class CandleWidget extends IndicatorWidget {
 
   override updateMainContent (ctx: CanvasRenderingContext2D): void {
     const candleStyles = this.getPane().getChart().getStyles().candle
-    if (candleStyles.type !== CandleType.Area) {
+    if (candleStyles.type !== 'area') {
       this._candleBarView.draw(ctx)
       this._candleHighLowPriceView.draw(ctx)
       this._candleAreaView.stopAnimation()

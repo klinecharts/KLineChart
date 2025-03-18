@@ -14,7 +14,7 @@
 
 import type Coordinate from '../../common/Coordinate'
 import { getDistance } from '../../common/Coordinate'
-import { type LineStyle, LineType } from '../../common/Styles'
+import type { LineStyle } from '../../common/Styles'
 
 import { type FigureTemplate, DEVIATION } from '../../component/Figure'
 
@@ -47,10 +47,10 @@ export function checkCoordinateOnArc (coordinate: Coordinate, attrs: ArcAttrs | 
 export function drawArc (ctx: CanvasRenderingContext2D, attrs: ArcAttrs | ArcAttrs[], styles: Partial<LineStyle>): void {
   let arcs: ArcAttrs[] = []
   arcs = arcs.concat(attrs)
-  const { style = LineType.Solid, size = 1, color = 'currentColor', dashedValue = [2, 2] } = styles
+  const { style = 'solid', size = 1, color = 'currentColor', dashedValue = [2, 2] } = styles
   ctx.lineWidth = size
   ctx.strokeStyle = color
-  if (style === LineType.Dashed) {
+  if (style === 'dashed') {
     ctx.setLineDash(dashedValue)
   } else {
     ctx.setLineDash([])

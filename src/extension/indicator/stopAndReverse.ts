@@ -14,7 +14,7 @@
 
 import { formatValue } from '../../common/utils/format'
 
-import { type IndicatorTemplate, IndicatorSeries } from '../../component/Indicator'
+import type { IndicatorTemplate } from '../../component/Indicator'
 
 interface Sar {
   sar?: number
@@ -25,7 +25,7 @@ interface Sar {
 const stopAndReverse: IndicatorTemplate<Sar, number> = {
   name: 'SAR',
   shortName: 'SAR',
-  series: IndicatorSeries.Price,
+  series: 'price',
   calcParams: [2, 2, 20],
   precision: 2,
   shouldOhlc: true,

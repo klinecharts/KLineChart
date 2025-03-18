@@ -24,7 +24,7 @@
  * limitations under the License.
  */
 
-import {
+import type {
   LineType, PolygonType, TooltipShowRule, TooltipShowType, FeatureType, TooltipFeaturePosition,
   CandleType, CandleTooltipRectPosition
 } from './common/Styles'
@@ -44,12 +44,12 @@ import {
   formatTimestampByTemplate
 } from './common/utils/format'
 import { calcTextWidth } from './common/utils/canvas'
-import { ActionType } from './common/Action'
-import { IndicatorSeries } from './component/Indicator'
-import { OverlayMode } from './component/Overlay'
+import type { ActionType } from './common/Action'
+import type { IndicatorSeries } from './component/Indicator'
+import type { OverlayMode } from './component/Overlay'
 
-import { FormatDateType, type Options } from './Options'
-import ChartImp, { type Chart, DomPosition } from './Chart'
+import type { FormatDateType, Options } from './Options'
+import ChartImp, { type Chart, type DomPosition } from './Chart'
 
 import { checkCoordinateOnArc } from './extension/figure/arc'
 import { checkCoordinateOnCircle } from './extension/figure/circle'
@@ -173,7 +173,7 @@ export {
   registerStyles,
   registerXAxis, registerYAxis,
   utils,
-  LineType, PolygonType, TooltipShowRule, TooltipShowType, FeatureType, TooltipFeaturePosition, CandleTooltipRectPosition,
-  CandleType, FormatDateType,
-  DomPosition, ActionType, IndicatorSeries, OverlayMode
+  type LineType, type PolygonType, type TooltipShowRule, type TooltipShowType, type FeatureType, type TooltipFeaturePosition, type CandleTooltipRectPosition,
+  type CandleType, type FormatDateType,
+  type DomPosition, type ActionType, type IndicatorSeries, type OverlayMode
 }

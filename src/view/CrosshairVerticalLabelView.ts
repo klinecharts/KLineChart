@@ -17,8 +17,6 @@ import type Crosshair from '../common/Crosshair'
 import type { CrosshairStyle, CrosshairDirectionStyle, StateTextStyle } from '../common/Styles'
 import { isValid } from '../common/utils/typeChecks'
 
-import { FormatDateType } from '../Options'
-
 import type { Axis } from '../component/Axis'
 import type { XAxis } from '../component/XAxis'
 
@@ -38,7 +36,7 @@ export default class CrosshairVerticalLabelView extends CrosshairHorizontalLabel
 
   override getText (crosshair: Crosshair, chartStore: ChartStore): string {
     const timestamp = crosshair.timestamp!
-    return chartStore.getInnerFormatter().formatDate(timestamp, 'YYYY-MM-DD HH:mm', FormatDateType.Crosshair)
+    return chartStore.getInnerFormatter().formatDate(timestamp, 'YYYY-MM-DD HH:mm', 'crosshair')
   }
 
   override getTextAttrs (text: string, textWidth: number, crosshair: Crosshair, bounding: Bounding, _axis: Axis, styles: StateTextStyle): TextAttrs {

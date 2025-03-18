@@ -81,12 +81,10 @@ export interface EventOptions {
 
 // we can use `const name = 500;` but with `const enum` this values will be inlined into code
 // so we do not need to have it as variables
-const enum Delay {
-  ResetClick = 500,
-  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
-  LongTap = 500,
-  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
-  PreventFiresTouchEvents = 500,
+const Delay = {
+  ResetClick: 500,
+  LongTap: 500,
+  PreventFiresTouchEvents: 500
 }
 
 const ManhattanDistance = {

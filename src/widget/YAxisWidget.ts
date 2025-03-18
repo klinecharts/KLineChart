@@ -16,7 +16,6 @@ import type DrawPane from '../pane/DrawPane'
 
 import { WidgetNameConstants } from './types'
 import DrawWidget from './DrawWidget'
-import { PaneState } from '../pane/types'
 
 import type { YAxis } from '../component/YAxis'
 
@@ -44,7 +43,7 @@ export default class YAxisWidget extends DrawWidget<DrawPane<YAxis>> {
   }
 
   override updateMain (ctx: CanvasRenderingContext2D): void {
-    const minimize = this.getPane().getOptions().state === PaneState.Minimize
+    const minimize = this.getPane().getOptions().state === 'minimize'
     this._yAxisView.draw(ctx, minimize)
     if (!minimize) {
       if (this.getPane().getAxisComponent().isInCandle()) {
@@ -55,7 +54,7 @@ export default class YAxisWidget extends DrawWidget<DrawPane<YAxis>> {
   }
 
   override updateOverlay (ctx: CanvasRenderingContext2D): void {
-    if (this.getPane().getOptions().state !== PaneState.Minimize) {
+    if (this.getPane().getOptions().state !== 'minimize') {
       this._overlayYAxisView.draw(ctx)
       this._crosshairHorizontalLabelView.draw(ctx)
     }

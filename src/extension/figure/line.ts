@@ -14,7 +14,7 @@
 
 import type Nullable from '../../common/Nullable'
 import type Coordinate from '../../common/Coordinate'
-import { type SmoothLineStyle, LineType } from '../../common/Styles'
+import type { SmoothLineStyle } from '../../common/Styles'
 
 import { type FigureTemplate, DEVIATION } from '../../component/Figure'
 import { isNumber } from '../../common/utils/typeChecks'
@@ -141,10 +141,10 @@ export function lineTo (ctx: CanvasRenderingContext2D, coordinates: Coordinate[]
 export function drawLine (ctx: CanvasRenderingContext2D, attrs: LineAttrs | LineAttrs[], styles: Partial<SmoothLineStyle>): void {
   let lines: LineAttrs[] = []
   lines = lines.concat(attrs)
-  const { style = LineType.Solid, smooth = false, size = 1, color = 'currentColor', dashedValue = [2, 2] } = styles
+  const { style = 'solid', smooth = false, size = 1, color = 'currentColor', dashedValue = [2, 2] } = styles
   ctx.lineWidth = size
   ctx.strokeStyle = color
-  if (style === LineType.Dashed) {
+  if (style === 'dashed') {
     ctx.setLineDash(dashedValue)
   } else {
     ctx.setLineDash([])

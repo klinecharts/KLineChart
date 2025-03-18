@@ -14,13 +14,12 @@
 
 import type { OverlayTemplate } from '../../component/Overlay'
 import { isFunction, isValid } from '../../common/utils/typeChecks'
-import { LineType } from '../../common/Styles'
 
 const simpleAnnotation: OverlayTemplate = {
   name: 'simpleAnnotation',
   totalStep: 2,
   styles: {
-    line: { style: LineType.Dashed }
+    line: { style: 'dashed' }
   },
   createPointFigures: ({ overlay, coordinates }) => {
     let text = ''

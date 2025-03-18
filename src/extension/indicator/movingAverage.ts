@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import { type IndicatorTemplate, IndicatorSeries } from '../../component/Indicator'
+import type { IndicatorTemplate } from '../../component/Indicator'
 
 interface Ma {
   ma1?: number
@@ -27,7 +27,7 @@ interface Ma {
 const movingAverage: IndicatorTemplate<Ma, number> = {
   name: 'MA',
   shortName: 'MA',
-  series: IndicatorSeries.Price,
+  series: 'price',
   calcParams: [5, 10, 30, 60],
   precision: 2,
   shouldOhlc: true,
