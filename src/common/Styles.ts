@@ -128,7 +128,6 @@ export interface FeatureIconFontStyle {
 
 export interface FeatureStyle extends Padding, Margin {
   id: string
-  show: boolean
   backgroundColor: string
   activeBackgroundColor: string
   size: number

@@ -94,85 +94,83 @@ export default class CrosshairFeatureView extends View<YAxis> {
         }
         const y = crosshair.y!
         features.forEach(feature => {
-          if (feature.show) {
-            const {
-              marginLeft = 0, marginTop = 0, marginRight = 0,
-              paddingLeft = 0, paddingTop = 0, paddingRight = 0, paddingBottom = 0,
-              color, activeColor, backgroundColor, activeBackgroundColor,
-              borderRadius, size = 0, type, content
-            } = feature
-            let width = size
-            if (type === 'icon_font') {
-              const iconFont = content as FeatureIconFontStyle
-              width = paddingLeft + calcTextWidth(iconFont.code, size, 'normal', iconFont.family) + paddingRight
-            }
-            if (isRight) {
-              x -= (width + marginRight)
-            } else {
-              x += marginLeft
-            }
-            let finalColor = color
-            let finalBackgroundColor = backgroundColor
-            if (this._activeFeatureInfo?.feature.id === feature.id) {
-              // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- ignore
-              finalColor = activeColor ?? color
-              // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- ignore
-              finalBackgroundColor = activeBackgroundColor ?? backgroundColor
-            }
-            const eventHandler = {
-              mouseClickEvent: this._featureClickEvent({ crosshair, feature }),
-              mouseMoveEvent: this._featureMouseMoveEvent({ crosshair, feature })
-            }
-            if (type === 'icon_font') {
-              const iconFont = content as FeatureIconFontStyle
-              this.createFigure({
-                name: 'text',
-                attrs: {
-                  text: iconFont.code,
-                  x,
-                  y: y + marginTop,
-                  baseline: 'middle'
-                },
-                styles: {
-                  paddingLeft,
-                  paddingTop,
-                  paddingRight,
-                  paddingBottom,
-                  borderRadius,
-                  size,
-                  family: iconFont.family,
-                  color: finalColor,
-                  backgroundColor: finalBackgroundColor
-                }
-              }, eventHandler)?.draw(ctx)
-            } else {
-              this.createFigure({
-                name: 'rect',
-                attrs: { x, y: y + marginTop - size / 2, width: size, height: size },
-                styles: {
-                  paddingLeft,
-                  paddingTop,
-                  paddingRight,
-                  paddingBottom,
-                  color: finalBackgroundColor
-                }
-              }, eventHandler)?.draw(ctx)
-              const path = content as FeaturePathStyle
-              this.createFigure({
-                name: 'path',
-                attrs: { path: path.path, x, y: y + marginTop + paddingTop - size / 2, width: size, height: size },
-                styles: {
-                  style: path.style,
-                  lineWidth: path.lineWidth,
-                  color: finalColor
-                }
-              })?.draw(ctx)
-            }
-            if (isRight) {
-              x -= marginLeft
-            } else {
-              x += (width + marginRight)
-            }
+          const {
+            marginLeft = 0, marginTop = 0, marginRight = 0,
+            paddingLeft = 0, paddingTop = 0, paddingRight = 0, paddingBottom = 0,
+            color, activeColor, backgroundColor, activeBackgroundColor,
+            borderRadius, size = 0, type, content
+          } = feature
+          let width = size
+          if (type === 'icon_font') {
+            const iconFont = content as FeatureIconFontStyle
+            width = paddingLeft + calcTextWidth(iconFont.code, size, 'normal', iconFont.family) + paddingRight
+          }
+          if (isRight) {
+            x -= (width + marginRight)
+          } else {
+            x += marginLeft
+          }
+          let finalColor = color
+          let finalBackgroundColor = backgroundColor
+          if (this._activeFeatureInfo?.feature.id === feature.id) {
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- ignore
+            finalColor = activeColor ?? color
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- ignore
+            finalBackgroundColor = activeBackgroundColor ?? backgroundColor
+          }
+          const eventHandler = {
+            mouseClickEvent: this._featureClickEvent({ crosshair, feature }),
+            mouseMoveEvent: this._featureMouseMoveEvent({ crosshair, feature })
+          }
+          if (type === 'icon_font') {
+            const iconFont = content as FeatureIconFontStyle
+            this.createFigure({
+              name: 'text',
+              attrs: {
+                text: iconFont.code,
+                x,
+                y: y + marginTop,
+                baseline: 'middle'
+              },
+              styles: {
+                paddingLeft,
+                paddingTop,
+                paddingRight,
+                paddingBottom,
+                borderRadius,
+                size,
+                family: iconFont.family,
+                color: finalColor,
+                backgroundColor: finalBackgroundColor
+              }
+            }, eventHandler)?.draw(ctx)
+          } else {
+            this.createFigure({
+              name: 'rect',
+              attrs: { x, y: y + marginTop - size / 2, width: size, height: size },
+              styles: {
+                paddingLeft,
+                paddingTop,
+                paddingRight,
+                paddingBottom,
+                color: finalBackgroundColor
+              }
+            }, eventHandler)?.draw(ctx)
+            const path = content as FeaturePathStyle
+            this.createFigure({
+              name: 'path',
+              attrs: { path: path.path, x, y: y + marginTop + paddingTop - size / 2, width: size, height: size },
+              styles: {
+                style: path.style,
+                lineWidth: path.lineWidth,
+                color: finalColor
+              }
+            })?.draw(ctx)
+          }
+          if (isRight) {
+            x -= marginLeft
+          } else {
+            x += (width + marginRight)
           }
         })
       }

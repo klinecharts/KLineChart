@@ -413,20 +413,18 @@ export default class IndicatorTooltipView extends View<YAxis> {
     const middleFeatures: TooltipFeatureStyle[] = []
     const rightFeatures: TooltipFeatureStyle[] = []
     features.forEach(feature => {
-      if (feature.show) {
-        switch (feature.position) {
-          case 'left': {
-            leftFeatures.push(feature)
-            break
-          }
-          case 'middle': {
-            middleFeatures.push(feature)
-            break
-          }
-          case 'right': {
-            rightFeatures.push(feature)
-            break
-          }
+      switch (feature.position) {
+        case 'left': {
+          leftFeatures.push(feature)
+          break
+        }
+        case 'middle': {
+          middleFeatures.push(feature)
+          break
+        }
+        case 'right': {
+          rightFeatures.push(feature)
+          break
         }
       }
     })
