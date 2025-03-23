@@ -19,7 +19,6 @@ import { isValid, isObject, isString, isNumber, isFunction } from '../common/uti
 import { createFont } from '../common/utils/canvas'
 import type Coordinate from '../common/Coordinate'
 import type Nullable from '../common/Nullable'
-import type { MouseTouchEvent } from '../common/SyntheticEvent'
 
 import type { YAxis } from '../component/YAxis'
 
@@ -66,10 +65,6 @@ export default class IndicatorTooltipView extends View<YAxis> {
       this._activeFeatureInfo = null
       return false
     })
-  }
-
-  override checkEventOn (_: MouseTouchEvent): boolean {
-    return true
   }
 
   override drawImp (ctx: CanvasRenderingContext2D): void {

@@ -38,14 +38,7 @@ export default abstract class Eventful implements EventDispatcher {
     return false
   }
 
-  checkEventOn (event: MouseTouchEvent): boolean {
-    for (const ful of this._children) {
-      if (ful.checkEventOn(event)) {
-        return true
-      }
-    }
-    return false
-  }
+  abstract checkEventOn (event: MouseTouchEvent): boolean
 
   dispatchEvent (name: EventName, event: MouseTouchEvent): boolean {
     const start = this._children.length - 1

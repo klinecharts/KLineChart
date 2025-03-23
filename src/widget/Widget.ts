@@ -21,6 +21,7 @@ import Eventful from '../common/Eventful'
 import type Pane from '../pane/Pane'
 
 import { merge } from '../common/utils/typeChecks'
+import type { MouseTouchEvent } from '../common/SyntheticEvent'
 
 export default abstract class Widget<P extends Pane = Pane> extends Eventful implements Updater {
   /**
@@ -61,6 +62,10 @@ export default abstract class Widget<P extends Pane = Pane> extends Eventful imp
 
   getPane (): P {
     return this._pane
+  }
+
+  override checkEventOn (_: MouseTouchEvent): boolean {
+    return true
   }
 
   update (level?: UpdateLevel): void {

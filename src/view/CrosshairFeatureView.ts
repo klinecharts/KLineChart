@@ -17,7 +17,6 @@ import type Crosshair from '../common/Crosshair'
 import type { CrosshairStyle, CrosshairDirectionStyle, FeatureIconFontStyle, FeaturePathStyle, FeatureStyle } from '../common/Styles'
 import { isString } from '../common/utils/typeChecks'
 import { calcTextWidth } from '../common/utils/canvas'
-import type { MouseTouchEvent } from '../common/SyntheticEvent'
 
 import type { YAxis } from '../component/YAxis'
 
@@ -50,10 +49,6 @@ export default class CrosshairFeatureView extends View<YAxis> {
       this._activeFeatureInfo = null
       return false
     })
-  }
-
-  override checkEventOn (_: MouseTouchEvent): boolean {
-    return true
   }
 
   override drawImp (ctx: CanvasRenderingContext2D): void {

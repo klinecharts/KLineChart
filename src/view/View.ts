@@ -13,7 +13,7 @@
  */
 
 import type Nullable from '../common/Nullable'
-import type { EventHandler, EventName } from '../common/SyntheticEvent'
+import type { EventHandler, EventName, MouseTouchEvent } from '../common/SyntheticEvent'
 import Eventful from '../common/Eventful'
 import { isValid } from '../common/utils/typeChecks'
 
@@ -61,6 +61,10 @@ export default abstract class View<C extends Axis = Axis> extends Eventful {
   draw (ctx: CanvasRenderingContext2D, ...extend: unknown[]): void {
     this.clear()
     this.drawImp(ctx, extend)
+  }
+
+  checkEventOn (_: MouseTouchEvent): boolean {
+    return true
   }
 
   protected abstract drawImp (ctx: CanvasRenderingContext2D, ...extend: unknown[]): void

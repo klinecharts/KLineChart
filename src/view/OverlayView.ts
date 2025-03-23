@@ -403,10 +403,6 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     return super.dispatchEvent(name, event)
   }
 
-  override checkEventOn (): boolean {
-    return true
-  }
-
   override drawImp (ctx: CanvasRenderingContext2D): void {
     const overlays = this.getCompleteOverlays()
     overlays.forEach(overlay => {
