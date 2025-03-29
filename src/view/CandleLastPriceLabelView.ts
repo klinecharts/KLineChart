@@ -64,8 +64,9 @@ export default class CandleLastPriceLabelView extends View {
           precision.price
         )
         priceText = chartStore.getDecimalFold().format(chartStore.getThousandsSeparator().format(priceText))
-        const priceTextWidth = lastPriceMarkTextStyles.paddingLeft + calcTextWidth(priceText, lastPriceMarkTextStyles.size, lastPriceMarkTextStyles.weight, lastPriceMarkTextStyles.family)
-        const priceTextHeight = lastPriceMarkTextStyles.paddingTop + lastPriceMarkTextStyles.size + lastPriceMarkTextStyles.paddingBottom
+        const { paddingLeft, paddingRight, paddingTop, paddingBottom, size, family, weight } = lastPriceMarkTextStyles
+        const priceTextWidth = paddingLeft + calcTextWidth(priceText, size, weight, family) + paddingRight
+        const priceTextHeight = paddingTop + size + paddingBottom
         this.createFigure({
           name: 'text',
           attrs: {
@@ -84,9 +85,9 @@ export default class CandleLastPriceLabelView extends View {
         })?.draw(ctx)
 
         const formatLastPriceExtendText = chartStore.getInnerFormatter().formatLastPriceExtendText
-        const priceTextHalfHeight = lastPriceMarkTextStyles.size / 2
-        let aboveY = priceY - priceTextHalfHeight - lastPriceMarkTextStyles.paddingTop
-        let belowY = priceY + priceTextHalfHeight + lastPriceMarkTextStyles.paddingBottom
+        const priceTextHalfHeight = size / 2
+        let aboveY = priceY - priceTextHalfHeight - paddingTop
+        let belowY = priceY + priceTextHalfHeight + paddingBottom
         lastPriceMarkStyles.extendTexts.forEach((item, index) => {
           const text = formatLastPriceExtendText({ data, index })
           if (text.length > 0 && item.show) {
