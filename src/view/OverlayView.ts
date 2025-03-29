@@ -117,7 +117,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
         },
         (o, f) => this._processOverlayClickEvent(o, f, event),
         (o, f) => this._processOverlaySelectedEvent(o, f, event),
-        (o, f) => this._processOverlayUnselectedEvent(o, f, event)
+        (o, f) => this._processOverlayDeselectedEvent(o, f, event)
       )
       return false
     }).registerEvent('mouseDoubleClickEvent', event => {
@@ -243,16 +243,16 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
   }
 
   private _processOverlaySelectedEvent (overlay: OverlayImp, figure: Nullable<OverlayFigure>, event: MouseTouchEvent): boolean {
-    if (checkOverlayFigureEvent('onDeselected', figure)) {
-      overlay.onDeselected?.({ chart: this.getWidget().getPane().getChart(), overlay, figure: figure ?? undefined, ...event })
+    if (checkOverlayFigureEvent('onSelected', figure)) {
+      overlay.onSelected?.({ chart: this.getWidget().getPane().getChart(), overlay, figure: figure ?? undefined, ...event })
       return true
     }
     return false
   }
 
-  private _processOverlayUnselectedEvent (overlay: OverlayImp, figure: Nullable<OverlayFigure>, event: MouseTouchEvent): boolean {
-    if (checkOverlayFigureEvent('onSelected', figure)) {
-      overlay.onSelected?.({ chart: this.getWidget().getPane().getChart(), overlay, figure: figure ?? undefined, ...event })
+  private _processOverlayDeselectedEvent (overlay: OverlayImp, figure: Nullable<OverlayFigure>, event: MouseTouchEvent): boolean {
+    if (checkOverlayFigureEvent('onDeselected', figure)) {
+      overlay.onDeselected?.({ chart: this.getWidget().getPane().getChart(), overlay, figure: figure ?? undefined, ...event })
       return true
     }
     return false
@@ -292,7 +292,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
         { paneId, overlay, figureType, figureIndex, figure },
         (o, f) => this._processOverlayClickEvent(o, f, event),
         (o, f) => this._processOverlaySelectedEvent(o, f, event),
-        (o, f) => this._processOverlayUnselectedEvent(o, f, event)
+        (o, f) => this._processOverlayDeselectedEvent(o, f, event)
       )
       return checkOverlayFigureEvent('onClick', figure) && !overlay.isDrawing()
     }
