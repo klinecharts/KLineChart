@@ -14,7 +14,7 @@
 
 import type Nullable from '../common/Nullable'
 import type Crosshair from '../common/Crosshair'
-import type { CrosshairStyle, CrosshairDirectionStyle, FeatureIconFontStyle, FeaturePathStyle, FeatureStyle } from '../common/Styles'
+import type { FeatureIconFontStyle, FeaturePathStyle, FeatureStyle } from '../common/Styles'
 import { isString } from '../common/utils/typeChecks'
 import { calcTextWidth } from '../common/utils/canvas'
 
@@ -23,6 +23,7 @@ import type { YAxis } from '../component/YAxis'
 import type DrawPane from '../pane/DrawPane'
 import type DrawWidget from '../widget/DrawWidget'
 import View from './View'
+import type { EventName, MouseTouchEvent } from '../common/SyntheticEvent'
 
 interface FeatureInfo {
   crosshair: Crosshair
@@ -34,21 +35,30 @@ export default class CrosshairFeatureView extends View<YAxis> {
 
   private readonly _featureClickEvent = (featureInfo: FeatureInfo) => () => {
     const pane = this.getWidget().getPane()
-    pane.getChart().getChartStore().executeAction('onCrosshairFeatureClick', featureInfo)
-    return false
+    pane.getChart().getChartStore().executeAction('onCrosshairFeatureClick', { ...featureInfo, chart: pane.getChart() })
+    return true
   }
 
   private readonly _featureMouseMoveEvent = (featureInfo: FeatureInfo) => () => {
     this._activeFeatureInfo = featureInfo
-    return false
+    this.getWidget().setForceCursor('pointer')
+    return true
   }
 
   constructor (widget: DrawWidget<DrawPane<YAxis>>) {
     super(widget)
     this.registerEvent('mouseMoveEvent', _ => {
       this._activeFeatureInfo = null
+      this.getWidget().setForceCursor(null)
       return false
     })
+  }
+
+  override dispatchEvent (name: EventName, event: MouseTouchEvent): boolean {
+    if (this.dispatchEventToChildren(name, event)) {
+      return false
+    }
+    return this.onEvent(name, event)
   }
 
   override drawImp (ctx: CanvasRenderingContext2D): void {
@@ -170,13 +180,5 @@ export default class CrosshairFeatureView extends View<YAxis> {
         })
       }
     }
-  }
-
-  protected compare (crosshair: Crosshair, paneId: string): boolean {
-    return crosshair.paneId === paneId
-  }
-
-  protected getDirectionStyles (styles: CrosshairStyle): CrosshairDirectionStyle {
-    return styles.horizontal
   }
 }

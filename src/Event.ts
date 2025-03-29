@@ -194,9 +194,9 @@ export default class Event implements EventHandler {
           let crosshair: Crosshair | undefined = { x: event.x, y: event.y, paneId: pane?.getId() }
           if (consumed) {
             crosshair = undefined
-            widget.getContainer().style.cursor = 'pointer'
+            widget.setCursor('pointer')
           } else {
-            widget.getContainer().style.cursor = 'crosshair'
+            widget.setCursor('crosshair')
           }
           this._chart.getChartStore().setCrosshair(crosshair)
           return consumed

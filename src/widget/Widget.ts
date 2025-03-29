@@ -20,8 +20,9 @@ import Eventful from '../common/Eventful'
 
 import type Pane from '../pane/Pane'
 
-import { merge } from '../common/utils/typeChecks'
+import { isString, merge } from '../common/utils/typeChecks'
 import type { MouseTouchEvent } from '../common/SyntheticEvent'
+import type Nullable from '../common/Nullable'
 
 export default abstract class Widget<P extends Pane = Pane> extends Eventful implements Updater {
   /**
@@ -40,6 +41,10 @@ export default abstract class Widget<P extends Pane = Pane> extends Eventful imp
   private readonly _container: HTMLElement
 
   private readonly _bounding: Bounding = createDefaultBounding()
+
+  private _cursor = 'crosshair'
+
+  private _forceCursor: Nullable<string> = null
 
   constructor (rootContainer: HTMLElement, pane: P) {
     super()
@@ -66,6 +71,22 @@ export default abstract class Widget<P extends Pane = Pane> extends Eventful imp
 
   override checkEventOn (_: MouseTouchEvent): boolean {
     return true
+  }
+
+  setCursor (cursor: string): void {
+    if (!isString(this._forceCursor)) {
+      if (cursor !== this._cursor) {
+        this._cursor = cursor
+        this._container.style.cursor = this._cursor
+      }
+    }
+  }
+
+  setForceCursor (cursor: Nullable<string>): void {
+    if (cursor !== this._forceCursor) {
+      this._forceCursor = cursor
+      this._container.style.cursor = this._forceCursor ?? this._cursor
+    }
   }
 
   update (level?: UpdateLevel): void {

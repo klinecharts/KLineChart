@@ -30,7 +30,7 @@ export default class XAxisWidget extends DrawWidget<DrawPane<XAxis>> {
 
   constructor (rootContainer: HTMLElement, pane: DrawPane<XAxis>) {
     super(rootContainer, pane)
-    this.getContainer().style.cursor = 'ew-resize'
+    this.setCursor('ew-resize')
     this.addChild(this._overlayXAxisView)
   }
 
