@@ -89,6 +89,10 @@ export default abstract class Widget<P extends Pane = Pane> extends Eventful imp
     }
   }
 
+  getForceCursor (): Nullable<string> {
+    return this._forceCursor
+  }
+
   update (level?: UpdateLevel): void {
     this.updateImp(this._container, this._bounding, level ?? UpdateLevel.Drawer)
   }

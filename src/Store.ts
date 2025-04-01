@@ -1416,23 +1416,18 @@ export default class StoreImp implements Store {
 
   setClickOverlayInfo (
     info: EventOverlayInfo,
-    processOnClickEvent: ProcessOverlayEventCallback,
     processOnSelectedEvent: ProcessOverlayEventCallback,
     processOnDeselectedEvent: ProcessOverlayEventCallback
   ): void {
     const { paneId, overlay, figureType, figure, figureIndex } = this._clickOverlayInfo
     const infoOverlay = info.overlay
-    const infoOverlayValid = isValid(infoOverlay)
-    if (infoOverlayValid) {
-      processOnClickEvent(infoOverlay, info.figure)
-    }
     if (overlay?.id !== infoOverlay?.id || figureType !== info.figureType || figureIndex !== info.figureIndex) {
       this._clickOverlayInfo = info
       if (overlay?.id !== infoOverlay?.id) {
         if (isValid(overlay)) {
           processOnDeselectedEvent(overlay, figure)
         }
-        if (infoOverlayValid) {
+        if (isValid(infoOverlay)) {
           processOnSelectedEvent(infoOverlay, info.figure)
         }
         this._chart.updatePane(UpdateLevel.Overlay, info.paneId)

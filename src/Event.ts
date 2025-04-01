@@ -193,7 +193,9 @@ export default class Event implements EventHandler {
           const consumed = widget.dispatchEvent('mouseMoveEvent', event)
           let crosshair: Crosshair | undefined = { x: event.x, y: event.y, paneId: pane?.getId() }
           if (consumed) {
-            crosshair = undefined
+            if (widget.getForceCursor() !== 'pointer') {
+              crosshair = undefined
+            }
             widget.setCursor('pointer')
           } else {
             widget.setCursor('crosshair')
@@ -231,8 +233,10 @@ export default class Event implements EventHandler {
           let crosshair: Crosshair | undefined
           const consumed = widget.dispatchEvent('pressedMouseMoveEvent', event)
           if (!consumed) {
-            crosshair = { x: event.x, y: event.y, paneId: pane?.getId() }
             this._processMainScrollingEvent(widget as Widget<DrawPane<YAxis>>, event)
+          }
+          if (!consumed || widget.getForceCursor() === 'pointer') {
+            crosshair = { x: event.x, y: event.y, paneId: pane?.getId() }
           }
           this._chart.getChartStore().setCrosshair(crosshair, { forceInvalidate: true })
           return consumed

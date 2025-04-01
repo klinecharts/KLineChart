@@ -60,10 +60,6 @@ export default class SeparatorWidget extends Widget<SeparatorPane> {
     return WidgetNameConstants.SEPARATOR
   }
 
-  override checkEventOn (): boolean {
-    return true
-  }
-
   private _mouseDownEvent (event: MouseTouchEvent): boolean {
     this._dragFlag = true
     this._dragStartY = event.pageY

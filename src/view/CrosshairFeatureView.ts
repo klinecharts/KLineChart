@@ -23,7 +23,6 @@ import type { YAxis } from '../component/YAxis'
 import type DrawPane from '../pane/DrawPane'
 import type DrawWidget from '../widget/DrawWidget'
 import View from './View'
-import type { EventName, MouseTouchEvent } from '../common/SyntheticEvent'
 
 interface FeatureInfo {
   crosshair: Crosshair
@@ -52,13 +51,6 @@ export default class CrosshairFeatureView extends View<YAxis> {
       this.getWidget().setForceCursor(null)
       return false
     })
-  }
-
-  override dispatchEvent (name: EventName, event: MouseTouchEvent): boolean {
-    if (this.dispatchEventToChildren(name, event)) {
-      return false
-    }
-    return this.onEvent(name, event)
   }
 
   override drawImp (ctx: CanvasRenderingContext2D): void {

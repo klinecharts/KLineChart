@@ -48,6 +48,7 @@ export interface OverlayEventCollection<E> {
   onPressedMoveStart: Nullable<OverlayEventCallback<E>>
   onPressedMoving: Nullable<OverlayEventCallback<E>>
   onPressedMoveEnd: Nullable<OverlayEventCallback<E>>
+  onMouseMove: Nullable<OverlayEventCallback<E>>
   onMouseEnter: Nullable<OverlayEventCallback<E>>
   onMouseLeave: Nullable<OverlayEventCallback<E>>
   onSelected: Nullable<OverlayEventCallback<E>>
@@ -253,6 +254,7 @@ export default class OverlayImp<E = unknown> implements Overlay<E> {
   onPressedMoveStart: Nullable<OverlayEventCallback<E>> = null
   onPressedMoving: Nullable<OverlayEventCallback<E>> = null
   onPressedMoveEnd: Nullable<OverlayEventCallback<E>> = null
+  onMouseMove: Nullable<OverlayEventCallback<E>> = null
   onMouseEnter: Nullable<OverlayEventCallback<E>> = null
   onMouseLeave: Nullable<OverlayEventCallback<E>> = null
   onRemoved: Nullable<OverlayEventCallback<E>> = null
