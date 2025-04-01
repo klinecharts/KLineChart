@@ -89,7 +89,7 @@ export interface OverlayEvent<E> extends Partial<MouseTouchEvent> {
   chart: Chart
 }
 
-export type OverlayEventCallback<E> = (event: OverlayEvent<E>) => boolean
+export type OverlayEventCallback<E> = (event: OverlayEvent<E>) => void
 
 export type OverlayCreateFiguresCallback<E> = (params: OverlayCreateFiguresCallbackParams<E>) => OverlayFigure | OverlayFigure[]
 

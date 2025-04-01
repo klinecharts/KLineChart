@@ -191,7 +191,10 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
             } else {
               overlay.eventPressedOtherMove(point, this.getWidget().getPane().getChart().getChartStore())
             }
-            if (overlay.onPressedMoving?.({ chart, overlay, figure: figure ?? undefined, ...event }) ?? false) {
+            let prevented = false
+            overlay.onPressedMoving?.({ chart, overlay, figure: figure ?? undefined, ...event, preventDefault: () => { prevented = true } })
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- ignore
+            if (prevented) {
               this.getWidget().setForceCursor(null)
             } else {
               this.getWidget().setForceCursor('pointer')
@@ -260,7 +263,10 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
       const pane = this.getWidget().getPane()
       const check = !overlay.isDrawing() && checkOverlayFigureEvent('onMouseMove', figure)
       if (check) {
-        if (overlay.onMouseMove?.({ chart: pane.getChart(), overlay, figure, ...event }) ?? false) {
+        let prevented = false
+        overlay.onMouseMove?.({ chart: pane.getChart(), overlay, figure, ...event, preventDefault: () => { prevented = true } })
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- ignore
+        if (prevented) {
           this.getWidget().setForceCursor(null)
         } else {
           this.getWidget().setForceCursor('pointer')
@@ -320,7 +326,10 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
   private _figureMouseRightClickEvent (overlay: OverlayImp, _figureType: EventOverlayInfoFigureType, _figureIndex: number, figure: OverlayFigure): MouseTouchEventCallback {
     return (event: MouseTouchEvent) => {
       if (checkOverlayFigureEvent('onRightClick', figure)) {
-        if (!(overlay.onRightClick?.({ chart: this.getWidget().getPane().getChart(), overlay, figure, ...event }) ?? false)) {
+        let prevented = false
+        overlay.onRightClick?.({ chart: this.getWidget().getPane().getChart(), overlay, figure, ...event, preventDefault: () => { prevented = true } })
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- ignore
+        if (!prevented) {
           this.getWidget().getPane().getChart().getChartStore().removeOverlay(overlay)
         }
         return !overlay.isDrawing()
