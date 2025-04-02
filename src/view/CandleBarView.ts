@@ -52,7 +52,7 @@ export default class CandleBarView extends ChildrenView {
         if (ohlcSize > 2 && ohlcSize % 2 === 1) {
           ohlcSize--
         }
-        halfOhlcSize = Math.floor(halfOhlcSize / 2)
+        halfOhlcSize = Math.floor(ohlcSize / 2)
       }
       const yAxis = pane.getAxisComponent()
       this.eachChildren((visibleData, barSpace) => {
@@ -124,7 +124,7 @@ export default class CandleBarView extends ChildrenView {
                     {
                       x: x - barSpace.halfGapBar,
                       y: openY + ohlcSize > priceY[3] ? priceY[3] - ohlcSize : openY,
-                      width: barSpace.halfGapBar,
+                      width: barSpace.halfGapBar - halfOhlcSize,
                       height: ohlcSize
                     },
                     {
