@@ -8,8 +8,8 @@
     {
       "name": "Northstar",
       "logo": "/images/sponsors/Northstar.png",
-      "website": "https://www.quantit.tech",
-      "amount": 600
+      "website": "https://northstar.quantit.tech:8443/",
+      "amount": 1600
     },
     {
       "name": "flameOnYou",
