@@ -505,7 +505,7 @@ export default class ChartImp implements Chart {
       })
       if (isString(crosshair.paneId)) {
         this._chartStore.executeAction('onCrosshairChange', {
-          ...crosshair,
+          crosshair,
           indicatorData
         })
       }

@@ -34,7 +34,7 @@ export default class CrosshairFeatureView extends View<YAxis> {
 
   private readonly _featureClickEvent = (featureInfo: FeatureInfo) => () => {
     const pane = this.getWidget().getPane()
-    pane.getChart().getChartStore().executeAction('onCrosshairFeatureClick', { ...featureInfo, chart: pane.getChart() })
+    pane.getChart().getChartStore().executeAction('onCrosshairFeatureClick', featureInfo)
     return true
   }
 
