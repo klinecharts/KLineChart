@@ -36,7 +36,7 @@ import type { LoadDataCallback, LoadDataParams, LoadDataType } from './common/Lo
 import type TimeWeightTick from './common/TimeWeightTick'
 import { classifyTimeWeightTicks, createTimeWeightTickList } from './common/TimeWeightTick'
 
-import type { Options, Formatter, ThousandsSeparator, DecimalFold, FormatDateType, FormatDateParams, FormatBigNumber, FormatLastPriceExtendTextParams, FormatLastPriceExtendText } from './Options'
+import type { Options, Formatter, ThousandsSeparator, DecimalFold, FormatDateType, FormatDateParams, FormatBigNumber, FormatExtendText, FormatExtendTextParams } from './Options'
 
 import type { IndicatorOverride, IndicatorCreate, IndicatorFilter } from './component/Indicator'
 import type IndicatorImp from './component/Indicator'
@@ -145,7 +145,7 @@ export default class StoreImp implements Store {
       template
     }: FormatDateParams) => formatTimestampByTemplate(dateTimeFormat, timestamp, template),
     formatBigNumber,
-    formatLastPriceExtendText: (_: FormatLastPriceExtendTextParams) => ''
+    formatExtendText: (_: FormatExtendTextParams) => ''
   }
 
   /**
@@ -155,7 +155,7 @@ export default class StoreImp implements Store {
   private readonly _innerFormatter = {
     formatDate: (timestamp: number, template: string, type: FormatDateType) => this._formatter.formatDate({ dateTimeFormat: this._dateTimeFormat, timestamp, template, type }),
     formatBigNumber: (value: number | string) => this._formatter.formatBigNumber(value),
-    formatLastPriceExtendText: (params: FormatLastPriceExtendTextParams) => this._formatter.formatLastPriceExtendText(params)
+    formatExtendText: (params: FormatExtendTextParams) => this._formatter.formatExtendText(params)
   }
 
   /**
@@ -415,7 +415,7 @@ export default class StoreImp implements Store {
   getInnerFormatter (): {
     formatDate: (timestamp: number, template: string, type: FormatDateType) => string
     formatBigNumber: FormatBigNumber,
-    formatLastPriceExtendText: FormatLastPriceExtendText
+    formatExtendText: FormatExtendText
     } {
     return this._innerFormatter
   }

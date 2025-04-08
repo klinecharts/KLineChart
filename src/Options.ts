@@ -32,17 +32,20 @@ export type FormatDate = (params: FormatDateParams) => string
 
 export type FormatBigNumber = (value: string | number) => string
 
-export interface FormatLastPriceExtendTextParams {
+export type ExtendTextType = 'lastPrice'
+
+export interface FormatExtendTextParams {
+  type: ExtendTextType
   data: KLineData
   index: number
 }
 
-export type FormatLastPriceExtendText = (params: FormatLastPriceExtendTextParams) => string
+export type FormatExtendText = (params: FormatExtendTextParams) => string
 
 export interface Formatter {
   formatDate: FormatDate
   formatBigNumber: FormatBigNumber
-  formatLastPriceExtendText: FormatLastPriceExtendText
+  formatExtendText: FormatExtendText
 }
 
 export interface Locales {

@@ -84,12 +84,12 @@ export default class CandleLastPriceLabelView extends View {
           }
         })?.draw(ctx)
 
-        const formatLastPriceExtendText = chartStore.getInnerFormatter().formatLastPriceExtendText
+        const formatExtendText = chartStore.getInnerFormatter().formatExtendText
         const priceTextHalfHeight = size / 2
         let aboveY = priceY - priceTextHalfHeight - paddingTop
         let belowY = priceY + priceTextHalfHeight + paddingBottom
         lastPriceMarkStyles.extendTexts.forEach((item, index) => {
-          const text = formatLastPriceExtendText({ data, index })
+          const text = formatExtendText({ type: 'lastPrice', data, index })
           if (text.length > 0 && item.show) {
             const textHalfHeight = item.size / 2
             let textY = 0
