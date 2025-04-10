@@ -7,6 +7,12 @@
   "module": "./dist/index.esm.js",
   "unpkg": "./dist/umd/klinecharts.min.js",
   "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.esm.js",
+      "require": "./dist/index.cjs"
+    }
+  },
   "files": [
     "LICENSE",
     "README.md",
@@ -94,12 +100,12 @@
     "gh-pages": "^6.1.1",
     "husky": "^8.0.3",
     "resize-observer-polyfill": "^1.5.1",
-    "rollup": "^4.21.3",
+    "rollup": "^4.39.0",
     "rollup-plugin-filesize": "^10.0.0",
     "shiki": "^1.22.1",
-    "tslib": "^2.6.2",
-    "typescript": "^5.5.4",
-    "vitepress": "2.0.0-alpha.3"
+    "tslib": "^2.8.1",
+    "typescript": "^5.8.3",
+    "vitepress": "2.0.0-alpha.4"
   },
   "pnpm": {
     "overrides": {
