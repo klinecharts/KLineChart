@@ -16,8 +16,8 @@ async function build ({ index, replaceValues, fileName, format, parentDir, name 
       fileName, format, name, parentDir
     }))
 
-    console.log(chalk.green(`\n✔️ Compiled ${text} successfully.\n`))
-    console.log(`Done in ${((new Date().getTime() - startTime) / 1000 / 60).toFixed(2)}s.\n`)
+    console.log(chalk.green(`\n✔ Compiled ${text} successfully.\n`))
+    console.log(`${chalk.green('✔')} Done in ${((new Date().getTime() - startTime) / 1000 / 60).toFixed(2)}s.\n`)
   } catch (err) {
     console.log(`\n\n${chalk.red(err)}\n`)
     console.log(chalk.red(`✖️ Failed to compile ${text}.\n`))
