@@ -82,6 +82,7 @@
     "@rollup/plugin-replace": "^5.0.5",
     "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^11.1.6",
+    "@shikijs/vitepress-twoslash": "^3.2.2",
     "@stackblitz/sdk": "^1.9.0",
     "@types/node": "^20.12.7",
     "@vueuse/core": "^11.1.0",
@@ -102,7 +103,7 @@
     "resize-observer-polyfill": "^1.5.1",
     "rollup": "^4.39.0",
     "rollup-plugin-filesize": "^10.0.0",
-    "shiki": "^1.22.1",
+    "shiki": "^2.4.2",
     "tslib": "^2.8.1",
     "typescript": "^5.8.3",
     "vitepress": "2.0.0-alpha.4"

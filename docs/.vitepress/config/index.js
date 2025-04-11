@@ -1,6 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import { defineConfig } from 'vitepress'
+import { transformerTwoslash } from '@shikijs/vitepress-twoslash'
 
 import zhCN, { search as zhCNSearch } from './zh-CN'
 import enUS, { search as enUSSearch } from './en-US'
@@ -29,7 +30,11 @@ function config () {
       theme: {
         light: 'github-light',
         dark: 'github-dark'
-      }
+      },
+      codeTransformers: [
+        transformerTwoslash()
+      ],
+      languages: ['js', 'jsx', 'ts', 'tsx']
     },
     head: [
       ['link', { rel: 'icon', type: 'image/svg+xml', href: '/images/logo.svg' }],

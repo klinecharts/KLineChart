@@ -1,13 +1,13 @@
 <script setup>
 import { ref, onMounted, onUnmounted, watch } from 'vue'
-import { useData } from 'vitepress';
+import { useData } from 'vitepress'
 
 import { codeToHtml } from 'shiki'
 
 import { transform } from '@babel/standalone'
 import { parse } from '@babel/parser'
 import generator from '@babel/generator'
-import traverse from "@babel/traverse"
+import traverse from '@babel/traverse'
 import * as t from '@babel/types'
 
 import ResizeObserver from 'resize-observer-polyfill'
