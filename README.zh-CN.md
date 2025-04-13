@@ -106,9 +106,9 @@ npm run build
 构建好的文件在`dist`文件夹。
 
 ## 🔗 链接
-+ [在线预览](https://preview.klinecharts.com)
-+ [Pro版本](https://pro.klinecharts.com)
-+ [示例代码](https://github.com/liihuu/KLineChartSample)
++ [KLineChart 预览](https://preview.klinecharts.com): 一个功能比较完善 KLineChart 示例。
++ [KLineChart Pro](https://pro.klinecharts.com): 基于 KLineChart 构建的开箱即用的金融图表.
++ [openctp](https://github.com/openctp/openctp): 可替代 Simnow 的交易模拟环境。
 
 ## ©️ License
 Apache License V2.

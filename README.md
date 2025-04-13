@@ -109,9 +109,9 @@ npm run build
 The generated files are in the dist folder.
 
 ## 🔗 Links
-+ [Online Preview](https://preview.klinecharts.com)
-+ [KLineChart Pro](https://pro.klinecharts.com)
-+ [Sample Code](https://github.com/liihuu/KLineChartSample)
++ [KLineChart Preview](https://preview.klinecharts.com): A more complete example.
++ [KLineChart Pro](https://pro.klinecharts.com): Financial chart built out of the box based on KLineChart.
++ [openctp](https://github.com/openctp/openctp): Trading simulation environment for the Chinese market.
 
 ## ©️ License
 KLineChart is available under the Apache License V2.
