@@ -1,1 +1,0 @@
-import{C as r}from"./theme.ZixRhF5X.js";import{b as t,o as e,k as o}from"./framework.oU-LsNvg.js";const s=JSON.parse(`{"js":"import { getSupportedIndicators } from 'klinecharts';\\n\\nconst supports = getSupportedIndicators();"}`),i={__name:"index",setup(a){return(n,c)=>(e(),t(r,{hiddenChart:!0,code:o(s).js},null,8,["code"]))}};export{i as _};
