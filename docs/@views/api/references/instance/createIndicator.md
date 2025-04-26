@@ -52,7 +52,7 @@
         activeColor?: string
         backgroundColor?: string
         activeBackgroundColor?: string
-        type?: 'path' | 'iconFont'
+        type?: 'path' | 'icon_font'
         path?: {
           style?: 'stroke' | 'fill'
           path?: string
