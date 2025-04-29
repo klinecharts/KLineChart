@@ -31,7 +31,7 @@ export default class CandleHighLowPriceView extends View<YAxis> {
     const lowPriceMarkStyles = priceMarkStyles.low
     if (priceMarkStyles.show && (highPriceMarkStyles.show || lowPriceMarkStyles.show)) {
       const highestLowestPrice = chartStore.getVisibleRangeHighLowPrice()
-      const precision = chartStore.getPrecision()
+      const precision = chartStore.getSymbol()?.pricePrecision ?? 2
       const yAxis = pane.getAxisComponent()
 
       const { price: high, x: highX } = highestLowestPrice[0]
@@ -43,7 +43,7 @@ export default class CandleHighLowPriceView extends View<YAxis> {
       if (highPriceMarkStyles.show && high !== Number.MIN_SAFE_INTEGER) {
         this._drawMark(
           ctx,
-          decimalFold.format(thousandsSeparator.format(formatPrecision(high, precision.price))),
+          decimalFold.format(thousandsSeparator.format(formatPrecision(high, precision))),
           { x: highX, y: highY },
           highY < lowY ? [-2, -5] : [2, 5],
           highPriceMarkStyles
@@ -52,7 +52,7 @@ export default class CandleHighLowPriceView extends View<YAxis> {
       if (lowPriceMarkStyles.show && low !== Number.MAX_SAFE_INTEGER) {
         this._drawMark(
           ctx,
-          decimalFold.format(thousandsSeparator.format(formatPrecision(low, precision.price))),
+          decimalFold.format(thousandsSeparator.format(formatPrecision(low, precision))),
           { x: lowX, y: lowY },
           highY < lowY ? [2, 5] : [-2, -5],
           lowPriceMarkStyles

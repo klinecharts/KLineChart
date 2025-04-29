@@ -22,7 +22,9 @@ import { getDefaultVisibleRange } from './common/VisibleRange'
 import TaskScheduler, { generateTaskId } from './common/TaskScheduler'
 import type Crosshair from './common/Crosshair'
 import type BarSpace from './common/BarSpace'
-import type Precision from './common/Precision'
+import type Symbol from './common/Symbol'
+import type { Period } from './common/Period'
+
 import Action from './common/Action'
 import type { ActionType, ActionCallback } from './common/Action'
 import { formatValue, formatTimestampByTemplate, formatBigNumber, formatThousands, formatFoldDecimal } from './common/utils/format'
@@ -32,9 +34,7 @@ import { createId } from './common/utils/id'
 import { binarySearchNearest } from './common/utils/number'
 import { logWarn } from './common/utils/logger'
 import { UpdateLevel } from './common/Updater'
-import type { LoadDataCallback, LoadDataParams, LoadDataType } from './common/LoadDataCallback'
-import type TimeWeightTick from './common/TimeWeightTick'
-import { classifyTimeWeightTicks, createTimeWeightTickList } from './common/TimeWeightTick'
+import type { DataLoader, DataLoaderGetBarsParams, DataLoadMore, DataLoadType } from './common/DataLoader'
 
 import type { Options, Formatter, ThousandsSeparator, DecimalFold, FormatDateType, FormatDateParams, FormatBigNumber, FormatExtendText, FormatExtendTextParams } from './Options'
 
@@ -100,8 +100,10 @@ export interface Store {
   getThousandsSeparator: () => ThousandsSeparator
   setDecimalFold: (decimalFold: Partial<DecimalFold>) => void
   getDecimalFold: () => DecimalFold
-  getPrecision: () => Precision
-  setPrecision: (precision: Partial<Precision>) => void
+  setSymbol: (symbol: Symbol) => void
+  getSymbol: () => Nullable<Symbol>
+  setPeriod: (period: Period) => void
+  getPeriod: () => Nullable<Period>
   getDataList: () => KLineData[]
   setOffsetRightDistance: (distance: number) => void
   getOffsetRightDistance: () => number
@@ -112,7 +114,7 @@ export interface Store {
   setBarSpace: (space: number) => void
   getBarSpace: () => BarSpace
   getVisibleRange: () => VisibleRange
-  setLoadMoreDataCallback: (callback: LoadDataCallback) => void
+  setDataLoader: (dataLoader: DataLoader) => void
   overrideIndicator: (override: IndicatorCreate) => boolean
   removeIndicator: (filter?: IndicatorFilter) => boolean
   overrideOverlay: (override: Partial<OverlayCreate>) => boolean
@@ -180,9 +182,14 @@ export default class StoreImp implements Store {
   }
 
   /**
-   * Price and volume precision
+   * Symbol
    */
-  private readonly _precision = { price: 2, volume: 0 }
+  private _symbol: Nullable<Symbol> = null
+
+  /**
+   * Period
+   */
+  private _period: Nullable<Period> = null
 
   /**
    * Data source
@@ -192,17 +199,17 @@ export default class StoreImp implements Store {
   /**
    * Load more data callback
    */
-  private _loadMoreDataCallback: Nullable<LoadDataCallback> = null
+  private _dataLoader: Nullable<DataLoader> = null
 
   /**
    * Is loading data flag
    */
-  private _loading = true
+  private _loading = false
 
   /**
   * Whether there are forward and backward more flag
    */
-  private readonly _loadDataMore = { forward: false, backward: false }
+  private readonly _dataLoadMore = { forward: false, backward: false }
 
   /**
      * Time format
@@ -268,12 +275,6 @@ export default class StoreImp implements Store {
    * Start and end points of visible area data index
    */
   private _visibleRange = getDefaultVisibleRange()
-
-  private readonly _timeWeightTickMap = new Map<number, TimeWeightTick[]>()
-
-  private _timeWeightTickList: TimeWeightTick[] = []
-
-  private _minTimeSpan = { compare: Number.MAX_SAFE_INTEGER, calc: DEFAULT_MIN_TIME_SPAN }
 
   /**
    * Visible data array
@@ -448,7 +449,6 @@ export default class StoreImp implements Store {
         logWarn('', '', 'Timezone is error!!!')
       }
       if (dateTimeFormat !== null) {
-        this._classifyTimeWeightTicks(this._dataList)
         this._dateTimeFormat = dateTimeFormat
       }
     }
@@ -470,13 +470,27 @@ export default class StoreImp implements Store {
 
   getDecimalFold (): DecimalFold { return this._decimalFold }
 
-  getPrecision (): Precision {
-    return this._precision
+  setSymbol (symbol: Symbol): void {
+    this._processDataUnsubscribe()
+    this._symbol = symbol
+    this._synchronizeIndicatorSeriesPrecision()
+    this._loading = false
+    this._processDataLoad('init')
   }
 
-  setPrecision (precision: Partial<Precision>): void {
-    merge(this._precision, precision)
-    this._synchronizeIndicatorSeriesPrecision()
+  getSymbol (): Nullable<Symbol> {
+    return this._symbol
+  }
+
+  setPeriod (period: Period): void {
+    this._processDataUnsubscribe()
+    this._period = period
+    this._loading = false
+    this._processDataLoad('init')
+  }
+
+  getPeriod (): Nullable<Period> {
+    return this._period
   }
 
   getDataList (): KLineData[] {
@@ -491,38 +505,43 @@ export default class StoreImp implements Store {
     return this._visibleRangeHighLowPrice
   }
 
-  addData (
+  private _addData (
     data: KLineData | KLineData[],
-    type: LoadDataType,
-    more?: { forward: boolean, backward: boolean }
+    type: DataLoadType,
+    more?: DataLoadMore
   ): void {
     let success = false
     let adjustFlag = false
     let dataLengthChange = 0
     if (isArray<KLineData>(data)) {
+      const realMore = { backward: false, forward: false }
+      if (isBoolean(more)) {
+        realMore.backward = more
+        realMore.forward = more
+      } else {
+        realMore.backward = more?.backward ?? false
+        realMore.forward = more?.forward ?? false
+      }
       dataLengthChange = data.length
       switch (type) {
         case 'init': {
           this.clearData()
           this._dataList = data
-          this._loadDataMore.backward = more?.backward ?? false
-          this._loadDataMore.forward = more?.forward ?? false
-          this._classifyTimeWeightTicks(this._dataList)
+          this._dataLoadMore.backward = realMore.backward
+          this._dataLoadMore.forward = realMore.forward
           this.setOffsetRightDistance(this._offsetRightDistance)
           adjustFlag = true
           break
         }
         case 'backward': {
-          this._classifyTimeWeightTicks(data, true)
           this._dataList = this._dataList.concat(data)
-          this._loadDataMore.backward = more?.backward ?? false
+          this._dataLoadMore.backward = realMore.backward
           adjustFlag = dataLengthChange > 0
           break
         }
         case 'forward': {
           this._dataList = data.concat(this._dataList)
-          this._classifyTimeWeightTicks(this._dataList)
-          this._loadDataMore.forward = more?.forward ?? false
+          this._dataLoadMore.forward = realMore.forward
           adjustFlag = dataLengthChange > 0
           break
         }
@@ -530,7 +549,6 @@ export default class StoreImp implements Store {
           break
         }
       }
-      this._loading = false
       success = true
     } else {
       const dataCount = this._dataList.length
@@ -538,7 +556,6 @@ export default class StoreImp implements Store {
       const timestamp = data.timestamp
       const lastDataTimestamp = formatValue(this._dataList[dataCount - 1], 'timestamp', 0) as number
       if (timestamp > lastDataTimestamp) {
-        this._classifyTimeWeightTicks([data], true)
         this._dataList.push(data)
         let lastBarRightSideDiffBarCount = this.getLastBarRightSideDiffBarCount()
         if (lastBarRightSideDiffBarCount < 0) {
@@ -570,8 +587,8 @@ export default class StoreImp implements Store {
     }
   }
 
-  setLoadMoreDataCallback (callback: LoadDataCallback): void {
-    this._loadMoreDataCallback = callback
+  setDataLoader (dataLoader: DataLoader): void {
+    this._dataLoader = dataLoader
   }
 
   private _calcOptimalBarSpace (): void {
@@ -582,35 +599,6 @@ export default class StoreImp implements Store {
       --gapBarSpace
     }
     this._gapBarSpace = Math.max(1, gapBarSpace)
-  }
-
-  private _classifyTimeWeightTicks (newDataList: KLineData[], isUpdate?: boolean): void {
-    let baseDataIndex = 0
-    let prevTimestamp: Nullable<number> = null
-    if (isUpdate ?? false) {
-      baseDataIndex = this._dataList.length
-      prevTimestamp = this._dataList[baseDataIndex - 1].timestamp
-    } else {
-      this._timeWeightTickMap.clear()
-      this._minTimeSpan = { compare: Number.MAX_SAFE_INTEGER, calc: DEFAULT_MIN_TIME_SPAN }
-    }
-
-    classifyTimeWeightTicks(
-      this._timeWeightTickMap,
-      newDataList,
-      this._dateTimeFormat,
-      baseDataIndex,
-      this._minTimeSpan,
-      prevTimestamp
-    )
-    if (this._minTimeSpan.compare !== Number.MAX_SAFE_INTEGER) {
-      this._minTimeSpan.calc = this._minTimeSpan.compare
-    }
-    this._timeWeightTickList = createTimeWeightTickList(this._timeWeightTickMap, this._barSpace, this._styles.xAxis.tickText)
-  }
-
-  getTimeWeightTickList (): TimeWeightTick[] {
-    return this._timeWeightTickList
   }
 
   private _adjustVisibleRange (): void {
@@ -682,34 +670,64 @@ export default class StoreImp implements Store {
       }
     }
     // More processing and loading, more loading if there are callback methods and no data is being loaded
-    if (!this._loading && isValid(this._loadMoreDataCallback)) {
-      let params: Nullable<LoadDataParams> = null
+    if (!this._loading && isValid(this._dataLoader) && isValid(this._symbol) && isValid(this._period)) {
       if (from === 0) {
-        if (this._loadDataMore.forward) {
-          this._loading = true
-          params = {
-            type: 'forward',
-            data: this._dataList[0] ?? null,
-            callback: (data: KLineData[], more?: boolean) => {
-              this.addData(data, 'forward', { forward: more ?? false, backward: more ?? false })
-            }
-          }
+        if (this._dataLoadMore.forward) {
+          this._processDataLoad('forward')
         }
       } else if (to === totalBarCount) {
-        if (this._loadDataMore.backward) {
-          this._loading = true
-          params = {
-            type: 'backward',
-            data: this._dataList[totalBarCount - 1] ?? null,
-            callback: (data: KLineData[], more?: boolean) => {
-              this.addData(data, 'backward', { forward: more ?? false, backward: more ?? false })
-            }
+        if (this._dataLoadMore.backward) {
+          this._processDataLoad('backward')
+        }
+      }
+    }
+  }
+
+  private _processDataLoad (type: DataLoadType): void {
+    if (!this._loading && isValid(this._dataLoader) && isValid(this._symbol) && isValid(this._period)) {
+      this._loading = true
+      const params: DataLoaderGetBarsParams = {
+        type,
+        symbol: this._symbol,
+        period: this._period,
+        data: null,
+        callback: (data: KLineData[], more?: boolean) => {
+          this._loading = false
+          this._addData(data, type, more)
+          if (type === 'init') {
+            this._dataLoader?.subscribeBar?.({
+              symbol: this._symbol!,
+              period: this._period!,
+              callback: (data: KLineData) => {
+                this._addData(data, 'update')
+              }
+            })
           }
         }
       }
-      if (isValid(params)) {
-        this._loadMoreDataCallback(params)
+      switch (type) {
+        case 'backward': {
+          params.data = this._dataList[this._dataList.length - 1] ?? null
+          break
+        }
+        case 'forward': {
+          params.data = this._dataList[0] ?? null
+          break
+        }
+        default: {
+          break
+        }
       }
+      void this._dataLoader.getBars(params)
+    }
+  }
+
+  private _processDataUnsubscribe (): void {
+    if (isValid(this._dataLoader) && isValid(this._symbol) && isValid(this._period)) {
+      this._dataLoader.unsubscribeBar?.({
+        symbol: this._symbol,
+        period: this._period
+      })
     }
   }
 
@@ -727,7 +745,6 @@ export default class StoreImp implements Store {
       return
     }
     this._barSpace = barSpace
-    this._timeWeightTickList = createTimeWeightTickList(this._timeWeightTickMap, this._barSpace, this._styles.xAxis.tickText)
     this._calcOptimalBarSpace()
     adjustBeforeFunc?.()
     this._adjustVisibleRange()
@@ -848,12 +865,55 @@ export default class StoreImp implements Store {
     if (isValid(data)) {
       return data.timestamp
     }
-    const lastIndex = length - 1
-    if (dataIndex > lastIndex) {
-      return this._dataList[lastIndex].timestamp + this._minTimeSpan.calc * (dataIndex - lastIndex)
-    }
-    if (dataIndex < 0) {
-      return this._dataList[0].timestamp - this._minTimeSpan.calc * Math.abs(dataIndex)
+    if (isValid(this._period)) {
+      const lastIndex = length - 1
+      let referenceTimestamp: Nullable<number | null> = null
+      let diff = 0
+      if (dataIndex > lastIndex) {
+        referenceTimestamp = this._dataList[lastIndex].timestamp
+        diff = dataIndex - lastIndex
+      } else if (dataIndex < 0) {
+        referenceTimestamp = this._dataList[0].timestamp
+        diff = dataIndex
+      }
+      if (isNumber(referenceTimestamp)) {
+        const { type, span } = this._period
+        switch (type) {
+          case 'second': {
+            return referenceTimestamp + span * 1000 * diff
+          }
+          case 'minute': {
+            return referenceTimestamp + span * 60 * 1000 * diff
+          }
+          case 'hour': {
+            return referenceTimestamp + span * 60 * 60 * 1000 * diff
+          }
+          case 'day': {
+            return referenceTimestamp + span * 24 * 60 * 60 * 1000 * diff
+          }
+          case 'week': {
+            return referenceTimestamp + span * 7 * 24 * 60 * 60 * 1000 * diff
+          }
+          case 'month': {
+            const date = new Date(referenceTimestamp)
+            const originalDay = date.getDate()
+            const targetMonth = date.getMonth() + span * diff
+            date.setMonth(targetMonth)
+            const lastDayOfTargetMonth = new Date(
+              date.getFullYear(),
+              date.getMonth() + 1,
+              0
+            ).getDate()
+            date.setDate(Math.min(originalDay, lastDayOfTargetMonth))
+            return date.getTime()
+          }
+          case 'year': {
+            const date = new Date(referenceTimestamp)
+            date.setFullYear(date.getFullYear() + span * diff)
+            return date.getTime()
+          }
+        }
+      }
     }
     return null
   }
@@ -863,14 +923,55 @@ export default class StoreImp implements Store {
     if (length === 0) {
       return 0
     }
-    const lastIndex = length - 1
-    const lastTimestamp = this._dataList[lastIndex].timestamp
-    if (timestamp > lastTimestamp) {
-      return lastIndex + Math.floor((timestamp - lastTimestamp) / this._minTimeSpan.calc)
-    }
-    const firstTimestamp = this._dataList[0].timestamp
-    if (timestamp < firstTimestamp) {
-      return Math.floor((timestamp - firstTimestamp) / this._minTimeSpan.calc)
+    if (isValid(this._period)) {
+      let referenceTimestamp: Nullable<number | null> = null
+      let baseDataIndex = 0
+
+      const lastIndex = length - 1
+      const lastTimestamp = this._dataList[lastIndex].timestamp
+      if (timestamp > lastTimestamp) {
+        referenceTimestamp = lastTimestamp
+        baseDataIndex = lastIndex
+      }
+      const firstTimestamp = this._dataList[0].timestamp
+      if (timestamp < firstTimestamp) {
+        referenceTimestamp = firstTimestamp
+        baseDataIndex = 0
+      }
+      if (isNumber(referenceTimestamp)) {
+        const { type, span } = this._period
+        switch (type) {
+          case 'second': {
+            return baseDataIndex + Math.floor((timestamp - referenceTimestamp) / (span * 1000))
+          }
+          case 'minute': {
+            return baseDataIndex + Math.floor((timestamp - referenceTimestamp) / (span * 60 * 1000))
+          }
+          case 'hour': {
+            return baseDataIndex + Math.floor((timestamp - referenceTimestamp) / (span * 60 * 60 * 1000))
+          }
+          case 'day': {
+            return baseDataIndex + Math.floor((timestamp - referenceTimestamp) / (span * 24 * 60 * 60 * 1000))
+          }
+          case 'week': {
+            return baseDataIndex + Math.floor((timestamp - referenceTimestamp) / (span * 7 * 24 * 60 * 60 * 1000))
+          }
+          case 'month': {
+            const referenceDate = new Date(referenceTimestamp)
+            const currentDate = new Date(timestamp)
+            const referenceYear = referenceDate.getFullYear()
+            const currentYear = currentDate.getFullYear()
+            const referenceMonth = referenceDate.getMonth()
+            const currentMonth = currentDate.getMonth()
+            return baseDataIndex + Math.floor((currentYear - referenceYear) * 12 + (currentMonth - referenceMonth) / span)
+          }
+          case 'year': {
+            const referenceYear = new Date(referenceTimestamp).getFullYear()
+            const currentYear = new Date(timestamp).getFullYear()
+            return baseDataIndex + Math.floor((currentYear - referenceYear) / span)
+          }
+        }
+      }
     }
     return binarySearchNearest(this._dataList, 'timestamp', timestamp)
   }
@@ -962,10 +1063,6 @@ export default class StoreImp implements Store {
     }
   }
 
-  /**
-   * 获取crosshair信息
-   * @returns
-   */
   getCrosshair (): Crosshair {
     return this._crosshair
   }
@@ -1006,13 +1103,13 @@ export default class StoreImp implements Store {
     }
   }
 
-  private _addIndicatorCalcTask (indicator: IndicatorImp, loadDataType: LoadDataType): void {
+  private _addIndicatorCalcTask (indicator: IndicatorImp, dataLoadType: DataLoadType): void {
     this._taskScheduler.addTask({
       id: generateTaskId(indicator.id),
       handler: () => {
         indicator.onDataStateChange?.({
           state: 'loading',
-          type: loadDataType,
+          type: dataLoadType,
           indicator
         })
         indicator.calcImp(this._dataList).then(result => {
@@ -1024,14 +1121,14 @@ export default class StoreImp implements Store {
             })
             indicator.onDataStateChange?.({
               state: 'ready',
-              type: loadDataType,
+              type: dataLoadType,
               indicator
             })
           }
         }).catch(() => {
           indicator.onDataStateChange?.({
             state: 'error',
-            type: loadDataType,
+            type: dataLoadType,
             indicator
           })
         })
@@ -1109,29 +1206,31 @@ export default class StoreImp implements Store {
   }
 
   private _synchronizeIndicatorSeriesPrecision (indicator?: IndicatorImp): void {
-    const { price: pricePrecision, volume: volumePrecision } = this._precision
-    const synchronize: ((indicator: IndicatorImp) => void) = indicator => {
-      switch (indicator.series) {
-        case 'price': {
-          indicator.setSeriesPrecision(pricePrecision)
-          break
+    if (isValid(this._symbol)) {
+      const { pricePrecision = 2, volumePrecision = 0 } = this._symbol
+      const synchronize: ((indicator: IndicatorImp) => void) = indicator => {
+        switch (indicator.series) {
+          case 'price': {
+            indicator.setSeriesPrecision(pricePrecision)
+            break
+          }
+          case 'volume': {
+            indicator.setSeriesPrecision(volumePrecision)
+            break
+          }
+          default: { break }
         }
-        case 'volume': {
-          indicator.setSeriesPrecision(volumePrecision)
-          break
-        }
-        default: { break }
       }
-    }
 
-    if (isValid(indicator)) {
-      synchronize(indicator)
-    } else {
-      this._indicators.forEach(paneIndicators => {
-        paneIndicators.forEach(indicator => {
-          synchronize(indicator)
+      if (isValid(indicator)) {
+        synchronize(indicator)
+      } else {
+        this._indicators.forEach(paneIndicators => {
+          paneIndicators.forEach(indicator => {
+            synchronize(indicator)
+          })
         })
-      })
+      }
     }
   }
 
@@ -1459,8 +1558,8 @@ export default class StoreImp implements Store {
   }
 
   clearData (): void {
-    this._loadDataMore.backward = false
-    this._loadDataMore.forward = false
+    this._dataLoadMore.backward = false
+    this._dataLoadMore.forward = false
     this._loading = true
     this._dataList = []
     this._visibleRangeDataList = []
@@ -1469,8 +1568,6 @@ export default class StoreImp implements Store {
       { x: 0, price: Number.MAX_SAFE_INTEGER }
     ]
     this._visibleRange = getDefaultVisibleRange()
-    this._timeWeightTickMap.clear()
-    this._timeWeightTickList = []
     this._crosshair = {}
   }
 

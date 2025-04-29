@@ -67,7 +67,7 @@ export default class CrosshairHorizontalLabelView<C extends Axis = YAxis> extend
     let precision = 0
     let shouldFormatBigNumber = false
     if (yAxis.isInCandle()) {
-      precision = chartStore.getPrecision().price
+      precision = chartStore.getSymbol()?.pricePrecision ?? 2
     } else {
       const indicators = chartStore.getIndicatorsByPaneId(crosshair.paneId!)
       indicators.forEach(indicator => {

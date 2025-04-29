@@ -15,13 +15,12 @@
 import type Nullable from '../common/Nullable'
 import type Bounding from '../common/Bounding'
 import { isFunction, isNumber, isString } from '../common/utils/typeChecks'
-import type TimeWeightTick from '../common/TimeWeightTick'
-import { calcBetweenTimeWeightTickBarCount, classifyTimeWeightTicks, createTimeWeightTickList, TimeWeightConstants } from '../common/TimeWeightTick'
-import type { KLineData } from '../common/Data'
 
 import AxisImp, { type AxisTemplate, type Axis, type AxisRange, type AxisTick } from './Axis'
 
 import type DrawPane from '../pane/DrawPane'
+import { calcTextWidth } from '../common/utils/canvas'
+import { PeriodTypeFormat } from '../common/Period'
 
 export type XAxisTemplate = Pick<AxisTemplate, 'name' | 'scrollZoomEnabled' | 'createTicks'>
 
@@ -76,70 +75,26 @@ export default abstract class XAxisImp extends AxisImp implements XAxis {
     const { realFrom, realTo } = this.getRange()
     const chartStore = this.getParent().getChart().getChartStore()
     const formatDate = chartStore.getInnerFormatter().formatDate
-    const timeWeightTickList = chartStore.getTimeWeightTickList()
+    const period = chartStore.getPeriod()
     const ticks: AxisTick[] = []
 
-    const fitTicks: ((list: TimeWeightTick[], start: number) => void) = (list, start) => {
-      for (const timeWeightTick of list) {
-        if (timeWeightTick.dataIndex >= start && timeWeightTick.dataIndex < realTo) {
-          const { timestamp, weight, dataIndex } = timeWeightTick
-          let text = ''
-          switch (weight) {
-            case TimeWeightConstants.Year: {
-              text = formatDate(timestamp, 'YYYY', 'xAxis')
-              break
-            }
-            case TimeWeightConstants.Month: {
-              text = formatDate(timestamp, 'YYYY-MM', 'xAxis')
-              break
-            }
-            case TimeWeightConstants.Day: {
-              text = formatDate(timestamp, 'MM-DD', 'xAxis')
-              break
-            }
-            case TimeWeightConstants.Hour:
-            case TimeWeightConstants.Minute: {
-              text = formatDate(timestamp, 'HH:mm', 'xAxis')
-              break
-            }
-            case TimeWeightConstants.Second: {
-              text = formatDate(timestamp, 'HH:mm:ss', 'xAxis')
-              break
-            }
-            default: {
-              text = formatDate(timestamp, 'YYYY-MM-DD HH:mm', 'xAxis')
-              break
-            }
-          }
-          ticks.push({
-            coord: this.convertToPixel(dataIndex),
-            value: timestamp,
-            text
-          })
-        }
-      }
+    const barSpace = chartStore.getBarSpace().bar
+    const textStyles = chartStore.getStyles().xAxis.tickText
+    const tickTextWidth = Math.max(calcTextWidth('YYYY-MM-DD HH:mm:ss', textStyles.size, textStyles.weight, textStyles.family), 140)
+    let tickBetweenBarCount = Math.ceil(tickTextWidth / barSpace)
+    if (tickBetweenBarCount % 2 !== 0) {
+      tickBetweenBarCount += 1
     }
+    const startDataIndex = Math.floor(realFrom / tickBetweenBarCount) * tickBetweenBarCount - 1
 
-    fitTicks(timeWeightTickList, realFrom)
-
-    // Future time tick
-    if (timeWeightTickList.length > 0) {
-      const barSpace = chartStore.getBarSpace().bar
-      const textStyles = chartStore.getStyles().xAxis.tickText
-      const barCount = calcBetweenTimeWeightTickBarCount(barSpace, textStyles)
-      const startDataIndex = timeWeightTickList[timeWeightTickList.length - 1].dataIndex + barCount - 1
-      const dataList: Array<Pick<KLineData, 'timestamp'>> = []
-      for (let i = startDataIndex; i < realTo; i++) {
-        const timestamp = chartStore.dataIndexToTimestamp(i)
-        if (isNumber(timestamp)) {
-          dataList.push({ timestamp })
-        }
-      }
-
-      if (dataList.length > 0) {
-        const map = new Map<number, TimeWeightTick[]>()
-        classifyTimeWeightTicks(map, dataList, chartStore.getDateTimeFormat(), startDataIndex)
-        fitTicks(createTimeWeightTickList(map, barSpace, textStyles), startDataIndex)
+    for (let i = startDataIndex; i < realTo; i += tickBetweenBarCount) {
+      const timestamp = chartStore.dataIndexToTimestamp(i)
+      if (isNumber(timestamp)) {
+        ticks.push({
+          coord: this.convertToPixel(i),
+          value: timestamp,
+          text: formatDate(timestamp, PeriodTypeFormat[period?.type ?? 'day'], 'xAxis')
+        })
       }
     }
 

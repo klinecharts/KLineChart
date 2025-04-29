@@ -21,8 +21,7 @@ import type Point from './common/Point'
 import { UpdateLevel } from './common/Updater'
 import type Crosshair from './common/Crosshair'
 import type { ActionType, ActionCallback } from './common/Action'
-import type { LoadDataCallback, LoadDataMore } from './common/LoadDataCallback'
-import type Precision from './common/Precision'
+import type { DataLoader } from './common/DataLoader'
 import type VisibleRange from './common/VisibleRange'
 import type { Formatter, DecimalFold, LayoutChild, Options, ThousandsSeparator } from './Options'
 import Animation from './common/Animation'
@@ -30,7 +29,7 @@ import Animation from './common/Animation'
 import { createId } from './common/utils/id'
 import { createDom } from './common/utils/dom'
 import { getPixelRatio } from './common/utils/canvas'
-import { isString, isArray, isValid, merge, isNumber, isBoolean } from './common/utils/typeChecks'
+import { isString, isArray, isValid, merge, isNumber } from './common/utils/typeChecks'
 import { logWarn } from './common/utils/logger'
 import { binarySearchNearest } from './common/utils/number'
 
@@ -57,6 +56,8 @@ import type DeepPartial from './common/DeepPartial'
 import type { Styles } from './common/Styles'
 import type BarSpace from './common/BarSpace'
 import type PickRequired from './common/PickRequired'
+import type Symbol from './common/Symbol'
+import type { Period } from './common/Period'
 
 export type DomPosition = 'root' | 'main' | 'yAxis'
 
@@ -74,8 +75,6 @@ export interface Chart extends Store {
   id: string
   getDom: (paneId?: string, position?: DomPosition) => Nullable<HTMLElement>
   getSize: (paneId?: string, position?: DomPosition) => Nullable<Bounding>
-  applyNewData: (dataList: KLineData[], more?: boolean | Partial<LoadDataMore>) => void
-  updateData: (data: KLineData) => void
   createIndicator: (value: string | IndicatorCreate, isStack?: boolean, paneOptions?: PaneOptions) => Nullable<string>
   getIndicators: (filter?: IndicatorFilter) => Indicator[]
   createOverlay: (value: string | OverlayCreate | Array<string | OverlayCreate>) => Nullable<string> | Array<Nullable<string>>
@@ -154,7 +153,7 @@ export default class ChartImp implements Chart {
     this._cacheChartBounding()
   }
 
-  _cacheChartBounding (): void {
+  private _cacheChartBounding (): void {
     this._chartBounding.width = Math.floor(this._chartContainer.clientWidth)
     this._chartBounding.height = Math.floor(this._chartContainer.clientHeight)
   }
@@ -558,12 +557,20 @@ export default class ChartImp implements Chart {
     return null
   }
 
-  setPrecision (precision: Partial<Precision>): void {
-    this._chartStore.setPrecision(precision)
+  setSymbol (symbol: Symbol): void {
+    this._chartStore.setSymbol(symbol)
   }
 
-  getPrecision (): Precision {
-    return this._chartStore.getPrecision()
+  getSymbol (): Nullable<Symbol> {
+    return this._chartStore.getSymbol()
+  }
+
+  setPeriod (period: Period): void {
+    this._chartStore.setPeriod(period)
+  }
+
+  getPeriod (): Nullable<Period> {
+    return this._chartStore.getPeriod()
   }
 
   setStyles (value: string | DeepPartial<Styles>): void {
@@ -685,26 +692,22 @@ export default class ChartImp implements Chart {
     return this._chartStore.getDataList()
   }
 
-  applyNewData (data: KLineData[], more?: boolean | Partial<LoadDataMore>): void {
-    this._drawPanes.forEach(pane => {
-      (pane.getAxisComponent() as AxisImp).setAutoCalcTickFlag(true)
-    })
-    let loadDataMore = { forward: false, backward: false }
-    if (isBoolean(more)) {
-      loadDataMore.forward = more
-      loadDataMore.backward = more
-    } else {
-      loadDataMore = { ...loadDataMore, ...more }
-    }
-    this._chartStore.addData(data, 'init', loadDataMore)
-  }
+  // applyNewData (data: KLineData[], more?: boolean | Partial<LoadDataMore>): void {
+  //   this._drawPanes.forEach(pane => {
+  //     (pane.getAxisComponent() as AxisImp).setAutoCalcTickFlag(true)
+  //   })
+  //   let loadDataMore = { forward: false, backward: false }
+  //   if (isBoolean(more)) {
+  //     loadDataMore.forward = more
+  //     loadDataMore.backward = more
+  //   } else {
+  //     loadDataMore = { ...loadDataMore, ...more }
+  //   }
+  //   this._chartStore.addData(data, 'init', loadDataMore)
+  // }
 
-  updateData (data: KLineData): void {
-    this._chartStore.addData(data, 'update')
-  }
-
-  setLoadMoreDataCallback (cb: LoadDataCallback): void {
-    this._chartStore.setLoadMoreDataCallback(cb)
+  setDataLoader (dataLoader: DataLoader): void {
+    this._chartStore.setDataLoader(dataLoader)
   }
 
   createIndicator (value: string | IndicatorCreate, isStack?: boolean, paneOptions?: PaneOptions): Nullable<string> {

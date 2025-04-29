@@ -12,7 +12,19 @@
  * limitations under the License.
  */
 
-export default interface Precision {
-  price: number
-  volume: number
+export type PeriodType = 'second' | 'minute' | 'hour' | 'day' | 'week' | 'month' | 'year'
+
+export interface Period {
+  type: PeriodType
+  span: number
+}
+
+export const PeriodTypeFormat: Record<PeriodType, string> = {
+  second: 'HH:mm:ss',
+  minute: 'HH:mm',
+  hour: 'MM-DD HH:mm',
+  day: 'YYYY-MM-DD',
+  week: 'YYYY-MM-DD',
+  month: 'YYYY-MM',
+  year: 'YYYY'
 }

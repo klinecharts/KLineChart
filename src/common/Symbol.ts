@@ -12,20 +12,9 @@
  * limitations under the License.
  */
 
-import type Nullable from './Nullable'
-import type { KLineData } from './Data'
-
-export type LoadDataType = 'init' | 'forward' | 'backward' | 'update'
-
-export interface LoadDataParams {
-  type: LoadDataType
-  data: Nullable<KLineData>
-  callback: (dataList: KLineData[], more?: boolean) => void
+export default interface Symbol {
+  ticker: string
+  name?: string
+  pricePrecision?: number
+  volumePrecision?: number
 }
-
-export interface LoadDataMore {
-  backward: boolean
-  forward: boolean
-}
-
-export type LoadDataCallback = (params: LoadDataParams) => void

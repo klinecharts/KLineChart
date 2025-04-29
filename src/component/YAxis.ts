@@ -102,7 +102,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
     let precision = 4
     const inCandle = this.isInCandle()
     if (inCandle) {
-      const { price: pricePrecision } = chartStore.getPrecision()
+      const pricePrecision = chartStore.getSymbol()?.pricePrecision ?? 2
       if (indicatorPrecision !== Number.MAX_SAFE_INTEGER) {
         precision = Math.min(indicatorPrecision, pricePrecision)
       } else {
@@ -269,7 +269,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
     let precision = 0
     let shouldFormatBigNumber = false
     if (this.isInCandle()) {
-      precision = chartStore.getPrecision().price
+      precision = chartStore.getSymbol()?.pricePrecision ?? 2
     } else {
       indicators.forEach(indicator => {
         precision = Math.max(precision, indicator.precision)
@@ -354,7 +354,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
       })
       let precision = 2
       if (this.isInCandle()) {
-        const { price: pricePrecision } = chartStore.getPrecision()
+        const pricePrecision = chartStore.getSymbol()?.pricePrecision ?? 2
         const lastValueMarkStyles = styles.indicator.lastValueMark
         if (lastValueMarkStyles.show && lastValueMarkStyles.text.show) {
           precision = Math.max(indicatorPrecision, pricePrecision)

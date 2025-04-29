@@ -21,6 +21,7 @@ import type BarSpace from '../common/BarSpace'
 import type Crosshair from '../common/Crosshair'
 import type { IndicatorStyle, IndicatorPolygonStyle, SmoothLineStyle, RectStyle, TextStyle, TooltipFeatureStyle, LineStyle, LineType, TooltipLegend } from '../common/Styles'
 import { isNumber, isValid, merge, isBoolean, isString, clone, isFunction } from '../common/utils/typeChecks'
+import type { DataLoadType } from '../common/DataLoader'
 
 import type { XAxis } from './XAxis'
 import type { YAxis } from './YAxis'
@@ -30,7 +31,6 @@ import { formatValue } from '../common/utils/format'
 import type { ArcAttrs } from '../extension/figure/arc'
 import type { RectAttrs } from '../extension/figure/rect'
 import type { TextAttrs } from '../extension/figure/text'
-import type { LoadDataType } from '../common/LoadDataCallback'
 import type { Chart } from '../Chart'
 
 export type IndicatorSeries = 'normal' | 'price' | 'volume'
@@ -116,7 +116,7 @@ export type IndicatorDataState = 'loading' | 'error' | 'ready'
 
 export interface IndicatorOnDataStateChangeParams<D> {
   state: IndicatorDataState
-  type: LoadDataType
+  type: DataLoadType
 
   indicator: Indicator<D>
 }

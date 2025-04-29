@@ -363,7 +363,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
     const decimalFold = chartStore.getDecimalFold()
     const thousandsSeparator = chartStore.getThousandsSeparator()
     const locale = chartStore.getLocale()
-    const { price: pricePrecision, volume: volumePrecision } = chartStore.getPrecision()
+    const { pricePrecision = 2, volumePrecision = 0 } = chartStore.getSymbol() ?? {}
     const dataIndex = chartStore.getCrosshair().dataIndex ?? 0
 
     const tooltipStyles = styles.tooltip

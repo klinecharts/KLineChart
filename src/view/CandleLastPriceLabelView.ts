@@ -29,7 +29,7 @@ export default class CandleLastPriceLabelView extends View {
     const lastPriceMarkStyles = priceMarkStyles.last
     const lastPriceMarkTextStyles = lastPriceMarkStyles.text
     if (priceMarkStyles.show && lastPriceMarkStyles.show && lastPriceMarkTextStyles.show) {
-      const precision = chartStore.getPrecision()
+      const precision = chartStore.getSymbol()?.pricePrecision ?? 2
       const yAxis = pane.getAxisComponent() as YAxis
       const dataList = chartStore.getDataList()
       const data = dataList[dataList.length - 1]
@@ -61,7 +61,7 @@ export default class CandleLastPriceLabelView extends View {
             yAxis.valueToRealValue(close, { range: yAxisRange }),
             { range: yAxisRange }
           ),
-          precision.price
+          precision
         )
         priceText = chartStore.getDecimalFold().format(chartStore.getThousandsSeparator().format(priceText))
         const { paddingLeft, paddingRight, paddingTop, paddingBottom, size, family, weight } = lastPriceMarkTextStyles
