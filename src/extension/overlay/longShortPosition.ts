@@ -20,6 +20,7 @@ import type Coordinate from '../../common/Coordinate'
 import type { OverlayTemplate, OverlayFigure, OverlayCreateFiguresCallback, OverlayCreateFiguresCallbackParams } from '../../component/Overlay'
 import type { RectAttrs } from '../figure/rect'
 import type { TextStyle, LineStyle, RectStyle } from '../../common/Styles'
+import type { KLineData } from '../../common/Data'
 
 export interface PositionOverlayExtend {
   hovered: boolean;
@@ -117,6 +118,44 @@ function createPositionRects (
   }
 }
 
+interface RiskInfo {
+  riskReward: number;
+  pnl?: number;
+  realEntry?: Pick<Point, 'value' | 'timestamp'>;
+  realTarget?: Pick<Point, 'value' | 'timestamp'>;
+  realLoss?: Pick<Point, 'value' | 'timestamp'>;
+}
+
+/**
+ * Calculate the profit and loss information and risk-reward ratio.
+ *
+ * @param data - The KLine data array.
+ * @param start - The start dataindex.
+ * @param end - The end dataindex.
+ * @param entry - The entry price.
+ * @param target - The target price.
+ * @param loss - The loss price.
+ * @param isLong - Whether the position is long or short.
+ */
+function calcRiskInfo (data: KLineData[], start:number, end: number, entry: number, target: number, loss: number, isLong: boolean): RiskInfo {
+  let entryIndex = -1
+  let upPrice = 0
+  let downPrice = 0
+  for (let i = start; i <= end; i++) {
+    const bar = data[i]
+    if (bar.low <= entry && entry <= bar.high && entryIndex === -1) entryIndex = i
+    if (entryIndex === -1) continue
+
+    if (bar.high >= Math.max(target, loss) && upPrice === 0) upPrice = Math.max(target, loss)
+    if (bar.low <= Math.min(target, loss) && downPrice === 0) downPrice = Math.min(target, loss)
+  }
+
+  const riskInfo: RiskInfo = { riskReward: (target - entry) / (entry - loss) }
+  if (entryIndex === -1) return riskInfo
+
+  if (upPrice > 0) {}
+}
+
 function createPositionInfo (
   isLong: boolean
 ): (params: OverlayCreateFiguresCallbackParams<PositionOverlayExtend>) => OverlayFigure[] {
@@ -131,9 +170,9 @@ function createPositionInfo (
     if (
       !isNumber(points[0].value) ||
       !isNumber(points[1].value) ||
-      !isNumber(points[1].timestamp) ||
-      !isNumber(points[0].timestamp) ||
       !isNumber(points[2].value) ||
+      !isNumber(points[0].timestamp) ||
+      !isNumber(points[1].timestamp) ||
       !isNumber(points[2].timestamp)
     ) {
       return []
@@ -191,6 +230,7 @@ function createPositionInfo (
       },
       styles: isLong ? overlay.styles?.lossText : overlay.styles?.targetText
     })
+
     return figures
   }
 }
