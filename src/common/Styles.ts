@@ -227,10 +227,10 @@ export interface CandleTooltipRectStyle extends Omit<RectStyle, 'style' | 'borde
   position: CandleTooltipRectPosition
 }
 
-export type CandleTooltipCustomCallback = (data: NeighborData<Nullable<KLineData>>, styles: CandleStyle) => TooltipLegend[]
+export type CandleTooltipLegendsCallback = (data: NeighborData<Nullable<KLineData>>, styles: CandleStyle) => TooltipLegend[]
 
 export interface CandleTooltipStyle extends TooltipStyle, Offset {
-  custom: CandleTooltipCustomCallback | TooltipLegend[]
+  legends: CandleTooltipLegendsCallback | TooltipLegend[]
   rect: CandleTooltipRectStyle
 }
 
@@ -469,7 +469,7 @@ function getDefaultCandleStyle (): CandleStyle {
       offsetBottom: 6,
       showRule: 'always',
       showType: 'standard',
-      custom: [
+      legends: [
         { title: 'time', value: '{time}' },
         { title: 'open', value: '{open}' },
         { title: 'high', value: '{high}' },

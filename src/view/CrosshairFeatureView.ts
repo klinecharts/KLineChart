@@ -24,21 +24,21 @@ import type DrawPane from '../pane/DrawPane'
 import type DrawWidget from '../widget/DrawWidget'
 import View from './View'
 
-interface FeatureInfo {
+interface CrosshairFeatureInfo {
   crosshair: Crosshair
   feature: FeatureStyle
 }
 
 export default class CrosshairFeatureView extends View<YAxis> {
-  private _activeFeatureInfo: Nullable<FeatureInfo> = null
+  private _activeFeatureInfo: Nullable<CrosshairFeatureInfo> = null
 
-  private readonly _featureClickEvent = (featureInfo: FeatureInfo) => () => {
+  private readonly _featureClickEvent = (featureInfo: CrosshairFeatureInfo) => () => {
     const pane = this.getWidget().getPane()
     pane.getChart().getChartStore().executeAction('onCrosshairFeatureClick', featureInfo)
     return true
   }
 
-  private readonly _featureMouseMoveEvent = (featureInfo: FeatureInfo) => () => {
+  private readonly _featureMouseMoveEvent = (featureInfo: CrosshairFeatureInfo) => () => {
     this._activeFeatureInfo = featureInfo
     this.getWidget().setForceCursor('pointer')
     return true

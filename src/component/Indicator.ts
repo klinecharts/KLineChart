@@ -88,15 +88,6 @@ export type IndicatorCreateTooltipDataSourceCallback<D> = (params: IndicatorCrea
 
 export type IndicatorEventTarget = 'feature'
 
-export interface IndicatorEvent<D, C, E> {
-  target: IndicatorEventTarget
-  chart: Chart
-  indicator: Indicator<D, C, E>
-  [key: string]: unknown
-}
-
-export type IndicatorEventCallback<D, C, E> = (params: IndicatorEvent<D, C, E>) => void
-
 export interface IndicatorDrawParams<D, C, E> {
   ctx: CanvasRenderingContext2D
   chart: Chart
@@ -234,11 +225,6 @@ export interface Indicator<D = unknown, C = unknown, E = unknown> {
   onDataStateChange: Nullable<IndicatorOnDataStateChangeCallback<D>>
 
   /**
-   * Event
-   */
-  onClick: Nullable<IndicatorEventCallback<D, C, E>>
-
-  /**
    * Calculation result
    */
   result: D[]
@@ -365,8 +351,6 @@ export default class IndicatorImp<D = unknown, C = unknown, E = unknown> impleme
   regenerateFigures: Nullable<IndicatorRegenerateFiguresCallback<D, C>> = null
   createTooltipDataSource: Nullable<IndicatorCreateTooltipDataSourceCallback<D>> = null
   draw: Nullable<IndicatorDrawCallback<D, C, E>> = null
-
-  onClick: Nullable<IndicatorEventCallback<D, C, E>> = null
 
   onDataStateChange: Nullable<IndicatorOnDataStateChangeCallback<D>> = null
 

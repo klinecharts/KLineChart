@@ -692,20 +692,6 @@ export default class ChartImp implements Chart {
     return this._chartStore.getDataList()
   }
 
-  // applyNewData (data: KLineData[], more?: boolean | Partial<LoadDataMore>): void {
-  //   this._drawPanes.forEach(pane => {
-  //     (pane.getAxisComponent() as AxisImp).setAutoCalcTickFlag(true)
-  //   })
-  //   let loadDataMore = { forward: false, backward: false }
-  //   if (isBoolean(more)) {
-  //     loadDataMore.forward = more
-  //     loadDataMore.backward = more
-  //   } else {
-  //     loadDataMore = { ...loadDataMore, ...more }
-  //   }
-  //   this._chartStore.addData(data, 'init', loadDataMore)
-  // }
-
   setDataLoader (dataLoader: DataLoader): void {
     this._chartStore.setDataLoader(dataLoader)
   }

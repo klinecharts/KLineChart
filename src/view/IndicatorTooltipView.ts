@@ -19,6 +19,7 @@ import { isValid, isObject, isString, isNumber, isFunction } from '../common/uti
 import { createFont } from '../common/utils/canvas'
 import type Coordinate from '../common/Coordinate'
 import type Nullable from '../common/Nullable'
+import type { ActionType } from '../common/Action'
 
 import type { YAxis } from '../component/YAxis'
 
@@ -29,32 +30,22 @@ import type DrawPane from '../pane/DrawPane'
 import type DrawWidget from '../widget/DrawWidget'
 import View from './View'
 
-interface FeatureInfo {
+interface TooltipFeatureInfo {
   paneId: string
-  indicator: Nullable<Indicator>
+  indicator?: Indicator
   feature: TooltipFeatureStyle
 }
 
 export default class IndicatorTooltipView extends View<YAxis> {
-  private _activeFeatureInfo: Nullable<FeatureInfo> = null
+  private _activeFeatureInfo: Nullable<TooltipFeatureInfo> = null
 
-  private readonly _featureClickEvent = (featureInfo: FeatureInfo) => () => {
+  private readonly _featureClickEvent = (type: ActionType, featureInfo: TooltipFeatureInfo) => () => {
     const pane = this.getWidget().getPane()
-    const { indicator, ...others } = featureInfo
-    if (isValid(indicator)) {
-      indicator.onClick?.({
-        target: 'feature',
-        chart: pane.getChart(),
-        indicator,
-        ...others
-      })
-    } else {
-      pane.getChart().getChartStore().executeAction('onCandleTooltipFeatureClick', featureInfo)
-    }
+    pane.getChart().getChartStore().executeAction(type, featureInfo)
     return true
   }
 
-  private readonly _featureMouseMoveEvent = (featureInfo: FeatureInfo) => () => {
+  private readonly _featureMouseMoveEvent = (featureInfo: TooltipFeatureInfo) => () => {
     this._activeFeatureInfo = featureInfo
     return true
   }
@@ -211,9 +202,17 @@ export default class IndicatorTooltipView extends View<YAxis> {
           // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- ignore
           finalBackgroundColor = activeBackgroundColor ?? backgroundColor
         }
+        let actionType: ActionType = 'onCandleTooltipFeatureClick'
+        const featureInfo: TooltipFeatureInfo = {
+          paneId, feature
+        }
+        if (isValid(indicator)) {
+          actionType = 'onIndicatorTooltipFeatureClick'
+          featureInfo.indicator = indicator
+        }
         const eventHandler = {
-          mouseClickEvent: this._featureClickEvent({ paneId, indicator, feature }),
-          mouseMoveEvent: this._featureMouseMoveEvent({ paneId, indicator, feature })
+          mouseClickEvent: this._featureClickEvent(actionType, featureInfo),
+          mouseMoveEvent: this._featureMouseMoveEvent(featureInfo)
         }
         let contentWidth = 0
         if (type === 'icon_font') {

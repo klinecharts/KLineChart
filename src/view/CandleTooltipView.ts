@@ -389,9 +389,9 @@ export default class CandleTooltipView extends IndicatorTooltipView {
       '{change}': prevClose === 0 ? tooltipStyles.defaultValue : `${thousandsSeparator.format(formatPrecision(changeValue / prevClose * 100))}%`
     }
     const legends = (
-      isFunction(tooltipStyles.custom)
-        ? tooltipStyles.custom({ prev, current, next: dataList[dataIndex + 1] ?? null }, styles)
-        : tooltipStyles.custom
+      isFunction(tooltipStyles.legends)
+        ? tooltipStyles.legends({ prev, current, next: dataList[dataIndex + 1] ?? null }, styles)
+        : tooltipStyles.legends
     )
     return legends.map(({ title, value }) => {
       let t: TooltipLegendChild = { text: '', color: textColor }
