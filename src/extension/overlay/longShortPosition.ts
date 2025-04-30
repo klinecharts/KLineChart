@@ -14,6 +14,7 @@
 
 import { i18n } from '../i18n'
 import { isNumber, isValid } from '../../common/utils/typeChecks'
+import type Nullable from '../../common/Nullable'
 import type DeepPartial from '../../common/DeepPartial'
 import type Point from '../../common/Point'
 import type Coordinate from '../../common/Coordinate'
@@ -120,10 +121,9 @@ function createPositionRects (
 
 interface RiskInfo {
   riskReward: number;
-  pnl?: number;
-  realEntry?: Pick<Point, 'value' | 'timestamp'>;
-  realTarget?: Pick<Point, 'value' | 'timestamp'>;
-  realLoss?: Pick<Point, 'value' | 'timestamp'>;
+  entryPoint?: Pick<Point, 'value' | 'timestamp'>;
+  upPoint?: Pick<Point, 'value' | 'timestamp'>;
+  downPoint?: Pick<Point, 'value' | 'timestamp'>;
 }
 
 /**
@@ -137,23 +137,40 @@ interface RiskInfo {
  * @param loss - The loss price.
  * @param isLong - Whether the position is long or short.
  */
-function calcRiskInfo (data: KLineData[], start:number, end: number, entry: number, target: number, loss: number, isLong: boolean): RiskInfo {
-  let entryIndex = -1
-  let upPrice = 0
-  let downPrice = 0
+function calcRiskInfo (data: KLineData[], start: number, end: number, entry: number, up: number, down: number): Nullable<RiskInfo> {
+  if (start === end) return null
+  if (entry === up || entry === down || down >= up) return null
+
+  let entryPoint: Nullable<Pick<Point, 'value' | 'timestamp'>> = null
+  let upPoint: Nullable<Pick<Point, 'value' | 'timestamp'>> = null
+  let downPoint: Nullable<Pick<Point, 'value' | 'timestamp'>> = null
   for (let i = start; i <= end; i++) {
     const bar = data[i]
-    if (bar.low <= entry && entry <= bar.high && entryIndex === -1) entryIndex = i
-    if (entryIndex === -1) continue
+    if (bar.low <= entry && entry <= bar.high && !isValid(entryPoint)) entryPoint = { timestamp: bar.timestamp, value: entry }
+    if (!isValid(entryPoint)) continue
 
-    if (bar.high >= Math.max(target, loss) && upPrice === 0) upPrice = Math.max(target, loss)
-    if (bar.low <= Math.min(target, loss) && downPrice === 0) downPrice = Math.min(target, loss)
+    if (bar.high >= up) {
+      upPoint = { timestamp: bar.timestamp, value: up }
+      break
+    }
+    if (bar.low <= down) {
+      downPoint = { timestamp: bar.timestamp, value: down }
+      break
+    }
   }
 
-  const riskInfo: RiskInfo = { riskReward: (target - entry) / (entry - loss) }
-  if (entryIndex === -1) return riskInfo
+  const riskInfo: RiskInfo = { riskReward: (up - entry) / (entry - down) }
+  if (!isValid(entryPoint)) return riskInfo
+  riskInfo.entryPoint = entryPoint
 
-  if (upPrice > 0) {}
+  if (isValid(upPoint)) riskInfo.upPoint = upPoint
+  else if (isValid(downPoint)) riskInfo.downPoint = downPoint
+  else {
+    const lastBar = data[end]
+    if (lastBar.close > entry) riskInfo.upPoint = { timestamp: lastBar.timestamp, value: lastBar.close }
+    else { riskInfo.downPoint = { timestamp: lastBar.timestamp, value: lastBar.close } }
+  }
+  return riskInfo
 }
 
 function createPositionInfo (
@@ -231,6 +248,7 @@ function createPositionInfo (
       styles: isLong ? overlay.styles?.lossText : overlay.styles?.targetText
     })
 
+    // const riskInfo = calcRiskInfo(chart.getDataList(), )
     return figures
   }
 }
