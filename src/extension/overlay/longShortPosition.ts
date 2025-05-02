@@ -14,14 +14,12 @@
 
 import { i18n } from '../i18n'
 import { isNumber, isValid } from '../../common/utils/typeChecks'
-import type Nullable from '../../common/Nullable'
 import type DeepPartial from '../../common/DeepPartial'
 import type Point from '../../common/Point'
 import type Coordinate from '../../common/Coordinate'
 import type { OverlayTemplate, OverlayFigure, OverlayCreateFiguresCallback, OverlayCreateFiguresCallbackParams } from '../../component/Overlay'
 import type { RectAttrs } from '../figure/rect'
 import type { TextStyle, LineStyle, RectStyle } from '../../common/Styles'
-import type { KLineData } from '../../common/Data'
 
 export interface PositionOverlayExtend {
   hovered: boolean;
@@ -40,7 +38,7 @@ function getDefaultPositionStyle (): DeepPartial<PositionOverlayStyle> {
   return {
     target: { color: '#279d8233' },
     loss: { color: '#f2385a33' },
-    midLine: { color: '#76808F', size: 1 },
+    midLine: { color: '#76808F80', size: 1 },
     targetText: {
       backgroundColor: '#279d82'
     },
@@ -119,60 +117,6 @@ function createPositionRects (
   }
 }
 
-interface RiskInfo {
-  riskReward: number;
-  entryPoint?: Pick<Point, 'value' | 'timestamp'>;
-  upPoint?: Pick<Point, 'value' | 'timestamp'>;
-  downPoint?: Pick<Point, 'value' | 'timestamp'>;
-}
-
-/**
- * Calculate the profit and loss information and risk-reward ratio.
- *
- * @param data - The KLine data array.
- * @param start - The start dataindex.
- * @param end - The end dataindex.
- * @param entry - The entry price.
- * @param target - The target price.
- * @param loss - The loss price.
- * @param isLong - Whether the position is long or short.
- */
-function calcRiskInfo (data: KLineData[], start: number, end: number, entry: number, up: number, down: number): Nullable<RiskInfo> {
-  if (start === end) return null
-  if (entry === up || entry === down || down >= up) return null
-
-  let entryPoint: Nullable<Pick<Point, 'value' | 'timestamp'>> = null
-  let upPoint: Nullable<Pick<Point, 'value' | 'timestamp'>> = null
-  let downPoint: Nullable<Pick<Point, 'value' | 'timestamp'>> = null
-  for (let i = start; i <= end; i++) {
-    const bar = data[i]
-    if (bar.low <= entry && entry <= bar.high && !isValid(entryPoint)) entryPoint = { timestamp: bar.timestamp, value: entry }
-    if (!isValid(entryPoint)) continue
-
-    if (bar.high >= up) {
-      upPoint = { timestamp: bar.timestamp, value: up }
-      break
-    }
-    if (bar.low <= down) {
-      downPoint = { timestamp: bar.timestamp, value: down }
-      break
-    }
-  }
-
-  const riskInfo: RiskInfo = { riskReward: (up - entry) / (entry - down) }
-  if (!isValid(entryPoint)) return riskInfo
-  riskInfo.entryPoint = entryPoint
-
-  if (isValid(upPoint)) riskInfo.upPoint = upPoint
-  else if (isValid(downPoint)) riskInfo.downPoint = downPoint
-  else {
-    const lastBar = data[end]
-    if (lastBar.close > entry) riskInfo.upPoint = { timestamp: lastBar.timestamp, value: lastBar.close }
-    else { riskInfo.downPoint = { timestamp: lastBar.timestamp, value: lastBar.close } }
-  }
-  return riskInfo
-}
-
 function createPositionInfo (
   isLong: boolean
 ): (params: OverlayCreateFiguresCallbackParams<PositionOverlayExtend>) => OverlayFigure[] {
@@ -248,7 +192,22 @@ function createPositionInfo (
       styles: isLong ? overlay.styles?.lossText : overlay.styles?.targetText
     })
 
-    // const riskInfo = calcRiskInfo(chart.getDataList(), )
+    const riskReward = isLong ? upPercent / downPercent : downPercent / upPercent
+    if (!isNumber(riskReward) || riskReward <= 0) return figures
+
+    const riskRewardLabel = isLong ? i18n('riskReward', locale) : i18n('riskReward', locale)
+    figures.push({
+      type: 'text',
+      attrs: {
+        x: xText,
+        y: coordinates[1].y,
+        text: `${riskRewardLabel}${riskReward.toFixed(2)}`,
+        baseline: 'middle',
+        align: 'center'
+      },
+      styles: overlay.styles?.targetText
+    })
+
     return figures
   }
 }
