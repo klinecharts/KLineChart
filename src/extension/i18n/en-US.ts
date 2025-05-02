@@ -22,7 +22,10 @@ const enUS: Locales = {
   close: 'Close: ',
   volume: 'Volume: ',
   turnover: 'Turnover: ',
-  change: 'Change: '
+  change: 'Change: ',
+  target: 'Target: ',
+  loss: 'Loss: ',
+  riskReward: 'Risk Reward: '
 }
 
 export default enUS
