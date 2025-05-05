@@ -497,7 +497,7 @@ function getDefaultCandleStyle (): CandleStyle {
         marginTop: 4,
         marginRight: 8,
         marginBottom: 4,
-        template: '{name} · {period}'
+        template: '{ticker} · {period}'
       },
       legend: {
         size: 12,

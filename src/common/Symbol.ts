@@ -14,7 +14,7 @@
 
 export default interface Symbol {
   ticker: string
-  name?: string
-  pricePrecision?: number
-  volumePrecision?: number
+  pricePrecision: number
+  volumePrecision: number
+  [key: string]: unknown
 }

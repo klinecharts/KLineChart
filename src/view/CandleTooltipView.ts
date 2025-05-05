@@ -99,9 +99,8 @@ export default class CandleTooltipView extends IndicatorTooltipView {
     if (this.isDrawTooltip(crosshair, tooltipStyles)) {
       const tooltipTitleStyles = tooltipStyles.title
       if (tooltipTitleStyles.show) {
-        let text = formatTemplateString(tooltipTitleStyles.template, (chartStore.getSymbol() ?? {}) as Record<string, unknown>)
         const { type = '', span = '' } = chartStore.getPeriod() ?? {}
-        text = text.replace('{period}', `${span}${i18n(type, chartStore.getLocale())}`)
+        const text = formatTemplateString(tooltipTitleStyles.template, { ...chartStore.getSymbol(), period: `${span}${i18n(type, chartStore.getLocale())}` })
         const color = tooltipTitleStyles.color
         const height = this.drawStandardTooltipLegends(
           ctx, [
@@ -393,18 +392,19 @@ export default class CandleTooltipView extends IndicatorTooltipView {
     const prevClose = prev?.close ?? current.close
     const changeValue = current.close - prevClose
     const mapping = {
-      '{time}': formatter.formatDate(current.timestamp, PeriodTypeCrosshairTooltipFormat[period?.type ?? 'day'], 'tooltip'),
-      '{open}': decimalFold.format(thousandsSeparator.format(formatPrecision(current.open, pricePrecision))),
-      '{high}': decimalFold.format(thousandsSeparator.format(formatPrecision(current.high, pricePrecision))),
-      '{low}': decimalFold.format(thousandsSeparator.format(formatPrecision(current.low, pricePrecision))),
-      '{close}': decimalFold.format(thousandsSeparator.format(formatPrecision(current.close, pricePrecision))),
-      '{volume}': decimalFold.format(thousandsSeparator.format(
+      ...current,
+      time: formatter.formatDate(current.timestamp, PeriodTypeCrosshairTooltipFormat[period?.type ?? 'day'], 'tooltip'),
+      open: decimalFold.format(thousandsSeparator.format(formatPrecision(current.open, pricePrecision))),
+      high: decimalFold.format(thousandsSeparator.format(formatPrecision(current.high, pricePrecision))),
+      low: decimalFold.format(thousandsSeparator.format(formatPrecision(current.low, pricePrecision))),
+      close: decimalFold.format(thousandsSeparator.format(formatPrecision(current.close, pricePrecision))),
+      volume: decimalFold.format(thousandsSeparator.format(
         formatter.formatBigNumber(formatPrecision(current.volume ?? defaultValue, volumePrecision))
       )),
-      '{turnover}': decimalFold.format(thousandsSeparator.format(
+      turnover: decimalFold.format(thousandsSeparator.format(
         formatPrecision(current.turnover ?? defaultValue, pricePrecision)
       )),
-      '{change}': prevClose === 0 ? defaultValue : `${thousandsSeparator.format(formatPrecision(changeValue / prevClose * 100))}%`
+      change: prevClose === 0 ? defaultValue : `${thousandsSeparator.format(formatPrecision(changeValue / prevClose * 100))}%`
     }
     const legends = (
       isFunction(custom)
@@ -425,14 +425,10 @@ export default class CandleTooltipView extends IndicatorTooltipView {
       } else {
         v.text = value
       }
-      const match = /{(\S*)}/.exec(v.text)
-      if (match !== null && match.length > 1) {
-        const key = `{${match[1]}}`
-        v.text = v.text.replace(key, (mapping[key] ?? defaultValue) as string)
-        if (key === '{change}') {
-          v.color = changeValue === 0 ? styles.priceMark.last.noChangeColor : (changeValue > 0 ? styles.priceMark.last.upColor : styles.priceMark.last.downColor)
-        }
+      if (isValid(/{change}/.exec(v.text))) {
+        v.color = changeValue === 0 ? styles.priceMark.last.noChangeColor : (changeValue > 0 ? styles.priceMark.last.upColor : styles.priceMark.last.downColor)
       }
+      v.text = formatTemplateString(v.text, mapping)
       return { title: t, value: v }
     })
   }
