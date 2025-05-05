@@ -38,14 +38,14 @@ const light: DeepPartial<Styles> = {
         color: '#FEFEFE',
         borderColor: '#F2F3F5'
       },
-      text: {
+      legend: {
         color: '#76808F'
       }
     }
   },
   indicator: {
     tooltip: {
-      text: {
+      legend: {
         color: '#76808F'
       }
     }

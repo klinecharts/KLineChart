@@ -20,7 +20,7 @@ import AxisImp, { type AxisTemplate, type Axis, type AxisRange, type AxisTick } 
 
 import type DrawPane from '../pane/DrawPane'
 import { calcTextWidth } from '../common/utils/canvas'
-import { PeriodTypeFormat } from '../common/Period'
+import { PeriodTypeXAxisFormat } from '../common/Period'
 
 export type XAxisTemplate = Pick<AxisTemplate, 'name' | 'scrollZoomEnabled' | 'createTicks'>
 
@@ -72,7 +72,7 @@ export default abstract class XAxisImp extends AxisImp implements XAxis {
   }
 
   protected override createTicksImp (): AxisTick[] {
-    const { realFrom, realTo } = this.getRange()
+    const { realFrom, realTo, from } = this.getRange()
     const chartStore = this.getParent().getChart().getChartStore()
     const formatDate = chartStore.getInnerFormatter().formatDate
     const period = chartStore.getPeriod()
@@ -80,21 +80,23 @@ export default abstract class XAxisImp extends AxisImp implements XAxis {
 
     const barSpace = chartStore.getBarSpace().bar
     const textStyles = chartStore.getStyles().xAxis.tickText
-    const tickTextWidth = Math.max(calcTextWidth('YYYY-MM-DD HH:mm:ss', textStyles.size, textStyles.weight, textStyles.family), 140)
+    const tickTextWidth = Math.max(calcTextWidth('YYYY-MM-DD HH:mm:ss', textStyles.size, textStyles.weight, textStyles.family), this.getBounding().width / 8)
     let tickBetweenBarCount = Math.ceil(tickTextWidth / barSpace)
     if (tickBetweenBarCount % 2 !== 0) {
       tickBetweenBarCount += 1
     }
-    const startDataIndex = Math.floor(realFrom / tickBetweenBarCount) * tickBetweenBarCount - 1
+    const startDataIndex = Math.floor(realFrom / tickBetweenBarCount) * tickBetweenBarCount
 
     for (let i = startDataIndex; i < realTo; i += tickBetweenBarCount) {
-      const timestamp = chartStore.dataIndexToTimestamp(i)
-      if (isNumber(timestamp)) {
-        ticks.push({
-          coord: this.convertToPixel(i),
-          value: timestamp,
-          text: formatDate(timestamp, PeriodTypeFormat[period?.type ?? 'day'], 'xAxis')
-        })
+      if (i >= from) {
+        const timestamp = chartStore.dataIndexToTimestamp(i)
+        if (isNumber(timestamp)) {
+          ticks.push({
+            coord: this.convertToPixel(i),
+            value: timestamp,
+            text: formatDate(timestamp, PeriodTypeXAxisFormat[period?.type ?? 'day'], 'xAxis')
+          })
+        }
       }
     }
 

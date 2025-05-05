@@ -13,7 +13,7 @@
  */
 
 import type Crosshair from '../common/Crosshair'
-import type { TooltipStyle, TooltipTextStyle, TooltipLegend, TooltipLegendChild, TooltipFeatureStyle, FeatureIconFontStyle, FeaturePathStyle } from '../common/Styles'
+import type { TooltipStyle, TooltipLegendStyle, TooltipLegend, TooltipLegendChild, TooltipFeatureStyle, FeatureIconFontStyle, FeaturePathStyle } from '../common/Styles'
 import { formatPrecision } from '../common/utils/format'
 import { isValid, isObject, isString, isNumber, isFunction } from '../common/utils/typeChecks'
 import { createFont } from '../common/utils/canvas'
@@ -85,17 +85,17 @@ export default class IndicatorTooltipView extends View<YAxis> {
     const tooltipStyles = styles.tooltip
     if (this.isDrawTooltip(chartStore.getCrosshair(), tooltipStyles)) {
       const indicators = chartStore.getIndicatorsByPaneId(pane.getId())
-      const tooltipTextStyles = tooltipStyles.text
+      const tooltipLegendStyles = tooltipStyles.legend
       indicators.forEach(indicator => {
         let prevRowHeight = 0
         const coordinate = { x: left, y: top }
-        const { name, calcParamsText, legends, features } = this.getIndicatorTooltipData(indicator)
+        const { name, calcParamsText, legends, features: featuresStyles } = this.getIndicatorTooltipData(indicator)
         const nameValid = name.length > 0
         const legendValid = legends.length > 0
         if (nameValid || legendValid) {
-          const [leftFeatures, middleFeatures, rightFeatures] = this.classifyTooltipFeatures(features)
+          const features = this.classifyTooltipFeatures(featuresStyles)
           prevRowHeight = this.drawStandardTooltipFeatures(
-            ctx, leftFeatures,
+            ctx, features[0],
             coordinate, indicator,
             left, prevRowHeight, maxWidth
           )
@@ -105,20 +105,21 @@ export default class IndicatorTooltipView extends View<YAxis> {
             if (calcParamsText.length > 0) {
               text = `${text}${calcParamsText}`
             }
+            const color = tooltipLegendStyles.color
             prevRowHeight = this.drawStandardTooltipLegends(
               ctx,
               [
                 {
-                  title: { text: '', color: tooltipTextStyles.color },
-                  value: { text, color: tooltipTextStyles.color }
+                  title: { text: '', color },
+                  value: { text, color }
                 }
               ],
-              coordinate, left, prevRowHeight, maxWidth, tooltipTextStyles
+              coordinate, left, prevRowHeight, maxWidth, tooltipLegendStyles
             )
           }
 
           prevRowHeight = this.drawStandardTooltipFeatures(
-            ctx, middleFeatures,
+            ctx, features[1],
             coordinate, indicator,
             left, prevRowHeight, maxWidth
           )
@@ -126,13 +127,13 @@ export default class IndicatorTooltipView extends View<YAxis> {
           if (legendValid) {
             prevRowHeight = this.drawStandardTooltipLegends(
               ctx, legends, coordinate,
-              left, prevRowHeight, maxWidth, tooltipStyles.text
+              left, prevRowHeight, maxWidth, tooltipLegendStyles
             )
           }
 
-          // draw right icons
+          // draw right features
           prevRowHeight = this.drawStandardTooltipFeatures(
-            ctx, rightFeatures,
+            ctx, features[2],
             coordinate, indicator,
             left, prevRowHeight, maxWidth
           )
@@ -270,7 +271,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
     left: number,
     prevRowHeight: number,
     maxWidth: number,
-    styles: TooltipTextStyle
+    styles: TooltipLegendStyle
   ): number {
     if (legends.length > 0) {
       const { marginLeft, marginTop, marginRight, marginBottom, size, family, weight } = styles
@@ -336,6 +337,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
     const legends: TooltipLegend[] = []
     if (indicator.visible) {
       const data = result[dataIndex] ?? result[dataIndex - 1] ?? {}
+      const defaultValue = tooltipStyles.legend.defaultValue
       eachFigures(indicator, dataIndex, styles, (figure: IndicatorFigure, figureStyles: Required<IndicatorFigureStyle>) => {
         if (isString(figure.title)) {
           const color = figureStyles.color
@@ -348,7 +350,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
             }
             value = decimalFold.format(thousandsSeparator.format(value as string))
           }
-          legends.push({ title: { text: figure.title, color }, value: { text: (value ?? tooltipStyles.defaultValue) as string, color } })
+          legends.push({ title: { text: figure.title, color }, value: { text: (value ?? defaultValue) as string, color } })
         }
       })
       tooltipData.legends = legends
@@ -377,7 +379,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
       }
       if (isValid(customLegends) && indicator.visible) {
         const optimizedLegends: TooltipLegend[] = []
-        const color = styles.tooltip.text.color
+        const color = styles.tooltip.legend.color
         customLegends.forEach(data => {
           let title = { text: '', color }
           if (isObject(data.title)) {

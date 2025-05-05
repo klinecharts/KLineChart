@@ -386,8 +386,8 @@ export default class StoreImp implements Store {
     }
     merge(this._styles, styles)
     // `candle.tooltip.custom` should override
-    if (isArray(styles?.candle?.tooltip?.custom)) {
-      this._styles.candle.tooltip.custom = styles.candle.tooltip.custom as TooltipLegend[]
+    if (isArray(styles?.candle?.tooltip?.legend?.custom)) {
+      this._styles.candle.tooltip.legend.custom = styles.candle.tooltip.legend.custom as TooltipLegend[]
     }
     if (isValid(styles?.candle?.priceMark?.last?.extendTexts)) {
       this._clearLastPriceMarkExtendTextUpdateTimer()
@@ -1319,7 +1319,8 @@ export default class StoreImp implements Store {
     const ids = os.map((create, index) => {
       if (isValid(create.id)) {
         let findOverlay: Nullable<OverlayImp> = null
-        for (const [, overlays] of this._overlays) {
+        for (const item of this._overlays) {
+          const overlays = item[1]
           const overlay = overlays.find(o => o.id === create.id)
           if (isValid(overlay)) {
             findOverlay = overlay

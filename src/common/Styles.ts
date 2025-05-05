@@ -144,7 +144,7 @@ export interface GridStyle {
   vertical: StateLineStyle
 }
 
-export type TooltipTextStyle = Pick<TextStyle, 'color' | 'size' | 'family' | 'weight'> & Margin
+export type TooltipLegendStyle = Pick<TextStyle, 'color' | 'size' | 'family' | 'weight'> & Margin & { defaultValue: string }
 
 export interface TooltipLegendChild {
   text: string
@@ -165,8 +165,7 @@ export interface TooltipFeatureStyle extends FeatureStyle {
 export interface TooltipStyle {
   showRule: TooltipShowRule
   showType: TooltipShowType
-  defaultValue: string
-  text: TooltipTextStyle
+  legend: TooltipLegendStyle
   features: TooltipFeatureStyle[]
 }
 
@@ -227,10 +226,10 @@ export interface CandleTooltipRectStyle extends Omit<RectStyle, 'style' | 'borde
   position: CandleTooltipRectPosition
 }
 
-export type CandleTooltipLegendsCallback = (data: NeighborData<Nullable<KLineData>>, styles: CandleStyle) => TooltipLegend[]
+export type CandleTooltipLegendsCustomCallback = (data: NeighborData<Nullable<KLineData>>, styles: CandleStyle) => TooltipLegend[]
 
 export interface CandleTooltipStyle extends TooltipStyle, Offset {
-  legends: CandleTooltipLegendsCallback | TooltipLegend[]
+  legend: TooltipLegendStyle & { custom: CandleTooltipLegendsCustomCallback | TooltipLegend[] }
   rect: CandleTooltipRectStyle
 }
 
@@ -469,15 +468,25 @@ function getDefaultCandleStyle (): CandleStyle {
       offsetBottom: 6,
       showRule: 'always',
       showType: 'standard',
-      legends: [
-        { title: 'time', value: '{time}' },
-        { title: 'open', value: '{open}' },
-        { title: 'high', value: '{high}' },
-        { title: 'low', value: '{low}' },
-        { title: 'close', value: '{close}' },
-        { title: 'volume', value: '{volume}' }
-      ],
-      defaultValue: 'n/a',
+      legend: {
+        size: 12,
+        family: 'Helvetica Neue',
+        weight: 'normal',
+        color: Color.GREY,
+        marginLeft: 8,
+        marginTop: 4,
+        marginRight: 8,
+        marginBottom: 4,
+        defaultValue: 'n/a',
+        custom: [
+          { title: 'time', value: '{time}' },
+          { title: 'open', value: '{open}' },
+          { title: 'high', value: '{high}' },
+          { title: 'low', value: '{low}' },
+          { title: 'close', value: '{close}' },
+          { title: 'volume', value: '{volume}' }
+        ]
+      },
       rect: {
         position: 'fixed',
         paddingLeft: 4,
@@ -492,16 +501,6 @@ function getDefaultCandleStyle (): CandleStyle {
         borderSize: 1,
         borderColor: '#F2F3F5',
         color: '#FEFEFE'
-      },
-      text: {
-        size: 12,
-        family: 'Helvetica Neue',
-        weight: 'normal',
-        color: Color.GREY,
-        marginLeft: 8,
-        marginTop: 4,
-        marginRight: 8,
-        marginBottom: 4
       },
       features: []
     }
@@ -575,8 +574,7 @@ function getDefaultIndicatorStyle (): IndicatorStyle {
       showType: 'standard',
       showName: true,
       showParams: true,
-      defaultValue: 'n/a',
-      text: {
+      legend: {
         size: 12,
         family: 'Helvetica Neue',
         weight: 'normal',
@@ -584,7 +582,8 @@ function getDefaultIndicatorStyle (): IndicatorStyle {
         marginLeft: 8,
         marginTop: 4,
         marginRight: 8,
-        marginBottom: 4
+        marginBottom: 4,
+        defaultValue: 'n/a'
       },
       features: []
     }
