@@ -22,7 +22,14 @@ const zhCN: Locales = {
   close: '收：',
   volume: '成交量：',
   turnover: '成交额：',
-  change: '涨幅：'
+  change: '涨幅：',
+  second: '秒',
+  minute: '',
+  hour: '小时',
+  day: '天',
+  week: '周',
+  month: '月',
+  year: '年'
 }
 
 export default zhCN

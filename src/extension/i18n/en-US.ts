@@ -22,7 +22,14 @@ const enUS: Locales = {
   close: 'Close: ',
   volume: 'Volume: ',
   turnover: 'Turnover: ',
-  change: 'Change: '
+  change: 'Change: ',
+  second: 'S',
+  minute: '',
+  hour: 'H',
+  day: 'D',
+  week: 'W',
+  month: 'M',
+  year: 'Y'
 }
 
 export default enUS

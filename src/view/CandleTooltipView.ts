@@ -15,7 +15,7 @@
 import type {
   TooltipLegend, TooltipLegendChild
 } from '../common/Styles'
-import { formatPrecision } from '../common/utils/format'
+import { formatPrecision, formatTemplateString } from '../common/utils/format'
 import { createFont } from '../common/utils/canvas'
 import { isFunction, isObject, isValid } from '../common/utils/typeChecks'
 import { PeriodTypeCrosshairTooltipFormat } from '../common/Period'
@@ -97,6 +97,24 @@ export default class CandleTooltipView extends IndicatorTooltipView {
     const coordinate = { x: left, y: top }
     const crosshair = chartStore.getCrosshair()
     if (this.isDrawTooltip(crosshair, tooltipStyles)) {
+      const tooltipTitleStyles = tooltipStyles.title
+      if (tooltipTitleStyles.show) {
+        let text = formatTemplateString(tooltipTitleStyles.template, (chartStore.getSymbol() ?? {}) as Record<string, unknown>)
+        const { type = '', span = '' } = chartStore.getPeriod() ?? {}
+        text = text.replace('{period}', `${span}${i18n(type, chartStore.getLocale())}`)
+        const color = tooltipTitleStyles.color
+        const height = this.drawStandardTooltipLegends(
+          ctx, [
+            {
+              title: { text: '', color },
+              value: { text, color }
+            }
+          ], { x: left, y: top }, left,
+          0, maxWidth, tooltipTitleStyles
+        )
+        coordinate.y = coordinate.y + height
+      }
+
       const legends = this._getCandleTooltipLegends()
       const features = this.classifyTooltipFeatures(tooltipStyles.features)
       prevRowHeight = this.drawStandardTooltipFeatures(

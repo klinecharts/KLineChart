@@ -13,7 +13,7 @@
  */
 
 import type Crosshair from '../common/Crosshair'
-import type { TooltipStyle, TooltipLegendStyle, TooltipLegend, TooltipLegendChild, TooltipFeatureStyle, FeatureIconFontStyle, FeaturePathStyle } from '../common/Styles'
+import type { TooltipStyle, TooltipTextStyle, TooltipLegend, TooltipLegendChild, TooltipFeatureStyle, FeatureIconFontStyle, FeaturePathStyle } from '../common/Styles'
 import { formatPrecision } from '../common/utils/format'
 import { isValid, isObject, isString, isNumber, isFunction } from '../common/utils/typeChecks'
 import { createFont } from '../common/utils/canvas'
@@ -85,6 +85,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
     const tooltipStyles = styles.tooltip
     if (this.isDrawTooltip(chartStore.getCrosshair(), tooltipStyles)) {
       const indicators = chartStore.getIndicatorsByPaneId(pane.getId())
+      const tooltipTitleStyles = tooltipStyles.title
       const tooltipLegendStyles = tooltipStyles.legend
       indicators.forEach(indicator => {
         let prevRowHeight = 0
@@ -105,7 +106,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
             if (calcParamsText.length > 0) {
               text = `${text}${calcParamsText}`
             }
-            const color = tooltipLegendStyles.color
+            const color = tooltipTitleStyles.color
             prevRowHeight = this.drawStandardTooltipLegends(
               ctx,
               [
@@ -114,7 +115,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
                   value: { text, color }
                 }
               ],
-              coordinate, left, prevRowHeight, maxWidth, tooltipLegendStyles
+              coordinate, left, prevRowHeight, maxWidth, tooltipTitleStyles
             )
           }
 
@@ -271,7 +272,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
     left: number,
     prevRowHeight: number,
     maxWidth: number,
-    styles: TooltipLegendStyle
+    styles: TooltipTextStyle
   ): number {
     if (legends.length > 0) {
       const { marginLeft, marginTop, marginRight, marginBottom, size, family, weight } = styles
@@ -318,12 +319,18 @@ export default class IndicatorTooltipView extends View<YAxis> {
     const chartStore = this.getWidget().getPane().getChart().getChartStore()
     const styles = chartStore.getStyles().indicator
     const tooltipStyles = styles.tooltip
-    const name = tooltipStyles.showName ? indicator.shortName : ''
+    const tooltipTitleStyles = tooltipStyles.title
+    let name = ''
     let calcParamsText = ''
-    if (tooltipStyles.showParams) {
-      const calcParams = indicator.calcParams
-      if (calcParams.length > 0) {
-        calcParamsText = `(${calcParams.join(',')})`
+    if (tooltipTitleStyles.show) {
+      if (tooltipTitleStyles.showName) {
+        name = indicator.shortName
+      }
+      if (tooltipTitleStyles.showParams) {
+        const calcParams = indicator.calcParams
+        if (calcParams.length > 0) {
+          calcParamsText = `(${calcParams.join(',')})`
+        }
       }
     }
     const tooltipData: IndicatorTooltipData = { name, calcParamsText, legends: [], features: tooltipStyles.features }
@@ -368,12 +375,15 @@ export default class IndicatorTooltipView extends View<YAxis> {
         xAxis: pane.getChart().getXAxisPane().getAxisComponent(),
         yAxis: pane.getAxisComponent()
       })
-      if (isString(customName) && tooltipStyles.showName) {
-        tooltipData.name = customName
+      if (tooltipTitleStyles.show) {
+        if (isString(customName) && tooltipTitleStyles.showName) {
+          tooltipData.name = customName
+        }
+        if (isString(customCalcParamsText) && tooltipTitleStyles.showParams) {
+          tooltipData.calcParamsText = customCalcParamsText
+        }
       }
-      if (isString(customCalcParamsText) && tooltipStyles.showParams) {
-        tooltipData.calcParamsText = customCalcParamsText
-      }
+
       if (isValid(customFeatures)) {
         tooltipData.features = customFeatures
       }

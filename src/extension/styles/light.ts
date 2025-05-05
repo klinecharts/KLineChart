@@ -38,6 +38,9 @@ const light: DeepPartial<Styles> = {
         color: '#FEFEFE',
         borderColor: '#F2F3F5'
       },
+      title: {
+        color: '#76808F'
+      },
       legend: {
         color: '#76808F'
       }
@@ -45,6 +48,9 @@ const light: DeepPartial<Styles> = {
   },
   indicator: {
     tooltip: {
+      title: {
+        color: '#76808F'
+      },
       legend: {
         color: '#76808F'
       }
