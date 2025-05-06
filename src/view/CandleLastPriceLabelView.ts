@@ -14,10 +14,13 @@
 
 import { isValid } from '../common/utils/typeChecks'
 import { calcTextWidth } from '../common/utils/canvas'
+import type { TextStyle } from '../common/Styles'
 
 import View from './View'
 
+import type { FigureCreate } from '../component/Figure'
 import type YAxis from '../component/YAxis'
+import type { TextAttrs } from '../extension/figure/text'
 
 export default class CandleLastPriceLabelView extends View {
   override drawImp (ctx: CanvasRenderingContext2D): void {
@@ -55,6 +58,7 @@ export default class CandleLastPriceLabelView extends View {
           textAlgin = 'right'
         }
 
+        const textFigures: Array<FigureCreate<TextAttrs, TextStyle>> = []
         const yAxisRange = yAxis.getRange()
         let priceText = yAxis.displayValueToText(
           yAxis.realValueToDisplayValue(
@@ -65,14 +69,14 @@ export default class CandleLastPriceLabelView extends View {
         )
         priceText = chartStore.getDecimalFold().format(chartStore.getThousandsSeparator().format(priceText))
         const { paddingLeft, paddingRight, paddingTop, paddingBottom, size, family, weight } = lastPriceMarkTextStyles
-        const priceTextWidth = paddingLeft + calcTextWidth(priceText, size, weight, family) + paddingRight
+        let textWidth = paddingLeft + calcTextWidth(priceText, size, weight, family) + paddingRight
         const priceTextHeight = paddingTop + size + paddingBottom
-        this.createFigure({
+        textFigures.push({
           name: 'text',
           attrs: {
             x,
             y: priceY,
-            width: priceTextWidth,
+            width: textWidth,
             height: priceTextHeight,
             text: priceText,
             align: textAlgin,
@@ -82,14 +86,13 @@ export default class CandleLastPriceLabelView extends View {
             ...lastPriceMarkTextStyles,
             backgroundColor
           }
-        })?.draw(ctx)
-
+        })
         const formatExtendText = chartStore.getInnerFormatter().formatExtendText
         const priceTextHalfHeight = size / 2
         let aboveY = priceY - priceTextHalfHeight - paddingTop
         let belowY = priceY + priceTextHalfHeight + paddingBottom
         lastPriceMarkStyles.extendTexts.forEach((item, index) => {
-          const text = formatExtendText({ type: 'lastPrice', data, index })
+          const text = formatExtendText({ type: 'last_price', data, index })
           if (text.length > 0 && item.show) {
             const textHalfHeight = item.size / 2
             let textY = 0
@@ -102,20 +105,25 @@ export default class CandleLastPriceLabelView extends View {
               textY = belowY
               belowY += (textHalfHeight + item.paddingBottom)
             }
-            this.createFigure({
+            textWidth = Math.max(textWidth, item.paddingLeft + calcTextWidth(text, item.size, item.weight, item.family) + item.paddingRight)
+            textFigures.push({
               name: 'text',
               attrs: {
                 x,
                 y: textY,
-                width: priceTextWidth,
+                width: textWidth,
                 height: item.paddingTop + item.size + item.paddingBottom,
                 text,
                 align: textAlgin,
                 baseline: 'middle'
               },
               styles: { ...item, backgroundColor }
-            })?.draw(ctx)
+            })
           }
+        })
+        textFigures.forEach(figure => {
+          figure.attrs.width = textWidth
+          this.createFigure(figure)?.draw(ctx)
         })
       }
     }

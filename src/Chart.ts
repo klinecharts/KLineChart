@@ -116,10 +116,13 @@ export default class ChartImp implements Chart {
     measureWidth: true,
     update: true,
     buildYAxisTick: false,
+    cacheYAxisWidth: false,
     forceBuildYAxisTick: false
   }
 
   private _layoutPending = false
+
+  private readonly _cacheYAxisWidth = { left: 0, right: 0 }
 
   constructor (container: HTMLElement, options?: Options) {
     this._initContainer(container)
@@ -304,6 +307,7 @@ export default class ChartImp implements Chart {
     measureWidth?: boolean
     update?: boolean
     buildYAxisTick?: boolean
+    cacheYAxisWidth?: boolean
     forceBuildYAxisTick?: boolean
   }): void {
     if (options.sort ?? false) {
@@ -321,6 +325,9 @@ export default class ChartImp implements Chart {
     if (options.buildYAxisTick ?? false) {
       this._layoutOptions.buildYAxisTick = options.buildYAxisTick!
     }
+    if (options.cacheYAxisWidth ?? false) {
+      this._layoutOptions.cacheYAxisWidth = options.cacheYAxisWidth!
+    }
     if (options.buildYAxisTick ?? false) {
       this._layoutOptions.forceBuildYAxisTick = options.forceBuildYAxisTick!
     }
@@ -336,7 +343,7 @@ export default class ChartImp implements Chart {
   }
 
   private _layout (): void {
-    const { sort, measureHeight, measureWidth, update, buildYAxisTick, forceBuildYAxisTick } = this._layoutOptions
+    const { sort, measureHeight, measureWidth, update, buildYAxisTick, cacheYAxisWidth, forceBuildYAxisTick } = this._layoutOptions
     if (sort) {
       while (isValid(this._chartContainer.firstChild)) {
         this._chartContainer.removeChild(this._chartContainer.firstChild)
@@ -430,6 +437,14 @@ export default class ChartImp implements Chart {
         }
       })
 
+      if (cacheYAxisWidth) {
+        leftYAxisWidth = Math.max(this._cacheYAxisWidth.left, leftYAxisWidth)
+        rightYAxisWidth = Math.max(this._cacheYAxisWidth.right, rightYAxisWidth)
+      }
+
+      this._cacheYAxisWidth.left = leftYAxisWidth
+      this._cacheYAxisWidth.right = rightYAxisWidth
+
       let mainWidth = totalWidth
       let mainLeft = 0
       let mainRight = 0
@@ -473,6 +488,7 @@ export default class ChartImp implements Chart {
       measureWidth: false,
       update: false,
       buildYAxisTick: false,
+      cacheYAxisWidth: false,
       forceBuildYAxisTick: false
     }
   }

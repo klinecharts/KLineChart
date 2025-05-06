@@ -581,7 +581,8 @@ export default class StoreImp implements Store {
         this._chart.layout({
           measureWidth: true,
           update: true,
-          buildYAxisTick: true
+          buildYAxisTick: true,
+          cacheYAxisWidth: type !== 'init'
         })
       }
     }
@@ -752,7 +753,8 @@ export default class StoreImp implements Store {
     this._chart.layout({
       measureWidth: true,
       update: true,
-      buildYAxisTick: true
+      buildYAxisTick: true,
+      cacheYAxisWidth: true
     })
   }
 
@@ -773,7 +775,8 @@ export default class StoreImp implements Store {
       this._chart.layout({
         measureWidth: true,
         update: true,
-        buildYAxisTick: true
+        buildYAxisTick: true,
+        cacheYAxisWidth: true
       })
     }
     return this
@@ -835,7 +838,8 @@ export default class StoreImp implements Store {
     this._chart.layout({
       measureWidth: true,
       update: true,
-      buildYAxisTick: true
+      buildYAxisTick: true,
+      cacheYAxisWidth: true
     })
     const realDistance = Math.round(
       prevLastBarRightSideDistance - this._lastBarRightSideDiffBarCount * this._barSpace
@@ -1117,7 +1121,8 @@ export default class StoreImp implements Store {
             this._chart.layout({
               measureWidth: true,
               update: true,
-              buildYAxisTick: true
+              buildYAxisTick: true,
+              cacheYAxisWidth: dataLoadType !== 'init'
             })
             indicator.onDataStateChange?.({
               state: 'ready',

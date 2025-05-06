@@ -32,7 +32,7 @@ export type FormatDate = (params: FormatDateParams) => string
 
 export type FormatBigNumber = (value: string | number) => string
 
-export type ExtendTextType = 'lastPrice'
+export type ExtendTextType = 'last_price'
 
 export interface FormatExtendTextParams {
   type: ExtendTextType
