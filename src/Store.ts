@@ -22,7 +22,7 @@ import { getDefaultVisibleRange } from './common/VisibleRange'
 import TaskScheduler, { generateTaskId } from './common/TaskScheduler'
 import type Crosshair from './common/Crosshair'
 import type BarSpace from './common/BarSpace'
-import type Symbol from './common/Symbol'
+import type SymbolInfo from './common/SymbolInfo'
 import type { Period } from './common/Period'
 
 import Action from './common/Action'
@@ -100,8 +100,8 @@ export interface Store {
   getThousandsSeparator: () => ThousandsSeparator
   setDecimalFold: (decimalFold: Partial<DecimalFold>) => void
   getDecimalFold: () => DecimalFold
-  setSymbol: (symbol: Symbol) => void
-  getSymbol: () => Nullable<Symbol>
+  setSymbol: (symbol: SymbolInfo) => void
+  getSymbol: () => Nullable<SymbolInfo>
   setPeriod: (period: Period) => void
   getPeriod: () => Nullable<Period>
   getDataList: () => KLineData[]
@@ -184,7 +184,7 @@ export default class StoreImp implements Store {
   /**
    * Symbol
    */
-  private _symbol: Nullable<Symbol> = null
+  private _symbol: Nullable<SymbolInfo> = null
 
   /**
    * Period
@@ -470,7 +470,7 @@ export default class StoreImp implements Store {
 
   getDecimalFold (): DecimalFold { return this._decimalFold }
 
-  setSymbol (symbol: Symbol): void {
+  setSymbol (symbol: SymbolInfo): void {
     this._processDataUnsubscribe()
     this._symbol = symbol
     this._synchronizeIndicatorSeriesPrecision()
@@ -478,7 +478,7 @@ export default class StoreImp implements Store {
     this._processDataLoad('init')
   }
 
-  getSymbol (): Nullable<Symbol> {
+  getSymbol (): Nullable<SymbolInfo> {
     return this._symbol
   }
 

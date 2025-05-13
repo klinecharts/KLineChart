@@ -14,7 +14,7 @@
 
 import type Nullable from './Nullable'
 import type { KLineData } from './Data'
-import type Symbol from './Symbol'
+import type SymbolInfo from './SymbolInfo'
 import type { Period } from './Period'
 
 export type DataLoadType = 'init' | 'forward' | 'backward' | 'update'
@@ -27,13 +27,13 @@ export type DataLoadMore = boolean | {
 export interface DataLoaderGetBarsParams {
   type: DataLoadType
   data: Nullable<KLineData>
-  symbol: Symbol
+  symbol: SymbolInfo
   period: Period
   callback: (data: KLineData[], more?: DataLoadMore) => void
 }
 
 export interface DataLoaderSubscribeBarParams {
-  symbol: Symbol
+  symbol: SymbolInfo
   period: Period
   callback: (data: KLineData) => void
 }

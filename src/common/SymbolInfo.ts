@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-export default interface Symbol {
+export default interface SymbolInfo {
   ticker: string
   pricePrecision: number
   volumePrecision: number

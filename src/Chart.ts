@@ -56,7 +56,7 @@ import type DeepPartial from './common/DeepPartial'
 import type { Styles } from './common/Styles'
 import type BarSpace from './common/BarSpace'
 import type PickRequired from './common/PickRequired'
-import type Symbol from './common/Symbol'
+import type SymbolInfo from './common/SymbolInfo'
 import type { Period } from './common/Period'
 
 export type DomPosition = 'root' | 'main' | 'yAxis'
@@ -573,11 +573,11 @@ export default class ChartImp implements Chart {
     return null
   }
 
-  setSymbol (symbol: Symbol): void {
+  setSymbol (symbol: SymbolInfo): void {
     this._chartStore.setSymbol(symbol)
   }
 
-  getSymbol (): Nullable<Symbol> {
+  getSymbol (): Nullable<SymbolInfo> {
     return this._chartStore.getSymbol()
   }
 
