@@ -44,6 +44,7 @@
   "license": "Apache-2.0",
   "private": false,
   "scripts": {
+    "preinstall": "node scripts/check-node-version.js",
     "branch-lint": "node scripts/branch-lint.js",
     "commit-lint": "commitlint --edit",
     "code-lint": "eslint src/**/*.ts",
@@ -86,7 +87,6 @@
     "@stackblitz/sdk": "^1.9.0",
     "@types/node": "^20.12.7",
     "@vueuse/core": "^11.1.0",
-    "chalk": "^5.3.0",
     "codesandbox": "^2.2.3",
     "cross-env": "^7.0.3",
     "dts-bundle-generator": "^9.5.1",
@@ -103,10 +103,11 @@
     "resize-observer-polyfill": "^1.5.1",
     "rollup": "^4.39.0",
     "rollup-plugin-filesize": "^10.0.0",
+    "semver": "^7.7.2",
     "shiki": "^2.4.2",
     "tslib": "^2.8.1",
     "typescript": "^5.8.3",
-    "vitepress": "2.0.0-alpha.4"
+    "vitepress": "2.0.0-alpha.5"
   },
   "pnpm": {
     "overrides": {
