@@ -1,4 +1,4 @@
-import { init, registerOverlay } from 'klinecharts';
+import { init, registerOverlay } from 'klinecharts'
 
 registerOverlay({
   name: 'customOverlayBasic',
@@ -14,17 +14,25 @@ registerOverlay({
       }
     }
   }
-});
+})
 
-const chart = init('custom-overlay-basic-chart');
+const chart = init('custom-overlay-basic-chart')
 
-fetch('https://klinecharts.com/datas/kline.json')
-  .then(res => res.json())
-  .then(dataList => {
-    chart.applyNewData(dataList);
-    const data = dataList[dataList.length - 10];
-    chart.createOverlay({
-      name: 'customOverlayBasic',
-      points: [{ timestamp: data.timestamp, value: data.close }]
-    })
-  });
+chart.setSymbol({ ticker: 'TestSymbol' })
+chart.setPeriod({ span: 1, type: 'day' })
+chart.setDataLoader({
+  getBars: ({
+    callback
+  }) => {
+    fetch('https://klinecharts.com/datas/kline.json')
+      .then(res => res.json())
+      .then(dataList => {
+        callback(dataList)
+        const data = dataList[dataList.length - 10]
+        chart.createOverlay({
+          name: 'customOverlayBasic',
+          points: [{ timestamp: data.timestamp, value: data.close }]
+        })
+      })
+  }
+})

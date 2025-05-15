@@ -172,9 +172,8 @@ onMounted(() => {
       traverse(ast, {
         CallExpression(path) {
           if (
-            t.isMemberExpression(path.node.callee) &&
-            t.isIdentifier(path.node.callee.object, { name: 'chart' }) &&
-            t.isIdentifier(path.node.callee.property, { name: 'applyNewData' })
+            t.isCallExpression(path.node) &&
+            t.isIdentifier(path.node.callee, { name: 'callback' })
           ) {
             const postMessageFun = t.expressionStatement(
               t.callExpression(

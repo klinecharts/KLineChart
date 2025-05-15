@@ -109,9 +109,17 @@
     "typescript": "^5.8.3",
     "vitepress": "2.0.0-alpha.5"
   },
+  "overrides": {
+    "@rollup/plugin-eslint": {
+      "eslint": "$eslint"
+    }
+  },
   "pnpm": {
     "overrides": {
       "@rollup/plugin-eslint>eslint": "$eslint"
     }
+  },
+  "resolutions": {
+    "@rollup/plugin-eslint/eslint": "$eslint"
   }
 }

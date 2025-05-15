@@ -1,4 +1,4 @@
-import { init } from 'klinecharts';
+import { init } from 'klinecharts'
 
 const chart = init('init-layout-chart', {
   layout: [
@@ -7,11 +7,20 @@ const chart = init('init-layout-chart', {
       content: ['MA', { name: 'EMA', calcParams: [10, 30] }],
       options: { order: Number.MIN_SAFE_INTEGER }
     },
-    { type: 'indicator', content: ['VOL'], options: { order: 10 }  },
+    { type: 'indicator', content: ['VOL'], options: { order: 10 } },
     { type: 'xAxis', options: { order: 9 } }
   ]
 })
-
-fetch('https://klinecharts.com/datas/kline.json')
-  .then(res => res.json())
-  .then(dataList => { chart.applyNewData(dataList); });
+chart.setSymbol({ ticker: 'TestSymbol' })
+chart.setPeriod({ span: 1, type: 'day' })
+chart.setDataLoader({
+  getBars: ({
+    callback
+  }) => {
+    fetch('https://klinecharts.com/datas/kline.json')
+      .then(res => res.json())
+      .then(dataList => {
+        callback(dataList)
+      })
+  }
+})

@@ -1,8 +1,18 @@
-import { init } from 'klinecharts';
+import { init } from 'klinecharts'
 
-const chart = init('setStyles-built-in-chart');
-chart.setStyles('light');
+const chart = init('setStyles-built-in-chart')
+chart.setStyles('light')
 
-fetch('https://klinecharts.com/datas/kline.json')
-  .then(res => res.json())
-  .then(dataList => { chart.applyNewData(dataList); });
+chart.setSymbol({ ticker: 'TestSymbol' })
+chart.setPeriod({ span: 1, type: 'day' })
+chart.setDataLoader({
+  getBars: ({
+    callback
+  }) => {
+    fetch('https://klinecharts.com/datas/kline.json')
+      .then(res => res.json())
+      .then(dataList => {
+        callback(dataList)
+      })
+  }
+})

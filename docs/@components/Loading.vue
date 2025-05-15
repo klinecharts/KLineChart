@@ -20,7 +20,7 @@
 }
 
 .loader {
-  width: 16px;
+  width: 14px;
   aspect-ratio: 1;
   border-radius: 50%;
   background: var(--custom-red);

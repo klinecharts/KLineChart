@@ -1,3 +1,3 @@
-import { getSupportedFigures } from 'klinecharts';
+import { getSupportedFigures } from 'klinecharts'
 
-const supports = getSupportedFigures();
+const supports = getSupportedFigures()

@@ -1,4 +1,4 @@
-import { init, registerXAxis } from 'klinecharts';
+import { init, registerXAxis } from 'klinecharts'
 
 registerXAxis({
   name: 'customXAxis',
@@ -15,7 +15,7 @@ registerXAxis({
       }
     })
   }
-});
+})
 
 const chart = init(
   'custom-x-axis-chart',
@@ -26,14 +26,24 @@ const chart = init(
         options: {
           order: 1000,
           axis: {
-            name: 'customXAxis',
+            name: 'customXAxis'
           }
         }
       }
     ]
   }
-);
+)
 
-fetch('https://klinecharts.com/datas/kline.json')
-  .then(res => res.json())
-  .then(dataList => { chart.applyNewData(dataList); });
+chart.setSymbol({ ticker: 'TestSymbol' })
+chart.setPeriod({ span: 1, type: 'day' })
+chart.setDataLoader({
+  getBars: ({
+    callback
+  }) => {
+    fetch('https://klinecharts.com/datas/kline.json')
+      .then(res => res.json())
+      .then(dataList => {
+        callback(dataList)
+      })
+  }
+})

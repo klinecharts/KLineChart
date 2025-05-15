@@ -1,4 +1,4 @@
-import { init, registerYAxis } from 'klinecharts';
+import { init, registerYAxis } from 'klinecharts'
 
 registerYAxis({
   name: 'customYAxisBasic',
@@ -30,7 +30,7 @@ registerYAxis({
     }
     return defaultRange
   }
-});
+})
 
 const chart = init(
   'custom-y-axis-basic-chart',
@@ -40,14 +40,24 @@ const chart = init(
         type: 'candle',
         options: {
           axis: {
-            name: 'customYAxisBasic',
+            name: 'customYAxisBasic'
           }
         }
       }
     ]
   }
-);
+)
 
-fetch('https://klinecharts.com/datas/kline.json')
-  .then(res => res.json())
-  .then(dataList => { chart.applyNewData(dataList); });
+chart.setSymbol({ ticker: 'TestSymbol' })
+chart.setPeriod({ span: 1, type: 'day' })
+chart.setDataLoader({
+  getBars: ({
+    callback
+  }) => {
+    fetch('https://klinecharts.com/datas/kline.json')
+      .then(res => res.json())
+      .then(dataList => {
+        callback(dataList)
+      })
+  }
+})
