@@ -123,7 +123,7 @@ export interface Store {
   isZoomEnabled: () => boolean
   setScrollEnabled: (enabled: boolean) => void
   isScrollEnabled: () => boolean
-  clearData: () => void
+  resetData: () => void
 }
 
 export default class StoreImp implements Store {
@@ -474,8 +474,7 @@ export default class StoreImp implements Store {
     this._processDataUnsubscribe()
     this._symbol = symbol
     this._synchronizeIndicatorSeriesPrecision()
-    this._loading = false
-    this._processDataLoad('init')
+    this.resetData()
   }
 
   getSymbol (): Nullable<SymbolInfo> {
@@ -485,8 +484,7 @@ export default class StoreImp implements Store {
   setPeriod (period: Period): void {
     this._processDataUnsubscribe()
     this._period = period
-    this._loading = false
-    this._processDataLoad('init')
+    this.resetData()
   }
 
   getPeriod (): Nullable<Period> {
@@ -525,7 +523,7 @@ export default class StoreImp implements Store {
       dataLengthChange = data.length
       switch (type) {
         case 'init': {
-          this.clearData()
+          this._clearData()
           this._dataList = data
           this._dataLoadMore.backward = realMore.backward
           this._dataLoadMore.forward = realMore.forward
@@ -691,7 +689,7 @@ export default class StoreImp implements Store {
         type,
         symbol: this._symbol,
         period: this._period,
-        data: null,
+        timestamp: null,
         callback: (data: KLineData[], more?: boolean) => {
           this._loading = false
           this._addData(data, type, more)
@@ -708,11 +706,11 @@ export default class StoreImp implements Store {
       }
       switch (type) {
         case 'backward': {
-          params.data = this._dataList[this._dataList.length - 1] ?? null
+          params.timestamp = this._dataList[this._dataList.length - 1]?.timestamp ?? null
           break
         }
         case 'forward': {
-          params.data = this._dataList[0] ?? null
+          params.timestamp = this._dataList[0]?.timestamp ?? null
           break
         }
         default: {
@@ -730,6 +728,11 @@ export default class StoreImp implements Store {
         period: this._period
       })
     }
+  }
+
+  resetData (): void {
+    this._loading = false
+    this._processDataLoad('init')
   }
 
   getBarSpace (): BarSpace {
@@ -1563,10 +1566,10 @@ export default class StoreImp implements Store {
     this._lastPriceMarkExtendTextUpdateTimers = []
   }
 
-  clearData (): void {
+  private _clearData (): void {
     this._dataLoadMore.backward = false
     this._dataLoadMore.forward = false
-    this._loading = true
+    this._loading = false
     this._dataList = []
     this._visibleRangeDataList = []
     this._visibleRangeHighLowPrice = [
@@ -1582,7 +1585,7 @@ export default class StoreImp implements Store {
   }
 
   destroy (): void {
-    this.clearData()
+    this._clearData()
     this._clearLastPriceMarkExtendTextUpdateTimer()
     this._taskScheduler.removeTask()
     this._overlays.clear()

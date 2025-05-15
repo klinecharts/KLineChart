@@ -700,8 +700,8 @@ export default class ChartImp implements Chart {
     return this._chartStore.getVisibleRange()
   }
 
-  clearData (): void {
-    this._chartStore.clearData()
+  resetData (): void {
+    this._chartStore.resetData()
   }
 
   getDataList (): KLineData[] {

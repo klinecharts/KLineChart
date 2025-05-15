@@ -26,7 +26,7 @@ export type DataLoadMore = boolean | {
 
 export interface DataLoaderGetBarsParams {
   type: DataLoadType
-  data: Nullable<KLineData>
+  timestamp: Nullable<number>
   symbol: SymbolInfo
   period: Period
   callback: (data: KLineData[], more?: DataLoadMore) => void
