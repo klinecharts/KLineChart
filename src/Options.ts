@@ -57,6 +57,13 @@ export interface Locales {
   volume: string
   change: string
   turnover: string
+  second: string
+  minute: string
+  hour: string
+  day: string
+  week: string
+  month: string
+  year: string
   [key: string]: string
 }
 

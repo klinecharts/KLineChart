@@ -588,6 +588,7 @@ export default class StoreImp implements Store {
 
   setDataLoader (dataLoader: DataLoader): void {
     this._dataLoader = dataLoader
+    this.resetData()
   }
 
   private _calcOptimalBarSpace (): void {
