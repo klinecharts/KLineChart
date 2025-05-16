@@ -5,6 +5,7 @@ import { data } from './index.data'
 
 <template>
   <ChartPreview
+    title="getVisibleRange"
     chartId="getVisibleRange-chart"
     :code="data.js"/>
 </template>

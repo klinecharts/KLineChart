@@ -5,6 +5,7 @@ import { data } from './index.data'
 
 <template>
   <ChartPreview
+    title="setMaxOffsetRightDistance"
     chartId="setMaxOffsetRightDistance-chart"
     :code="data.js"/>
 </template>

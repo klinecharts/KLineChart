@@ -5,6 +5,7 @@ import { data } from './index.data'
 
 <template>
   <ChartPreview
+    title="createOverlay-batch"
     chartId="createOverlay-batch-chart"
     :code="data.js"/>
 </template>

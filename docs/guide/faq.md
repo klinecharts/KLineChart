@@ -4,7 +4,7 @@
 图表总是会填充容器，检查一下容器是否有高度。
 
 ## 蜡烛柱显示趋近于一条线，看不到波动，怎么办？
-图表默认价格精度为两位小数，调用`setPriceVolumePrecision(pricePrecision, volumePrecision)`设置下精度。
+在设置交易对的时候要设置精度，调用`setSymbol({ ticker: 'TestSymbol', pricePrecision: 6, volumePrecision: 6 })`。
 
 ## 分时图怎么创建？
 通过样式设置。
@@ -24,4 +24,4 @@ chart.setStyles({
 图表支持自定义技术指标，详情参阅[技术指标](/guide/indicator)。
 
 ## 想标记一下买卖点，该怎么做？
-可以使用覆盖物，内置的覆盖物有一个`simpleAnnotation`，用图表api创建即可`createOverlay({ name: 'simpleAnnotation', ... }, paneId)`。
+可以使用覆盖物，内置的覆盖物有一个`simpleAnnotation`，用图表api创建即可`createOverlay({ name: 'simpleAnnotation', ... })`。

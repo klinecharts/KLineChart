@@ -5,6 +5,7 @@ import { data } from './index.data'
 
 <template>
   <ChartPreview
+    title="scrollToTimestamp"
     chartId="scrollToTimestamp-chart"
     :code="data.js"/>
 </template>

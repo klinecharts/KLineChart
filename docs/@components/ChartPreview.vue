@@ -181,7 +181,7 @@ onMounted(() => {
                 [t.stringLiteral(props.chartId)]
               )
             )
-            path.insertBefore(postMessageFun);
+            path.insertBefore(postMessageFun)
           }
         }
       })

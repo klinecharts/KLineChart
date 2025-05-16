@@ -5,6 +5,7 @@ import { data } from './index.data'
 
 <template>
   <ChartPreview
+    title="init-styles-override"
     chartId="init-styles-override-chart"
     :code="data.js"/>
 </template>

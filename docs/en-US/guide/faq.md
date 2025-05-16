@@ -4,7 +4,7 @@
 The chart always fills the container, checking to see if the container has height.
 
 ## The candle shows a line, no fluctuation, what to do?
-Chart default price precision is two decimal, call `setPriceVolumePrecision(pricePrecision, volumePrecision)` to set the precision.
+To set the precision when setting the trading pair, call `setSymbol({ ticker: 'TestSymbol', pricePrecision: 6, volumePrecision: 6 })`.
 
 ## How to create a real-time chart?
 Through style settings.
@@ -23,4 +23,4 @@ You can override `calc` by the chart method `createIndicator` or `overrideIndica
 Charts support custom technical indicators, see [indicators](/en-US/guide/indicator) for details.
 
 ## Want to mark the point of sale, how should do?
-Overlays can be used. The built-in overlay has a `simpleAnnotation`, which can be created with the chart api `createOverlay({ name: 'simpleAnnotation', ... }, paneId)`.
+Overlays can be used. The built-in overlay has a `simpleAnnotation`, which can be created with the chart api `createOverlay({ name: 'simpleAnnotation', ... })`.

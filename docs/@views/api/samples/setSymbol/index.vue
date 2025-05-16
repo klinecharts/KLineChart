@@ -5,6 +5,7 @@ import { data } from './index.data'
 
 <template>
   <ChartPreview
+    title="setSymbol"
     chartId="setSymbol-chart"
     :code="data.js"/>
 </template>

@@ -5,6 +5,7 @@ import { data } from './index.data'
 
 <template>
   <ChartPreview
+    title="getTimezone"
     chartId="getTimezone-chart"
     :code="data.js"/>
 </template>

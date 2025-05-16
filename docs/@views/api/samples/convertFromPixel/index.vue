@@ -6,5 +6,6 @@ import { data } from './index.data'
 <template>
   <ChartPreview
     chartId="convertFromPixel-chart"
+    title="convertFromPixel"
     :code="data.js"/>
 </template>

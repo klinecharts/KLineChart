@@ -5,6 +5,7 @@ import { data } from './index.data'
 
 <template>
   <ChartPreview
+    title="setBarSpace"
     chartId="setBarSpace-chart"
     :code="data.js"/>
 </template>

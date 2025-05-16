@@ -23,25 +23,24 @@ import ProjectModuleExplain from '../@views/local-development/ProjectModuleExpla
 
 ## 开发
 ### 安装依赖
-项目采用依赖 [Node.js](https://nodejs.org) 的包管理器管理，所以需要 [Node.js](https://nodejs.org) 环境。
-你可以使用 npm，pnpm 或者 yarn 来安装依赖。
+项目强制使用 [pnpm](https://pnpm.io/zh/) 来作为包管理器，所以需要使用 pnpm 安装依赖。
 ```bash
 # 项目根目录下执行
-npm install
+pnpm install
 ```
 
-### NPM 执行命令说明
+### 执行命令说明
 
-- `lint`：运行 `npm run lint` 检验代码规则。
-- `clean`：运行 `npm run clean` 进行清理打包好的文件。
-- `build-esm`：运行 `npm run build-esm` 打包成 esm 模块。
-- `build-cjs`：运行 `npm run build-cjs` 打包成 commonjs 模块。
-- `build-umd:dev`：运行 `npm run build-umd:dev` 打包成 umd 开发环境模块。
-- `build-umd:prod`：运行 `npm run build-umd:dev` 打包成 umd 生产环境模块。
-- `build-umd`：运行 `npm run build-umd` 同时打包 umd 开发环境和生产环境模块。
-- `build-core`：运行 `npm run build-core` 同时打包 esm 模块，commonjs 模块，umd 开发环境和生产环境模块。
-- `build-dts`：运行 `npm run build-dts` 生成 typescript 依赖文件。
-- `build`：运行 `npm run build` 同时打包 esm 模块，commonjs 模块，umd 开发环境和生产环境模块并生成 typescript 依赖文件。
+- `code-lint`：运行 `pnpm run code-lint` 检验代码规则。
+- `clean`：运行 `pnpm run clean` 进行清理打包好的文件。
+- `build-esm`：运行 `pnpm run build-esm` 打包成 esm 模块。
+- `build-cjs`：运行 `pnpm run build-cjs` 打包成 commonjs 模块。
+- `build-umd:dev`：运行 `pnpm run build-umd:dev` 打包成 umd 开发环境模块。
+- `build-umd:prod`：运行 `pnpm run build-umd:dev` 打包成 umd 生产环境模块。
+- `build-umd`：运行 `pnpm run build-umd` 同时打包 umd 开发环境和生产环境模块。
+- `build-core`：运行 `pnpm run build-core` 同时打包 esm 模块，commonjs 模块，umd 开发环境和生产环境模块。
+- `build-dts`：运行 `pnpm run build-dts` 生成 typescript 依赖文件。
+- `build`：运行 `pnpm run build` 同时打包 esm 模块，commonjs 模块，umd 开发环境和生产环境模块并生成 typescript 依赖文件。
 
 ### 调试
 此项目没有调试项目，需要创建新的工程，用 `npm link` 引入，或者直接引入 `index.ts` 入口文件的方式进行调试。你可以使用 [vite](https://cn.vitejs.dev/) 进行项目创建。

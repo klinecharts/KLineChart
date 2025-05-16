@@ -5,6 +5,7 @@ import { data } from './index.data'
 
 <template>
   <ChartPreview
+    title="zoomAtCoordinate"
     chartId="zoomAtCoordinate-chart"
     :code="data.js"/>
 </template>

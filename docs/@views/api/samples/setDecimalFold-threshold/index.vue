@@ -5,6 +5,7 @@ import { data } from './index.data'
 
 <template>
   <ChartPreview
+    title="setDecimalFold-threshold"
     chartId="setDecimalFold-threshold-chart"
     :code="data.js"/>
 </template>

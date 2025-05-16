@@ -5,6 +5,7 @@ import { data } from './index.data'
 
 <template>
   <ChartPreview
+    title="setPaneOptions-state"
     chartId="setPaneOptions-state-chart"
     :code="data.js"/>
 </template>

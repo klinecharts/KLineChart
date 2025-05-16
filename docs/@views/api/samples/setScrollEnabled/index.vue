@@ -5,6 +5,7 @@ import { data } from './index.data'
 
 <template>
   <ChartPreview
+    title="setScrollEnabled"
     chartId="setScrollEnabled-chart"
     :code="data.js"/>
 </template>

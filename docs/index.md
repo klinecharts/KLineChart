@@ -19,7 +19,7 @@ features:
       light: /images/box_light.png
       dark: /images/box_dark.png
     title: 开箱即用
-    details: 简单快速集成，零成本上手，显示出一个图表仅需3行代码，让使用者专注于数据对接。
+    details: 简单快速集成，零成本上手，显示出一个图表仅需 5 行代码，让使用者专注于数据对接。
   - icon:
       light: /images/rocket_light.png
       dark: /images/rocket_dark.png

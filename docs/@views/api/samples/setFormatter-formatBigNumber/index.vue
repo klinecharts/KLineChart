@@ -5,6 +5,7 @@ import { data } from './index.data'
 
 <template>
   <ChartPreview
+    title="setFormatter-formatBigNumber"
     chartId="setFormatter-formatBigNumber-chart"
     :code="data.js"/>
 </template>
