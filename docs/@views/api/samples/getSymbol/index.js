@@ -1,6 +1,6 @@
 import { init } from 'klinecharts'
 
-const chart = init('getThousandsSeparator-chart')
+const chart = init('getSymbol-chart')
 
 chart.setSymbol({ ticker: 'TestSymbol' })
 chart.setPeriod({ span: 1, type: 'day' })
@@ -16,4 +16,4 @@ chart.setDataLoader({
   }
 })
 
-const thousandsSeparator = chart.getThousandsSeparator()
+const symbol = chart.getSymbol()

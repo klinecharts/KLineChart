@@ -1,6 +1,6 @@
 import { init } from 'klinecharts'
 
-const chart = init('getThousandsSeparator-chart')
+const chart = init('resetData-chart')
 
 chart.setSymbol({ ticker: 'TestSymbol' })
 chart.setPeriod({ span: 1, type: 'day' })
@@ -15,5 +15,6 @@ chart.setDataLoader({
       })
   }
 })
-
-const thousandsSeparator = chart.getThousandsSeparator()
+setTimeout(() => {
+  chart.resetData()
+}, 5000)

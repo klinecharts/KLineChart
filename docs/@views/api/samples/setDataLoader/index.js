@@ -1,6 +1,6 @@
 import { init } from 'klinecharts'
 
-const chart = init('getThousandsSeparator-chart')
+const chart = init('setDataLoader-chart')
 
 chart.setSymbol({ ticker: 'TestSymbol' })
 chart.setPeriod({ span: 1, type: 'day' })
@@ -13,7 +13,7 @@ chart.setDataLoader({
       .then(dataList => {
         callback(dataList)
       })
-  }
+  },
+  subscribe: (params) => {},
+  unsubscribe: (params) => {}
 })
-
-const thousandsSeparator = chart.getThousandsSeparator()
