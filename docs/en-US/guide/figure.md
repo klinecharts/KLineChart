@@ -98,7 +98,7 @@ new ({
 }) => Figure
 ```
 
-###polygon
+### polygon
 ```typescript
 new ({
   attrs: {
