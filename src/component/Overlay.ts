@@ -341,7 +341,7 @@ export default class OverlayImp<E = unknown> implements Overlay<E> {
   shouldUpdate (): { draw: boolean, sort: boolean } {
     const sort = this._prevOverlay.zLevel !== this.zLevel
     const draw = sort ||
-      JSON.stringify(this._prevOverlay) !== JSON.stringify(this.points) ||
+      JSON.stringify(this._prevOverlay.points) !== JSON.stringify(this.points) ||
       this._prevOverlay.visible !== this.visible ||
       this._prevOverlay.extendData !== this.extendData ||
       this._prevOverlay.styles !== this.styles
