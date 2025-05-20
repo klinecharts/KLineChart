@@ -5,6 +5,7 @@ import { data } from './index.data';
 
 <template>
   <ChartPreview
+    title="getSupportedOverlays"
     :hiddenChart="true"
     :code="data.js"/>
 </template>

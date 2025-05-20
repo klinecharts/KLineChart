@@ -5,6 +5,7 @@ import { data } from './index.data';
 
 <template>
   <ChartPreview
+    title="getSupportedFigures"
     :hiddenChart="true"
     :code="data.js"/>
 </template>

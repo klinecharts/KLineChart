@@ -5,6 +5,7 @@ import { data } from './index.data'
 
 <template>
   <ChartPreview
+    title="setDecimalFold-format"
     chartId="setDecimalFold-format-chart"
     :code="data.js"/>
 </template>

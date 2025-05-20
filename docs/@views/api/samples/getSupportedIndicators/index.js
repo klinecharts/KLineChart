@@ -1,3 +1,3 @@
-import { getSupportedIndicators } from 'klinecharts';
+import { getSupportedIndicators } from 'klinecharts'
 
-const supports = getSupportedIndicators();
+const supports = getSupportedIndicators()

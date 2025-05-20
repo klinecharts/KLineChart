@@ -5,6 +5,7 @@ import { data } from './index.data'
 
 <template>
   <ChartPreview
+    title="getConvertPictureUrl"
     chartId="getConvertPictureUrl-chart"
     :code="data.js"/>
 </template>

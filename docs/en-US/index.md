@@ -8,7 +8,7 @@ features:
       light: /images/box_light.png
       dark: /images/box_dark.png
     title: Out of the box
-    details: Simple and fast integration, zero cost to get started, displaying a chart in just 3 lines of code, allowing users to focus on data integration.
+    details: Simple and fast integration, zero cost to get started, displaying a chart in just 5 lines of code, allowing users to focus on data integration.
   - icon:
       light: /images/rocket_light.png
       dark: /images/rocket_dark.png

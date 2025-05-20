@@ -1,6 +1,6 @@
 <template>
   <div class="loading">
-    <div class="loader"></div>
+    <div class="loader"/>
   </div>
 </template>
 
@@ -17,10 +17,11 @@
   width: 100%;
   height: 100%;
   z-index: 10;
+  background-color: var(--vp-code-block-bg);
 }
 
 .loader {
-  width: 16px;
+  width: 14px;
   aspect-ratio: 1;
   border-radius: 50%;
   background: var(--custom-red);

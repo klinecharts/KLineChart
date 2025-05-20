@@ -25,7 +25,14 @@ const enUS: Locales = {
   change: 'Change: ',
   target: 'Target: ',
   loss: 'Loss: ',
-  riskReward: 'Risk Reward: '
+  riskReward: 'Risk Reward: ',
+  second: 'S',
+  minute: '',
+  hour: 'H',
+  day: 'D',
+  week: 'W',
+  month: 'M',
+  year: 'Y'
 }
 
 export default enUS

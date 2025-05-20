@@ -1,17 +1,34 @@
-import { init, registerLocale } from 'klinecharts';
+import { init, registerLocale } from 'klinecharts'
 
-registerLocale('ru-RU', {
-  time: 'Время: ',
-  open: 'Открой.: ',
-  high: 'Высокий: ',
-  low: 'Низкий: ',
-  close: 'Б: ',
-  volume: 'Объем: '
+registerLocale('zh-TW', {
+  time: '時間：',
+  open: '開：',
+  high: '高：',
+  low: '低：',
+  close: '收：',
+  volume: '量：',
+  second: '秒',
+  minute: '分鐘',
+  hour: '小時',
+  day: '天',
+  week: '週',
+  month: '月',
+  year: '年'
 })
 
-const chart = init('setLocale-extension-chart');
-chart.setLocale('ru-RU');
+const chart = init('setLocale-extension-chart')
+chart.setLocale('zh-TW')
 
-fetch('https://klinecharts.com/datas/kline.json')
-  .then(res => res.json())
-  .then(dataList => { chart.applyNewData(dataList); });
+chart.setSymbol({ ticker: 'TestSymbol' })
+chart.setPeriod({ span: 1, type: 'day' })
+chart.setDataLoader({
+  getBars: ({
+    callback
+  }) => {
+    fetch('https://klinecharts.com/datas/kline.json')
+      .then(res => res.json())
+      .then(dataList => {
+        callback(dataList)
+      })
+  }
+})

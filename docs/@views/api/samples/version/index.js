@@ -1,3 +1,3 @@
-import { version } from 'klinecharts';
+import { version } from 'klinecharts'
 
-const v = version();
+const v = version()

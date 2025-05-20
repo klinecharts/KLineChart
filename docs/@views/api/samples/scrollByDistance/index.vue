@@ -5,6 +5,7 @@ import { data } from './index.data'
 
 <template>
   <ChartPreview
+    title="scrollByDistance"
     chartId="scrollByDistance-chart"
     :code="data.js"/>
 </template>

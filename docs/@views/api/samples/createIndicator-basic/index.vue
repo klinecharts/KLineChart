@@ -5,6 +5,7 @@ import { data } from './index.data'
 
 <template>
   <ChartPreview
+    title="createIndicator-basic"
     chartId="createIndicator-basic-chart"
     :code="data.js"/>
 </template>

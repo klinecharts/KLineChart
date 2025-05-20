@@ -1,5 +1,5 @@
 import fs from 'fs'
-import chalk from 'chalk'
+import { styleText } from 'node:util'
 
 import { resolvePath } from '../utils.js'
 
@@ -35,7 +35,7 @@ function deleteFiles (dir) {
         process.stdout.clearLine(process.stdout)
         process.stdout.cursorTo(0)
         const percent = `${Math.round(deletedFileCount / totalFileCount * 100)}%`
-        process.stdout.write(`${chalk.blue(`${percent}(${deletedFileCount}/${totalFileCount}): ${file}`)}`, 'utf-8')
+        process.stdout.write(`${styleText('blue', `${percent}(${deletedFileCount}/${totalFileCount}): ${file}`)}`, 'utf-8')
       }
     })
     fs.rmdirSync(dir)
@@ -46,7 +46,7 @@ function clean () {
   eachFiles(buildDir)
   deleteFiles(buildDir)
 
-  console.log(chalk.green('\n\n✔️ Clean successfully.\n'))
+  console.log(styleText('green', '\n\n✔ Clean successfully.\n'))
 }
 
 clean()

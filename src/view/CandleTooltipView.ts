@@ -15,9 +15,10 @@
 import type {
   TooltipLegend, TooltipLegendChild
 } from '../common/Styles'
-import { formatPrecision } from '../common/utils/format'
+import { formatPrecision, formatTemplateString } from '../common/utils/format'
 import { createFont } from '../common/utils/canvas'
 import { isFunction, isObject, isValid } from '../common/utils/typeChecks'
+import { PeriodTypeCrosshairTooltipFormat } from '../common/Period'
 
 import { PaneIdConstants } from '../pane/types'
 
@@ -91,32 +92,47 @@ export default class CandleTooltipView extends IndicatorTooltipView {
     const chartStore = this.getWidget().getPane().getChart().getChartStore()
     const styles = chartStore.getStyles().candle
     const tooltipStyles = styles.tooltip
-    const tooltipTextStyles = tooltipStyles.text
+    const tooltipLegendStyles = tooltipStyles.legend
     let prevRowHeight = 0
     const coordinate = { x: left, y: top }
     const crosshair = chartStore.getCrosshair()
     if (this.isDrawTooltip(crosshair, tooltipStyles)) {
+      const tooltipTitleStyles = tooltipStyles.title
+      if (tooltipTitleStyles.show) {
+        const { type = '', span = '' } = chartStore.getPeriod() ?? {}
+        const text = formatTemplateString(tooltipTitleStyles.template, { ...chartStore.getSymbol(), period: `${span}${i18n(type, chartStore.getLocale())}` })
+        const color = tooltipTitleStyles.color
+        const height = this.drawStandardTooltipLegends(
+          ctx, [
+            {
+              title: { text: '', color },
+              value: { text, color }
+            }
+          ], { x: left, y: top }, left,
+          0, maxWidth, tooltipTitleStyles
+        )
+        coordinate.y = coordinate.y + height
+      }
+
       const legends = this._getCandleTooltipLegends()
-
-      const [leftFeatures, middleFeatures, rightFeatures] = this.classifyTooltipFeatures(tooltipStyles.features)
-
+      const features = this.classifyTooltipFeatures(tooltipStyles.features)
       prevRowHeight = this.drawStandardTooltipFeatures(
-        ctx, leftFeatures, coordinate,
+        ctx, features[0], coordinate,
         null, left, prevRowHeight, maxWidth
       )
       prevRowHeight = this.drawStandardTooltipFeatures(
-        ctx, middleFeatures, coordinate,
+        ctx, features[1], coordinate,
         null, left, prevRowHeight, maxWidth
       )
       if (legends.length > 0) {
         prevRowHeight = this.drawStandardTooltipLegends(
           ctx, legends, coordinate, left,
-          prevRowHeight, maxWidth, tooltipTextStyles
+          prevRowHeight, maxWidth, tooltipLegendStyles
         )
       }
 
       prevRowHeight = this.drawStandardTooltipFeatures(
-        ctx, rightFeatures, coordinate,
+        ctx, features[2], coordinate,
         null, left, prevRowHeight, maxWidth
       )
     }
@@ -143,14 +159,14 @@ export default class CandleTooltipView extends IndicatorTooltipView {
       const { offsetLeft, offsetTop, offsetRight, offsetBottom } = candleTooltipStyles
 
       const {
-        marginLeft: baseTextMarginLeft,
-        marginRight: baseTextMarginRight,
-        marginTop: baseTextMarginTop,
-        marginBottom: baseTextMarginBottom,
-        size: baseTextSize,
-        weight: baseTextWeight,
-        family: baseTextFamily
-      } = candleTooltipStyles.text
+        marginLeft: baseLegendMarginLeft,
+        marginRight: baseLegendMarginRight,
+        marginTop: baseLegendMarginTop,
+        marginBottom: baseLegendMarginBottom,
+        size: baseLegendSize,
+        weight: baseLegendWeight,
+        family: baseLegendFamily
+      } = candleTooltipStyles.legend
 
       const {
         position: rectPosition,
@@ -172,30 +188,30 @@ export default class CandleTooltipView extends IndicatorTooltipView {
       let rectWidth = 0
       let rectHeight = 0
       if (isDrawCandleTooltip) {
-        ctx.font = createFont(baseTextSize, baseTextWeight, baseTextFamily)
+        ctx.font = createFont(baseLegendSize, baseLegendWeight, baseLegendFamily)
         candleLegends.forEach(data => {
           const title = data.title as TooltipLegendChild
           const value = data.value as TooltipLegendChild
           const text = `${title.text}${value.text}`
-          const labelWidth = ctx.measureText(text).width + baseTextMarginLeft + baseTextMarginRight
+          const labelWidth = ctx.measureText(text).width + baseLegendMarginLeft + baseLegendMarginRight
           maxTextWidth = Math.max(maxTextWidth, labelWidth)
         })
-        rectHeight += ((baseTextMarginBottom + baseTextMarginTop + baseTextSize) * candleLegends.length)
+        rectHeight += ((baseLegendMarginBottom + baseLegendMarginTop + baseLegendSize) * candleLegends.length)
       }
 
       const {
-        marginLeft: indicatorTextMarginLeft,
-        marginRight: indicatorTextMarginRight,
-        marginTop: indicatorTextMarginTop,
-        marginBottom: indicatorTextMarginBottom,
-        size: indicatorTextSize,
-        weight: indicatorTextWeight,
-        family: indicatorTextFamily
-      } = indicatorTooltipStyles.text
+        marginLeft: indicatorLegendMarginLeft,
+        marginRight: indicatorLegendMarginRight,
+        marginTop: indicatorLegendMarginTop,
+        marginBottom: indicatorLegendMarginBottom,
+        size: indicatorLegendSize,
+        weight: indicatorLegendWeight,
+        family: indicatorLegendFamily
+      } = indicatorTooltipStyles.legend
       const indicatorLegendsArray: TooltipLegend[][] = []
       if (isDrawIndicatorTooltip) {
         const indicators = chartStore.getIndicatorsByPaneId(pane.getId())
-        ctx.font = createFont(indicatorTextSize, indicatorTextWeight, indicatorTextFamily)
+        ctx.font = createFont(indicatorLegendSize, indicatorLegendWeight, indicatorLegendFamily)
         indicators.forEach(indicator => {
           const tooltipDataLegends = this.getIndicatorTooltipData(indicator).legends
           indicatorLegendsArray.push(tooltipDataLegends)
@@ -203,9 +219,9 @@ export default class CandleTooltipView extends IndicatorTooltipView {
             const title = data.title as TooltipLegendChild
             const value = data.value as TooltipLegendChild
             const text = `${title.text}${value.text}`
-            const textWidth = ctx.measureText(text).width + indicatorTextMarginLeft + indicatorTextMarginRight
+            const textWidth = ctx.measureText(text).width + indicatorLegendMarginLeft + indicatorLegendMarginRight
             maxTextWidth = Math.max(maxTextWidth, textWidth)
-            rectHeight += (indicatorTextMarginTop + indicatorTextMarginBottom + indicatorTextSize)
+            rectHeight += (indicatorLegendMarginTop + indicatorLegendMarginBottom + indicatorLegendSize)
           })
         })
       }
@@ -269,12 +285,12 @@ export default class CandleTooltipView extends IndicatorTooltipView {
             borderRadius: rectBorderRadius
           }
         })?.draw(ctx)
-        const candleTextX = rectX + rectBorderSize + rectPaddingLeft + baseTextMarginLeft
+        const candleTextX = rectX + rectBorderSize + rectPaddingLeft + baseLegendMarginLeft
         let textY = rectY + rectBorderSize + rectPaddingTop
         if (isDrawCandleTooltip) {
           // render candle texts
           candleLegends.forEach(data => {
-            textY += baseTextMarginTop
+            textY += baseLegendMarginTop
             const title = data.title as TooltipLegendChild
             this.createFigure({
               name: 'text',
@@ -285,36 +301,36 @@ export default class CandleTooltipView extends IndicatorTooltipView {
               },
               styles: {
                 color: title.color,
-                size: baseTextSize,
-                family: baseTextFamily,
-                weight: baseTextWeight
+                size: baseLegendSize,
+                family: baseLegendFamily,
+                weight: baseLegendWeight
               }
             })?.draw(ctx)
             const value = data.value as TooltipLegendChild
             this.createFigure({
               name: 'text',
               attrs: {
-                x: rectX + rectWidth - rectBorderSize - baseTextMarginRight - rectPaddingRight,
+                x: rectX + rectWidth - rectBorderSize - baseLegendMarginRight - rectPaddingRight,
                 y: textY,
                 text: value.text,
                 align: 'right'
               },
               styles: {
                 color: value.color,
-                size: baseTextSize,
-                family: baseTextFamily,
-                weight: baseTextWeight
+                size: baseLegendSize,
+                family: baseLegendFamily,
+                weight: baseLegendWeight
               }
             })?.draw(ctx)
-            textY += (baseTextSize + baseTextMarginBottom)
+            textY += (baseLegendSize + baseLegendMarginBottom)
           })
         }
         if (isDrawIndicatorTooltip) {
-          // render indicator texts
-          const indicatorTextX = rectX + rectBorderSize + rectPaddingLeft + indicatorTextMarginLeft
+          // render indicator legends
+          const indicatorTextX = rectX + rectBorderSize + rectPaddingLeft + indicatorLegendMarginLeft
           indicatorLegendsArray.forEach(legends => {
             legends.forEach(data => {
-              textY += indicatorTextMarginTop
+              textY += indicatorLegendMarginTop
               const title = data.title as TooltipLegendChild
               const value = data.value as TooltipLegendChild
               this.createFigure({
@@ -326,28 +342,28 @@ export default class CandleTooltipView extends IndicatorTooltipView {
                 },
                 styles: {
                   color: title.color,
-                  size: indicatorTextSize,
-                  family: indicatorTextFamily,
-                  weight: indicatorTextWeight
+                  size: indicatorLegendSize,
+                  family: indicatorLegendFamily,
+                  weight: indicatorLegendWeight
                 }
               })?.draw(ctx)
 
               this.createFigure({
                 name: 'text',
                 attrs: {
-                  x: rectX + rectWidth - rectBorderSize - indicatorTextMarginRight - rectPaddingRight,
+                  x: rectX + rectWidth - rectBorderSize - indicatorLegendMarginRight - rectPaddingRight,
                   y: textY,
                   text: value.text,
                   align: 'right'
                 },
                 styles: {
                   color: value.color,
-                  size: indicatorTextSize,
-                  family: indicatorTextFamily,
-                  weight: indicatorTextWeight
+                  size: indicatorLegendSize,
+                  family: indicatorLegendFamily,
+                  weight: indicatorLegendWeight
                 }
               })?.draw(ctx)
-              textY += (indicatorTextSize + indicatorTextMarginBottom)
+              textY += (indicatorLegendSize + indicatorLegendMarginBottom)
             })
           })
         }
@@ -363,11 +379,12 @@ export default class CandleTooltipView extends IndicatorTooltipView {
     const decimalFold = chartStore.getDecimalFold()
     const thousandsSeparator = chartStore.getThousandsSeparator()
     const locale = chartStore.getLocale()
-    const { price: pricePrecision, volume: volumePrecision } = chartStore.getPrecision()
+    const { pricePrecision = 2, volumePrecision = 0 } = chartStore.getSymbol() ?? {}
+    const period = chartStore.getPeriod()
     const dataIndex = chartStore.getCrosshair().dataIndex ?? 0
 
     const tooltipStyles = styles.tooltip
-    const textColor = tooltipStyles.text.color
+    const { color: textColor, defaultValue, custom } = tooltipStyles.legend
     const prev = dataList[dataIndex - 1] ?? null
     const current = dataList[dataIndex]
 
@@ -375,23 +392,24 @@ export default class CandleTooltipView extends IndicatorTooltipView {
     const prevClose = prev?.close ?? current.close
     const changeValue = current.close - prevClose
     const mapping = {
-      '{time}': formatter.formatDate(current.timestamp, 'YYYY-MM-DD HH:mm', 'tooltip'),
-      '{open}': decimalFold.format(thousandsSeparator.format(formatPrecision(current.open, pricePrecision))),
-      '{high}': decimalFold.format(thousandsSeparator.format(formatPrecision(current.high, pricePrecision))),
-      '{low}': decimalFold.format(thousandsSeparator.format(formatPrecision(current.low, pricePrecision))),
-      '{close}': decimalFold.format(thousandsSeparator.format(formatPrecision(current.close, pricePrecision))),
-      '{volume}': decimalFold.format(thousandsSeparator.format(
-        formatter.formatBigNumber(formatPrecision(current.volume ?? tooltipStyles.defaultValue, volumePrecision))
+      ...current,
+      time: formatter.formatDate(current.timestamp, PeriodTypeCrosshairTooltipFormat[period?.type ?? 'day'], 'tooltip'),
+      open: decimalFold.format(thousandsSeparator.format(formatPrecision(current.open, pricePrecision))),
+      high: decimalFold.format(thousandsSeparator.format(formatPrecision(current.high, pricePrecision))),
+      low: decimalFold.format(thousandsSeparator.format(formatPrecision(current.low, pricePrecision))),
+      close: decimalFold.format(thousandsSeparator.format(formatPrecision(current.close, pricePrecision))),
+      volume: decimalFold.format(thousandsSeparator.format(
+        formatter.formatBigNumber(formatPrecision(current.volume ?? defaultValue, volumePrecision))
       )),
-      '{turnover}': decimalFold.format(thousandsSeparator.format(
-        formatPrecision(current.turnover ?? tooltipStyles.defaultValue, pricePrecision)
+      turnover: decimalFold.format(thousandsSeparator.format(
+        formatPrecision(current.turnover ?? defaultValue, pricePrecision)
       )),
-      '{change}': prevClose === 0 ? tooltipStyles.defaultValue : `${thousandsSeparator.format(formatPrecision(changeValue / prevClose * 100))}%`
+      change: prevClose === 0 ? defaultValue : `${thousandsSeparator.format(formatPrecision(changeValue / prevClose * 100))}%`
     }
     const legends = (
-      isFunction(tooltipStyles.custom)
-        ? tooltipStyles.custom({ prev, current, next: dataList[dataIndex + 1] ?? null }, styles)
-        : tooltipStyles.custom
+      isFunction(custom)
+        ? custom({ prev, current, next: dataList[dataIndex + 1] ?? null }, styles)
+        : custom
     )
     return legends.map(({ title, value }) => {
       let t: TooltipLegendChild = { text: '', color: textColor }
@@ -401,20 +419,16 @@ export default class CandleTooltipView extends IndicatorTooltipView {
         t.text = title
       }
       t.text = i18n(t.text, locale)
-      let v = { text: tooltipStyles.defaultValue, color: textColor }
+      let v = { text: defaultValue, color: textColor }
       if (isObject(value)) {
         v = { ...value }
       } else {
         v.text = value
       }
-      const match = /{(\S*)}/.exec(v.text)
-      if (match !== null && match.length > 1) {
-        const key = `{${match[1]}}`
-        v.text = v.text.replace(key, (mapping[key] ?? tooltipStyles.defaultValue) as string)
-        if (key === '{change}') {
-          v.color = changeValue === 0 ? styles.priceMark.last.noChangeColor : (changeValue > 0 ? styles.priceMark.last.upColor : styles.priceMark.last.downColor)
-        }
+      if (isValid(/{change}/.exec(v.text))) {
+        v.color = changeValue === 0 ? styles.priceMark.last.noChangeColor : (changeValue > 0 ? styles.priceMark.last.upColor : styles.priceMark.last.downColor)
       }
+      v.text = formatTemplateString(v.text, mapping)
       return { title: t, value: v }
     })
   }

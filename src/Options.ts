@@ -32,7 +32,7 @@ export type FormatDate = (params: FormatDateParams) => string
 
 export type FormatBigNumber = (value: string | number) => string
 
-export type ExtendTextType = 'lastPrice'
+export type ExtendTextType = 'last_price'
 
 export interface FormatExtendTextParams {
   type: ExtendTextType
@@ -57,6 +57,13 @@ export interface Locales {
   volume: string
   change: string
   turnover: string
+  second: string
+  minute: string
+  hour: string
+  day: string
+  week: string
+  month: string
+  year: string
   [key: string]: string
 }
 

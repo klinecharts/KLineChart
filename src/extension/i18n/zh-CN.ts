@@ -25,7 +25,14 @@ const zhCN: Locales = {
   change: '涨幅：',
   target: '止盈: ',
   loss: '止损: ',
-  riskReward: '盈亏比: '
+  riskReward: '盈亏比: ',
+  second: '秒',
+  minute: '',
+  hour: '小时',
+  day: '天',
+  week: '周',
+  month: '月',
+  year: '年'
 }
 
 export default zhCN

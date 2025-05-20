@@ -1,8 +1,8 @@
-import { init } from 'klinecharts';
+import { init } from 'klinecharts'
 
-const chart = init('overrideIndicator-paneId-chart');
-chart.createIndicator('MA', false, { id: 'candle_pane' });
-chart.createIndicator('MA');
+const chart = init('overrideIndicator-paneId-chart')
+chart.createIndicator('MA', false, { id: 'candle_pane' })
+chart.createIndicator('MA')
 chart.overrideIndicator({
   name: 'MA',
   shouldOhlc: false,
@@ -14,8 +14,18 @@ chart.overrideIndicator({
       { color: '#edafda' }
     ]
   }
-}, 'candle_pane');
+}, 'candle_pane')
 
-fetch('https://klinecharts.com/datas/kline.json')
-  .then(res => res.json())
-  .then(dataList => { chart.applyNewData(dataList); });
+chart.setSymbol({ ticker: 'TestSymbol' })
+chart.setPeriod({ span: 1, type: 'day' })
+chart.setDataLoader({
+  getBars: ({
+    callback
+  }) => {
+    fetch('https://klinecharts.com/datas/kline.json')
+      .then(res => res.json())
+      .then(dataList => {
+        callback(dataList)
+      })
+  }
+})

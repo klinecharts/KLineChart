@@ -5,6 +5,7 @@ import { data } from './index.data'
 
 <template>
   <ChartPreview
+    title="removeOverlay-groupId"
     chartId="removeOverlay-groupId-chart"
     :code="data.js"/>
 </template>

@@ -5,6 +5,7 @@ import { data } from './index.data'
 
 <template>
   <ChartPreview
+    title="custom-figure-custom-overlay"
     chartId="custom-figure-custom-overlay-chart"
     :code="data.js"/>
 </template>

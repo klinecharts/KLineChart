@@ -1,3 +1,3 @@
-import { getSupportedOverlays } from 'klinecharts';
+import { getSupportedOverlays } from 'klinecharts'
 
-const supports = getSupportedOverlays();
+const supports = getSupportedOverlays()

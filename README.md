@@ -46,19 +46,6 @@ English | <a href="https://github.com/liihuu/KLineChart/blob/main/README.zh-CN.m
 - 📱 **Mobile:** Support mobile, one chart, handle multiple terminals.
 - 🛡 **Typescript development:** Provide complete type definition files.
 
-## ⚡ Performance
-Similar to chart libraries for performance comparison. 
-+ **Test Scenario:** 50000 pieces of data, 5 pane indicators, average 10 runs
-+ **Device:** macOS Ventura, Apple M2 Pro, 16G
-+ **Browser:** Chrome 114.0.5735.106
-+ **Framework:** React@18.2.0
-
-Comparison of time consumption from initialization to full rendering:
-
-| **klinecharts@9.4.0** | **night-vision@0.3.2** | **hqchart@1.1.12147** |
-| :---: | :---: | :---: |
-|  37ms  |  36ms | 241ms | 
-
 
 ## 📦 Install
 ### Using npm

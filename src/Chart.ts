@@ -21,8 +21,7 @@ import type Point from './common/Point'
 import { UpdateLevel } from './common/Updater'
 import type Crosshair from './common/Crosshair'
 import type { ActionType, ActionCallback } from './common/Action'
-import type { LoadDataCallback, LoadDataMore } from './common/LoadDataCallback'
-import type Precision from './common/Precision'
+import type { DataLoader } from './common/DataLoader'
 import type VisibleRange from './common/VisibleRange'
 import type { Formatter, DecimalFold, LayoutChild, Options, ThousandsSeparator } from './Options'
 import Animation from './common/Animation'
@@ -30,7 +29,7 @@ import Animation from './common/Animation'
 import { createId } from './common/utils/id'
 import { createDom } from './common/utils/dom'
 import { getPixelRatio } from './common/utils/canvas'
-import { isString, isArray, isValid, merge, isNumber, isBoolean } from './common/utils/typeChecks'
+import { isString, isArray, isValid, merge, isNumber } from './common/utils/typeChecks'
 import { logWarn } from './common/utils/logger'
 import { binarySearchNearest } from './common/utils/number'
 
@@ -57,6 +56,8 @@ import type DeepPartial from './common/DeepPartial'
 import type { Styles } from './common/Styles'
 import type BarSpace from './common/BarSpace'
 import type PickRequired from './common/PickRequired'
+import type SymbolInfo from './common/SymbolInfo'
+import type { Period } from './common/Period'
 
 export type DomPosition = 'root' | 'main' | 'yAxis'
 
@@ -74,8 +75,6 @@ export interface Chart extends Store {
   id: string
   getDom: (paneId?: string, position?: DomPosition) => Nullable<HTMLElement>
   getSize: (paneId?: string, position?: DomPosition) => Nullable<Bounding>
-  applyNewData: (dataList: KLineData[], more?: boolean | Partial<LoadDataMore>) => void
-  updateData: (data: KLineData) => void
   createIndicator: (value: string | IndicatorCreate, isStack?: boolean, paneOptions?: PaneOptions) => Nullable<string>
   getIndicators: (filter?: IndicatorFilter) => Indicator[]
   createOverlay: (value: string | OverlayCreate | Array<string | OverlayCreate>) => Nullable<string> | Array<Nullable<string>>
@@ -117,10 +116,13 @@ export default class ChartImp implements Chart {
     measureWidth: true,
     update: true,
     buildYAxisTick: false,
+    cacheYAxisWidth: false,
     forceBuildYAxisTick: false
   }
 
   private _layoutPending = false
+
+  private readonly _cacheYAxisWidth = { left: 0, right: 0 }
 
   constructor (container: HTMLElement, options?: Options) {
     this._initContainer(container)
@@ -154,7 +156,7 @@ export default class ChartImp implements Chart {
     this._cacheChartBounding()
   }
 
-  _cacheChartBounding (): void {
+  private _cacheChartBounding (): void {
     this._chartBounding.width = Math.floor(this._chartContainer.clientWidth)
     this._chartBounding.height = Math.floor(this._chartContainer.clientHeight)
   }
@@ -305,6 +307,7 @@ export default class ChartImp implements Chart {
     measureWidth?: boolean
     update?: boolean
     buildYAxisTick?: boolean
+    cacheYAxisWidth?: boolean
     forceBuildYAxisTick?: boolean
   }): void {
     if (options.sort ?? false) {
@@ -322,6 +325,9 @@ export default class ChartImp implements Chart {
     if (options.buildYAxisTick ?? false) {
       this._layoutOptions.buildYAxisTick = options.buildYAxisTick!
     }
+    if (options.cacheYAxisWidth ?? false) {
+      this._layoutOptions.cacheYAxisWidth = options.cacheYAxisWidth!
+    }
     if (options.buildYAxisTick ?? false) {
       this._layoutOptions.forceBuildYAxisTick = options.forceBuildYAxisTick!
     }
@@ -337,7 +343,7 @@ export default class ChartImp implements Chart {
   }
 
   private _layout (): void {
-    const { sort, measureHeight, measureWidth, update, buildYAxisTick, forceBuildYAxisTick } = this._layoutOptions
+    const { sort, measureHeight, measureWidth, update, buildYAxisTick, cacheYAxisWidth, forceBuildYAxisTick } = this._layoutOptions
     if (sort) {
       while (isValid(this._chartContainer.firstChild)) {
         this._chartContainer.removeChild(this._chartContainer.firstChild)
@@ -431,6 +437,14 @@ export default class ChartImp implements Chart {
         }
       })
 
+      if (cacheYAxisWidth) {
+        leftYAxisWidth = Math.max(this._cacheYAxisWidth.left, leftYAxisWidth)
+        rightYAxisWidth = Math.max(this._cacheYAxisWidth.right, rightYAxisWidth)
+      }
+
+      this._cacheYAxisWidth.left = leftYAxisWidth
+      this._cacheYAxisWidth.right = rightYAxisWidth
+
       let mainWidth = totalWidth
       let mainLeft = 0
       let mainRight = 0
@@ -474,6 +488,7 @@ export default class ChartImp implements Chart {
       measureWidth: false,
       update: false,
       buildYAxisTick: false,
+      cacheYAxisWidth: false,
       forceBuildYAxisTick: false
     }
   }
@@ -558,12 +573,20 @@ export default class ChartImp implements Chart {
     return null
   }
 
-  setPrecision (precision: Partial<Precision>): void {
-    this._chartStore.setPrecision(precision)
+  setSymbol (symbol: SymbolInfo): void {
+    this._chartStore.setSymbol(symbol)
   }
 
-  getPrecision (): Precision {
-    return this._chartStore.getPrecision()
+  getSymbol (): Nullable<SymbolInfo> {
+    return this._chartStore.getSymbol()
+  }
+
+  setPeriod (period: Period): void {
+    this._chartStore.setPeriod(period)
+  }
+
+  getPeriod (): Nullable<Period> {
+    return this._chartStore.getPeriod()
   }
 
   setStyles (value: string | DeepPartial<Styles>): void {
@@ -677,34 +700,16 @@ export default class ChartImp implements Chart {
     return this._chartStore.getVisibleRange()
   }
 
-  clearData (): void {
-    this._chartStore.clearData()
+  resetData (): void {
+    this._chartStore.resetData()
   }
 
   getDataList (): KLineData[] {
     return this._chartStore.getDataList()
   }
 
-  applyNewData (data: KLineData[], more?: boolean | Partial<LoadDataMore>): void {
-    this._drawPanes.forEach(pane => {
-      (pane.getAxisComponent() as AxisImp).setAutoCalcTickFlag(true)
-    })
-    let loadDataMore = { forward: false, backward: false }
-    if (isBoolean(more)) {
-      loadDataMore.forward = more
-      loadDataMore.backward = more
-    } else {
-      loadDataMore = { ...loadDataMore, ...more }
-    }
-    this._chartStore.addData(data, 'init', loadDataMore)
-  }
-
-  updateData (data: KLineData): void {
-    this._chartStore.addData(data, 'update')
-  }
-
-  setLoadMoreDataCallback (cb: LoadDataCallback): void {
-    this._chartStore.setLoadMoreDataCallback(cb)
+  setDataLoader (dataLoader: DataLoader): void {
+    this._chartStore.setDataLoader(dataLoader)
   }
 
   createIndicator (value: string | IndicatorCreate, isStack?: boolean, paneOptions?: PaneOptions): Nullable<string> {

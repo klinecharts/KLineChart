@@ -14,7 +14,7 @@ const zhItems = [
   },
   {
     q: "蜡烛柱显示趋近于一条线，看不到波动，怎么办？",
-    a: `图表默认价格精度为两位小数，调用 <code>setPriceVolumePrecision(pricePrecision, volumePrecision)</code> 设置下精度。`,
+    a: `在设置交易对的时候要设置精度，调用<code>setSymbol({ ticker: 'TestSymbol', pricePrecision: 6, volumePrecision: 6 })</code> 。`,
     collapsed: true
   },
   {
@@ -34,7 +34,7 @@ const zhItems = [
   },
   {
     q: "想标记一下买卖点，该怎么做？",
-    a: `可以使用覆盖物，内置的覆盖物有一个 <code>simpleAnnotation</code> ，用图表api创建即可 <code>createOverlay({ name: 'simpleAnnotation', ... }, paneId)</code> 。`,
+    a: `可以使用覆盖物，内置的覆盖物有一个 <code>simpleAnnotation</code> ，用图表api创建即可 <code>createOverlay({ name: 'simpleAnnotation', ... })</code> 。`,
     collapsed: true
   },
 ]
@@ -47,7 +47,7 @@ const enItems = [
   },
   {
     q: "The candle shows a line, no fluctuation, what to do?",
-    a: `Chart default price precision is two decimal, call <code>setPriceVolumePrecision(pricePrecision, volumePrecision)</code> to set the precision.`,
+    a: `To set the precision when setting the trading pair, call <code>setSymbol({ ticker: 'TestSymbol', pricePrecision: 6, volumePrecision: 6 })</code> .`,
     collapsed: true
   },
   {
@@ -67,7 +67,7 @@ const enItems = [
   },
   {
     q: "Want to mark the point of sale, how should do?",
-    a: `Overlays can be used. The built-in overlay has a <code>simpleAnnotation</code>, which can be created with the chart api <code>createOverlay({ name: 'simpleAnnotation', ... }, paneId)</code>.`,
+    a: `Overlays can be used. The built-in overlay has a <code>simpleAnnotation</code>, which can be created with the chart api <code>createOverlay({ name: 'simpleAnnotation', ... })</code>.`,
     collapsed: true
   },
 ]

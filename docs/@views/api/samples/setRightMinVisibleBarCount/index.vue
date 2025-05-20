@@ -5,6 +5,7 @@ import { data } from './index.data'
 
 <template>
   <ChartPreview
+    title="setRightMinVisibleBarCount"
     chartId="setRightMinVisibleBarCount-chart"
     :code="data.js"/>
 </template>

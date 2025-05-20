@@ -38,14 +38,20 @@ const dark: DeepPartial<Styles> = {
         color: 'rgba(10, 10, 10, .6)',
         borderColor: 'rgba(10, 10, 10, .6)'
       },
-      text: {
+      title: {
+        color: '#929AA5'
+      },
+      legend: {
         color: '#929AA5'
       }
     }
   },
   indicator: {
     tooltip: {
-      text: {
+      title: {
+        color: '#929AA5'
+      },
+      legend: {
         color: '#929AA5'
       }
     }

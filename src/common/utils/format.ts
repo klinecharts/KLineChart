@@ -149,3 +149,13 @@ export function formatFoldDecimal (value: string | number, threshold: number): s
   }
   return vl
 }
+
+export function formatTemplateString (template: string, params: Record<string, unknown>): string {
+  return template.replace(/\{(\w+)\}/g, (_, key) => {
+    const value = params[key as string]
+    if (isValid(value)) {
+      return value as string
+    }
+    return `{${key}}`
+  })
+}

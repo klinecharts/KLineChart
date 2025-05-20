@@ -1,3 +1,3 @@
-import { getSupportedLocales } from 'klinecharts';
+import { getSupportedLocales } from 'klinecharts'
 
-const supports = getSupportedLocales();
+const supports = getSupportedLocales()

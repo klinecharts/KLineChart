@@ -5,6 +5,7 @@ import { data } from './index.data'
 
 <template>
   <ChartPreview
+    title="getDataList"
     chartId="getDataList-chart"
     :code="data.js"/>
 </template>

@@ -1,4 +1,4 @@
-import { init, registerIndicator } from 'klinecharts';
+import { init, registerIndicator } from 'klinecharts'
 
 registerIndicator({
   name: 'customIndicatorBasic',
@@ -10,12 +10,22 @@ registerIndicator({
     type: 'line'
   }],
   calc: dataList => dataList.map(data => ({ close: data.close }))
-});
+})
 
-const chart = init('custom-indicator-basic-chart');
+const chart = init('custom-indicator-basic-chart')
 
-chart.createIndicator('customIndicatorBasic');
+chart.createIndicator('customIndicatorBasic')
 
-fetch('https://klinecharts.com/datas/kline.json')
-  .then(res => res.json())
-  .then(dataList => { chart.applyNewData(dataList); });
+chart.setSymbol({ ticker: 'TestSymbol' })
+chart.setPeriod({ span: 1, type: 'day' })
+chart.setDataLoader({
+  getBars: ({
+    callback
+  }) => {
+    fetch('https://klinecharts.com/datas/kline.json')
+      .then(res => res.json())
+      .then(dataList => {
+        callback(dataList)
+      })
+  }
+})

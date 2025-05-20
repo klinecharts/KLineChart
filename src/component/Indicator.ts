@@ -21,6 +21,7 @@ import type BarSpace from '../common/BarSpace'
 import type Crosshair from '../common/Crosshair'
 import type { IndicatorStyle, IndicatorPolygonStyle, SmoothLineStyle, RectStyle, TextStyle, TooltipFeatureStyle, LineStyle, LineType, TooltipLegend } from '../common/Styles'
 import { isNumber, isValid, merge, isBoolean, isString, clone, isFunction } from '../common/utils/typeChecks'
+import type { DataLoadType } from '../common/DataLoader'
 
 import type { XAxis } from './XAxis'
 import type { YAxis } from './YAxis'
@@ -30,7 +31,6 @@ import { formatValue } from '../common/utils/format'
 import type { ArcAttrs } from '../extension/figure/arc'
 import type { RectAttrs } from '../extension/figure/rect'
 import type { TextAttrs } from '../extension/figure/text'
-import type { LoadDataType } from '../common/LoadDataCallback'
 import type { Chart } from '../Chart'
 
 export type IndicatorSeries = 'normal' | 'price' | 'volume'
@@ -88,15 +88,6 @@ export type IndicatorCreateTooltipDataSourceCallback<D> = (params: IndicatorCrea
 
 export type IndicatorEventTarget = 'feature'
 
-export interface IndicatorEvent<D, C, E> {
-  target: IndicatorEventTarget
-  chart: Chart
-  indicator: Indicator<D, C, E>
-  [key: string]: unknown
-}
-
-export type IndicatorEventCallback<D, C, E> = (params: IndicatorEvent<D, C, E>) => void
-
 export interface IndicatorDrawParams<D, C, E> {
   ctx: CanvasRenderingContext2D
   chart: Chart
@@ -116,7 +107,7 @@ export type IndicatorDataState = 'loading' | 'error' | 'ready'
 
 export interface IndicatorOnDataStateChangeParams<D> {
   state: IndicatorDataState
-  type: LoadDataType
+  type: DataLoadType
 
   indicator: Indicator<D>
 }
@@ -232,11 +223,6 @@ export interface Indicator<D = unknown, C = unknown, E = unknown> {
    * Data state change
    */
   onDataStateChange: Nullable<IndicatorOnDataStateChangeCallback<D>>
-
-  /**
-   * Event
-   */
-  onClick: Nullable<IndicatorEventCallback<D, C, E>>
 
   /**
    * Calculation result
@@ -365,8 +351,6 @@ export default class IndicatorImp<D = unknown, C = unknown, E = unknown> impleme
   regenerateFigures: Nullable<IndicatorRegenerateFiguresCallback<D, C>> = null
   createTooltipDataSource: Nullable<IndicatorCreateTooltipDataSourceCallback<D>> = null
   draw: Nullable<IndicatorDrawCallback<D, C, E>> = null
-
-  onClick: Nullable<IndicatorEventCallback<D, C, E>> = null
 
   onDataStateChange: Nullable<IndicatorOnDataStateChangeCallback<D>> = null
 

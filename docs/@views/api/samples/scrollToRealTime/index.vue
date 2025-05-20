@@ -5,6 +5,7 @@ import { data } from './index.data'
 
 <template>
   <ChartPreview
+    title="scrollToRealTime"
     chartId="scrollToRealTime-chart"
     :code="data.js"/>
 </template>

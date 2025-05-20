@@ -102,7 +102,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
     let precision = 4
     const inCandle = this.isInCandle()
     if (inCandle) {
-      const { price: pricePrecision } = chartStore.getPrecision()
+      const pricePrecision = chartStore.getSymbol()?.pricePrecision ?? 2
       if (indicatorPrecision !== Number.MAX_SAFE_INTEGER) {
         precision = Math.min(indicatorPrecision, pricePrecision)
       } else {
@@ -269,7 +269,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
     let precision = 0
     let shouldFormatBigNumber = false
     if (this.isInCandle()) {
-      precision = chartStore.getPrecision().price
+      precision = chartStore.getSymbol()?.pricePrecision ?? 2
     } else {
       indicators.forEach(indicator => {
         precision = Math.max(precision, indicator.precision)
@@ -338,51 +338,74 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
         yAxisWidth += (yAxisStyles.tickText.marginStart + yAxisStyles.tickText.marginEnd + textWidth)
       }
     }
+
+    const priceMarkStyles = styles.candle.priceMark
+    const lastPriceMarkTextVisible = priceMarkStyles.show && priceMarkStyles.last.show && priceMarkStyles.last.text.show
+    let lastPriceTextWidth = 0
+
     const crosshairStyles = styles.crosshair
-    let crosshairVerticalTextWidth = 0
-    if (
-      crosshairStyles.show &&
-      crosshairStyles.horizontal.show &&
-      crosshairStyles.horizontal.text.show
-    ) {
-      const indicators = chartStore.getIndicatorsByPaneId(pane.getId())
-      let indicatorPrecision = 0
-      let shouldFormatBigNumber = false
-      indicators.forEach(indicator => {
-        indicatorPrecision = Math.max(indicator.precision, indicatorPrecision)
-        shouldFormatBigNumber ||= indicator.shouldFormatBigNumber
-      })
-      let precision = 2
-      if (this.isInCandle()) {
-        const { price: pricePrecision } = chartStore.getPrecision()
-        const lastValueMarkStyles = styles.indicator.lastValueMark
-        if (lastValueMarkStyles.show && lastValueMarkStyles.text.show) {
-          precision = Math.max(indicatorPrecision, pricePrecision)
-        } else {
-          precision = pricePrecision
+    const crosshairHorizontalTextVisible = crosshairStyles.show && crosshairStyles.horizontal.show && crosshairStyles.horizontal.text.show
+    let crosshairHorizontalTextWidth = 0
+
+    if (lastPriceMarkTextVisible || crosshairHorizontalTextVisible) {
+      const pricePrecision = chartStore.getSymbol()?.pricePrecision ?? 2
+      const max = this.getRange().displayTo
+
+      if (lastPriceMarkTextVisible) {
+        const dataList = chartStore.getDataList()
+        const data = dataList[dataList.length - 1]
+        if (isValid(data)) {
+          const { paddingLeft, paddingRight, size, family, weight } = priceMarkStyles.last.text
+          lastPriceTextWidth = paddingLeft + calcTextWidth(formatPrecision(data.close, pricePrecision), size, weight, family) + paddingRight
+          const formatExtendText = chartStore.getInnerFormatter().formatExtendText
+          priceMarkStyles.last.extendTexts.forEach((item, index) => {
+            const text = formatExtendText({ type: 'last_price', data, index })
+            if (text.length > 0 && item.show) {
+              lastPriceTextWidth = Math.max(lastPriceTextWidth, item.paddingLeft + calcTextWidth(text, item.size, item.weight, item.family) + item.paddingRight)
+            }
+          })
         }
-      } else {
-        precision = indicatorPrecision
       }
-      let valueText = formatPrecision(this.getRange().displayTo, precision)
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- ignore
-      if (shouldFormatBigNumber) {
-        valueText = chartStore.getInnerFormatter().formatBigNumber(valueText)
-      }
-      valueText = chartStore.getDecimalFold().format(valueText)
-      crosshairVerticalTextWidth += (
-        crosshairStyles.horizontal.text.paddingLeft +
-        crosshairStyles.horizontal.text.paddingRight +
-        crosshairStyles.horizontal.text.borderSize * 2 +
-        calcTextWidth(
-          valueText,
-          crosshairStyles.horizontal.text.size,
-          crosshairStyles.horizontal.text.weight,
-          crosshairStyles.horizontal.text.family
+
+      if (crosshairHorizontalTextVisible) {
+        const indicators = chartStore.getIndicatorsByPaneId(pane.getId())
+        let indicatorPrecision = 0
+        let shouldFormatBigNumber = false
+        indicators.forEach(indicator => {
+          indicatorPrecision = Math.max(indicator.precision, indicatorPrecision)
+          shouldFormatBigNumber ||= indicator.shouldFormatBigNumber
+        })
+        let precision = 2
+        if (this.isInCandle()) {
+          const lastValueMarkStyles = styles.indicator.lastValueMark
+          if (lastValueMarkStyles.show && lastValueMarkStyles.text.show) {
+            precision = Math.max(indicatorPrecision, pricePrecision)
+          } else {
+            precision = pricePrecision
+          }
+        } else {
+          precision = indicatorPrecision
+        }
+        let valueText = formatPrecision(max, precision)
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- ignore
+        if (shouldFormatBigNumber) {
+          valueText = chartStore.getInnerFormatter().formatBigNumber(valueText)
+        }
+        valueText = chartStore.getDecimalFold().format(valueText)
+        crosshairHorizontalTextWidth += (
+          crosshairStyles.horizontal.text.paddingLeft +
+          crosshairStyles.horizontal.text.paddingRight +
+          crosshairStyles.horizontal.text.borderSize * 2 +
+          calcTextWidth(
+            valueText,
+            crosshairStyles.horizontal.text.size,
+            crosshairStyles.horizontal.text.weight,
+            crosshairStyles.horizontal.text.family
+          )
         )
-      )
+      }
     }
-    return Math.max(yAxisWidth, crosshairVerticalTextWidth)
+    return Math.max(yAxisWidth, lastPriceTextWidth, crosshairHorizontalTextWidth)
   }
 
   protected override getBounding (): Bounding {

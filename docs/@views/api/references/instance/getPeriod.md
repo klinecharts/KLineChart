@@ -1,0 +1,3 @@
+```typescript
+() => Period | null
+```

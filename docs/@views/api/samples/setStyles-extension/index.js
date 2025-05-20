@@ -1,4 +1,4 @@
-import { init, registerStyles } from 'klinecharts';
+import { init, registerStyles } from 'klinecharts'
 
 registerStyles('customTheme', {
   candle: {
@@ -8,14 +8,24 @@ registerStyles('customTheme', {
       upWickColor: '#2b821d',
       downColor: '#c12e34',
       downBorderColor: '#c12e34',
-      downWickColor: '#c12e34',
+      downWickColor: '#c12e34'
     }
   }
-});
+})
 
-const chart = init('setStyles-extension-chart');
-chart.setStyles('customTheme');
+const chart = init('setStyles-extension-chart')
+chart.setStyles('customTheme')
 
-fetch('https://klinecharts.com/datas/kline.json')
-  .then(res => res.json())
-  .then(dataList => { chart.applyNewData(dataList); });
+chart.setSymbol({ ticker: 'TestSymbol' })
+chart.setPeriod({ span: 1, type: 'day' })
+chart.setDataLoader({
+  getBars: ({
+    callback
+  }) => {
+    fetch('https://klinecharts.com/datas/kline.json')
+      .then(res => res.json())
+      .then(dataList => {
+        callback(dataList)
+      })
+  }
+})

@@ -645,7 +645,8 @@ export default class Event implements EventHandler {
     const { x, y } = event
     const separatorPanes = this._chart.getSeparatorPanes()
     const separatorSize = this._chart.getStyles().separator.size
-    for (const [, pane] of separatorPanes) {
+    for (const items of separatorPanes) {
+      const pane = items[1]
       const bounding = pane.getBounding()
       const top = bounding.top - Math.round((REAL_SEPARATOR_HEIGHT - separatorSize) / 2)
       if (

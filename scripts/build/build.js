@@ -1,5 +1,5 @@
+import { styleText } from 'node:util'
 import { rollup } from 'rollup'
-import chalk from 'chalk'
 
 import { createInputConfig, createOutputConfig, version, env } from './config.js'
 
@@ -16,11 +16,11 @@ async function build ({ index, replaceValues, fileName, format, parentDir, name 
       fileName, format, name, parentDir
     }))
 
-    console.log(chalk.green(`\n✔ Compiled ${text} successfully.\n`))
-    console.log(`${chalk.green('✔')} Done in ${((new Date().getTime() - startTime) / 1000 / 60).toFixed(2)}s.\n`)
+    console.log(styleText('green', `\n✔ Compiled ${text} successfully.\n`))
+    console.log(`${styleText('green', '✔')} Done in ${((new Date().getTime() - startTime) / 1000 / 60).toFixed(2)}s.\n`)
   } catch (err) {
-    console.log(`\n\n${chalk.red(err)}\n`)
-    console.log(chalk.red(`✖️ Failed to compile ${text}.\n`))
+    console.log(`\n\n${styleText('red', err)}\n`)
+    console.log(styleText('red', `✖️ Failed to compile ${text}.\n`))
     process.exit(1)
   }
 }

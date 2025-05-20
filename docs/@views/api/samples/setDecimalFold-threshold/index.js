@@ -1,10 +1,19 @@
-import { init } from 'klinecharts';
+import { init } from 'klinecharts'
 
-const chart = init('setDecimalFold-threshold-chart');
+const chart = init('setDecimalFold-threshold-chart')
 
-chart.setPrecision({ price: 10 });
-chart.setDecimalFold({ threshold: 1000 });
+chart.setDecimalFold({ threshold: 1000 })
 
-fetch('https://klinecharts.com/datas/kline2.json')
-  .then(res => res.json())
-  .then(dataList => { chart.applyNewData(dataList); });
+chart.setSymbol({ ticker: 'TestSymbol', pricePrecision: 10 })
+chart.setPeriod({ span: 1, type: 'day' })
+chart.setDataLoader({
+  getBars: ({
+    callback
+  }) => {
+    fetch('https://klinecharts.com/datas/kline2.json')
+      .then(res => res.json())
+      .then(dataList => {
+        callback(dataList)
+      })
+  }
+})

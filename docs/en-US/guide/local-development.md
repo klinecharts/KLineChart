@@ -23,25 +23,24 @@ The above diagram shows the hierarchy of chart modules from top to bottom, with 
 
 ## Development
 ### Installation dependencies
-The project adopts a dependency [Node.js](https://nodejs.org) The package manager for management requires [Node.js](https://nodejs.org) environment.
-You can use npm, pnpm, or yarn to install dependencies.
+Project mandatory use of [pnpm]（https://pnpm.io）As a package manager, it is necessary to use pnpm to install dependencies.
 ```bash
 # Root dir run
-npm install
+pnpm install
 ```
 
-### NPM Execute command description
+### Execute command description
 
-- `lint`: Run `npm run lint` verify code rules.
-- `clean`: Run `npm run clean` clean up the built files.
-- `build-esm`: Run `npm run build-esm` built esm module.
-- `build-cjs`: Run `npm run build-cjs` built commonjs module.
-- `build-umd:dev`: Run `npm run build-umd:dev` built umd development module.
-- `build-umd:prod`: Run `npm run build-umd:dev` built umd production module.
-- `build-umd`: Run `npm run build-umd` built umd development and production module。
-- `build-core`: Run `npm run build-core` built esm, commonjs umd development and umd production module.
-- `build-dts`: Run `npm run build-dts` generate typescript dependency files.
-- `build`: Run `npm run build` built esm, commonjs umd development and umd production module and generate typescript dependency files.
+- `code-lint`: Run `pnpm run code-lint` verify code rules.
+- `clean`: Run `pnpm run clean` clean up the built files.
+- `build-esm`: Run `pnpm run build-esm` built esm module.
+- `build-cjs`: Run `pnpm run build-cjs` built commonjs module.
+- `build-umd:dev`: Run `pnpm run build-umd:dev` built umd development module.
+- `build-umd:prod`: Run `pnpm run build-umd:dev` built umd production module.
+- `build-umd`: Run `pnpm run build-umd` built umd development and production module。
+- `build-core`: Run `pnpm run build-core` built esm, commonjs umd development and umd production module.
+- `build-dts`: Run `pnpm run build-dts` generate typescript dependency files.
+- `build`: Run `pnpm run build` built esm, commonjs umd development and umd production module and generate typescript dependency files.
 
 ### Debug
 This project does not have a debugging project and requires the creation of a new project, use `npm link` import，or import `index.ts` debug. You can use [vite](https://vitejs.dev/) create a project.
