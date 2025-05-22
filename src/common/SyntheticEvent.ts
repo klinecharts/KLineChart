@@ -901,8 +901,8 @@ export default class SyntheticEvent {
     const eventLike = touch ?? (event as MouseEvent)
     const box = this._target.getBoundingClientRect()
     return {
-      x: eventLike.clientX - box.left,
-      y: eventLike.clientY - box.top,
+      x: (eventLike.clientX - box.left) * this._target.offsetWidth / box.width,
+      y: (eventLike.clientY - box.top) * this._target.offsetHeight / box.height,
 
       pageX: eventLike.pageX,
       pageY: eventLike.pageY,
