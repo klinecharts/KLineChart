@@ -386,8 +386,8 @@ export default class StoreImp implements Store {
     }
     merge(this._styles, styles)
     // `candle.tooltip.custom` should override
-    if (isArray(styles?.candle?.tooltip?.legend?.custom)) {
-      this._styles.candle.tooltip.legend.custom = styles.candle.tooltip.legend.custom as TooltipLegend[]
+    if (isArray(styles?.candle?.tooltip?.legend?.template)) {
+      this._styles.candle.tooltip.legend.template = styles.candle.tooltip.legend.template as TooltipLegend[]
     }
     if (isValid(styles?.candle?.priceMark?.last?.extendTexts)) {
       this._clearLastPriceMarkExtendTextUpdateTimer()

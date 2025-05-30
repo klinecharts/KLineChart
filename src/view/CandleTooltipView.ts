@@ -384,7 +384,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
     const dataIndex = chartStore.getCrosshair().dataIndex ?? 0
 
     const tooltipStyles = styles.tooltip
-    const { color: textColor, defaultValue, custom } = tooltipStyles.legend
+    const { color: textColor, defaultValue, template } = tooltipStyles.legend
     const prev = dataList[dataIndex - 1] ?? null
     const current = dataList[dataIndex]
 
@@ -407,9 +407,9 @@ export default class CandleTooltipView extends IndicatorTooltipView {
       change: prevClose === 0 ? defaultValue : `${thousandsSeparator.format(formatPrecision(changeValue / prevClose * 100))}%`
     }
     const legends = (
-      isFunction(custom)
-        ? custom({ prev, current, next: dataList[dataIndex + 1] ?? null }, styles)
-        : custom
+      isFunction(template)
+        ? template({ prev, current, next: dataList[dataIndex + 1] ?? null }, styles)
+        : template
     )
     return legends.map(({ title, value }) => {
       let t: TooltipLegendChild = { text: '', color: textColor }
