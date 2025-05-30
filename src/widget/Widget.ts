@@ -21,7 +21,7 @@ import Eventful from '../common/Eventful'
 import type Pane from '../pane/Pane'
 
 import { isString, merge } from '../common/utils/typeChecks'
-import type { MouseTouchEvent } from '../common/SyntheticEvent'
+import type { MouseTouchEvent } from '../common/EventHandler'
 import type Nullable from '../common/Nullable'
 
 export default abstract class Widget<P extends Pane = Pane> extends Eventful implements Updater {

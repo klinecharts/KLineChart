@@ -14,7 +14,7 @@
 
 import type Bounding from '../common/Bounding'
 import { UpdateLevel } from '../common/Updater'
-import type { MouseTouchEvent } from '../common/SyntheticEvent'
+import type { MouseTouchEvent } from '../common/EventHandler'
 import { createDom } from '../common/utils/dom'
 import { throttle } from '../common/utils/performance'
 import type Nullable from '../common/Nullable'

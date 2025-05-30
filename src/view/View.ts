@@ -13,7 +13,7 @@
  */
 
 import type Nullable from '../common/Nullable'
-import type { EventHandler, EventName, MouseTouchEvent } from '../common/SyntheticEvent'
+import type { EventHandler, EventName, MouseTouchEvent } from '../common/EventHandler'
 import Eventful from '../common/Eventful'
 import { isValid } from '../common/utils/typeChecks'
 

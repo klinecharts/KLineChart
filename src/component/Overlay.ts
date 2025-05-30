@@ -19,7 +19,7 @@ import type Point from '../common/Point'
 import type Coordinate from '../common/Coordinate'
 import type Bounding from '../common/Bounding'
 import type { OverlayStyle } from '../common/Styles'
-import type { MouseTouchEvent } from '../common/SyntheticEvent'
+import type { MouseTouchEvent } from '../common/EventHandler'
 import { clone, isArray, isBoolean, isFunction, isNumber, isString, isValid, merge } from '../common/utils/typeChecks'
 
 import type { XAxis } from './XAxis'

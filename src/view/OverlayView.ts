@@ -15,7 +15,7 @@
 import type Nullable from '../common/Nullable'
 import type Coordinate from '../common/Coordinate'
 import type Point from '../common/Point'
-import type { EventHandler, EventName, MouseTouchEvent, MouseTouchEventCallback } from '../common/SyntheticEvent'
+import type { EventHandler, EventName, MouseTouchEvent, MouseTouchEventCallback } from '../common/EventHandler'
 import { isFunction, isNumber, isValid } from '../common/utils/typeChecks'
 
 import type { Axis } from '../component/Axis'

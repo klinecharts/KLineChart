@@ -14,7 +14,7 @@
 
 import { isValid } from './utils/typeChecks'
 
-import type { EventName, MouseTouchEvent, MouseTouchEventCallback } from './SyntheticEvent'
+import type { EventName, MouseTouchEvent, MouseTouchEventCallback } from './EventHandler'
 
 export interface EventDispatcher {
   dispatchEvent: (name: EventName, event: MouseTouchEvent) => boolean

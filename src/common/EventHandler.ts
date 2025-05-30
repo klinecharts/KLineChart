@@ -111,7 +111,7 @@ interface MouseTouchMoveWithDownInfo {
 }
 
 // TODO: get rid of a lot of boolean flags, probably we should replace it with some enum
-export default class SyntheticEvent {
+export default class EventHandlerImp {
   private readonly _target: HTMLElement
   private readonly _handler: EventHandler
 
