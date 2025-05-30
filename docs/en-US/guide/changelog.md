@@ -1,5 +1,19 @@
 # 📠 Change Log
 
+## 10.0.0-alpha6
+`Under construction`
++ 👉 Chart api `init(ds, options)` , `options.customApi` changed to `options.formatter` , `formatDate` parameter changed to object.
++ 👉 Instance api `setCustomApi` changed to `setFormatter` , `getCustomApi` changed to `getFormatter`.
++ 🆕 Style configuration add `candle.priceMark.last.extendTexts` , `candle.tooltip.title` , `candle.tooltip.legend` , `indicator.tooltip.title` , `indicator.tooltip.legend` and `crosshair.horizontal.features` .
++ 🆕 Instance api add `setDataLoader` , `setSymbol` , `getSymbol` , `setPeriod` , `getPeriod` and `resetData` .
++ 🆕 Instance api `subscribeAction` and `unsubscribeAction` params add `onIndicatorTooltipFeatureClick` and `onCrosshairFeatureClick` .
++ 🗑 Remove `candle.tooltip.defaultValue` in style configuration, replace `candle.tooltip.custom` with `candle.tooltip.legend`, remove `candle.tooltip.text`, remove `indicator.tooltip.showName`, `indicator.tooltip.showParams`, use `indicator.tooltip.title`, remove `indicator.tooltip.defaultValue`, replace with `indicator.tooltip.legend`, remove `indicator.tooltip.text`.
++ 🗑 Remove `setLoadMoreData` , `applyNewData` , `updateData` in instance api, replace with `setDataLoader`, remove `clearData`, `setPrecision` and `getPrecision` .
++ 🐞 Fix the confusion of overlay `onSelected` and `onDeselected` responses.
++ 🐞 Fix the display problem when the style configuration `candle.type` is `ohlc` .
++ 💄 Optimize the default event response of overlay events.
++ 💄 Optimize the x-axis display.
+
 ## 10.0.0-alpha5
 `2025-03-09`
 + 👉 Style configuration `candle.tooltip.icons` changed to `candle.tooltip.features`, `indicator.tooltip.icons` changed to `indicator.tooltip.features`.

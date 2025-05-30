@@ -106,6 +106,27 @@ const styles = {
           weight: 'normal',
           borderRadius: 2
         }
+        // e.g.
+        // [{
+        //   show: true,
+        //   style: 'fill', // 'fill' | 'stroke' | 'stroke_fill'
+        //   position: 'above_price', // 'above_price' | 'below_price'
+        //   updateInterval: 0,
+        //   size: 12,
+        //   paddingLeft: 4,
+        //   paddingTop: 4,
+        //   paddingRight: 4,
+        //   paddingBottom: 4,
+        //   borderStyle: 'solid', // 'solid' | 'dashed'
+        //   borderSize: 0,
+        //   borderColor: 'transparent',
+        //   borderDashedValue: [2, 2],
+        //   color: '#FFFFFF',
+        //   family: 'Helvetica Neue',
+        //   weight: 'normal',
+        //   borderRadius: 2
+        // }]
+        extendTexts: []
       }
     },
     tooltip: {
@@ -117,20 +138,8 @@ const styles = {
       showRule: 'always',
       // 'standard' | 'rect'
       showType: 'standard',
-      // e.g.
-      // [{ title: 'time', value: '{time}' }, { title: 'close', value: '{close}' }]
-      // [{ title: { text: 'time', color: '#fff' }, value: { text: '{time}', color: '#fff' } }, { title: 'close', value: '{close}' }]
-      custom: [
-        { title: 'time', value: '{time}' },
-        { title: 'open', value: '{open}' },
-        { title: 'high', value: '{high}' },
-        { title: 'low', value: '{low}' },
-        { title: 'close', value: '{close}' },
-        { title: 'volume', value: '{volume}' }
-      ],
-      defaultValue: 'n/a',
       rect: {
-       // 'fixed' | 'pointer'
+        // 'fixed' | 'pointer'
         position: 'fixed',
         paddingLeft: 4,
         paddingRight: 4,
@@ -145,20 +154,44 @@ const styles = {
         borderColor: '#f2f3f5',
         color: '#FEFEFE'
       },
-      text: {
-        size: 12,
+      title: {
+        show: true,
+        size: 14,
         family: 'Helvetica Neue',
         weight: 'normal',
-        color: '#D9D9D9',
+        color: Color.GREY,
         marginLeft: 8,
         marginTop: 4,
         marginRight: 8,
-        marginBottom: 4
+        marginBottom: 4,
+        template: '{ticker} · {period}'
+      },
+      legend: {
+        size: 12,
+        family: 'Helvetica Neue',
+        weight: 'normal',
+        color: '#76808F',
+        marginLeft: 8,
+        marginTop: 4,
+        marginRight: 8,
+        marginBottom: 4,
+        defaultValue: 'n/a',
+        // e.g.
+        // [{ title: 'time', value: '{time}' }, { title: 'close', value: '{close}' }]
+        // [{ title: { text: 'time', color: '#fff' }, value: { text: '{time}', color: '#fff' } }, { title: 'close', value: '{close}' }]
+        template: [
+          { title: 'time', value: '{time}' },
+          { title: 'open', value: '{open}' },
+          { title: 'high', value: '{high}' },
+          { title: 'low', value: '{low}' },
+          { title: 'close', value: '{close}' },
+          { title: 'volume', value: '{volume}' }
+        ]
       },
       // e.g.
       // [{
       //    id: 'icon_id',
-      //    position: 'left', // 'left', 'middle', 'right'
+      //    position: 'left', // 'left' | 'middle' | 'right'
       //    marginLeft: 8,
       //    marginTop: 6,
       //    marginRight: 0,
@@ -173,14 +206,10 @@ const styles = {
       //    backgroundColor: 'rgba(33, 150, 243, 0.2)',
       //    activeBackgroundColor: 'rgba(33, 150, 243, 0.4)',
       //    type: 'path', // 'path', 'icon_font'
-      //    path: {
+      //    content: {
       //      style: 'stroke', // 'stroke', 'fill'
       //      path: 'M6.81029,6.02908L11.7878,1.02746C12.0193,0.79483,12.0193,0.445881,11.7878,0.213247C11.5563,-0.019386,11.209,-0.019386,10.9775,0.213247L6,5.21486L1.02251,0.174475C0.790997,-0.0581583,0.44373,-0.0581583,0.212219,0.174475C-0.0192925,0.407108,-0.0192925,0.756058,0.212219,0.988691L5.18971,6.02908L0.173633,11.0307C-0.0578778,11.2633,-0.0578778,11.6123,0.173633,11.8449C0.289389,11.9612,0.44373,12,0.598071,12C0.752411,12,0.906752,11.9612,1.02251,11.8449L6,6.8433L10.9775,11.8449C11.0932,11.9612,11.2476,12,11.4019,12C11.5563,12,11.7106,11.9612,11.8264,11.8449C12.0579,11.6123,12.0579,11.2633,11.8264,11.0307L6.81029,6.02908Z',
       //      lineWidth: 1,
-      //    },
-      //    iconFont: {
-      //      content: '\ue900',
-      //      family: 'iconfont'
       //    }
       // }]
       features: []
@@ -280,23 +309,34 @@ const styles = {
       showRule: 'always',
       // 'standard' | 'rect'
       showType: 'standard',
-      showName: true,
-      showParams: true,
-      defaultValue: 'n/a',
-      text: {
+      title: {
+        show: true,
+        showName: true,
+        showParams: true,
         size: 12,
         family: 'Helvetica Neue',
         weight: 'normal',
-        color: '#D9D9D9',
+        color: '#76808F',
+        marginLeft: 8,
+        marginTop: 4,
+        marginRight: 8,
+        marginBottom: 4
+      },
+      legend: {
+        size: 12,
+        family: 'Helvetica Neue',
+        weight: 'normal',
+        color: '#76808F',
+        marginLeft: 8,
         marginTop: 4,
         marginRight: 8,
         marginBottom: 4,
-        marginLeft: 8
+        defaultValue: 'n/a'
       },
       // e.g.
       // [{
       //    id: 'icon_id',
-      //    position: 'left', // 'left', 'middle', 'right'
+      //    position: 'left', // 'left' | 'middle' | 'right'
       //    marginLeft: 8,
       //    marginTop: 6,
       //    marginRight: 0,
@@ -311,14 +351,10 @@ const styles = {
       //    backgroundColor: 'rgba(33, 150, 243, 0.2)',
       //    activeBackgroundColor: 'rgba(33, 150, 243, 0.4)',
       //    type: 'path', // 'path', 'icon_font'
-      //    path: {
+      //    content: {
       //      style: 'stroke', // 'stroke', 'fill'
       //      path: 'M6.81029,6.02908L11.7878,1.02746C12.0193,0.79483,12.0193,0.445881,11.7878,0.213247C11.5563,-0.019386,11.209,-0.019386,10.9775,0.213247L6,5.21486L1.02251,0.174475C0.790997,-0.0581583,0.44373,-0.0581583,0.212219,0.174475C-0.0192925,0.407108,-0.0192925,0.756058,0.212219,0.988691L5.18971,6.02908L0.173633,11.0307C-0.0578778,11.2633,-0.0578778,11.6123,0.173633,11.8449C0.289389,11.9612,0.44373,12,0.598071,12C0.752411,12,0.906752,11.9612,1.02251,11.8449L6,6.8433L10.9775,11.8449C11.0932,11.9612,11.2476,12,11.4019,12C11.5563,12,11.7106,11.9612,11.8264,11.8449C12.0579,11.6123,12.0579,11.2633,11.8264,11.0307L6.81029,6.02908Z',
       //      lineWidth: 1,
-      //    },
-      //    iconFont: {
-      //      content: '\ue900',
-      //      family: 'iconfont'
       //    }
       // }]
       features: []
@@ -415,7 +451,32 @@ const styles = {
         paddingTop: 4,
         paddingBottom: 4,
         backgroundColor: '#686D76'
-      }
+      },
+      // e.g.
+      // [{
+      //    id: 'icon_id',
+      //    position: 'left', // 'left' | 'middle' | 'right'
+      //    marginLeft: 8,
+      //    marginTop: 6,
+      //    marginRight: 0,
+      //    marginBottom: 0,
+      //    paddingLeft: 1,
+      //    paddingTop: 1,
+      //    paddingRight: 1,
+      //    paddingBottom: 1,
+      //    size: 12,
+      //    color: '#76808F',
+      //    activeColor: '#76808F',
+      //    backgroundColor: 'rgba(33, 150, 243, 0.2)',
+      //    activeBackgroundColor: 'rgba(33, 150, 243, 0.4)',
+      //    type: 'path', // 'path', 'icon_font'
+      //    content: {
+      //      style: 'stroke', // 'stroke', 'fill'
+      //      path: 'M6.81029,6.02908L11.7878,1.02746C12.0193,0.79483,12.0193,0.445881,11.7878,0.213247C11.5563,-0.019386,11.209,-0.019386,10.9775,0.213247L6,5.21486L1.02251,0.174475C0.790997,-0.0581583,0.44373,-0.0581583,0.212219,0.174475C-0.0192925,0.407108,-0.0192925,0.756058,0.212219,0.988691L5.18971,6.02908L0.173633,11.0307C-0.0578778,11.2633,-0.0578778,11.6123,0.173633,11.8449C0.289389,11.9612,0.44373,12,0.598071,12C0.752411,12,0.906752,11.9612,1.02251,11.8449L6,6.8433L10.9775,11.8449C11.0932,11.9612,11.2476,12,11.4019,12C11.5563,12,11.7106,11.9612,11.8264,11.8449C12.0579,11.6123,12.0579,11.2633,11.8264,11.0307L6.81029,6.02908Z',
+      //      lineWidth: 1,
+      //    }
+      // }]
+      features: []
     },
     vertical: {
       show: true,

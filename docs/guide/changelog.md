@@ -1,5 +1,19 @@
 # 📠 更新日志
 
+## 10.0.0-alpha6
+`开发中`
++ 👉 图表api `init(ds, options)` 中的 `options.customApi` 变更为 `options.formatter` ， `formatDate` 参数变更为对象。
++ 👉 实例api `setCustomApi` 变更为 `setFormatter` ， `getCustomApi` 变更为 `getFormatter`。
++ 🆕 样式配置新增 `candle.priceMark.last.extendTexts` ， `candle.tooltip.title` ， `candle.tooltip.legend` ， `indicator.tooltip.title` ， `indicator.tooltip.legend` ， 和 `crosshair.horizontal.features` 。
++ 🆕 实例方法新增 `setDataLoader` ， `setSymbol` ， `getSymbol` ， `setPeriod` ， `getPeriod` 和 `resetData` 。
++ 🆕 实例api的 `subscribeAction` 和 `unsubscribeAction` ， 入参 `type` 新增 `onIndicatorTooltipFeatureClick` 和 `onCrosshairFeatureClick` 。
++ 🗑 样式配置删除 `candle.tooltip.defaultValue` ， `candle.tooltip.custom` 请替换为 `candle.tooltip.legend` ，删除 `candle.tooltip.text` ，删除 `indicator.tooltip.showName` ， `indicator.tooltip.showParams` ，请用 `indicator.tooltip.title` ，删除 `indicator.tooltip.defaultValue` ， 请替换为 `indicator.tooltip.legend` ， 删除 `indicator.tooltip.text` 。
++ 🗑 实例api删除 `setLoadMoreData` ， `applyNewData` ， `updateData` ， 请替换为 `setDataLoader` ， 删除 `clearData` ， `setPrecision` 和 `getPrecision`。
++ 🐞 修复覆盖物 `onSelected` 和 `onDeselected` 响应错乱问题。
++ 🐞 修复样式配置 `candle.type` 是 `ohlc` 时的显示问题。
++ 💄 优化覆盖物事件默认事件响应。
++ 💄 优化x轴显示。
+
 ## 10.0.0-alpha5
 `2025-03-09`
 + 👉 样式配置 `candle.tooltip.icons` 变更为 `candle.tooltip.features` ， `indicator.tooltip.icons` 变更为 `indicator.tooltip.features` 。
