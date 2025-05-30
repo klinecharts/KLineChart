@@ -9,11 +9,11 @@ outline: deep
 <!-- @include: @/@views/api/references/instance/subscribeAction.md -->
 
 ### Parameters {#parameters}
-- `type` Type, supports `onZoom`, `onScroll`, `onVisibleRangeChange`, `onCandleTooltipFeatureClick`, `onCrosshairChange`, `onCandleBarClick` and `onPaneDrag` .
+- `type` Type, supports `onZoom`, `onScroll`, `onVisibleRangeChange`, `onCandleTooltipFeatureClick`, `onIndicatorTooltipFeatureClick`, `onCrosshairFeatureClick`, `onCrosshairChange`, `onCandleBarClick` and `onPaneDrag` .
 - `cb` Callback.
 
 ### Returns {#returns}
-`executeAction` returns `undefined` .
+`subscribeAction` returns `undefined` .
 
 ## Usage {#usage}
 <script setup>

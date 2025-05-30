@@ -9,7 +9,7 @@ outline: deep
 <!-- @include: @/@views/api/references/instance/unsubscribeAction.md -->
 
 ### 参数 {#parameters}
-- `type` 类型，支持 `onZoom` ， `onScroll` ， `onVisibleRangeChange` ， `onCandleTooltipFeatureClick` ， `onCrosshairChange` ， `onCandleBarClick` 和 `onPaneDrag` 。
+- `type` 类型，支持 `onZoom` ， `onScroll` ， `onVisibleRangeChange` ， `onCandleTooltipFeatureClick` ， `onIndicatorTooltipFeatureClick` ， `onCrosshairFeatureClick` ， `onCrosshairChange` ， `onCandleBarClick` 和 `onPaneDrag` 。
 - `cb` 订阅时的回调方法，缺省则取消当前类型所有。
 
 ### 返回值 {#returns}

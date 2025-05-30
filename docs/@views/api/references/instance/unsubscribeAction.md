@@ -4,6 +4,8 @@
     'onScroll' |
     'onVisibleRangeChange' |
     'onCandleTooltipFeatureClick' |
+    'onIndicatorTooltipFeatureClick'|
+    'onCrosshairFeatureClick' |
     'onCrosshairChange' |
     'onCandleBarClick' |
     'onPaneDrag',
