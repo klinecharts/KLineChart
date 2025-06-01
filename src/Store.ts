@@ -904,15 +904,17 @@ export default class StoreImp implements Store {
           }
           case 'month': {
             const date = new Date(referenceTimestamp)
-            const originalDay = date.getDate()
-            const targetMonth = date.getMonth() + span * diff
-            date.setMonth(targetMonth)
+            const referenceDay = date.getDate()
+
+            date.setDate(1)
+
+            date.setMonth(date.getMonth() + span * diff)
             const lastDayOfTargetMonth = new Date(
               date.getFullYear(),
               date.getMonth() + 1,
               0
             ).getDate()
-            date.setDate(Math.min(originalDay, lastDayOfTargetMonth))
+            date.setDate(Math.min(referenceDay, lastDayOfTargetMonth))
             return date.getTime()
           }
           case 'year': {
@@ -971,7 +973,7 @@ export default class StoreImp implements Store {
             const currentYear = currentDate.getFullYear()
             const referenceMonth = referenceDate.getMonth()
             const currentMonth = currentDate.getMonth()
-            return baseDataIndex + Math.floor((currentYear - referenceYear) * 12 + (currentMonth - referenceMonth) / span)
+            return baseDataIndex + Math.floor(((currentYear - referenceYear) * 12 + (currentMonth - referenceMonth)) / span)
           }
           case 'year': {
             const referenceYear = new Date(referenceTimestamp).getFullYear()

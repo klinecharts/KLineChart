@@ -85,7 +85,7 @@ export default abstract class XAxisImp extends AxisImp implements XAxis {
     if (tickBetweenBarCount % 2 !== 0) {
       tickBetweenBarCount += 1
     }
-    const startDataIndex = Math.floor(realFrom / tickBetweenBarCount) * tickBetweenBarCount
+    const startDataIndex = Math.max(0, Math.floor(realFrom / tickBetweenBarCount) * tickBetweenBarCount)
 
     for (let i = startDataIndex; i < realTo; i += tickBetweenBarCount) {
       if (i >= from) {
