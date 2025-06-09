@@ -273,7 +273,10 @@ export default class OverlayImp<E = unknown> implements Overlay<E> {
   }
 
   override (overlay: Partial<Overlay<E>>): void {
-    this._prevOverlay = clone(this)
+    this._prevOverlay = clone({
+      ...this,
+      _prevOverlay: null
+    })
 
     const {
       id,
