@@ -76,7 +76,6 @@
       }>
     })
     draw?: (params: object) => boolean
-    onClick?: (params: object) => void
     onDataStateChange?: (params: object) => void
   }
 ) => void

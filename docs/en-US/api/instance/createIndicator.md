@@ -35,7 +35,6 @@ outline: deep
   - `regenerateFigures` Regenerates the basic graphics configuration. This is triggered when `calcParams` changes. The return value type is the same as `figures` .
   - `createTooltipDataSource` Create custom prompts.
   - `draw` Custom drawing method, if the return value is `true`, it will override the default drawing.
-  - `onClick` Click event.
   - `onDataStateChange` Data change callback notification.
 - `isStack` Whether to stack.
 - `paneOptions` Pane configuration.

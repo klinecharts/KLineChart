@@ -1,7 +1,7 @@
 # 📠 Change Log
 
 ## 10.0.0-alpha6
-`Under construction`
+`2025-06-12`
 + 👉 Chart api `init(ds, options)` , `options.customApi` changed to `options.formatter` , `formatDate` parameter changed to object.
 + 👉 Instance api `setCustomApi` changed to `setFormatter` , `getCustomApi` changed to `getFormatter`.
 + 🆕 Style configuration add `candle.priceMark.last.extendTexts` , `candle.tooltip.title` , `candle.tooltip.legend` , `indicator.tooltip.title` , `indicator.tooltip.legend` and `crosshair.horizontal.features` .

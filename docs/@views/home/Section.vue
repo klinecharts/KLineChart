@@ -1,10 +1,10 @@
 <script setup>
-const props = defineProps(['title', 'description'])
+const props = defineProps(['title', 'description', 'outClass'])
 
 </script>
 
 <template>
-  <section class="section">
+  <section class="section" :class="props.outClass">
     <div class="content">
       <h2 class="title">{{ props.title }}</h2>
       <p class="description">{{ props.description }}</p>
