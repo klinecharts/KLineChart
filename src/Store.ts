@@ -534,6 +534,7 @@ export default class StoreImp implements Store {
         case 'backward': {
           this._dataList = this._dataList.concat(data)
           this._dataLoadMore.backward = realMore.backward
+          this._lastBarRightSideDiffBarCount -= dataLengthChange
           adjustFlag = dataLengthChange > 0
           break
         }
@@ -670,15 +671,13 @@ export default class StoreImp implements Store {
       }
     }
     // More processing and loading, more loading if there are callback methods and no data is being loaded
-    if (!this._loading && isValid(this._dataLoader) && isValid(this._symbol) && isValid(this._period)) {
-      if (from === 0) {
-        if (this._dataLoadMore.forward) {
-          this._processDataLoad('forward')
-        }
-      } else if (to === totalBarCount) {
-        if (this._dataLoadMore.backward) {
-          this._processDataLoad('backward')
-        }
+    if (from === 0) {
+      if (this._dataLoadMore.forward) {
+        this._processDataLoad('forward')
+      }
+    } else if (to === totalBarCount) {
+      if (this._dataLoadMore.backward) {
+        this._processDataLoad('backward')
       }
     }
   }
