@@ -28,6 +28,6 @@ jobs:
           cache: pnpm
           registry-url: https://registry.npmjs.org/
       - run: pnpm install && pnpm run build
-      - run: npm publish
+      - run: npm publish --tag latest
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}

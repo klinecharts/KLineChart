@@ -20,7 +20,7 @@ outline: deep
 
 ## Usage {#usage}
 <script setup>
-import SetSymbol from '../../@views/api/samples/setSymbol/index.vue'
+import SetSymbol from '../../../@views/api/samples/setSymbol/index.vue'
 </script>
 
 ### Basic {#basic}
