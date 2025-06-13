@@ -1,7 +1,11 @@
 # 📠 Change Log
 
-## 10.0.0-alpha6
-`2025-06-12`
+## 10.0.0-alpha8
+`2025-06-14`
++ 🐞 Fix typescript reference error.
+
+## 10.0.0-alpha7
+`2025-06-14`
 + 👉 Chart api `init(ds, options)` , `options.customApi` changed to `options.formatter` , `formatDate` parameter changed to object.
 + 👉 Instance api `setCustomApi` changed to `setFormatter` , `getCustomApi` changed to `getFormatter`.
 + 🆕 Style configuration add `candle.priceMark.last.extendTexts` , `candle.tooltip.title` , `candle.tooltip.legend` , `indicator.tooltip.title` , `indicator.tooltip.legend` and `crosshair.horizontal.features` .
@@ -13,6 +17,10 @@
 + 🐞 Fix the display problem when the style configuration `candle.type` is `ohlc` .
 + 💄 Optimize the default event response of overlay events.
 + 💄 Optimize the x-axis display.
+
+## 10.0.0-alpha6
+`2025-06-12`
++ Error publish.
 
 ## 10.0.0-alpha5
 `2025-03-09`
