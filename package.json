@@ -107,7 +107,7 @@
     "shiki": "^2.4.2",
     "tslib": "^2.8.1",
     "typescript": "^5.8.3",
-    "vitepress": "2.0.0-alpha.5"
+    "vitepress": "2.0.0-alpha.6"
   },
   "pnpm": {
     "overrides": {

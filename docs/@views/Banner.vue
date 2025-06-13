@@ -1,7 +1,6 @@
 <template>
-  <div class="banner" :class="{ 'top': y === 0 }" role="banner" v-if="isVisible">
-    <span v-if="lang === 'zh-CN'">🔔&nbsp;&nbsp;v9 将维护到 2025 年 5 月份，建议尽快迁移到新版本。</span>
-    <span v-else>🔔&nbsp;&nbsp;v9 will be maintained until May 2025. It is recommended to migrate to the new version as soon as possible.</span>
+  <div class="banner" :class="{ 'top': y === 0 }" role="banner" v-if="visible">
+    <span>{{ i18n('view_banner_tip', lang) }}</span>
     <button class="banner-close" @click.prevent="closeBanner">
       <span class="close">&times;</span>
     </button>
@@ -13,21 +12,22 @@ import { ref, onMounted } from 'vue'
 import { useWindowScroll } from '@vueuse/core'
 import { useData } from 'vitepress'
 
+import i18n from '../@i18n'
+
 const { y } = useWindowScroll()
 
-const isVisible = ref(true)
+const visible = ref(false)
 
 const { lang } = useData()
 
 const closeBanner = () => {
-  isVisible.value = false
+  visible.value = false
   document.documentElement.classList.remove('banner-fixed')
 }
 
 onMounted(() => {
-  if (isVisible.value) {
-    document.documentElement.classList.add('banner-fixed')
-  }
+  visible.value = true
+  document.documentElement.classList.add('banner-fixed')
 })
 </script>
 <style scoped>
@@ -45,7 +45,7 @@ onMounted(() => {
   right: 0;
   z-index: 61;
   width: 100%;
-  height: var(--vp-layout-top-height);
+  height: var(--vp-layout-top-height, 50px);
   background-color: var(--vp-c-bg);
   overflow: hidden;
   margin: 0;

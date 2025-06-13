@@ -1,0 +1,20 @@
+{
+  "view_banner_tip": "🔔  v9 will be maintained until May 2025. It is recommended to migrate to the new version as soon as possible.",
+  "view_customize_title": "Customized Service",
+  "view_customize_free_title": "Free",
+  "view_customize_free_desc": "Free professional K Line component",
+  "view_customize_free_price": "$ 0",
+  "view_customize_free_features": ["Highly scalable core chart", "Full features Pro version chart", "Complete development documents", "Development discussion WeChat group"],
+  "view_customize_free_tip": "Contact the developer to join the development discussion group.",
+  "view_customize_sponsor_title": "Sponsor",
+  "view_customize_sponsor_desc": "Comprehensive answers to development issues",
+  "view_customize_sponsor_sponsor": "Sponsor",
+  "view_customize_sponsor_price": "$ 78",
+  "view_customize_sponsor_features": ["All services in the free version", "Homepage sponsor advertising space", "One-on-one Q&A", "New features priority support"],
+  "view_customize_sponsor_tip": "Donate to the project on the sponsorship page, and after completing the donation, contact the developer to get one week of answers to your questions.",
+  "view_customize_custom_title": "Customized",
+  "view_customize_custom_desc": "Exclusive customization and extended development",
+  "view_customize_custom_price": "$ Discussion",
+  "view_customize_custom_features": ["All services of the sponsored version", "UI custom development", "Extended custom development", "Other chart custom development"],
+  "view_customize_custom_tip": "Contact developers to discuss specific requirements."
+}

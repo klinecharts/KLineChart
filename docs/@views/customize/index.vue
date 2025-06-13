@@ -1,45 +1,46 @@
 <template>
   <div class="customize">
-    <h1 class="customize-title">{{ lang === 'zh-CN' ? '定制化服务' : 'Customized Service' }}</h1>
+    <h1 class="customize-title">{{i18n('view_customize_title', lang)}}</h1>
     <div class="customize-content">
       <div class="customize-content-item customize-content-free-item">
         <div class="customize-content-item-title-container">
-          <h3 class="customize-content-item-title">{{ lang === 'zh-CN' ? '免费版' : 'Free' }}</h3>
-          <p class="customize-content-item-sub-title">{{ lang === 'zh-CN' ? '免费的专业级K线组件' : 'Free professional K Line component' }}</p>
+          <h3 class="customize-content-item-title">{{i18n('view_customize_free_title', lang)}}</h3>
+          <p class="customize-content-item-sub-title">{{i18n('view_customize_free_desc', lang)}}</p>
           <p class="customize-content-item-price">
-            {{ lang === 'zh-CN' ? '¥ 0' : '$ 0' }}
+            {{i18n('view_customize_free_price', lang)}}
           </p>
         </div>
-        <FeatureList :features="lang === 'zh-CN' ? ['高度可扩展的核心图表', '功能完善的Pro版图表', '完善的开发文档', '开发讨论微信群'] : ['Highly scalable core chart', 'Full features Pro version chart', 'Complete development documents', 'Development discussion WeChat group']"/>
+        <FeatureList :features="i18n('view_customize_free_features', lang)"/>
         <p class="customize-content-item-tip">
-          {{ lang === 'zh-CN' ? '联系开发者加入开发讨论群。' : 'Contact the developer to join the development discussion group.' }}
+          {{i18n('view_customize_free_tip', lang)}}
         </p>
       </div>
       <div class="customize-content-item customize-content-qa-item">
         <div class="customize-content-item-title-container">
-          <h3 class="customize-content-item-title">{{ lang === 'zh-CN' ? '赞助版' : 'Sponsor' }}</h3>
-            <p class="customize-content-item-sub-title">{{ lang === 'zh-CN' ? '全方位解答遇到的问题' : 'Comprehensive answers to development issues' }}</p>
+          <h3 class="customize-content-item-title">{{i18n('view_customize_sponsor_title', lang)}}</h3>
+            <p class="customize-content-item-sub-title">{{i18n('view_customize_sponsor_desc', lang)}}</p>
             <p class="customize-content-item-price">
-              <span style="font-size: 14px; padding-right: 6px; padding-top: 4px; font-weight: normal;">{{ lang === 'zh-CN' ? '赞助' : 'Sponsor' }}</span>{{ lang === 'zh-CN' ? `¥ 500` : '$ 78' }}
+              <span style="font-size: 14px; padding-right: 6px; padding-top: 4px; font-weight: normal;">{{i18n('view_customize_sponsor_sponsor', lang)}}</span>
+              {{i18n('view_customize_sponsor_price', lang)}}
             </p>
         </div>
         
-        <FeatureList :features="lang === 'zh-CN' ? ['免费版所有服务', '首页赞助商广告位', '一对一答疑', '新功能优先支持'] : ['All services in the free version', 'Homepage sponsor advertising space', 'One-on-one Q&A', 'New features priority support']"/>
+        <FeatureList :features="i18n('view_customize_sponsor_features', lang)"/>
         <p class="customize-content-item-tip">
-          {{ lang === 'zh-CN' ? '在赞助页对项目进行捐赠，完成之后联系开发者获得一周时间的答疑。' : 'Donate to the project on the sponsorship page, and after completing the donation, contact the developer to get one week of answers to your questions.' }}
+          {{i18n('view_customize_sponsor_tip', lang)}}
         </p>
       </div>
       <div class="customize-content-item customize-content-custom-item">
         <div class="customize-content-item-title-container">
-          <h3 class="customize-content-item-title">{{ lang === 'zh-CN' ? '定制版' : 'Customized' }}</h3>
-          <p class="customize-content-item-sub-title">{{ lang === 'zh-CN' ? '专属定制，扩展开发' : 'Exclusive customization and extended development' }}</p>
+          <h3 class="customize-content-item-title">{{i18n('view_customize_custom_title', lang)}}</h3>
+          <p class="customize-content-item-sub-title">{{i18n('view_customize_custom_desc', lang)}}</p>
           <p class="customize-content-item-price">
-            {{ lang === 'zh-CN' ? '¥ 面议' : '$ Discussion' }}
+            {{i18n('view_customize_custom_price', lang)}}
           </p>
         </div>
-        <FeatureList :features="lang === 'zh-CN' ? ['赞助版所有服务', 'UI定制开发', '扩展定制开发', '其它图表相关定制开发'] : ['All services of the sponsored version', 'UI custom development', 'Extended custom development', 'Other chart custom development']"/>
+        <FeatureList :features="i18n('view_customize_custom_features', lang)"/>
         <p class="customize-content-item-tip">
-          {{ lang === 'zh-CN' ? '联系开发者，讨论具体需求。' : 'Contact developers to discuss specific requirements.' }}
+          {{i18n('view_customize_custom_tip', lang)}}
         </p>
       </div>
     </div>
@@ -48,6 +49,8 @@
 
 <script setup>
 import { useData } from 'vitepress'
+
+import i18n from '../../@i18n'
 
 import FeatureList from './FeatureList.vue'
 
@@ -183,6 +186,7 @@ const { lang } = useData()
   font-size: 14px;
   padding: 0 20px;
   color: #e77c0a;
+  line-height: 18px;
   border-top: solid 1px var(--vp-c-gutter);
 }
 

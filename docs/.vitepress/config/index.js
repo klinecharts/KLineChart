@@ -24,7 +24,7 @@ function config () {
     metaChunk: true,
     title: 'KLineChart',
     outDir: '../website',
-    srcExclude: ['@components', 'data', '@views'],
+    srcExclude: ['@components', '@views', '@i18n'],
     lastUpdated: true,
     markdown: {
       theme: {
