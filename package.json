@@ -1,6 +1,6 @@
 {
   "name": "klinecharts",
-  "version": "10.0.0-alpha6",
+  "version": "10.0.0-alpha7",
   "description": "Lightweight k-line chart built with html5 canvas",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -44,7 +44,8 @@
   "license": "Apache-2.0",
   "private": false,
   "scripts": {
-    "preinstall": "node scripts/check-env.js",
+    "prepare": "node scripts/check-env.js && husky install",
+    "prepublishOnly": "node scripts/pre-publish.js",
     "branch-lint": "node scripts/branch-lint.js",
     "commit-lint": "commitlint --edit",
     "code-lint": "eslint src/**/*.ts",
@@ -57,8 +58,6 @@
     "build-core": "pnpm build-esm && pnpm build-cjs && pnpm build-umd",
     "build-dts": "dts-bundle-generator --no-banner true --fail-on-class true --umd-module-name klinecharts -o dist/index.d.ts src/index.ts",
     "build": "pnpm clean && pnpm build-core && pnpm build-dts",
-    "prepare": "husky install",
-    "prepublishOnly": "node scripts/pre-publish.js",
     "docs:dev": "pnpm -F=docs dev",
     "docs:build": "pnpm -F=docs build",
     "docs:preview": "pnpm -F=docs preview",
