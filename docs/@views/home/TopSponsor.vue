@@ -1,5 +1,6 @@
 <script setup>
-import { useData } from 'vitepress';
+import { useData } from 'vitepress'
+import i18n from '../../@i18n'
 
 const { isDark, lang } = useData()
 </script>
@@ -7,7 +8,7 @@ const { isDark, lang } = useData()
 <template>
   <div class="topSponsor">
     <a href="https://www.tradingx.cloud/" target="_blank" rel="noopener noreferrer">
-      <span>{{ lang === 'zh-CN' ? '顶级赞助商' : 'Top Sponsor' }}</span>
+      <span>{{ i18n('view_home_top_sponsor', lang) }}</span>
       <img :class="{ 'invert': isDark }" src="/images/sponsors/tradingx.png" alt="tradingx" />
     </a>
   </div>

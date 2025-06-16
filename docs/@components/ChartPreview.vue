@@ -15,11 +15,13 @@ import ResizeObserver from 'resize-observer-polyfill'
 import stackBlitz from '@stackblitz/sdk'
 import { getParameters } from 'codesandbox/lib/api/define'
 
-import Tooltip from './Tooltip.vue';
+import i18n from '../@i18n'
+
+import Tooltip from './Tooltip.vue'
+import Loading from './Loading.vue'
 
 const { isDark, lang } = useData()
 
-import Loading from './Loading.vue'
 
 const href = ref()
 
@@ -256,7 +258,7 @@ onUnmounted(() => {
           name="parameters"
           :value="getCodeSandboxParameters()"/>
         <button type="submit">
-          <Tooltip :tip="lang === 'zh-CN' ? '在 CodeSandbox 中打开' : 'Open in CodeSandbox'">
+          <Tooltip :tip="i18n('component_chart_preview_open_in_codesandbox', lang)">
             <svg width="18px" height="18px" viewBox="0 0 24 24">
               <path stroke="none" d="M2.34 6.423L12 .845l9.66 5.578v11.154L12 23.155l-9.66-5.578zM12 3.155L9.67 4.5L12 5.845L14.33 4.5zm4.33 2.5L12 8.155l-4.33-2.5L5.34 7L12 10.845L18.66 7zm3.33 3.077L13 12.577v7.69l2.34-1.35v-4.994l4.32-2.495zm0 5.006l-2.32 1.34v2.684l2.32-1.34zm-15.32-2.31l4.32 2.495v4.994l2.34 1.35v-7.69L4.34 8.732zm0 2.31v2.685l2.32 1.34v-2.686z"/>
             </svg>
@@ -272,14 +274,14 @@ onUnmounted(() => {
           name="data"
           :value="getCodePenParameters()"/>
         <button type="submit">
-          <Tooltip :tip="lang === 'zh-CN' ? '在 CodePen 中打开' : 'Open in CodePen'">
+          <Tooltip :tip="i18n('component_chart_preview_open_in_codepen', lang)">
             <svg width="20px" height="20px" viewBox="0 0 24 24"><path stroke="none" d="m21.66 8.264l-9.18-6.12a.88.88 0 0 0-.966 0l-9.146 6.12c-.225.129-.354.451-.354.676v6.087c0 .258.129.548.354.741l9.147 6.087a.88.88 0 0 0 .966 0l9.146-6.087c.226-.129.355-.45.355-.74V8.94c.032-.257-.097-.547-.323-.676m-8.793-3.8l6.731 4.509l-3.06 1.996l-3.703-2.512c.032 0 .032-3.993.032-3.993m-1.707 0v3.993L7.424 10.97L4.43 8.973zM3.753 10.55L5.878 12l-2.125 1.45zm7.407 8.985l-6.73-4.509l2.994-1.996l3.736 2.512zm.87-5.475L8.97 12l3.06-2.061L15.09 12zm.837 5.475v-3.993l3.736-2.512l2.995 1.996zm7.407-6.087L18.15 12l2.125-1.45z"/></svg>
           </Tooltip>
         </button>
       </form>
       <button
         @click="openStackBlitz()">
-        <Tooltip :tip="lang === 'zh-CN' ? '在 StackBlitz 中打开' : 'Open in StackBlitz'">
+        <Tooltip :tip="i18n('component_chart_preview_open_in_stackblitz', lang)">
           <svg width="18px" height="18px" viewBox="0 0 24 24">
             <path stroke="none" d="M10.797 14.182H3.635L16.728 0l-3.525 9.818h7.162L7.272 24l3.524-9.818Z"/>
           </svg>
@@ -287,7 +289,7 @@ onUnmounted(() => {
       </button>
       <button
         @click="showCode = !showCode">
-        <Tooltip :tip="lang === 'zh-CN' ? (showCode ? '收起代码' : '显示代码') : (showCode ? 'Hide code' : 'Show code')">
+        <Tooltip :tip="showCode ? i18n('component_chart_preview_hide_code', lang) : i18n('component_chart_preview_show_code', lang)">
           <svg v-if="!showCode" width="20px" height="20px" viewBox="0 0 16 16">
             <path fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5.25 11.25L1.75 8l3.5-3.25m5.5 6.5L14.25 8l-3.5-3.25"/>
           </svg>

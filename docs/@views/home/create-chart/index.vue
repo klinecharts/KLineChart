@@ -2,6 +2,8 @@
 import { useData } from 'vitepress';
 const { lang } = useData()
 
+import i18n from '../../../@i18n';
+
 import Section from '../Section.vue';
 
 import ChartPreview from '../../../@components/ChartPreview.vue';
@@ -13,10 +15,10 @@ import { data } from './index.data.js'
 <template>
   <Section
     out-class="quick-create-chart"
-    :title="lang === 'zh-CN' ? '简单快速创建图表' : 'Create chart easily and quickly'"
-    :description="lang === 'zh-CN' ? 'KLineChart 让你使用几行代码就可以创建一个金融图表，同时可以使用内置的多种常用技术指标，让图表看起来更专业。' : 'KLineChart allows you to create a financial chart with just a few lines of code, while also utilizing various commonly used technical indicators built-in to make the chart look more professional.'">
+    :title="i18n('view_home_quick_create_chart_title', lang)"
+    :description="i18n('view_home_quick_create_chart_desc', lang)">
     <ChartPreview
-      :title="lang === 'zh-CN' ? '快速创建' : 'Quick started'"
+      :title="i18n('view_home_quick_create', lang)"
       chartId="k-line-chart"
       :code="data.js"
       chartHeight="450"/>

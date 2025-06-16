@@ -3,46 +3,45 @@ import { ref } from 'vue'
 
 import { useData } from 'vitepress'
 
+import i18n from '../../@i18n'
+
 const { lang } = useData()
 
-const isCN = lang.value === 'zh-CN'
-
 const dirs = ref([
-  { name: 'dist', explain: isCN ? '存放编译生成的文件' : 'Store compiled files' },
-  { name: 'docs', explain: isCN ? '文档目录' : 'Docs directory' },
-  { name: 'scripts', explain: isCN ? '构建的脚本目录' : 'Built script directory' },
+  { name: 'dist', explain: 'view_local_dev_dir_explain_dist' },
+  { name: 'docs', explain: 'view_local_dev_dir_explain_docs' },
+  { name: 'scripts', explain: 'view_local_dev_dir_explain_scripts' },
   {
     name: 'src',
-    explain: isCN ? '源码目录' : 'Source code directory',
+    explain: 'view_local_dev_dir_explain_src',
     children: [
       {
         name: 'common',
-        explain: isCN ? '存放公共的基础的一些文件' : 'Store some public basic files',
+        explain: 'view_local_dev_dir_explain_common',
         children: [
-          { name: 'utils', explain: isCN ? '工具类文件夹' : 'Util directory', },
+          { name: 'utils', explain: 'view_local_dev_dir_explain_utils', },
         ]
       },
-      { name: 'component', explain: isCN ? '组件文件夹' : 'Component directory' },
+      { name: 'component', explain: 'view_local_dev_dir_explain_component' },
       {
         name: 'extension',
-        explain: isCN ? '可扩展的一些模块文件夹' : 'Some module directory that can be extended',
+        explain: 'view_local_dev_dir_explain_extension',
         children: [
-          { name: 'figure', explain: isCN ? '基础图形文件夹' : 'Basic drawing directory' },
-          { name: 'i18n', explain: isCN ? '国际化文件夹' : 'International directory' },
-          { name: 'indicator', explain: isCN ? '指标文件夹' : 'Indicator directory' },
-          { name: 'overlay', explain: isCN ? '覆盖物文件夹' : 'Overlay directory' },
-          { name: 'styles', explain: isCN ? '样式文件夹' : 'Style directory' },
-          { name: 'x-axis', explain: isCN ? 'x轴文件夹' : 'X-axis directory' },
-          { name: 'y-axis', explain: isCN ? 'y轴文件夹' : 'Y-axis directory' }
+          { name: 'figure', explain: 'view_local_dev_dir_explain_figure' },
+          { name: 'i18n', explain: 'view_local_dev_dir_explain_i18n' },
+          { name: 'indicator', explain: 'view_local_dev_dir_explain_indicator' },
+          { name: 'overlay', explain: 'view_local_dev_dir_explain_overlay' },
+          { name: 'styles', explain: 'view_local_dev_dir_explain_styles' },
+          { name: 'x-axis', explain: 'view_local_dev_dir_explain_x_axis' },
+          { name: 'y-axis', explain: 'view_local_dev_dir_explain_y_axis' }
         ]
       },
-      { name: 'pane', explain: isCN ? '窗口文件夹' : 'Panel directory' },
-      { name: 'store', explain: isCN ? '数据存储文件夹' : 'Data store directory' },
-      { name: 'view', explain: isCN ? '绘制模块文件夹' : 'Draw module directory' },
-      { name: 'widget', explain: isCN ? '绘制模块集合文件夹' : 'Draw module collection directory' },
+      { name: 'pane', explain: 'view_local_dev_dir_explain_pane' },
+      { name: 'view', explain: 'view_local_dev_dir_explain_view' },
+      { name: 'widget', explain: 'view_local_dev_dir_explain_widget' },
     ]
   },
-  { name: 'tests', explain: isCN ? '测试模块文件夹' : 'Test module directory' }
+  { name: 'tests', explain: 'view_local_dev_dir_explain_tests' }
 ])
 </script>
 
@@ -56,7 +55,7 @@ const dirs = ref([
           </svg>
           <span>{{ item.name }}</span>
         </div>
-        <span class="explain">//&nbsp;&nbsp;{{ item.explain }}</span>
+        <span class="explain">//&nbsp;&nbsp;{{ i18n(item.explain, lang) }}</span>
       </div>
       <ul v-if="item.children" class="project-dir-explain project-dir-explain-child">
         <li v-for="child of item.children" class="item">
@@ -67,7 +66,7 @@ const dirs = ref([
               </svg>
               <span>{{ child.name }}</span>
             </div>
-            <span class="explain">//&nbsp;&nbsp;{{ child.explain }}</span>
+            <span class="explain">//&nbsp;&nbsp;{{ i18n(child.explain, lang) }}</span>
           </div>
           <ul v-if="child.children" class="project-dir-explain project-dir-explain-child">
             <li v-for="grandson of child.children" class="item">
@@ -78,7 +77,7 @@ const dirs = ref([
                   </svg>
                   <span>{{ grandson.name }}</span>
                 </div>
-                <span class="explain">//&nbsp;&nbsp;{{ grandson.explain }}</span>
+                <span class="explain">//&nbsp;&nbsp;{{ i18n(grandson.explain, lang) }}</span>
               </div>
             </li>
           </ul>

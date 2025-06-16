@@ -3,6 +3,7 @@
   import Section from './Section.vue';
 
   import { useData } from 'vitepress'
+import i18n from '../../@i18n';
 
   const sponsors = [
     {
@@ -51,8 +52,8 @@
 
 <template>
   <Section
-    :title="lang === 'zh-CN' ? '赞助商' : 'Sponsors'"
-    :description="lang === 'zh-CN' ? '维护这样一个图表和开发新功能需要巨大精力，只有在我们的赞助者慷慨的财务支持下才得以持续。' : 'Maintaining such a chart and developing new features requires tremendous effort, which can only be sustained with the generous financial support of our sponsors.'">
+    :title="i18n('view_home_sponsor_title', lang)"
+    :description="i18n('view_home_sponsor_desc', lang)">
     <div class="sponsor">
       <div class="sponsor-grid sponsor-top-grid">
         <a class="sponsor-grid-item item-no1" :href="sponsors[0].website" target="_blank" rel="noreferrer">
@@ -86,7 +87,7 @@
             <path fill="currentColor" d="m12 21l-1.45-1.3q-2.525-2.275-4.175-3.925T3.75 12.812T2.388 10.4T2 8.15Q2 5.8 3.575 4.225T7.5 2.65q1.3 0 2.475.55T12 4.75q.85-1 2.025-1.55t2.475-.55q2.35 0 3.925 1.575T22 8.15q0 1.15-.387 2.25t-1.363 2.412t-2.625 2.963T13.45 19.7z"/>
           </svg>
           &nbsp;
-          {{ lang === 'zh-CN' ? '成为赞助商' : 'Become a sponsor' }}
+          {{ i18n('view_home_sponsor_become_sponsor', lang) }}
         </a>
       </div>
     </div>

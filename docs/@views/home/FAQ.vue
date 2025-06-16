@@ -1,93 +1,56 @@
 <script setup>
 import { ref, watch } from 'vue'
-import { useData } from 'vitepress';
+import { useData } from 'vitepress'
+import i18n from '../../@i18n'
 
-import Section from './Section.vue';
+import Section from './Section.vue'
 
 const { lang } = useData()
 
-const zhItems = [
+const items = ref([
   {
-    q: "初始化图表后，只能看到一个x轴，是怎么回事？",
-    a: "图表总是会填充容器，检查一下容器是否有高度。",
+    q: "view_home_faq_question_1",
+    a: "view_home_faq_answer_1",
     collapsed: true
   },
   {
-    q: "蜡烛柱显示趋近于一条线，看不到波动，怎么办？",
-    a: `在设置交易对的时候要设置精度，调用<code>setSymbol({ ticker: 'TestSymbol', pricePrecision: 6, volumePrecision: 6 })</code> 。`,
+    q: "view_home_faq_question_2",
+    a: "view_home_faq_answer_2",
     collapsed: true
   },
   {
-    q: "分时图怎么创建？",
-    a: `通过样式设置，<code>chart.setStyles({ candle: { type: 'area' }})</code> 。`,
+    q: "view_home_faq_question_3",
+    a: "view_home_faq_answer_3",
     collapsed: true
   },
   {
-    q: "内置的技术指标，计算出来的数据不是想要的，怎么办？",
-    a: `可以通过图表方法 <code>createIndicator</code> 或者 <code>overrideIndicator</code> 重写 <code>calc</code> 即可。`,
+    q: "view_home_faq_question_4",
+    a: "view_home_faq_answer_4",
     collapsed: true
   },
   {
-    q: "想创建一个内置技术指标之外的指标，怎么办？",
-    a: `图表支持自定义技术指标，详情参阅<a rel="noreferrer" href="/guide/indicator" style="cursor:pointer;color:var(--vp-c-indigo-1)">技术指标</a>。`,
+    q: "view_home_faq_question_5",
+    a: "view_home_faq_answer_5",
     collapsed: true
   },
   {
-    q: "想标记一下买卖点，该怎么做？",
-    a: `可以使用覆盖物，内置的覆盖物有一个 <code>simpleAnnotation</code> ，用图表api创建即可 <code>createOverlay({ name: 'simpleAnnotation', ... })</code> 。`,
+    q: "view_home_faq_question_6",
+    a: "view_home_faq_answer_6",
     collapsed: true
   },
-]
-
-const enItems = [
-  {
-    q: "After the chart is initialized, only one line can be seen?",
-    a: "The chart always fills the container, checking to see if the container has height.",
-    collapsed: true
-  },
-  {
-    q: "The candle shows a line, no fluctuation, what to do?",
-    a: `To set the precision when setting the trading pair, call <code>setSymbol({ ticker: 'TestSymbol', pricePrecision: 6, volumePrecision: 6 })</code> .`,
-    collapsed: true
-  },
-  {
-    q: "How to create a real-time chart?",
-    a: `Through style settings, <code>chart.setStyles({ candle: { type: 'area' }})</code> 。`,
-    collapsed: true
-  },
-  {
-    q: "Built-in technical indicators, calculated data is not what you want, how to do?",
-    a: `You can override <code>calc</code> by the chart method <code>createIndicator</code> or <code>overrideIndicator</code>.`,
-    collapsed: true
-  },
-  {
-    q: "What if I want to create an indicator other than the built-in technical indicator?",
-    a: `Chart support custom technical indicators, see <a rel="noreferrer" href="/en-US/guide/indicator" style="cursor:pointer;color:var(--vp-c-indigo-1)">indicators</a> for details.`,
-    collapsed: true
-  },
-  {
-    q: "Want to mark the point of sale, how should do?",
-    a: `Overlays can be used. The built-in overlay has a <code>simpleAnnotation</code>, which can be created with the chart api <code>createOverlay({ name: 'simpleAnnotation', ... })</code>.`,
-    collapsed: true
-  },
-]
-
-const items = ref(lang.value === 'zh-CN' ? zhItems : enItems)
-watch(lang, (newLang) => {
-  items.value = newLang === 'zh-CN' ? zhItems : enItems
-})
+])
 
 </script>
 
 <template>
   <Section
-    :title="lang === 'zh-CN' ? '常见问题' : 'FAQ'"
-    :description="lang === 'zh-CN' ? '开发过程遇到的问题，大多都可以从以下内容中找到答案。' : 'Most of the problems encountered during the development process can be answered from the following content.'">
+    :title="i18n('view_home_faq_title', lang)"
+    :description="i18n('view_home_faq_desc', lang)">
     <ul class="faq">
       <li class="item" v-for="item in items">
         <div class="item-content home-faq-item-content">
-          <span class="item-content-q">{{ item.q }}</span>
-          <span v-if="!item.collapsed" class="item-content-a" v-html="item.a"/>
+          <span class="item-content-q">{{ i18n(item.q, lang) }}</span>
+          <span v-if="!item.collapsed" class="item-content-a" v-html="i18n(item.a, lang)"/>
         </div>
         <span
           class="icon"

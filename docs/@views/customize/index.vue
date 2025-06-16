@@ -1,46 +1,48 @@
 <template>
   <div class="customize">
-    <h1 class="customize-title">{{i18n('view_customize_title', lang)}}</h1>
+    <h1 class="customize-title">{{ i18n('view_customize_title', lang) }}</h1>
     <div class="customize-content">
       <div class="customize-content-item customize-content-free-item">
         <div class="customize-content-item-title-container">
-          <h3 class="customize-content-item-title">{{i18n('view_customize_free_title', lang)}}</h3>
-          <p class="customize-content-item-sub-title">{{i18n('view_customize_free_desc', lang)}}</p>
+          <h3 class="customize-content-item-title">{{ i18n('view_customize_free_title', lang) }}</h3>
+          <p class="customize-content-item-sub-title">{{ i18n('view_customize_free_desc', lang) }}</p>
           <p class="customize-content-item-price">
-            {{i18n('view_customize_free_price', lang)}}
+            {{ i18n('view_customize_free_price', lang) }}
           </p>
         </div>
         <FeatureList :features="i18n('view_customize_free_features', lang)"/>
         <p class="customize-content-item-tip">
-          {{i18n('view_customize_free_tip', lang)}}
+          {{ i18n('view_customize_free_tip', lang) }}
         </p>
       </div>
       <div class="customize-content-item customize-content-qa-item">
         <div class="customize-content-item-title-container">
-          <h3 class="customize-content-item-title">{{i18n('view_customize_sponsor_title', lang)}}</h3>
-            <p class="customize-content-item-sub-title">{{i18n('view_customize_sponsor_desc', lang)}}</p>
+          <h3 class="customize-content-item-title">{{ i18n('view_customize_sponsor_title', lang) }}</h3>
+            <p class="customize-content-item-sub-title">{{ i18n('view_customize_sponsor_desc', lang) }}</p>
             <p class="customize-content-item-price">
-              <span style="font-size: 14px; padding-right: 6px; padding-top: 4px; font-weight: normal;">{{i18n('view_customize_sponsor_sponsor', lang)}}</span>
-              {{i18n('view_customize_sponsor_price', lang)}}
+              <span style="font-size: 14px; padding-right: 6px; padding-top: 4px; font-weight: normal;">
+                {{ i18n('view_customize_sponsor_sponsor', lang) }}
+              </span>
+              {{ i18n('view_customize_sponsor_price', lang) }}
             </p>
         </div>
         
         <FeatureList :features="i18n('view_customize_sponsor_features', lang)"/>
         <p class="customize-content-item-tip">
-          {{i18n('view_customize_sponsor_tip', lang)}}
+          {{ i18n('view_customize_sponsor_tip', lang) }}
         </p>
       </div>
       <div class="customize-content-item customize-content-custom-item">
         <div class="customize-content-item-title-container">
-          <h3 class="customize-content-item-title">{{i18n('view_customize_custom_title', lang)}}</h3>
-          <p class="customize-content-item-sub-title">{{i18n('view_customize_custom_desc', lang)}}</p>
+          <h3 class="customize-content-item-title">{{ i18n('view_customize_custom_title', lang) }}</h3>
+          <p class="customize-content-item-sub-title">{{ i18n('view_customize_custom_desc', lang) }}</p>
           <p class="customize-content-item-price">
-            {{i18n('view_customize_custom_price', lang)}}
+            {{ i18n('view_customize_custom_price', lang) }}
           </p>
         </div>
         <FeatureList :features="i18n('view_customize_custom_features', lang)"/>
         <p class="customize-content-item-tip">
-          {{i18n('view_customize_custom_tip', lang)}}
+          {{ i18n('view_customize_custom_tip', lang) }}
         </p>
       </div>
     </div>

@@ -2,6 +2,8 @@
 import { onMounted, ref } from 'vue'
 import { withBase, useData } from 'vitepress'
 
+import i18n from '../@i18n'
+
 const { lang } = useData()
 const root = ref('/')
 onMounted(() => {
@@ -17,16 +19,16 @@ onMounted(() => {
       <span>4</span>
     </div>
     
-    <p class="title">{{ lang === 'zh-CN' ? '未找到页面' : 'Page Not Found'}}</p>
+    <p class="title">{{ i18n('view_404_title', lang) }}</p>
     <p class="tip" style="margin-top: 30px;">
-      {{ lang === 'zh-CN' ? '确保地址正确且页面未移除。' : `Make sure the address is correct and the page hasn't moved.` }}
+      {{ i18n('view_404_desc_1', lang) }}
     </p>
     <p class="tip">
-      {{ lang === 'zh-CN' ? '如果您认为这是一个错误，请联系您的 KLineChart 管理员。' : 'Please contact your KLineChart administrator if you think this is a mistake.' }}
+      {{ i18n('view_404_desc_2', lang) }}
     </p>
     <div class="action">
       <a class="link" :href="withBase(root)" aria-label="go to home">
-        {{ lang === 'zh-CN' ? '返回首页' : 'Take me home' }}
+        {{ i18n('view_404_back_home', lang) }}
       </a>
     </div>
   </div>

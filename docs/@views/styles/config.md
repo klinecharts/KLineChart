@@ -387,12 +387,6 @@ const styles = {
   yAxis: {
     show: true,
     size: 'auto',
-    // 'left' | 'right'
-    position: 'right',
-    // 'normal' | 'percentage' | 'log'
-    type: 'normal',
-    inside: false,
-    reverse: false,
     axisLine: {
       show: true,
       color: '#888888',
