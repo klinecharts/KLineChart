@@ -33,58 +33,67 @@ export default class IndicatorLastValueView extends View<YAxis> {
       const yAxis = pane.getAxisComponent()
       const yAxisRange = yAxis.getRange()
       const dataList = chartStore.getDataList()
-      const dataIndex = dataList.length - 1
+      const kLineData = dataList[dataList.length - 1] ?? {}
+      const prevKLineData = dataList[dataList.length - 2] ?? {}
       const indicators = chartStore.getIndicatorsByPaneId(pane.getId())
       const formatter = chartStore.getInnerFormatter()
       const decimalFold = chartStore.getDecimalFold()
       const thousandsSeparator = chartStore.getThousandsSeparator()
       indicators.forEach(indicator => {
         const result = indicator.result
-        const data = result[dataIndex] ?? result[dataIndex - 1] ?? {}
+        const data = result[kLineData.timestamp] ?? result[prevKLineData.timestamp] ?? {}
         if (isValid(data) && indicator.visible) {
           const precision = indicator.precision
-          eachFigures(indicator, dataIndex, defaultStyles, (figure: IndicatorFigure, figureStyles: Required<IndicatorFigureStyle>) => {
+          eachFigures(
+            indicator,
+            {
+              prev: prevKLineData.timestamp,
+              current: kLineData.timestamp,
+              next: null
+            },
+            defaultStyles,
+            (figure: IndicatorFigure, figureStyles: Required<IndicatorFigureStyle>) => {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- ignore
-            const value = data[figure.key]
-            if (isNumber(value)) {
-              const y = yAxis.convertToNicePixel(value)
-              let text = yAxis.displayValueToText(
-                yAxis.realValueToDisplayValue(
-                  yAxis.valueToRealValue(value, { range: yAxisRange }),
-                  { range: yAxisRange }
-                ),
-                precision
-              )
-              if (indicator.shouldFormatBigNumber) {
-                text = formatter.formatBigNumber(text)
-              }
-              text = decimalFold.format(thousandsSeparator.format(text))
-              let x = 0
-              let textAlign: CanvasTextAlign = 'left'
-              if (yAxis.isFromZero()) {
-                x = 0
-                textAlign = 'left'
-              } else {
-                x = bounding.width
-                textAlign = 'right'
-              }
-
-              this.createFigure({
-                name: 'text',
-                attrs: {
-                  x,
-                  y,
-                  text,
-                  align: textAlign,
-                  baseline: 'middle'
-                },
-                styles: {
-                  ...lastValueMarkTextStyles,
-                  backgroundColor: figureStyles.color
+              const value = data[figure.key]
+              if (isNumber(value)) {
+                const y = yAxis.convertToNicePixel(value)
+                let text = yAxis.displayValueToText(
+                  yAxis.realValueToDisplayValue(
+                    yAxis.valueToRealValue(value, { range: yAxisRange }),
+                    { range: yAxisRange }
+                  ),
+                  precision
+                )
+                if (indicator.shouldFormatBigNumber) {
+                  text = formatter.formatBigNumber(text)
                 }
-              })?.draw(ctx)
-            }
-          })
+                text = decimalFold.format(thousandsSeparator.format(text))
+                let x = 0
+                let textAlign: CanvasTextAlign = 'left'
+                if (yAxis.isFromZero()) {
+                  x = 0
+                  textAlign = 'left'
+                } else {
+                  x = bounding.width
+                  textAlign = 'right'
+                }
+
+                this.createFigure({
+                  name: 'text',
+                  attrs: {
+                    x,
+                    y,
+                    text,
+                    align: textAlign,
+                    baseline: 'middle'
+                  },
+                  styles: {
+                    ...lastValueMarkTextStyles,
+                    backgroundColor: figureStyles.color
+                  }
+                })?.draw(ctx)
+              }
+            })
         }
       })
     }

@@ -50,7 +50,7 @@ const awesomeOscillator: IndicatorTemplate<Ao, number> = {
     let longSum = 0
     let short = 0
     let long = 0
-    return dataList.map((kLineData, i) => {
+    return dataList.reduce((prev, kLineData, i) => {
       const ao: Ao = {}
       const middle = (kLineData.low + kLineData.high) / 2
       shortSum += middle
@@ -68,8 +68,9 @@ const awesomeOscillator: IndicatorTemplate<Ao, number> = {
       if (i >= maxPeriod - 1) {
         ao.ao = short - long
       }
-      return ao
-    })
+      prev[kLineData.timestamp] = ao
+      return prev
+    }, {})
   }
 }
 

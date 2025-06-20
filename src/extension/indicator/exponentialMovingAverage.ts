@@ -40,7 +40,7 @@ const exponentialMovingAverage: IndicatorTemplate<Ema, number> = {
     const { calcParams: params, figures } = indicator
     let closeSum = 0
     const emaValues: number[] = []
-    return dataList.map((kLineData, i) => {
+    return dataList.reduce((prev, kLineData, i) => {
       const ema = {}
       const close = kLineData.close
       closeSum += close
@@ -54,8 +54,9 @@ const exponentialMovingAverage: IndicatorTemplate<Ema, number> = {
           ema[figures[index].key] = emaValues[index]
         }
       })
-      return ema
-    })
+      prev[kLineData.timestamp] = ema
+      return prev
+    }, {})
   }
 }
 

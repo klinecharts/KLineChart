@@ -49,7 +49,8 @@ const tripleExponentiallySmoothedAverage: IndicatorTemplate<Trix, number> = {
     let ema1Sum = 0
     let ema2Sum = 0
     let trixSum = 0
-    const result: Trix[] = []
+    const trixList: Trix[] = []
+    const result: Record<number, Trix> = {}
     dataList.forEach((kLineData, i) => {
       const trix: Trix = {}
       const close = kLineData.close
@@ -82,12 +83,13 @@ const tripleExponentiallySmoothedAverage: IndicatorTemplate<Trix, number> = {
             trixSum += trixValue
             if (i >= params[0] * 3 + params[1] - 4) {
               trix.maTrix = trixSum / params[1]
-              trixSum -= (result[i - (params[1] - 1)].trix ?? 0)
+              trixSum -= (trixList[i - (params[1] - 1)].trix ?? 0)
             }
           }
         }
       }
-      result.push(trix)
+      trixList.push(trix)
+      result[kLineData.timestamp] = trix
     })
     return result
   }

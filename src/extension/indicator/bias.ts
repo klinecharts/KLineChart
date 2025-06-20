@@ -37,7 +37,7 @@ const bias: IndicatorTemplate<Bias, number> = {
   calc: (dataList, indicator) => {
     const { calcParams: params, figures } = indicator
     const closeSums: number[] = []
-    return dataList.map((kLineData, i) => {
+    return dataList.reduce((prev, kLineData, i) => {
       const bias: Bias = {}
       const close = kLineData.close
       params.forEach((p, index) => {
@@ -49,8 +49,9 @@ const bias: IndicatorTemplate<Bias, number> = {
           closeSums[index] -= dataList[i - (p - 1)].close
         }
       })
-      return bias
-    })
+      prev[kLineData.timestamp] = bias
+      return prev
+    }, {})
   }
 }
 

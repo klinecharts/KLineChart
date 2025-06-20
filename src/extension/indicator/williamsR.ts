@@ -39,7 +39,7 @@ const williamsR: IndicatorTemplate<Wr, number> = {
   regenerateFigures: (params) => params.map((_, i) => ({ key: `wr${i + 1}`, title: `WR${i + 1}: `, type: 'line' })),
   calc: (dataList, indicator) => {
     const { calcParams: params, figures } = indicator
-    return dataList.map((kLineData, i) => {
+    return dataList.reduce((prev, kLineData, i) => {
       const wr: Wr = {}
       const close = kLineData.close
       params.forEach((param, index) => {
@@ -52,8 +52,9 @@ const williamsR: IndicatorTemplate<Wr, number> = {
           wr[figures[index].key] = hnSubLn === 0 ? 0 : (close - hn) / hnSubLn * 100
         }
       })
-      return wr
-    })
+      prev[kLineData.timestamp] = wr
+      return prev
+    }, {})
   }
 }
 

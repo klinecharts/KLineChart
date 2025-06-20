@@ -119,32 +119,31 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
     const areaValueKey = candleStyles.area.value
     const shouldCompareHighLow = (inCandle && !isArea) || (!inCandle && shouldOhlc)
     visibleRangeDataList.forEach((visibleData) => {
-      const dataIndex = visibleData.dataIndex
-      const data = visibleData.data.current
-      if (isValid(data)) {
+      const kLineData = visibleData.data.current
+      if (isValid(kLineData)) {
         if (shouldCompareHighLow) {
-          min = Math.min(min, data.low)
-          max = Math.max(max, data.high)
+          min = Math.min(min, kLineData.low)
+          max = Math.max(max, kLineData.high)
         }
         if (inCandle && isArea) {
-          const value = data[areaValueKey]
+          const value = kLineData[areaValueKey]
           if (isNumber(value)) {
             min = Math.min(min, value)
             max = Math.max(max, value)
           }
         }
-      }
-      indicators.forEach(({ result, figures }) => {
-        const data = result[dataIndex] ?? {}
-        figures.forEach(figure => {
+        indicators.forEach(({ result, figures }) => {
+          const data = result[kLineData.timestamp] ?? {}
+          figures.forEach(figure => {
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- ignore
-          const value = data[figure.key]
-          if (isNumber(value)) {
-            min = Math.min(min, value)
-            max = Math.max(max, value)
-          }
+            const value = data[figure.key]
+            if (isNumber(value)) {
+              min = Math.min(min, value)
+              max = Math.max(max, value)
+            }
+          })
         })
-      })
+      }
     })
 
     if (min !== Number.MAX_SAFE_INTEGER && max !== Number.MIN_SAFE_INTEGER) {

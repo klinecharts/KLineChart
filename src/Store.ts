@@ -1063,8 +1063,8 @@ export default class StoreImp implements Store {
       prevCrosshair.paneId !== cr.paneId ||
       (forceInvalidate ?? false)
     ) {
-      if (isValid(kLineData) && !(notExecuteAction ?? false)) {
-        this._chart.crosshairChange(this._crosshair)
+      if (isValid(kLineData) && !(notExecuteAction ?? false) && this.hasAction('onCrosshairChange') && isString(this._crosshair.paneId)) {
+        this.executeAction('onCrosshairChange', crosshair)
       }
       if (!(notInvalidate ?? false)) {
         this._chart.updatePane(UpdateLevel.Overlay)

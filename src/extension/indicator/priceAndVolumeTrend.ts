@@ -33,7 +33,7 @@ const priceAndVolumeTrend: IndicatorTemplate<Pvt> = {
   ],
   calc: (dataList) => {
     let sum = 0
-    return dataList.map((kLineData, i) => {
+    return dataList.reduce((prev, kLineData, i) => {
       const pvt: Pvt = {}
       const close = kLineData.close
       const volume = kLineData.volume ?? 1
@@ -45,8 +45,9 @@ const priceAndVolumeTrend: IndicatorTemplate<Pvt> = {
       }
       sum += x
       pvt.pvt = sum
-      return pvt
-    })
+      prev[kLineData.timestamp] = pvt
+      return prev
+    }, {})
   }
 }
 

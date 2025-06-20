@@ -43,7 +43,7 @@ const easeOfMovementValue: IndicatorTemplate<Emv, number> = {
     const params = indicator.calcParams
     let emvValueSum = 0
     const emvValueList: number[] = []
-    return dataList.map((kLineData, i) => {
+    return dataList.reduce((prev, kLineData, i) => {
       const emv: Emv = {}
       if (i > 0) {
         const prevKLineData = dataList[i - 1]
@@ -65,8 +65,9 @@ const easeOfMovementValue: IndicatorTemplate<Emv, number> = {
           emvValueSum -= emvValueList[i - params[0]]
         }
       }
-      return emv
-    })
+      prev[kLineData.timestamp] = emv
+      return prev
+    }, {})
   }
 }
 

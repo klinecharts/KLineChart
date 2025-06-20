@@ -57,7 +57,7 @@ const bollingerBands: IndicatorTemplate<Boll, number> = {
     const params = indicator.calcParams
     const p = params[0] - 1
     let closeSum = 0
-    return dataList.map((kLineData, i) => {
+    return dataList.reduce((prev, kLineData, i) => {
       const close = kLineData.close
       const boll: Boll = {}
       closeSum += close
@@ -68,8 +68,9 @@ const bollingerBands: IndicatorTemplate<Boll, number> = {
         boll.dn = boll.mid - params[1] * md
         closeSum -= dataList[i - p].close
       }
-      return boll
-    })
+      prev[kLineData.timestamp] = boll
+      return prev
+    }, {})
   }
 }
 

@@ -37,7 +37,8 @@ const differentOfMovingAverage: IndicatorTemplate<Dma, number> = {
     let closeSum1 = 0
     let closeSum2 = 0
     let dmaSum = 0
-    const result: Dma[] = []
+    const dmaList: Dma[] = []
+    const result: Record<number, Dma> = {}
     dataList.forEach((kLineData, i) => {
       const dma: Dma = {}
       const close = kLineData.close
@@ -60,10 +61,11 @@ const differentOfMovingAverage: IndicatorTemplate<Dma, number> = {
         dmaSum += dif
         if (i >= maxPeriod + params[2] - 2) {
           dma.ama = dmaSum / params[2]
-          dmaSum -= (result[i - (params[2] - 1)].dma ?? 0)
+          dmaSum -= (dmaList[i - (params[2] - 1)].dma ?? 0)
         }
       }
-      result.push(dma)
+      dmaList.push(dma)
+      result[kLineData.timestamp] = dma
     })
     return result
   }

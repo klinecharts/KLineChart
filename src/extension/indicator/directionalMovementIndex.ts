@@ -66,7 +66,8 @@ const directionalMovementIndex: IndicatorTemplate<Dmi, number> = {
     let dmm = 0
     let dxSum = 0
     let adx = 0
-    const result: Dmi[] = []
+    const dmiList: Dmi[] = []
+    const result: Record<number, Dmi> = {}
     dataList.forEach((kLineData, i) => {
       const dmi: Dmi = {}
       const prevKLineData = dataList[i - 1] ?? kLineData
@@ -115,11 +116,12 @@ const directionalMovementIndex: IndicatorTemplate<Dmi, number> = {
           }
           dmi.adx = adx
           if (i >= params[0] * 2 + params[1] - 3) {
-            dmi.adxr = ((result[i - (params[1] - 1)].adx ?? 0) + adx) / 2
+            dmi.adxr = ((dmiList[i - (params[1] - 1)].adx ?? 0) + adx) / 2
           }
         }
       }
-      result.push(dmi)
+      dmiList.push(dmi)
+      result[kLineData.timestamp] = dmi
     })
     return result
   }

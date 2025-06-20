@@ -36,7 +36,8 @@ const psychologicalLine: IndicatorTemplate<Psy, number> = {
     let upCount = 0
     let psySum = 0
     const upList: number[] = []
-    const result: Psy[] = []
+    const psyList: Psy[] = []
+    const result: Record<number, Psy> = {}
     dataList.forEach((kLineData, i) => {
       const psy: Psy = {}
       const prevClose = (dataList[i - 1] ?? kLineData).close
@@ -48,11 +49,12 @@ const psychologicalLine: IndicatorTemplate<Psy, number> = {
         psySum += psy.psy
         if (i >= params[0] + params[1] - 2) {
           psy.maPsy = psySum / params[1]
-          psySum -= (result[i - (params[1] - 1)].psy ?? 0)
+          psySum -= (psyList[i - (params[1] - 1)].psy ?? 0)
         }
         upCount -= upList[i - (params[0] - 1)]
       }
-      result.push(psy)
+      psyList.push(psy)
+      result[kLineData.timestamp] = psy
     })
     return result
   }

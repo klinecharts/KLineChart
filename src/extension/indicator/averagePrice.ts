@@ -32,7 +32,7 @@ const averagePrice: IndicatorTemplate<Avp> = {
   calc: (dataList) => {
     let totalTurnover = 0
     let totalVolume = 0
-    return dataList.map((kLineData) => {
+    return dataList.reduce((prev, kLineData) => {
       const avp: Avp = {}
       const turnover = kLineData.turnover ?? 0
       const volume = kLineData.volume ?? 0
@@ -41,8 +41,9 @@ const averagePrice: IndicatorTemplate<Avp> = {
       if (totalVolume !== 0) {
         avp.avp = totalTurnover / totalVolume
       }
-      return avp
-    })
+      prev[kLineData.timestamp] = avp
+      return prev
+    }, {})
   }
 }
 

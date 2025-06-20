@@ -34,7 +34,8 @@ const momentum: IndicatorTemplate<Mtm, number> = {
   calc: (dataList, indicator) => {
     const params = indicator.calcParams
     let mtmSum = 0
-    const result: Mtm[] = []
+    const mtmList: Mtm[] = []
+    const result: Record<number, Mtm> = {}
     dataList.forEach((kLineData, i) => {
       const mtm: Mtm = {}
       if (i >= params[0]) {
@@ -44,10 +45,11 @@ const momentum: IndicatorTemplate<Mtm, number> = {
         mtmSum += mtm.mtm
         if (i >= params[0] + params[1] - 1) {
           mtm.maMtm = mtmSum / params[1]
-          mtmSum -= (result[i - (params[1] - 1)].mtm ?? 0)
+          mtmSum -= (mtmList[i - (params[1] - 1)].mtm ?? 0)
         }
       }
-      result.push(mtm)
+      mtmList.push(mtm)
+      result[kLineData.timestamp] = mtm
     })
     return result
   }

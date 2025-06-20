@@ -35,7 +35,8 @@ const onBalanceVolume: IndicatorTemplate<Obv, number> = {
     const params = indicator.calcParams
     let obvSum = 0
     let oldObv = 0
-    const result: Obv[] = []
+    const obvList: Obv[] = []
+    const result: Record<number, Obv> = {}
     dataList.forEach((kLineData, i) => {
       const prevKLineData = dataList[i - 1] ?? kLineData
       if (kLineData.close < prevKLineData.close) {
@@ -47,9 +48,10 @@ const onBalanceVolume: IndicatorTemplate<Obv, number> = {
       obvSum += oldObv
       if (i >= params[0] - 1) {
         obv.maObv = obvSum / params[0]
-        obvSum -= (result[i - (params[0] - 1)].obv ?? 0)
+        obvSum -= (obvList[i - (params[0] - 1)].obv ?? 0)
       }
-      result.push(obv)
+      obvList.push(obv)
+      result[kLineData.timestamp] = obv
     })
     return result
   }

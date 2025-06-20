@@ -505,28 +505,6 @@ export default class ChartImp implements Chart {
     }
   }
 
-  crosshairChange (crosshair: Crosshair): void {
-    if (this._chartStore.hasAction('onCrosshairChange')) {
-      const indicatorData = {}
-      this._drawPanes.forEach(pane => {
-        const id = pane.getId()
-        const paneIndicatorData = {}
-        const indicators = this._chartStore.getIndicatorsByPaneId(id)
-        indicators.forEach(indicator => {
-          const result = indicator.result
-          paneIndicatorData[indicator.name] = result[crosshair.dataIndex ?? result.length - 1]
-        })
-        indicatorData[id] = paneIndicatorData
-      })
-      if (isString(crosshair.paneId)) {
-        this._chartStore.executeAction('onCrosshairChange', {
-          crosshair,
-          indicatorData
-        })
-      }
-    }
-  }
-
   getDom (paneId?: string, position?: DomPosition): Nullable<HTMLElement> {
     if (isValid(paneId)) {
       const pane = this.getDrawPaneById(paneId)
