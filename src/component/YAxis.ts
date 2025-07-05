@@ -17,6 +17,7 @@ import { isFunction, isNumber, isString, isValid, merge } from '../common/utils/
 import { index10, getPrecision, nice, round } from '../common/utils/number'
 import { calcTextWidth } from '../common/utils/canvas'
 import { formatPrecision } from '../common/utils/format'
+import { SymbolDefaultPrecisionConstants } from '../common/SymbolInfo'
 
 import AxisImp, {
   type AxisTemplate, type Axis, type AxisRange,
@@ -102,7 +103,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
     let precision = 4
     const inCandle = this.isInCandle()
     if (inCandle) {
-      const pricePrecision = chartStore.getSymbol()?.pricePrecision ?? 2
+      const pricePrecision = chartStore.getSymbol()?.pricePrecision ?? SymbolDefaultPrecisionConstants.PRICE
       if (indicatorPrecision !== Number.MAX_SAFE_INTEGER) {
         precision = Math.min(indicatorPrecision, pricePrecision)
       } else {
@@ -268,7 +269,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
     let precision = 0
     let shouldFormatBigNumber = false
     if (this.isInCandle()) {
-      precision = chartStore.getSymbol()?.pricePrecision ?? 2
+      precision = chartStore.getSymbol()?.pricePrecision ?? SymbolDefaultPrecisionConstants.PRICE
     } else {
       indicators.forEach(indicator => {
         precision = Math.max(precision, indicator.precision)
@@ -347,7 +348,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
     let crosshairHorizontalTextWidth = 0
 
     if (lastPriceMarkTextVisible || crosshairHorizontalTextVisible) {
-      const pricePrecision = chartStore.getSymbol()?.pricePrecision ?? 2
+      const pricePrecision = chartStore.getSymbol()?.pricePrecision ?? SymbolDefaultPrecisionConstants.PRICE
       const max = this.getRange().displayTo
 
       if (lastPriceMarkTextVisible) {

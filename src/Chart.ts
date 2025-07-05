@@ -13,6 +13,8 @@
  */
 
 import type Nullable from './common/Nullable'
+import type DeepPartial from './common/DeepPartial'
+import type PickPartial from './common/PickPartial'
 import type Bounding from './common/Bounding'
 import { createDefaultBounding } from './common/Bounding'
 import type { KLineData } from './common/Data'
@@ -25,13 +27,17 @@ import type { DataLoader } from './common/DataLoader'
 import type VisibleRange from './common/VisibleRange'
 import type { Formatter, DecimalFold, LayoutChild, Options, ThousandsSeparator } from './Options'
 import Animation from './common/Animation'
-
 import { createId } from './common/utils/id'
 import { createDom } from './common/utils/dom'
 import { getPixelRatio } from './common/utils/canvas'
 import { isString, isArray, isValid, merge, isNumber } from './common/utils/typeChecks'
 import { logWarn } from './common/utils/logger'
 import { binarySearchNearest } from './common/utils/number'
+import type { Styles } from './common/Styles'
+import type BarSpace from './common/BarSpace'
+import type PickRequired from './common/PickRequired'
+import type { SymbolInfo } from './common/SymbolInfo'
+import type { Period } from './common/Period'
 
 import ChartStore, { SCALE_MULTIPLIER, type Store } from './Store'
 
@@ -52,12 +58,6 @@ import type { OverlayFilter, Overlay, OverlayCreate, OverlayOverride } from './c
 import { getIndicatorClass } from './extension/indicator/index'
 
 import Event from './Event'
-import type DeepPartial from './common/DeepPartial'
-import type { Styles } from './common/Styles'
-import type BarSpace from './common/BarSpace'
-import type PickRequired from './common/PickRequired'
-import type SymbolInfo from './common/SymbolInfo'
-import type { Period } from './common/Period'
 
 export type DomPosition = 'root' | 'main' | 'yAxis'
 
@@ -551,7 +551,7 @@ export default class ChartImp implements Chart {
     return null
   }
 
-  setSymbol (symbol: SymbolInfo): void {
+  setSymbol (symbol: PickPartial<SymbolInfo, 'pricePrecision' | 'volumePrecision'>): void {
     this._chartStore.setSymbol(symbol)
   }
 

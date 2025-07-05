@@ -13,6 +13,7 @@
  */
 
 import { isNumber } from '../../common/utils/typeChecks'
+import { SymbolDefaultPrecisionConstants } from '../../common/SymbolInfo'
 
 import type { OverlayTemplate } from '../../component/Overlay'
 
@@ -31,7 +32,7 @@ const fibonacciLine: OverlayTemplate = {
     if (coordinates.length > 0) {
       let precision = 0
       if (yAxis?.isInCandle() ?? true) {
-        precision = chart.getSymbol()?.pricePrecision ?? 2
+        precision = chart.getSymbol()?.pricePrecision ?? SymbolDefaultPrecisionConstants.PRICE
       } else {
         const indicators = chart.getIndicators({ paneId: overlay.paneId })
         indicators.forEach(indicator => {

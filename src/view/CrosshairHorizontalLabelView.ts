@@ -17,6 +17,7 @@ import type Crosshair from '../common/Crosshair'
 import type { CrosshairStyle, CrosshairDirectionStyle, StateTextStyle } from '../common/Styles'
 import { isString } from '../common/utils/typeChecks'
 import { createFont } from '../common/utils/canvas'
+import { SymbolDefaultPrecisionConstants } from '../common/SymbolInfo'
 
 import type { Axis } from '../component/Axis'
 import type YAxis from '../component/YAxis'
@@ -67,7 +68,7 @@ export default class CrosshairHorizontalLabelView<C extends Axis = YAxis> extend
     let precision = 0
     let shouldFormatBigNumber = false
     if (yAxis.isInCandle()) {
-      precision = chartStore.getSymbol()?.pricePrecision ?? 2
+      precision = chartStore.getSymbol()?.pricePrecision ?? SymbolDefaultPrecisionConstants.PRICE
     } else {
       const indicators = chartStore.getIndicatorsByPaneId(crosshair.paneId!)
       indicators.forEach(indicator => {

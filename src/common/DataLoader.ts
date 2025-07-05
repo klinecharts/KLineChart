@@ -14,7 +14,7 @@
 
 import type Nullable from './Nullable'
 import type { KLineData } from './Data'
-import type SymbolInfo from './SymbolInfo'
+import type { SymbolInfo } from './SymbolInfo'
 import type { Period } from './Period'
 
 export type DataLoadType = 'init' | 'forward' | 'backward' | 'update'

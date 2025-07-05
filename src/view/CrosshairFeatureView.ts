@@ -17,6 +17,7 @@ import type Crosshair from '../common/Crosshair'
 import type { FeatureIconFontStyle, FeaturePathStyle, FeatureStyle } from '../common/Styles'
 import { isString } from '../common/utils/typeChecks'
 import { calcTextWidth } from '../common/utils/canvas'
+import { SymbolDefaultPrecisionConstants } from '../common/SymbolInfo'
 
 import type { YAxis } from '../component/YAxis'
 
@@ -77,7 +78,7 @@ export default class CrosshairFeatureView extends View<YAxis> {
               yAxis.valueToRealValue(value, { range }),
               { range }
             ),
-            chartStore.getSymbol()?.pricePrecision ?? 2
+            chartStore.getSymbol()?.pricePrecision ?? SymbolDefaultPrecisionConstants.PRICE
           )
           text = chartStore.getDecimalFold().format(chartStore.getThousandsSeparator().format(text))
           yAxisTextWidth = horizontalTextStyles.paddingLeft +

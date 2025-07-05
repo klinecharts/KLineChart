@@ -13,10 +13,10 @@
  */
 
 import { formatPrecision } from '../../common/utils/format'
+import { SymbolDefaultPrecisionConstants } from '../../common/SymbolInfo'
+import { isFunction, isNumber, isValid } from '../../common/utils/typeChecks'
 
 import type { OverlayTemplate } from '../../component/Overlay'
-
-import { isFunction, isNumber, isValid } from '../../common/utils/typeChecks'
 
 const simpleTag: OverlayTemplate = {
   name: 'simpleTag',
@@ -54,7 +54,7 @@ const simpleTag: OverlayTemplate = {
       }
     }
     if (!isValid(text) && isNumber(overlay.points[0].value)) {
-      text = formatPrecision(overlay.points[0].value, chart.getSymbol()?.pricePrecision ?? 2)
+      text = formatPrecision(overlay.points[0].value, chart.getSymbol()?.pricePrecision ?? SymbolDefaultPrecisionConstants.PRICE)
     }
     return { type: 'text', attrs: { x, y: coordinates[0].y, text, align: textAlign, baseline: 'middle' } }
   }

@@ -12,9 +12,14 @@
  * limitations under the License.
  */
 
-export default interface SymbolInfo {
+export interface SymbolInfo {
   ticker: string
   pricePrecision: number
   volumePrecision: number
   [key: string]: unknown
+}
+
+export const SymbolDefaultPrecisionConstants = {
+  PRICE: 2,
+  VOLUME: 0
 }

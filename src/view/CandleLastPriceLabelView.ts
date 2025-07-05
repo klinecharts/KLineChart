@@ -15,6 +15,7 @@
 import { isValid } from '../common/utils/typeChecks'
 import { calcTextWidth } from '../common/utils/canvas'
 import type { TextStyle } from '../common/Styles'
+import { SymbolDefaultPrecisionConstants } from '../common/SymbolInfo'
 
 import View from './View'
 
@@ -32,7 +33,7 @@ export default class CandleLastPriceLabelView extends View {
     const lastPriceMarkStyles = priceMarkStyles.last
     const lastPriceMarkTextStyles = lastPriceMarkStyles.text
     if (priceMarkStyles.show && lastPriceMarkStyles.show && lastPriceMarkTextStyles.show) {
-      const precision = chartStore.getSymbol()?.pricePrecision ?? 2
+      const precision = chartStore.getSymbol()?.pricePrecision ?? SymbolDefaultPrecisionConstants.PRICE
       const yAxis = pane.getAxisComponent() as YAxis
       const dataList = chartStore.getDataList()
       const data = dataList[dataList.length - 1]

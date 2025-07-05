@@ -14,12 +14,12 @@
 
 import type Coordinate from '../common/Coordinate'
 import type { CandleHighLowPriceMarkStyle } from '../common/Styles'
+import { formatPrecision } from '../common/utils/format'
+import { SymbolDefaultPrecisionConstants } from '../common/SymbolInfo'
 
 import View from './View'
 
 import type { YAxis } from '../component/YAxis'
-
-import { formatPrecision } from '../common/utils/format'
 
 export default class CandleHighLowPriceView extends View<YAxis> {
   override drawImp (ctx: CanvasRenderingContext2D): void {
@@ -31,7 +31,7 @@ export default class CandleHighLowPriceView extends View<YAxis> {
     const lowPriceMarkStyles = priceMarkStyles.low
     if (priceMarkStyles.show && (highPriceMarkStyles.show || lowPriceMarkStyles.show)) {
       const highestLowestPrice = chartStore.getVisibleRangeHighLowPrice()
-      const precision = chartStore.getSymbol()?.pricePrecision ?? 2
+      const precision = chartStore.getSymbol()?.pricePrecision ?? SymbolDefaultPrecisionConstants.PRICE
       const yAxis = pane.getAxisComponent()
 
       const { price: high, x: highX } = highestLowestPrice[0]

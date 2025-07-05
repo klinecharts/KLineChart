@@ -12,6 +12,7 @@
  * limitations under the License.
  */
 
+import { SymbolDefaultPrecisionConstants } from '../../common/SymbolInfo'
 import type { OverlayTemplate } from '../../component/Overlay'
 
 const priceLine: OverlayTemplate = {
@@ -23,7 +24,7 @@ const priceLine: OverlayTemplate = {
   createPointFigures: ({ chart, coordinates, bounding, overlay, yAxis }) => {
     let precision = 0
     if (yAxis?.isInCandle() ?? true) {
-      precision = chart.getSymbol()?.pricePrecision ?? 2
+      precision = chart.getSymbol()?.pricePrecision ?? SymbolDefaultPrecisionConstants.PRICE
     } else {
       const indicators = chart.getIndicators({ paneId: overlay.paneId })
       indicators.forEach(indicator => {

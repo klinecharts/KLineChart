@@ -19,6 +19,7 @@ import { formatPrecision, formatTemplateString } from '../common/utils/format'
 import { createFont } from '../common/utils/canvas'
 import { isFunction, isObject, isValid } from '../common/utils/typeChecks'
 import { PeriodTypeCrosshairTooltipFormat } from '../common/Period'
+import { SymbolDefaultPrecisionConstants } from '../common/SymbolInfo'
 
 import { PaneIdConstants } from '../pane/types'
 
@@ -379,7 +380,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
     const decimalFold = chartStore.getDecimalFold()
     const thousandsSeparator = chartStore.getThousandsSeparator()
     const locale = chartStore.getLocale()
-    const { pricePrecision = 2, volumePrecision = 0 } = chartStore.getSymbol() ?? {}
+    const { pricePrecision = SymbolDefaultPrecisionConstants.PRICE, volumePrecision = SymbolDefaultPrecisionConstants.VOLUME } = chartStore.getSymbol() ?? {}
     const period = chartStore.getPeriod()
     const dataIndex = chartStore.getCrosshair().dataIndex ?? 0
 
