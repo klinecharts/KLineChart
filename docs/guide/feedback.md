@@ -1,11 +1,11 @@
 # 💬 反馈和共建
 
 ## Github
-+ Issues: [https://github.com/liihuu/KLineChart/issues](https://github.com/liihuu/KLineChart/issues)
-+ Discussions: [https://github.com/liihuu/KLineChart/discussions](https://github.com/liihuu/KLineChart/discussions)
++ Issues: [https://github.com/klinecharts/KLineChart/issues](https://github.com/klinecharts/KLineChart/issues)
++ Discussions: [https://github.com/klinecharts/KLineChart/discussions](https://github.com/klinecharts/KLineChart/discussions)
 
 ## Telegram
-https://t.me/+098syuQtzI0yNzll
+[https://t.me/klinecharts](https://t.me/klinecharts)
 
 <!-- ## Discord
 https://discord.gg/7YjHYgvvvZ -->
