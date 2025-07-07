@@ -65,9 +65,6 @@
     "docs:preview": "pnpm -F=docs preview",
     "docs:deploy": "pnpm build-umd:prod && pnpm docs:build && gh-pages -d website"
   },
-  "engines": {
-    "node": ">=0.10.0"
-  },
   "packageManager": "pnpm@10.4.1",
   "devDependencies": {
     "@babel/generator": "^7.26.9",
@@ -107,7 +104,7 @@
     "shiki": "^2.4.2",
     "tslib": "^2.8.1",
     "typescript": "^5.8.3",
-    "vitepress": "2.0.0-alpha.6"
+    "vitepress": "2.0.0-alpha.7"
   },
   "pnpm": {
     "overrides": {
