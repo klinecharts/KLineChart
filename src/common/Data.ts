@@ -20,8 +20,10 @@ export interface NeighborData<D> {
   next: D
 }
 
+export type Timestamp = number
+
 export interface KLineData {
-  timestamp: number
+  timestamp: Timestamp
   open: number
   high: number
   low: number

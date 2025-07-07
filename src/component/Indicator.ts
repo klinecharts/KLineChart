@@ -15,7 +15,7 @@
 import type Nullable from '../common/Nullable'
 import type DeepPartial from '../common/DeepPartial'
 import type ExcludePickPartial from '../common/ExcludePickPartial'
-import type { KLineData, NeighborData } from '../common/Data'
+import type { KLineData, NeighborData, Timestamp } from '../common/Data'
 import type Bounding from '../common/Bounding'
 import type BarSpace from '../common/BarSpace'
 import type Crosshair from '../common/Crosshair'
@@ -99,7 +99,7 @@ export interface IndicatorDrawParams<D, C, E> {
 
 export type IndicatorDrawCallback<D, C, E> = (params: IndicatorDrawParams<D, C, E>) => boolean
 
-export type IndicatorCalcCallback<D, C, E> = (dataList: KLineData[], indicator: Indicator<D, C, E>) => Promise<Record<number, D>> | Record<number, D>
+export type IndicatorCalcCallback<D, C, E> = (dataList: KLineData[], indicator: Indicator<D, C, E>) => Promise<Record<Timestamp, D>> | Record<Timestamp, D>
 
 export type IndicatorShouldUpdateCallback<D, C, E> = (prev: Indicator<D, C, E>, current: Indicator<D, C, E>) => (boolean | { calc: boolean, draw: boolean })
 
@@ -227,7 +227,7 @@ export interface Indicator<D = unknown, C = unknown, E = unknown> {
   /**
    * Calculation result
    */
-  result: Record<number, D>
+  result: Record<Timestamp, D>
 }
 
 export type IndicatorTemplate<D = unknown, C = unknown, E = unknown> = ExcludePickPartial<Omit<Indicator<D, C, E>, 'result' | 'paneId'>, 'name' | 'calc'>
@@ -354,7 +354,7 @@ export default class IndicatorImp<D = unknown, C = unknown, E = unknown> impleme
 
   onDataStateChange: Nullable<IndicatorOnDataStateChangeCallback<D>> = null
 
-  result: Record<number, D> = {}
+  result: Record<Timestamp, D> = {}
 
   private _prevIndicator: Indicator<D, C, E>
   private _lockSeriesPrecision = false
