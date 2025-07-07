@@ -9,10 +9,13 @@ registerIndicator({
     title: 'close: ',
     type: 'line'
   }],
-  calc: dataList => dataList.map(data => ({ close: data.close })),
+  calc: dataList => dataList.reduce((prev, data) => {
+    prev[data.timestamp] = { close: data.close }
+    return prev
+  }, {}),
   createTooltipDataSource: ({ indicator, crosshair }) => {
     const result = indicator.result
-    const data = result[crosshair.dataIndex]
+    const data = result[crosshair.kLineData.timestamp]
     if (data) {
       return {
         legends: [

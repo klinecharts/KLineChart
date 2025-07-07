@@ -9,7 +9,10 @@ registerIndicator({
     title: 'close: ',
     type: 'line'
   }],
-  calc: dataList => dataList.map(data => ({ close: data.close }))
+  calc: dataList => dataList.reduce((prev, data) => {
+    prev[data.timestamp] = data
+    return prev
+  }, {})
 })
 
 const chart = init('custom-indicator-basic-chart')

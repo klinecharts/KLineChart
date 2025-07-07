@@ -24,7 +24,7 @@
     maxValue?: number
     styles?: Partial<IndicatorStyle>
     shouldUpdate?: (prev: Indicator, current: Indicator) => (boolean | { calc: boolean, draw: boolean })
-    calc?: (kLineDataList: KLineData[], indicator: Indicator) => unknown[] | Promise<unknown[]>
+    calc?: (kLineDataList: KLineData[], indicator: Indicator) => Record<Timestamp, unknown> | Promise<Record<Timestamp, unknown>>
     regenerateFigures?: (calcParams: unknown[]) => Array<{
       key: string
       title?: string

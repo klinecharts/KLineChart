@@ -36,7 +36,10 @@ registerIndicator({
     },
     styles: () => ({ color: '#a0a7e6' })
   }],
-  calc: dataList => dataList
+  calc: dataList => dataList.reduce((prev, data) => {
+    prev[data.timestamp] = data
+    return prev
+  }, {})
 })
 
 const chart = init('custom-figure-custom-indicator-chart')

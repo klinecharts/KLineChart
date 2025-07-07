@@ -5,10 +5,13 @@ registerIndicator({
   shortName: 'Volume',
   zLevel: -1,
   figures: [],
-  calc: dataList => dataList.map(data => ({ volume: data.volume, close: data.close, open: data.open })),
+  calc: dataList => dataList.reduce((prev, data) => {
+    prev[data.timestamp] = { volume: data.volume, close: data.close, open: data.open }
+    return prev
+  }, {}),
   createTooltipDataSource: ({ indicator, crosshair }) => {
     const result = indicator.result
-    const data = result[crosshair.dataIndex]
+    const data = result[crosshair.kLineData.timestamp]
     if (data) {
       const color = data.open < data.close ? 'rgb(224, 152, 199)' : 'rgb(143, 211, 232)'
       return {
@@ -22,31 +25,38 @@ registerIndicator({
   draw: ({ ctx, chart, indicator, bounding, xAxis }) => {
     const { realFrom, realTo } = chart.getVisibleRange()
     const { gapBar, halfGapBar } = chart.getBarSpace()
+    const dataList = chart.getDataList()
     const { result } = indicator
     let maxVolume = 0
     for (let i = realFrom; i < realTo; i++) {
-      const data = result[i]
-      if (data) {
-        maxVolume = Math.max(maxVolume, data.volume)
+      const kLineData = dataList[i]
+      if (kLineData) {
+        const data = result[kLineData.timestamp]
+        if (data) {
+          maxVolume = Math.max(maxVolume, data.volume)
+        }
       }
     }
     const totalHeight = bounding.height * 0.4
     const Rect = getFigureClass('rect')
     for (let i = realFrom; i < realTo; i++) {
-      const data = result[i]
-      if (data) {
-        const height = Math.round(data.volume / maxVolume * totalHeight)
-        const color = data.open < data.close ? 'rgba(224, 152, 199, 0.6)' : 'rgba(143, 211, 232, 0.6)'
-        new Rect({
-          name: 'rect',
-          attrs: {
-            x: xAxis.convertToPixel(i) - halfGapBar,
-            y: bounding.height - height,
-            width: gapBar,
-            height
-          },
-          styles: { color }
-        }).draw(ctx)
+      const kLineData = dataList[i]
+      if (kLineData) {
+        const data = result[kLineData.timestamp]
+        if (data) {
+          const height = Math.round(data.volume / maxVolume * totalHeight)
+          const color = data.open < data.close ? 'rgba(224, 152, 199, 0.6)' : 'rgba(143, 211, 232, 0.6)'
+          new Rect({
+            name: 'rect',
+            attrs: {
+              x: xAxis.convertToPixel(i) - halfGapBar,
+              y: bounding.height - height,
+              width: gapBar,
+              height
+            },
+            styles: { color }
+          }).draw(ctx)
+        }
       }
     }
     return true
