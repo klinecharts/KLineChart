@@ -27,7 +27,7 @@ export default class GridView extends View {
 
     // 判断是否为副图面板，如果是则使用indicator.grid配置，否则使用全局grid配置
     const paneId = pane.getId()
-    const isIndicatorPane = paneId.startsWith(PaneIdConstants.INDICATOR)
+    const isIndicatorPane = paneId !== PaneIdConstants.CANDLE && paneId !== PaneIdConstants.X_AXIS // indicator指标的paneId可以自定义
     const allStyles = chart.getStyles()
     const styles: GridStyle = isIndicatorPane ? allStyles.indicator.grid : allStyles.grid
     const show = styles.show
