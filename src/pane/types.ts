@@ -26,7 +26,7 @@ export interface PaneOptions {
   axis?: Partial<AxisCreate>
 }
 
-export const PANE_MIN_HEIGHT = 30
+export const PANE_MIN_HEIGHT = 16
 
 export const PANE_DEFAULT_HEIGHT = 100
 
