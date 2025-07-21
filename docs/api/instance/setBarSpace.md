@@ -9,7 +9,7 @@ outline: deep
 <!--@include: @/@views/api/references/instance/setBarSpace.md-->
 
 ### 参数 {#parameters}
-- `space` 空间大小，范围在 1 到 50 之间。
+- `space` 空间大小，默认范围在 1 到 50 之间，可以通过`setBarSpaceLimit`设置。
 
 ### 返回值 {#returns}
 `setBarSpace` 返回 `undefined` 。
