@@ -49,6 +49,8 @@ export function getInstanceApiMenus (lang = '') {
     { text: 'setRightMinVisibleBarCount', link: `${prefix}/setRightMinVisibleBarCount` },
     { text: 'setBarSpace', link: `${prefix}/setBarSpace` },
     { text: 'getBarSpace', link: `${prefix}/getBarSpace` },
+    { text: 'setBarSpaceLimit', link: `${prefix}/setBarSpaceLimit` },
+    { text: 'getBarSpaceLimit', link: `${prefix}/getBarSpaceLimit` },
     { text: 'setSymbol', link: `${prefix}/setSymbol` },
     { text: 'getSymbol', link: `${prefix}/getSymbol` },
     { text: 'setPeriod', link: `${prefix}/setPeriod` },

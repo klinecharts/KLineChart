@@ -36,7 +36,7 @@ import { logWarn } from './common/utils/logger'
 import { UpdateLevel } from './common/Updater'
 import type { DataLoader, DataLoaderGetBarsParams, DataLoadMore, DataLoadType } from './common/DataLoader'
 
-import type { Options, Formatter, ThousandsSeparator, DecimalFold, FormatDateType, FormatDateParams, FormatBigNumber, FormatExtendText, FormatExtendTextParams } from './Options'
+import type { Options, Formatter, ThousandsSeparator, DecimalFold, BarSpaceLimit, FormatDateType, FormatDateParams, FormatBigNumber, FormatExtendText, FormatExtendTextParams } from './Options'
 
 import type { IndicatorOverride, IndicatorCreate, IndicatorFilter } from './component/Indicator'
 import type IndicatorImp from './component/Indicator'
@@ -52,7 +52,7 @@ import { PaneIdConstants } from './pane/types'
 
 import type Chart from './Chart'
 
-const BarSpaceLimitConstants = {
+const DEFAULT_BAR_SPACE_LIMIT = {
   MIN: 1,
   MAX: 50
 }
@@ -113,6 +113,8 @@ export interface Store {
   setRightMinVisibleBarCount: (barCount: number) => void
   setBarSpace: (space: number) => void
   getBarSpace: () => BarSpace
+  setBarSpaceLimit: (limit: Partial<BarSpaceLimit>) => void
+  getBarSpaceLimit: () => BarSpaceLimit
   getVisibleRange: () => VisibleRange
   setDataLoader: (dataLoader: DataLoader) => void
   overrideIndicator: (override: IndicatorCreate) => boolean
@@ -237,6 +239,14 @@ export default class StoreImp implements Store {
   private _barSpace = DEFAULT_BAR_SPACE
 
   /**
+   * Bar space limit
+   */
+  private readonly _barSpaceLimit: BarSpaceLimit = {
+    min: DEFAULT_BAR_SPACE_LIMIT.MIN,
+    max: DEFAULT_BAR_SPACE_LIMIT.MAX
+  }
+
+  /**
    * The space of the draw bar
    */
   private _gapBarSpace: number
@@ -358,7 +368,7 @@ export default class StoreImp implements Store {
     this._chart = chart
     this._calcOptimalBarSpace()
     this._lastBarRightSideDiffBarCount = this._offsetRightDistance / this._barSpace
-    const { styles, locale, timezone, formatter, thousandsSeparator, decimalFold } = options ?? {}
+    const { styles, locale, timezone, formatter, thousandsSeparator, decimalFold, barSpaceLimit } = options ?? {}
     if (isValid(styles)) {
       this.setStyles(styles)
     }
@@ -374,6 +384,9 @@ export default class StoreImp implements Store {
     }
     if (isValid(decimalFold)) {
       this.setDecimalFold(decimalFold)
+    }
+    if (isValid(barSpaceLimit)) {
+      this.setBarSpaceLimit(barSpaceLimit)
     }
   }
 
@@ -744,8 +757,21 @@ export default class StoreImp implements Store {
     }
   }
 
+  setBarSpaceLimit (limit: Partial<BarSpaceLimit>): void {
+    if (isValid(limit.min) && isNumber(limit.min)) {
+      this._barSpaceLimit.min = Math.max(0, limit.min)
+    }
+    if (isValid(limit.max) && isNumber(limit.max)) {
+      this._barSpaceLimit.max = Math.max(this._barSpaceLimit.min, limit.max)
+    }
+  }
+
+  getBarSpaceLimit (): BarSpaceLimit {
+    return { ...this._barSpaceLimit }
+  }
+
   setBarSpace (barSpace: number, adjustBeforeFunc?: () => void): void {
-    if (barSpace < BarSpaceLimitConstants.MIN || barSpace > BarSpaceLimitConstants.MAX || this._barSpace === barSpace) {
+    if (barSpace < this._barSpaceLimit.min || barSpace > this._barSpaceLimit.max || this._barSpace === barSpace) {
       return
     }
     this._barSpace = barSpace
