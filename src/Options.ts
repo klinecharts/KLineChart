@@ -85,6 +85,11 @@ export interface ThousandsSeparator {
   format: (value: string | number) => string
 }
 
+export interface BarSpaceLimit {
+  min: number
+  max: number
+}
+
 export interface Options {
   locale?: string
   timezone?: string
@@ -93,4 +98,5 @@ export interface Options {
   thousandsSeparator?: Partial<ThousandsSeparator>
   decimalFold?: Partial<DecimalFold>
   layout?: LayoutChild[]
+  barSpaceLimit?: Partial<BarSpaceLimit>
 }
