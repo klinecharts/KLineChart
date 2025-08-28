@@ -22,6 +22,7 @@ export default [
     rules: {
       'file-progress/activate': 1,
       complexity: 'off',
+      'promise/avoid-new': 'off',
       'no-use-before-define': 'off',
       '@typescript-eslint/no-unsafe-type-assertion': 'off',
       '@typescript-eslint/no-non-null-assertion': 'off',

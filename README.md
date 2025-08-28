@@ -20,7 +20,6 @@ English | <a href="https://github.com/liihuu/KLineChart/blob/main/README.zh-CN.m
 [![Typescript](https://badgen.net/npm/types/klinecharts)](types/index.d.ts)
 [![LICENSE](https://badgen.net/github/license/liihuu/KLineChart)](LICENSE)
 [![Docs](https://badgen.net/badge/docs%20by/vitepress/bd34fe)](https://vitepress.dev/)
-
 </div>
 
 <div align="center">

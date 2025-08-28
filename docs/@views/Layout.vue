@@ -4,7 +4,7 @@ import DefaultTheme from 'vitepress/theme'
 import { nextTick, provide } from 'vue'
 
 import Banner from './Banner.vue'
-import HomeHero from './home/Hero.vue'
+import HomeHero from './home/hero/index.vue'
 import HomeTopSponsor from './home/TopSponsor.vue'
 import HomeCreateChart from './home/create-chart/index.vue'
 import HomeFAQ from './home/FAQ.vue'

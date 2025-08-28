@@ -1,7 +1,7 @@
 <script setup>
 import { useData } from 'vitepress'
 
-import i18n from '../../@i18n'
+import i18n from '../../../@i18n'
 
 const { lang } = useData()
 </script>
@@ -35,7 +35,7 @@ const { lang } = useData()
   align-items: center;
   margin-top: calc((var(--vp-nav-height) + var(--vp-layout-top-height, 0px)) * -1);
   padding: calc(var(--vp-nav-height) + var(--vp-layout-top-height, 0px) + 48px) 24px 48px;
-  background: var(--vp-home-hero-bg);
+  /* background: var(--vp-home-hero-bg); */
 }
 
 .container {
