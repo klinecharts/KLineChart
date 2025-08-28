@@ -20,7 +20,6 @@ import { requestAnimationFrame, DEFAULT_REQUEST_ID } from './utils/compatible'
 type DrawListener = () => void
 
 async function isSupportedDevicePixelContentBox (): Promise<boolean> {
-  // eslint-disable-next-line promise/avoid-new -- ignore
   return await new Promise((resolve: (val: boolean) => void) => {
     const ro = new ResizeObserver((entries: ResizeObserverEntry[]) => {
       resolve(entries.every(entry => 'devicePixelContentBoxSize' in entry))

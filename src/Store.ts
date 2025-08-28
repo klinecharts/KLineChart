@@ -1136,34 +1136,34 @@ export default class StoreImp implements Store {
   }
 
   private _addIndicatorCalcTask (indicator: IndicatorImp, dataLoadType: DataLoadType): void {
-    this._taskScheduler.addTask({
+    indicator.onDataStateChange?.({
+      state: 'loading',
+      type: dataLoadType,
+      indicator
+    })
+    void this._taskScheduler.add<boolean>({
       id: generateTaskId(indicator.id),
-      handler: () => {
+      handler: async () => await indicator.calcImp(this._dataList).then(result => result)
+    }).then(result => {
+      if (result) {
+        this._chart.layout({
+          measureWidth: true,
+          update: true,
+          buildYAxisTick: true,
+          cacheYAxisWidth: dataLoadType !== 'init'
+        })
         indicator.onDataStateChange?.({
-          state: 'loading',
+          state: 'ready',
           type: dataLoadType,
           indicator
         })
-        indicator.calcImp(this._dataList).then(result => {
-          if (result) {
-            this._chart.layout({
-              measureWidth: true,
-              update: true,
-              buildYAxisTick: true,
-              cacheYAxisWidth: dataLoadType !== 'init'
-            })
-            indicator.onDataStateChange?.({
-              state: 'ready',
-              type: dataLoadType,
-              indicator
-            })
-          }
-        }).catch(() => {
-          indicator.onDataStateChange?.({
-            state: 'error',
-            type: dataLoadType,
-            indicator
-          })
+      }
+    }).catch((e: unknown) => {
+      if (e !== 'canceled') {
+        indicator.onDataStateChange?.({
+          state: 'error',
+          type: dataLoadType,
+          indicator
         })
       }
     })
@@ -1223,7 +1223,7 @@ export default class StoreImp implements Store {
       const paneIndicators = this.getIndicatorsByPaneId(indicator.paneId)
       const index = paneIndicators.findIndex(ins => ins.id === indicator.id)
       if (index > -1) {
-        this._taskScheduler.removeTask(generateTaskId(indicator.id))
+        this._taskScheduler.remove(generateTaskId(indicator.id))
         paneIndicators.splice(index, 1)
         removed = true
       }
@@ -1615,7 +1615,7 @@ export default class StoreImp implements Store {
   destroy (): void {
     this._clearData()
     this._clearLastPriceMarkExtendTextUpdateTimer()
-    this._taskScheduler.removeTask()
+    this._taskScheduler.clear()
     this._overlays.clear()
     this._indicators.clear()
     this._actions.clear()
