@@ -54,6 +54,14 @@ const dark: DeepPartial<Styles> = {
       legend: {
         color: '#929AA5'
       }
+    },
+    grid: {
+      horizontal: {
+        color: '#292929'
+      },
+      vertical: {
+        color: '#292929'
+      }
     }
   },
   xAxis: {
