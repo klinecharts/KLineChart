@@ -472,7 +472,7 @@ export default class StoreImp implements Store {
   getDecimalFold (): DecimalFold { return this._decimalFold }
 
   setSymbol (symbol: PickPartial<SymbolInfo, 'pricePrecision' | 'volumePrecision'>): void {
-    const asyncSymbol: (() => void) = () => {
+    this.resetData(() => {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- ignore
       // @ts-expect-error
       this._symbol = {
@@ -482,19 +482,7 @@ export default class StoreImp implements Store {
         ...symbol
       }
       this._synchronizeIndicatorSeriesPrecision()
-    }
-    if (this._symbol?.ticker !== symbol.ticker) {
-      this.resetData(() => {
-        asyncSymbol()
-      })
-    } else {
-      asyncSymbol()
-      this._chart.layout({
-        measureWidth: true,
-        update: true,
-        buildYAxisTick: true
-      })
-    }
+    })
   }
 
   getSymbol (): Nullable<SymbolInfo> {
