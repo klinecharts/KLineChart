@@ -36,7 +36,7 @@ pnpm install
 - `build-esm`：运行 `pnpm run build-esm` 打包成 esm 模块。
 - `build-cjs`：运行 `pnpm run build-cjs` 打包成 commonjs 模块。
 - `build-umd:dev`：运行 `pnpm run build-umd:dev` 打包成 umd 开发环境模块。
-- `build-umd:prod`：运行 `pnpm run build-umd:dev` 打包成 umd 生产环境模块。
+- `build-umd:prod`：运行 `pnpm run build-umd:prod` 打包成 umd 生产环境模块。
 - `build-umd`：运行 `pnpm run build-umd` 同时打包 umd 开发环境和生产环境模块。
 - `build-core`：运行 `pnpm run build-core` 同时打包 esm 模块，commonjs 模块，umd 开发环境和生产环境模块。
 - `build-dts`：运行 `pnpm run build-dts` 生成 typescript 依赖文件。
