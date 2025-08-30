@@ -53,7 +53,7 @@ export default class XAxisView extends AxisView<XAxis> {
     const axisLineSize = styles.axisLine.size
     const tickLineLength = styles.tickLine.length
     return ticks.map(tick => ({
-      x: tick.coord,
+      x: tick.textCoord ?? tick.coord,
       y: axisLineSize + tickLineLength + tickTickStyles.marginStart,
       text: tick.text,
       align: 'center',
