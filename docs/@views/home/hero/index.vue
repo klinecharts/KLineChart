@@ -2,6 +2,7 @@
 import { useData } from 'vitepress'
 
 import i18n from '../../../@i18n'
+import GithubStarButton from './GithubStarButton.vue';
 
 const { lang } = useData()
 </script>
@@ -17,11 +18,16 @@ const { lang } = useData()
         {{ i18n('view_home_hero_desc', lang) }}
       </p>
       <div class="actions">
-        <a class="action brand" rel="noreferrer" :href="lang === 'zh-CN' ? '/guide/quick-start' : '/en-US/guide/quick-start'">{{ i18n('view_home_hero_button', lang) }}</a>
-        <a class="action alt" rel="noreferrer" href="https://github.com/klinecharts/KLineChart">
-          <svg viewBox="0 0 64 64"><path fill="currentColor" d="M32 0C14 0 0 14 0 32c0 21 19 30 22 30c2 0 2-1 2-2v-5c-7 2-10-2-11-5c0 0 0-1-2-3c-1-1-5-3-1-3c3 0 5 4 5 4c3 4 7 3 9 2c0-2 2-4 2-4c-8-1-14-4-14-15q0-6 3-9s-2-4 0-9c0 0 5 0 9 4c3-2 13-2 16 0c4-4 9-4 9-4c2 7 0 9 0 9q3 3 3 9c0 11-7 14-14 15c1 1 2 3 2 6v8c0 1 0 2 2 2c3 0 22-9 22-30C64 14 50 0 32 0"/></svg>
-          &nbsp;&nbsp;Github
+        <a class="quick-start-action" rel="noreferrer" :href="lang === 'zh-CN' ? '/guide/quick-start' : '/en-US/guide/quick-start'">
+          {{ i18n('view_home_hero_button', lang) }}
+          <svg width="14" height="14" viewBox="0 0 24 24">
+            <path d="M13.025 1l-2.847 2.828 6.176 6.176h-16.354v3.992h16.354l-6.176 6.176 2.847 2.828 10.975-11z"/>
+          </svg>
         </a>
+        <GithubStarButton
+          username="klinecharts" 
+          repo="KLineChart"
+          :inView="true"/>
       </div>
     </div>
   </div>
@@ -74,44 +80,51 @@ const { lang } = useData()
 .actions {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 12px;
   padding-top: 32px;
+  font-weight: 500;
 }
 
-.action {
+.quick-start-action {
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding: 4px 16px;
   border-radius: 99999px;
   cursor: pointer;
-  border: solid 1px;
-}
-
-.action.brand {
+  border: solid 1px var(--vp-c-indigo-1);
   background-color: var(--vp-c-indigo-1);
-  border-color: var(--vp-c-indigo-1);
   color: #fff;
+  padding: 0 16px;
+  height: 36px;
+  font-size: 14px;
+  transition: all 0.3s ease;
 }
 
-.action.brand:hover {
+.quick-start-action:hover {
   background-color: var(--vp-c-indigo-2);
   border-color: var(--vp-c-indigo-2);
 }
 
-.action.alt {
-  border-color: var(--vp-c-indigo-1);
-  color: var(--vp-c-indigo-1);
+.quick-start-action svg {
+  width: 12px;
+  height: 12px;;
+  fill: currentColor;
+  transition: all 0.3s ease;
+  margin-inline-start: 6px;
 }
 
-.action.alt:hover {
-  border-color: var(--vp-c-indigo-2);
-  color: var(--vp-c-indigo-2);
+.quick-start-action:hover svg {
+  animation: move 0.45s ease infinite alternate;
 }
 
-.action.alt svg {
-  width: 14px;
-  height: 14px;
+@keyframes move {
+  0% {
+    transform: translateX(-1px);
+  }
+  100% {
+    transform: translateX(1px);
+  }
 }
 
 @media (min-width: 640px) {
@@ -135,13 +148,15 @@ const { lang } = useData()
     gap: 20px;
     padding-top: 40px;
   }
-  .action {
-    padding: 6px 20px;
+  .quick-start-action {
+    height: 40px;
+    font-size: 16px;
+    padding: 0 20px;
   }
-
-  .action.alt svg {
-    width: 16px;
-    height: 16px;
+  .quick-start-action svg {
+    width: 14px;
+    height: 14px;
+    margin-inline-start: 8px;
   }
 }
 
