@@ -18,6 +18,8 @@
   height: 100%;
   z-index: 10;
   background-color: var(--vp-code-block-bg);
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
 }
 
 .loader {

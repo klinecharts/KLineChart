@@ -552,7 +552,12 @@ export default class ChartImp implements Chart {
   }
 
   setSymbol (symbol: PickPartial<SymbolInfo, 'pricePrecision' | 'volumePrecision'>): void {
-    this._chartStore.setSymbol(symbol)
+    if (symbol !== this.getSymbol()) {
+      this._drawPanes.forEach(pane => {
+        (pane.getAxisComponent() as AxisImp).setAutoCalcTickFlag(true)
+      })
+      this._chartStore.setSymbol(symbol)
+    }
   }
 
   getSymbol (): Nullable<SymbolInfo> {
@@ -560,7 +565,12 @@ export default class ChartImp implements Chart {
   }
 
   setPeriod (period: Period): void {
-    this._chartStore.setPeriod(period)
+    if (period !== this.getPeriod()) {
+      this._drawPanes.forEach(pane => {
+        (pane.getAxisComponent() as AxisImp).setAutoCalcTickFlag(true)
+      })
+      this._chartStore.setPeriod(period)
+    }
   }
 
   getPeriod (): Nullable<Period> {
