@@ -36,7 +36,7 @@ pnpm install
 - `build-esm`: Run `pnpm run build-esm` built esm module.
 - `build-cjs`: Run `pnpm run build-cjs` built commonjs module.
 - `build-umd:dev`: Run `pnpm run build-umd:dev` built umd development module.
-- `build-umd:prod`: Run `pnpm run build-umd:dev` built umd production module.
+- `build-umd:prod`: Run `pnpm run build-umd:prod` built umd production module.
 - `build-umd`: Run `pnpm run build-umd` built umd development and production module。
 - `build-core`: Run `pnpm run build-core` built esm, commonjs umd development and umd production module.
 - `build-dts`: Run `pnpm run build-dts` generate typescript dependency files.
