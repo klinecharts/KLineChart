@@ -1,5 +1,11 @@
 # 📠 Change Log
 
+## 10.0.0-alpha9
+`2025-09-02`
++ 👉 Change the return value of the indicator method `calc` from an array to an object keyed by a timestamp.
++ 💄 Optimize indicator calculation task execution.
++ 🐞 Fix an issue where the instance APIs `setSymbol`, `setPeriod`, and `setDataLoader` did not reset the Y axis.
+
 ## 10.0.0-alpha8
 `2025-06-14`
 + 🐞 Fix typescript reference error.

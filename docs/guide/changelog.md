@@ -1,5 +1,11 @@
 # 📠 更新日志
 
+## 10.0.0-alpha9
+`2025-09-02`
++ 👉 指标方法 `calc` 返回值由数组变更为以时间戳为key的对象。
++ 💄 优化指标计算任务执行。
++ 🐞 修复实例api `setSymbol` ， `setPeriod` 和 `setDataLoader` 不重置Y轴问题。
+
 ## 10.0.0-alpha8
 `2025-06-14`
 + 🐞 修复 typescript 引用错误。

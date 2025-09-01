@@ -18,23 +18,20 @@
     <div class="star-container" v-if="!isLoading">
       <!-- Background Star -->
       <svg
-        viewBox="0 0 24 24"
+        aria-hidden="true"
         class="star star-bg"
-        aria-hidden="true"
-      >
-        <path d="m12,2l3.09,6.26L22,9.27l-5,4.87L18.18,22L12,18.77L5.82,22L7,14.14L2,9.27l6.91-1.01L12,2Z"/>
+        viewBox="0 0 16 16">
+        <path d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.751.751 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Z"/>
       </svg>
-      
-      <!-- Filled Star -->
+      <!-- Filled Star with Dynamic Clip Path -->
       <svg
-        viewBox="0 0 24 24"
-        class="star star-filled"
         aria-hidden="true"
+        class="star star-filled"
+        viewBox="0 0 16 16"
         :style="{
           clipPath: `inset(${100 - fillPercentage}% 0 0 0)`
-        }"
-      >
-        <path d="m12,2l3.09,6.26L22,9.27l-5,4.87L18.18,22L12,18.77L5.82,22L7,14.14L2,9.27l6.91-1.01L12,2Z"/>
+        }">
+        <path d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.751.751 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Z"/>
       </svg>
       
       <!-- Particle Effects -->
@@ -231,11 +228,10 @@ onMounted(async () => {
     const data = await response.json()
     if (data && typeof data.stargazers_count === 'number') {
       stars.value = data.stargazers_count
+      isLoading.value = false
     }
   } catch (error) {
     console.error('Failed to fetch GitHub stars:', error)
-  } finally {
-    isLoading.value = false
   }
   
   // Setup intersection observer
@@ -289,14 +285,13 @@ watch([() => stars.value, () => isInView.value], ([newStars, newIsInView]) => {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 16px;
-  height: 16px;
-  margin-bottom: 2px;
+  width: 14px;
+  height: 14px;
 }
 
 .star {
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
 }
 
 .star-bg {
@@ -415,14 +410,13 @@ watch([() => stars.value, () => isInView.value], ([newStars, newIsInView]) => {
     height: 18px;
   }
   .star-container {
-    width: 18px;
-    height: 18px;
-    margin-bottom: 2px;
+    width: 16px;
+    height: 16px;
   }
 
-.star {
-  width: 18px;
-  height: 18px;
-}
+  .star {
+    width: 16px;
+    height: 16px;
+  }
 }
 </style>
