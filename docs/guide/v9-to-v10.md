@@ -29,4 +29,5 @@
 
 ## 自定义扩展调整
 + 指标 `createTooltipDataSource` 方法返回值 `values` 变更为 `legends` ， `icons` 变更为 `features`。
++ 指标 `calc` 方法返回值由数组变更为key为时间戳的对象。
 + 删除内置的基础图形 `rectText` ，请使用 `text` 代替。

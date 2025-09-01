@@ -29,4 +29,5 @@ This document will help you upgrade from klinecharts version 9.x to klinecharts 
 
 ## Extension adjustment
 + The indicator `createTooltipDataSource` method return value `values` changed to `legends` , `icons` changed to `features` .
++ The return value of the `calc` method of the indicator has been changed from an array to an object whose key is a timestamp.
 + Remove the built-in basic graphic `rectText`, please use `text` instead.
