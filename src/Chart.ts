@@ -551,11 +551,15 @@ export default class ChartImp implements Chart {
     return null
   }
 
+  private _resetYAxisAutoCalcTickFlag (): void {
+    this._drawPanes.forEach(pane => {
+      (pane.getAxisComponent() as AxisImp).setAutoCalcTickFlag(true)
+    })
+  }
+
   setSymbol (symbol: PickPartial<SymbolInfo, 'pricePrecision' | 'volumePrecision'>): void {
     if (symbol !== this.getSymbol()) {
-      this._drawPanes.forEach(pane => {
-        (pane.getAxisComponent() as AxisImp).setAutoCalcTickFlag(true)
-      })
+      this._resetYAxisAutoCalcTickFlag()
       this._chartStore.setSymbol(symbol)
     }
   }
@@ -566,9 +570,7 @@ export default class ChartImp implements Chart {
 
   setPeriod (period: Period): void {
     if (period !== this.getPeriod()) {
-      this._drawPanes.forEach(pane => {
-        (pane.getAxisComponent() as AxisImp).setAutoCalcTickFlag(true)
-      })
+      this._resetYAxisAutoCalcTickFlag()
       this._chartStore.setPeriod(period)
     }
   }
@@ -697,6 +699,7 @@ export default class ChartImp implements Chart {
   }
 
   setDataLoader (dataLoader: DataLoader): void {
+    this._resetYAxisAutoCalcTickFlag()
     this._chartStore.setDataLoader(dataLoader)
   }
 
