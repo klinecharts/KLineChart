@@ -12,7 +12,7 @@
   "view_home_faq_question_1": "初始化图表后，只能看到一个x轴，是怎么回事？",
   "view_home_faq_answer_1": "图表总是会填充容器，检查一下容器是否有高度。",
   "view_home_faq_question_2": "蜡烛柱显示趋近于一条线，看不到波动，怎么办？",
-  "view_home_faq_answer_2": "在设置交易对的时候要设置精度，调用<code>setSymbol({ ticker: 'TestSymbol', pricePrecision: 6, volumePrecision: 6 })<\/code> 。",
+  "view_home_faq_answer_2": "在设置交易对的时候要设置精度，调用 <code>setSymbol({ ticker: 'TestSymbol', pricePrecision: 6, volumePrecision: 6 })<\/code> 。",
   "view_home_faq_question_3": "分时图怎么创建？",
   "view_home_faq_answer_3": "通过样式设置，<code>chart.setStyles({ candle: { type: 'area' }})<\/code> 。",
   "view_home_faq_question_4": "内置的技术指标，计算出来的数据不是想要的，怎么办？",

@@ -1,9 +1,11 @@
 <script setup>
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
 import { useData } from 'vitepress'
-import i18n from '../../@i18n'
+import i18n from '../../../@i18n'
 
-import Section from './Section.vue'
+import Section from '../Section.vue'
+import ExpandIcon from './ExpandIcon.vue'
+import SmoothExpand from '../../../@components/SmoothExpand.vue'
 
 const { lang } = useData()
 
@@ -11,32 +13,32 @@ const items = ref([
   {
     q: "view_home_faq_question_1",
     a: "view_home_faq_answer_1",
-    collapsed: true
+    expanded: false
   },
   {
     q: "view_home_faq_question_2",
     a: "view_home_faq_answer_2",
-    collapsed: true
+    expanded: false
   },
   {
     q: "view_home_faq_question_3",
     a: "view_home_faq_answer_3",
-    collapsed: true
+    expanded: false
   },
   {
     q: "view_home_faq_question_4",
     a: "view_home_faq_answer_4",
-    collapsed: true
+    expanded: false
   },
   {
     q: "view_home_faq_question_5",
     a: "view_home_faq_answer_5",
-    collapsed: true
+    expanded: false
   },
   {
     q: "view_home_faq_question_6",
     a: "view_home_faq_answer_6",
-    collapsed: true
+    expanded: false
   },
 ])
 
@@ -47,28 +49,17 @@ const items = ref([
     :title="i18n('view_home_faq_title', lang)"
     :description="i18n('view_home_faq_desc', lang)">
     <ul class="faq">
-      <li class="item" v-for="item in items">
+      <li class="item" v-for="item in items" :key="item.q">
         <div class="item-content home-faq-item-content">
           <span class="item-content-q">{{ i18n(item.q, lang) }}</span>
-          <span v-if="!item.collapsed" class="item-content-a" v-html="i18n(item.a, lang)"/>
+          <SmoothExpand :expanded="item.expanded">
+            <span class="item-content-a" v-html="i18n(item.a, lang)"/>
+          </SmoothExpand>
         </div>
         <span
           class="icon"
-          @click="item.collapsed = !item.collapsed">
-          <svg
-            v-if="item.collapsed"
-            viewBox="0 0 30 30">
-            <g transform="translate(-1630, -2301)">
-              <path d="M1647,2301 L1647,2314 L1660,2314 L1660,2318 L1646.999,2318 L1647,2331 L1643,2331 L1642.999,2318 L1630,2318 L1630,2314 L1643,2314 L1643,2301 L1647,2301 Z"/>
-            </g>
-          </svg>
-          <svg
-            v-if="!item.collapsed"
-            viewBox="0 0 30 4">
-            <g transform="translate(-1630, -2444)">
-              <rect x="1630" y="2444" width="30" height="4"/>
-            </g>
-          </svg>
+          @click="item.expanded = !item.expanded">
+          <ExpandIcon :expanded="item.expanded"/>
         </span>
       </li>
     </ul>
@@ -97,10 +88,11 @@ const items = ref([
   display: flex;
   flex-direction: row;
   width: 100%;
-  background-color: var(--vp-c-bg-soft);
+  background-color: var(--vp-code-block-bg);
   padding: 16px 26px;
   border-radius: 8px;
   color: var(--vp-c-text-1);
+  overflow: hidden;
 }
 
 .item-content {
@@ -108,6 +100,7 @@ const items = ref([
   flex-direction: column;
   margin-right: auto;
   padding-right: 16px;
+  width: 100%;
 }
 
 .item-content-q {
@@ -115,7 +108,12 @@ const items = ref([
   line-height: 22px;
 }
 
+.item-content-a-wrapper {
+  overflow: hidden;
+}
+
 .item-content-a {
+  display: block;
   font-size: 14px;
   padding-top: 12px;
   color: var(--vp-c-text-2);
@@ -126,14 +124,11 @@ const items = ref([
   display: flex;
   flex-direction: row;
   align-items: center;
+  justify-content: center;
   width: 16px;
   height: 22px;
   cursor: pointer;
-}
-
-.icon svg {
-  width: 16px;
-  fill: var(--vp-c-text-1);
+  flex-shrink: 0;
 }
 
 @media (min-width: 640px) {
@@ -155,10 +150,6 @@ const items = ref([
   .icon {
     width: 20px;
     height: 28px;
-  }
-
-  .icon svg {
-    width: 20px;
   }
 }
 </style>

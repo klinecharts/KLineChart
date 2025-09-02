@@ -33,11 +33,16 @@ const props = defineProps(['tip'])
   overflow: hidden;
   white-space: nowrap;
   padding: 6px 10px;
-  background-color: var(--vp-code-block-bg);
+  color: var(--dark-c-text-1);
+  background-color: var(--dark-c-bg);
   border-radius: 4px;
-  color: var(--vp-c-text-1);
   font-weight: normal;
   box-shadow: 0 6px 16px -8px rgba(0, 0, 0, .5);
+}
+
+.dark .tip {
+  color: var(--light-c-text-1);
+  background-color: var(--light-c-bg);
 }
 
 .tip:after {
@@ -50,8 +55,12 @@ const props = defineProps(['tip'])
   left: calc(50% - 5px);
   border-left: solid 5px transparent;
   border-right: solid 5px transparent;
-  border-top: solid 5px var(--vp-code-block-bg);
+  border-top: solid 5px var(--dark-c-bg);
   z-index: 20;
+}
+
+.dark .tip:after {
+  border-top: solid 5px var(--light-c-bg);
 }
 
 .body {
@@ -60,8 +69,7 @@ const props = defineProps(['tip'])
 
 .body:hover + .tip-container {
   opacity: 1;
-  bottom: calc(100% + 10px);
+  bottom: calc(100% + 16px);
 }
-
 
 </style>

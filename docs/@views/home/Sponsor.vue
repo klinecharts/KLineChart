@@ -118,7 +118,7 @@ import i18n from '../../@i18n';
     align-items: center;
     width: 100%;
     color: var(--vp-c-text-2)!important;
-    background-color: var(--vp-c-bg-soft);
+    background-color: var(--vp-code-block-bg);
     border-radius: 8px;
     transition: background-color .2s;
     cursor: pointer;

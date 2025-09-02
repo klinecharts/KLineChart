@@ -19,6 +19,7 @@ import i18n from '../@i18n'
 
 import Tooltip from './Tooltip.vue'
 import Loading from './Loading.vue'
+import SmoothExpand from './SmoothExpand.vue'
 
 const { isDark, lang } = useData()
 
@@ -300,15 +301,16 @@ onUnmounted(() => {
       </button>
     </div>
   </template>
-  <div
-    v-if="showCode"
-    class="content-item chart-preview-code">
-    <button
-      class="copy"
-      :class="{ 'copied': copied }"
-      @click="copyHandler()"/>
-    <div v-html="codeHtml"/>
-  </div>
+  <SmoothExpand :expanded="showCode">
+    <div
+      class="content-item chart-preview-code">
+      <button
+        class="copy"
+        :class="{ 'copied': copied }"
+        @click="copyHandler()"/>
+      <div v-html="codeHtml"/>
+    </div>
+  </SmoothExpand>
 </div>
 </template>
 

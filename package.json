@@ -61,9 +61,9 @@
     "build-dts": "dts-bundle-generator --no-banner true --fail-on-class true --umd-module-name klinecharts -o dist/index.d.ts src/index.ts",
     "build": "pnpm clean && pnpm build-core && pnpm build-dts",
     "docs:dev": "pnpm -F=docs dev",
-    "docs:build": "pnpm -F=docs build",
+    "docs:build": "pnpm build-umd:prod && pnpm -F=docs build",
     "docs:preview": "pnpm -F=docs preview",
-    "docs:deploy": "pnpm build-umd:prod && pnpm docs:build && gh-pages -d website"
+    "docs:deploy": "pnpm docs:build && gh-pages -d website"
   },
   "packageManager": "pnpm@10.4.1",
   "devDependencies": {
