@@ -1,1 +1,0 @@
-import{C as t}from"./theme.GgFhAdag.js";import{b as r,o as e,k as o}from"./framework.DaiwiRog.js";const s=JSON.parse(`{"js":"import { getSupportedIndicators } from 'klinecharts'\\n\\nconst supports = getSupportedIndicators()\\n"}`),i={__name:"index",setup(n){return(a,p)=>(e(),r(t,{title:"getSupportedIndicators",hiddenChart:!0,code:o(s).js},null,8,["code"]))}};export{i as _};
