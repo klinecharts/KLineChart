@@ -1,10 +1,13 @@
+<script setup>
+import Tip from '../@components/Tip.vue'
+</script>
+
 # 基础图形
 基础图形是图表重要的组成部分，图表上所有的元素都是由基础图形组成，如果需要制作复杂的自定义技术指标和覆盖物，建议仔细阅读。这篇文档介绍了内置的基本图形和如何自定义一个基础图形。基础图形可以通过图表方法    `klinecharts.getFigureClass(name)` 获取。
 
 ## 使用示例
-::: warning 注意
-需要在有画布上下文的情况下使用。
-:::
+<Tip type="warn" title="注意" tip="需要在有画布上下文的情况下使用。"/>
+
 
 ```javascript
 // 获取基础图形实例

@@ -81,7 +81,7 @@ const items = ref([
   flex-direction: column;
   align-items: center;
   width: 100%;
-  gap: 12px;
+  gap: 10px;
 }
 
 .item {
@@ -133,7 +133,7 @@ const items = ref([
 
 @media (min-width: 640px) {
   .faq {
-    gap: 20px;
+    gap: 16px;
   }
   .item {
     padding: 18px 50px;

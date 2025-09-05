@@ -92,7 +92,7 @@
       </div>
       <div class="sponsor-become">
         <a target="_blank" rel="noreferrer" href="./sponsor.html" @mouseenter="showParticle" >
-          <Particle ref="particle" color="var(--vp-c-text-1)">
+          <Particle ref="particle">
             <svg width="18" height="18" viewBox="0 0 24 24">
               <path fill="currentColor" d="m12 21l-1.45-1.3q-2.525-2.275-4.175-3.925T3.75 12.812T2.388 10.4T2 8.15Q2 5.8 3.575 4.225T7.5 2.65q1.3 0 2.475.55T12 4.75q.85-1 2.025-1.55t2.475-.55q2.35 0 3.925 1.575T22 8.15q0 1.15-.387 2.25t-1.363 2.412t-2.625 2.963T13.45 19.7z"/>
             </svg>
@@ -119,7 +119,7 @@
   .sponsor-grid {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
+    gap: 10px;
   }
 
   .sponsor-grid-item {
@@ -193,31 +193,23 @@
     gap: 8px;
     border-radius: 99px;
     transition: all .25s ease-in;
-    background-color: var(--vp-c-indigo-1);
-    color: white;
+    border: solid 1px var(--vp-c-indigo-1);
+    color: var(--vp-c-indigo-1);
     text-decoration: none;
   }
 
   .sponsor-become a:hover {
-    background-color: var(--vp-c-indigo-2);
+    border-color: var(--vp-c-indigo-2);
+    color: var(--vp-c-indigo-2);
   }
 
   @media (min-width: 640px) {
     .sponsor-grid {
-      gap: 4px;
-    }
-    .sponsor-platinum-grid .item {
-      width: calc((100% - 12px) / 3);
+      gap: 16px;
     }
 
-    .sponsor-gold-grid .item {
-      width: calc((100% - 30px) / 4);
-    }
-  }
-
-  @media (min-width: 960px) {
     .sponsor-top-grid .item-no2-no3 {
-      width: calc((100% - 4px) / 2);
+      width: calc((100% - 16px) / 2);
       height: 140px;
     }
 
@@ -226,11 +218,11 @@
     }
 
     .sponsor-platinum-grid .item {
-      width: calc((100% - 18px) / 4);
+      width: calc((100% - 32px) / 3);
     }
 
     .sponsor-gold-grid .item {
-      width: calc((100% - 54px) / 10);
+      width: calc((100% - 48px) / 4);
     }
   }
 </style>

@@ -26,15 +26,15 @@
   width: 14px;
   aspect-ratio: 1;
   border-radius: 50%;
-  background: var(--custom-red);
+  background: var(--vp-c-indigo-1);
   animation: l2 1.5s infinite;
 }
 @keyframes l2 {
   0%,
-  100%{transform:translate(-35px);box-shadow:  0     0 var(--vp-c-indigo-1), 0     0 var(--custom-green)}
-  40% {transform:translate( 35px);box-shadow: -15px  0 var(--vp-c-indigo-1), -30px  0 var(--custom-green)}
-  50% {transform:translate( 35px);box-shadow:  0     0 var(--vp-c-indigo-1), 0     0 var(--custom-green)}
-  90% {transform:translate(-35px);box-shadow:  15px  0 var(--vp-c-indigo-1), 30px  0 var(--custom-green)}
+  100%{transform:translate(-35px);box-shadow:  0     0 var(--vp-c-indigo-1), 0     0 var(--vp-c-indigo-1)}
+  40% {transform:translate( 35px);box-shadow: -15px  0 var(--vp-c-indigo-1), -30px  0 var(--vp-c-indigo-1)}
+  50% {transform:translate( 35px);box-shadow:  0     0 var(--vp-c-indigo-1), 0     0 var(--vp-c-indigo-1)}
+  90% {transform:translate(-35px);box-shadow:  15px  0 var(--vp-c-indigo-1), 30px  0 var(--vp-c-indigo-1)}
 }
 </style>
 

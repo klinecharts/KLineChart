@@ -2,12 +2,28 @@
 outline: deep
 ---
 
+<script setup>
+import InitBasic from '../../../@views/api/samples/init-basic/index.vue'
+import InitLayout from '../../../@views/api/samples/init-layout/index.vue'
+import InitLocaleBuiltIn from '../../../@views/api/samples/init-locale-built-in/index.vue'
+import InitLocaleExtension from '../../../@views/api/samples/init-locale-extension/index.vue'
+import InitTimezone from '../../../@views/api/samples/init-timezone/index.vue'
+import InitStylesBuiltIn from '../../../@views/api/samples/init-styles-built-in/index.vue'
+import InitStylesExtension from '../../../@views/api/samples/init-styles-extension/index.vue'
+import InitStylesOverride from '../../../@views/api/samples/init-styles-override/index.vue'
+import InitFormatDate from '../../../@views/api/samples/init-formateDate/index.vue'
+import InitFormatBigNumber from '../../../@views/api/samples/init-formatBigNumber/index.vue'
+import InitThousandsSeparatorNone from '../../../@views/api/samples/init-thousandsSeparator-none/index.vue'
+import InitThousandsSeparatorFormat from '../../../@views/api/samples/init-thousandsSeparator-format/index.vue'
+import InitDecimalFoldNone from '../../../@views/api/samples/init-decimalFold-none/index.vue'
+import InitDecimalFoldFormat from '../../../@views/api/samples/init-decimalFold-format/index.vue'
+import Tip from '../../../@components/Tip.vue'
+</script>
+
 # init(ds, options?)
 `init` used to initialize a chart.
 
-::: tip Tip
-When calling, you need to wait until the container `dom` is ready.
-:::
+<Tip title="Tip" tip="When calling, you need to wait until the container is ready."/>
 
 ## Reference {#reference}
 <!-- @include: @/@views/api/references/chart/init.md -->
@@ -53,22 +69,6 @@ When calling, you need to wait until the container `dom` is ready.
 `init` returns an object `Chart`。
 
 ## Usage {#usage}
-<script setup>
-import InitBasic from '../../../@views/api/samples/init-basic/index.vue'
-import InitLayout from '../../../@views/api/samples/init-layout/index.vue'
-import InitLocaleBuiltIn from '../../../@views/api/samples/init-locale-built-in/index.vue'
-import InitLocaleExtension from '../../../@views/api/samples/init-locale-extension/index.vue'
-import InitTimezone from '../../../@views/api/samples/init-timezone/index.vue'
-import InitStylesBuiltIn from '../../../@views/api/samples/init-styles-built-in/index.vue'
-import InitStylesExtension from '../../../@views/api/samples/init-styles-extension/index.vue'
-import InitStylesOverride from '../../../@views/api/samples/init-styles-override/index.vue'
-import InitFormatDate from '../../../@views/api/samples/init-formateDate/index.vue'
-import InitFormatBigNumber from '../../../@views/api/samples/init-formatBigNumber/index.vue'
-import InitThousandsSeparatorNone from '../../../@views/api/samples/init-thousandsSeparator-none/index.vue'
-import InitThousandsSeparatorFormat from '../../../@views/api/samples/init-thousandsSeparator-format/index.vue'
-import InitDecimalFoldNone from '../../../@views/api/samples/init-decimalFold-none/index.vue'
-import InitDecimalFoldFormat from '../../../@views/api/samples/init-decimalFold-format/index.vue'
-</script>
 
 ### Basic usage {#basic}
 <InitBasic/>

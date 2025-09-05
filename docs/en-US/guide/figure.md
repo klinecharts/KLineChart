@@ -1,10 +1,12 @@
+<script setup>
+import Tip from '../../@components/Tip.vue'
+</script>
+
 # Figure
 Figure are an important part of the chart. All elements on the chart are composed of figures. If you need to make complex custom technical indicators and overlays, it is recommended to read carefully. This document describes the built-in figures and how to customize a figure. The basic figure can be obtained through the chart method `klinecharts.getFigureClass(name)`.
 
 ## Example of use
-::: warning Note
-It needs to be used when there is a canvas context.
-:::
+<Tip type="warn" title="Note" tip="It needs to be used when there is a canvas context."/>
 
 ```javascript
 // Get the figure class

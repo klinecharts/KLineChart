@@ -9,8 +9,9 @@ import HomeTopSponsor from './home/TopSponsor.vue'
 import HomeCreateChart from './home/create-chart/index.vue'
 import HomeFAQ from './home/faq/index.vue'
 import HomeSponsor from './home/Sponsor.vue'
-import AsideSponsor from './AsideSponsor.vue'
+// import AsideSponsor from './AsideSponsor.vue'
 import NotFound from './NotFound.vue'
+import ColorPalette from './ColorPalette.vue'
 
 const { isDark } = useData()
 
@@ -62,11 +63,14 @@ provide('toggle-appearance', async ({ clientX: x, clientY: y }) => {
       <HomeFAQ/>
       <HomeSponsor/>
     </template>
-    <template #aside-bottom>
+    <!-- <template #aside-bottom>
       <AsideSponsor/>
-    </template>
+    </template> -->
     <template #not-found>
       <NotFound/>
+    </template>
+    <template #layout-bottom>
+      <ColorPalette/>
     </template>
   </DefaultTheme.Layout>
 </template>

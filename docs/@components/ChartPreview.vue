@@ -23,7 +23,6 @@ import SmoothExpand from './SmoothExpand.vue'
 
 const { isDark, lang } = useData()
 
-
 const href = ref()
 
 const props = defineProps(['title', 'chartId', 'chartHeight', 'code'])

@@ -1,3 +1,4 @@
+import { fileURLToPath, URL } from 'node:url'
 import fs from 'fs'
 import path from 'path'
 import { defineConfig } from 'vitepress'
@@ -18,6 +19,16 @@ function config () {
       },
       define: {
         'process.env': JSON.stringify(process.env)
+      },
+      resolve: {
+        alias: [
+          {
+            find: /^.*\/VPNavBarTitle\.vue$/,
+            replacement: fileURLToPath(
+              new URL('../../@components/NavbarTitle.vue', import.meta.url)
+            )
+          }
+        ]
       }
     },
     cleanUrls: true,
@@ -37,7 +48,7 @@ function config () {
       languages: ['js', 'jsx', 'ts', 'tsx']
     },
     head: [
-      ['link', { rel: 'icon', type: 'image/svg+xml', href: '/images/logo.svg' }],
+      ['link', { rel: 'icon', type: 'image/x-icon', href: '/images/fav.png' }],
       ['script', {}, `${klinecharts}`],
       [
         'script',
