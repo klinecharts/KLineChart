@@ -1,4 +1,4 @@
-# Local Development
+# 👨‍💻 Local Development
 
 ## Introduction
 If you see this, you may be interested in improving the KLineChart core. Thank you [@fish2016](https://github.com/fish2016) This document was written.

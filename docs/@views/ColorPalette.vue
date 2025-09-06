@@ -1,7 +1,12 @@
 <template>
   <button class="color-palette" @click="visible = !visible" @blur="visible = false">
     <div class="content" :class="{ visible: visible }">
-      <div v-for="color in colors" :key="color" class="item" :style="{ 'border-color': currentColor === color ? color : 'transparent', color }" @click="changePrimaryColor(color)">
+      <div
+        v-for="color in colors"
+        :key="color"
+        class="item"
+        :style="{ 'border-color': currentColor === color ? color : 'transparent', color }"
+        @click="changePrimaryColor(color)">
         <span/>
       </div>
     </div>
@@ -16,51 +21,44 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-
-// const colors = ref([
-//   '--primary-c-red',
-//   '--primary-c-orange',
-//   '--primary-c-yellow',
-//   '--primary-c-green',
-//   '--primary-c-cyan',
-//   '--primary-c-blue',
-//   '--primary-c-purple',
-//   '--primary-c-pink',
-// ])
+import { ref, watch } from 'vue'
+import { inBrowser } from 'vitepress'
+import { useLocalStorage } from '@vueuse/core'
 
 const visible = ref(false)
 
-const currentColor = ref('#E6AC00')
+const currentColor = useLocalStorage('klinecharts-primary-color')
 
-onMounted(() => {
-  const primaryColor = localStorage.getItem('klinecharts-primary-color') || '#E6AC00'
-  changePrimaryColor(primaryColor)
-
-  console.log(lighten('#E6AC00', 60))
-})
-
-function changePrimaryColor (color) {
-  const style = document.documentElement.style
-  style.setProperty('--vp-c-indigo-1', color)
-  style.setProperty('--vp-c-indigo-2', lighten(color, 20))
-  style.setProperty('--vp-c-indigo-3', lighten(color, 40))
-  style.setProperty('--vp-home-hero-bg', `linear-gradient(180deg, transparent 0%, ${hexToRgba(color, 0.1)} 52%, transparent 100%)`)
-
-  localStorage.setItem('klinecharts-primary-color', color)
-  currentColor.value = color
-}
-
-const colors = ref([
+const colors = [
   '#F92855',
+  '#EC4899',
   '#F17313',
   '#E6AC00',
   '#2DC08E',
-  '#3FB5FB',
+  "#84CC16",
   '#1677FF',
+  '#3FB5FB',
   '#A14DFD',
-  '#EC4899'
-])
+  '#8F6CEE'
+]
+
+const DEFAULT_COLOR = '#E6AC00'
+
+watch(currentColor, (color) => {
+  let finalColor = color || DEFAULT_COLOR
+  if (colors.indexOf(finalColor) < 0) {
+    finalColor = DEFAULT_COLOR
+  }
+  const style = document.documentElement.style
+  style.setProperty('--vp-c-indigo-1', finalColor)
+  style.setProperty('--vp-c-indigo-2', lighten(finalColor, 20))
+  style.setProperty('--vp-c-indigo-3', lighten(finalColor, 40))
+  style.setProperty('--vp-home-hero-bg', `linear-gradient(180deg, transparent 0%, ${hexToRgba(finalColor, 0.1)} 52%, transparent 100%)`)
+}, { immediate: inBrowser, flush: 'post' })
+
+function changePrimaryColor (color) {
+  currentColor.value = color
+}
 
 function lighten (color, percent) {
   color = color.replace(/^#/, "")
@@ -101,8 +99,8 @@ function hexToRgba (hex, alpha) {
     height: 40px;
     border-radius: 50%;
     z-index: 1000;
-    right: 24px;
-    bottom: 48px;
+    right: 36px;
+    bottom: 96px;
     cursor: pointer;
     background-color: var(--vp-c-bg-elv);
     box-shadow: var(--vp-shadow-3);
@@ -132,7 +130,7 @@ function hexToRgba (hex, alpha) {
     transform: scale(0);
     opacity: 0;
     transform-origin: bottom;
-    transition: all .2s ease;
+    transition: all .3s ease;
   }
 
   .content.visible {
@@ -150,7 +148,6 @@ function hexToRgba (hex, alpha) {
     border-radius: 50%;
     border: solid 1px;
     box-sizing: border-box;
-    transition: all .25s ease-in;
   }
 
   .item span {

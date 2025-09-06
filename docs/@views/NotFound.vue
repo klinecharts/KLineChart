@@ -112,7 +112,7 @@ function showParticle() {
   padding: 4px 16px;
   font-size: 14px;
   font-weight: 500;
-  transition: border-color 0.2s, color 0.2s;
+  transition: all 0.3s ease;
 }
 
 .link:hover {

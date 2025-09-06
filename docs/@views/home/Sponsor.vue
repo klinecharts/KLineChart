@@ -130,7 +130,7 @@
     color: var(--vp-c-text-2)!important;
     background-color: var(--vp-code-block-bg);
     border-radius: 8px;
-    transition: background-color .2s;
+    transition: background-color .3s ease;
     cursor: pointer;
     color: inherit;
     font-size: 32px;
@@ -192,7 +192,7 @@
     padding: 8px 20px;
     gap: 8px;
     border-radius: 99px;
-    transition: all .25s ease-in;
+    transition: all .3s ease;
     border: solid 1px var(--vp-c-indigo-1);
     color: var(--vp-c-indigo-1);
     text-decoration: none;

@@ -285,7 +285,7 @@ watch([() => stars.value, () => isInView.value], ([newStars, newIsInView]) => {
   left: 0;
   fill: var(--vp-c-indigo-1);
   color: var(--vp-c-indigo-1);
-  transition: clip-path 0.3s ease;
+  transition: all 0.3s ease;
 }
 
 /* Number Container */

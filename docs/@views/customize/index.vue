@@ -96,7 +96,7 @@ const { lang } = useData()
   border-radius: 8px;
   transform: scale(1);
   transform-origin: center bottom;
-  transition: all 0.25s ease-in-out;
+  transition: all 0.3s ease;
   cursor: pointer;
   max-width: 400px;
   box-sizing: border-box;
@@ -153,7 +153,7 @@ const { lang } = useData()
   height: 100px;
   font-size: 14px;
   padding: 0 20px;
-  color: #e77c0a;
+  color: #E6AC00;
   line-height: 18px;
   border-top: solid 1px var(--vp-c-gutter);
 }

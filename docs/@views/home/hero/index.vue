@@ -76,6 +76,7 @@ const { lang } = useData()
   margin-top: calc((var(--vp-nav-height) + var(--vp-layout-top-height, 0px)) * -1);
   padding: calc(var(--vp-nav-height) + var(--vp-layout-top-height, 0px) + 48px) 24px 48px;
   background: var(--vp-home-hero-bg);
+  transition: background .3s ease;
 }
 
 .container {
@@ -89,6 +90,7 @@ const { lang } = useData()
 
 .name {
   height: 22px;
+  transition: all .3s ease;
 }
 
 .text {
@@ -128,7 +130,7 @@ const { lang } = useData()
   cursor: pointer;
   border: solid 1px var(--vp-c-indigo-1);
   background-color: var(--vp-c-indigo-1);
-  color: #fff;
+  color: #FFFFFF;
   padding: 0 16px;
   height: 36px;
   font-size: 14px;
