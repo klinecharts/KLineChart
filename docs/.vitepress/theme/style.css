@@ -25,9 +25,9 @@
   --dark-c-text-3: #A1A1AA;
   --dark-c-bg: #09090B;
 
-  /* --vp-c-indigo-1: #E6AC00;
-  --vp-c-indigo-2: #d6ac2e;
-  --vp-c-indigo-3: #c9aa4e; */
+  --vp-c-indigo-1: transparent;
+  --vp-c-indigo-2: transparent;
+  --vp-c-indigo-3: transparent;
 
   --vp-c-text-1: var(--light-c-text-1);
   --vp-c-text-2: var(--light-c-text-2);

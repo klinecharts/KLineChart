@@ -1,6 +1,6 @@
 <template>
-  <button class="color-palette" @click="visible = !visible" @blur="visible = false">
-    <div class="content" :class="{ visible: visible }">
+  <button v-if="visible" class="color-palette" @click="popoverVisible = !popoverVisible" @blur="visible = false">
+    <div class="content" :class="{ visible: popoverVisible }">
       <div
         v-for="color in colors"
         :key="color"
@@ -21,11 +21,13 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import { inBrowser } from 'vitepress'
 import { useLocalStorage } from '@vueuse/core'
 
 const visible = ref(false)
+
+const popoverVisible = ref(false)
 
 const currentColor = useLocalStorage('klinecharts-primary-color')
 
@@ -43,6 +45,10 @@ const colors = [
 ]
 
 const DEFAULT_COLOR = '#E6AC00'
+
+onMounted(() => {
+  visible.value = true
+})
 
 watch(currentColor, (color) => {
   let finalColor = color || DEFAULT_COLOR
