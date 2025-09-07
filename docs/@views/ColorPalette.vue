@@ -46,6 +46,8 @@ const colors = [
 
 const DEFAULT_COLOR = '#E6AC00'
 
+let colorStyle = null
+
 onMounted(() => {
   visible.value = true
 })
@@ -55,11 +57,17 @@ watch(currentColor, (color) => {
   if (colors.indexOf(finalColor) < 0) {
     finalColor = DEFAULT_COLOR
   }
-  const style = document.documentElement.style
-  style.setProperty('--vp-c-indigo-1', finalColor)
-  style.setProperty('--vp-c-indigo-2', lighten(finalColor, 20))
-  style.setProperty('--vp-c-indigo-3', lighten(finalColor, 40))
-  style.setProperty('--vp-home-hero-bg', `linear-gradient(180deg, transparent 0%, ${hexToRgba(finalColor, 0.1)} 52%, transparent 100%)`)
+  if (!colorStyle) {
+    colorStyle = document.createElement('style')
+    document.body.appendChild(colorStyle)
+  }
+  colorStyle.innerHTML = `
+    :root {
+      --vp-c-indigo-1: ${finalColor};
+      --vp-c-indigo-2: ${lighten(finalColor, 20)};
+      --vp-c-indigo-3: ${lighten(finalColor, 40)};
+      --vp-home-hero-bg: linear-gradient(180deg, transparent 0%, ${hexToRgba(finalColor, 0.1)} 52%, transparent 100%)
+    }`
 }, { immediate: inBrowser, flush: 'post' })
 
 function changePrimaryColor (color) {
