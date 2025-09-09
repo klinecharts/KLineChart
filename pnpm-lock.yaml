@@ -64,7 +64,7 @@ importers:
         version: 20.17.30
       '@vueuse/core':
         specifier: ^11.1.0
-        version: 11.3.0(vue@3.5.13(typescript@5.8.3))
+        version: 11.3.0(vue@3.5.18(typescript@5.8.3))
       codesandbox:
         specifier: ^2.2.3
         version: 2.2.3
@@ -5173,12 +5173,12 @@ snapshots:
 
   '@vue/shared@3.5.18': {}
 
-  '@vueuse/core@11.3.0(vue@3.5.13(typescript@5.8.3))':
+  '@vueuse/core@11.3.0(vue@3.5.18(typescript@5.8.3))':
     dependencies:
       '@types/web-bluetooth': 0.0.20
       '@vueuse/metadata': 11.3.0
-      '@vueuse/shared': 11.3.0(vue@3.5.13(typescript@5.8.3))
-      vue-demi: 0.14.10(vue@3.5.13(typescript@5.8.3))
+      '@vueuse/shared': 11.3.0(vue@3.5.18(typescript@5.8.3))
+      vue-demi: 0.14.10(vue@3.5.18(typescript@5.8.3))
     transitivePeerDependencies:
       - '@vue/composition-api'
       - vue
@@ -5202,9 +5202,9 @@ snapshots:
 
   '@vueuse/metadata@13.9.0': {}
 
-  '@vueuse/shared@11.3.0(vue@3.5.13(typescript@5.8.3))':
+  '@vueuse/shared@11.3.0(vue@3.5.18(typescript@5.8.3))':
     dependencies:
-      vue-demi: 0.14.10(vue@3.5.13(typescript@5.8.3))
+      vue-demi: 0.14.10(vue@3.5.18(typescript@5.8.3))
     transitivePeerDependencies:
       - '@vue/composition-api'
       - vue
@@ -8791,9 +8791,9 @@ snapshots:
       - universal-cookie
       - yaml
 
-  vue-demi@0.14.10(vue@3.5.13(typescript@5.8.3)):
+  vue-demi@0.14.10(vue@3.5.18(typescript@5.8.3)):
     dependencies:
-      vue: 3.5.13(typescript@5.8.3)
+      vue: 3.5.18(typescript@5.8.3)
 
   vue-resize@2.0.0-alpha.1(vue@3.5.13(typescript@5.8.3)):
     dependencies:

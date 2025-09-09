@@ -56,7 +56,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch, nextTick } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
 
 import Particle from '../../../@components/Particle.vue'
 
@@ -89,8 +89,14 @@ const props = defineProps({
   className: {
     type: String,
     default: ''
+  },
+  delay: {
+    type: Number,
+    default: 0
   }
 })
+
+const delayTimer = ref(null)
 
 const particle = ref(null)
 
@@ -217,8 +223,10 @@ onMounted(async () => {
     const response = await fetch(`https://api.github.com/repos/${props.username}/${props.repo}`)
     const data = await response.json()
     if (data && typeof data.stargazers_count === 'number') {
-      stars.value = data.stargazers_count
-      isLoading.value = false
+      delayTimer.value = setTimeout(() => {
+        stars.value = data.stargazers_count
+        isLoading.value = false
+      }, props.delay * 1000)
     }
   } catch (error) {
     console.error('Failed to fetch GitHub stars:', error)
@@ -227,6 +235,12 @@ onMounted(async () => {
   // Setup intersection observer
   await nextTick()
   setupIntersectionObserver()
+})
+
+onUnmounted(() => {
+  if (delayTimer.value) {
+    clearTimeout(delayTimer.value)
+  }
 })
 
 // Watchers

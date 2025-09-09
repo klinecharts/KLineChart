@@ -17,12 +17,12 @@
 :root {
   --light-c-text-1: #09090B;
   --light-c-text-2: #71717A;
-  --light-c-text-3: #71717A;
+  --light-c-text-3: #A1A1AA;
   --light-c-bg: #FFFFFF;
 
   --dark-c-text-1: #FAFAFA;
   --dark-c-text-2: #A1A1AA;
-  --dark-c-text-3: #A1A1AA;
+  --dark-c-text-3: #828282;
   --dark-c-bg: #09090B;
 
   --vp-c-indigo-1: #E6AC00;
@@ -46,13 +46,6 @@
   --vp-code-color: var(--vp-c-text-1);
 
   --vp-nav-height: 60px;
-
-  --vp-button-brand-border: var(--vp-c-indigo-2);
-  --vp-button-brand-bg: var(--vp-c-indigo-1);
-  --vp-button-brand-hover-border: var(--vp-c-indigo-2);
-  --vp-button-brand-hover-bg: var(--vp-c-indigo-2);
-  --vp-button-brand-active-border: var(--vp-c-indigo-2);
-  --vp-button-brand-active-bg: var(--vp-button-brand-bg);
 
   --vp-sidebar-bg-color: var(--vp-c-bg);
   --vp-c-divider: #EFEFEF;
