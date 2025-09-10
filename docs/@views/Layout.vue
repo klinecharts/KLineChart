@@ -1,7 +1,7 @@
 <script setup>
 import { useData } from 'vitepress'
 import DefaultTheme from 'vitepress/theme'
-import { nextTick, provide } from 'vue'
+import { nextTick, provide, onMounted, ref } from 'vue'
 
 import Banner from './Banner.vue'
 import HomeHero from './home/hero/index.vue'
@@ -14,6 +14,12 @@ import NotFound from './NotFound.vue'
 import ColorPalette from './ColorPalette.vue'
 
 const { isDark } = useData()
+
+const mounted = ref(false)
+
+onMounted(() => {
+  mounted.value = true
+})
 
 const enableTransitions = () =>
   'startViewTransition' in document &&
@@ -50,7 +56,7 @@ provide('toggle-appearance', async ({ clientX: x, clientY: y }) => {
 </script>
 
 <template>
-  <DefaultTheme.Layout>
+  <DefaultTheme.Layout v-if="mounted">
     <template #layout-top>
       <Banner/>
     </template>

@@ -24,7 +24,7 @@ const { lang } = useData()
   line-height: 36px;
   font-size: 30px;
   font-weight: 700;
-  padding: 10px 0;
+  padding: 10px 0 12px 0;
   max-width: 80%;
   position: relative;
   flex-direction: column;
@@ -43,7 +43,7 @@ const { lang } = useData()
   .slogan {
     line-height: 50px;
     font-size: 44px;
-    padding: 14px 0 26px 0;
+    padding: 18px 0 28px 0;
     max-width: 70%;
   }
 }
@@ -51,7 +51,7 @@ const { lang } = useData()
 @media (min-width: 960px) {
   .slogan {
     line-height: 60px;
-    padding: 20px 0 34px 0;
+    padding: 26px 0 36px 0;
     font-size: 54px;
     max-width: 700px;
   }

@@ -25,7 +25,7 @@ function showParticle() {
   <div class="NotFound">
     <div class="logo">
       <span>4</span>
-      <Logo size="90"/>
+      <Logo :size="90"/>
       <span>4</span>
     </div>
     

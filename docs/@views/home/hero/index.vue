@@ -37,8 +37,9 @@ const { lang } = useData()
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   margin-top: calc((var(--vp-nav-height) + var(--vp-layout-top-height, 0px)) * -1);
-  padding: calc(var(--vp-nav-height) + var(--vp-layout-top-height, 0px) + 48px) 24px 48px;
+  padding: calc(var(--vp-nav-height) + var(--vp-layout-top-height, 0px) + 60px) 24px 80px 24px;
   background: var(--vp-home-hero-bg);
   transition: background .3s ease;
 }
@@ -88,7 +89,7 @@ const { lang } = useData()
 
 @media (min-width: 640px) {
   .hero {
-    padding: calc(var(--vp-nav-height) + var(--vp-layout-top-height, 0px) + 80px) 48px 64px;
+    padding: calc(var(--vp-nav-height) + var(--vp-layout-top-height, 0px) + 100px) 48px 110px 48px;
   }
   .tagline {
     max-width: 576px;
@@ -102,7 +103,7 @@ const { lang } = useData()
 
 @media (min-width: 960px) {
   .hero {
-    padding: calc(var(--vp-nav-height) + var(--vp-layout-top-height, 0px) + 100px) 64px 100px 64px;
+    padding: calc(var(--vp-nav-height) + var(--vp-layout-top-height, 0px) + 120px) 64px 120px 64px;
   }
   .tagline {
     font-size: 24px;

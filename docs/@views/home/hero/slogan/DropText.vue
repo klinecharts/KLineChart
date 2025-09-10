@@ -93,10 +93,12 @@ function getCharAnimDelay (currentWordIndex, currentCharIndex) {
 
 @keyframes show {
   0% {
+    filter: blur(8px);
     transform: translateY(-60px) rotate(-60deg);
     opacity: 0;
   }
   100% {
+    filter: blur(0);
     transform: translateY(0) rotate(0);
     opacity: 1;
   }
