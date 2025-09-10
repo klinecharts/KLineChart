@@ -58,7 +58,7 @@ provide('toggle-appearance', async ({ clientX: x, clientY: y }) => {
 
 <template>
   <Loading v-if="!mounted" className="page-loading"/>
-  <DefaultTheme.Layout v-else>
+  <DefaultTheme.Layout v-show="mounted">
     <template #layout-top>
       <Banner/>
     </template>
