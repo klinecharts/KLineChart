@@ -12,6 +12,7 @@ import HomeSponsor from './home/Sponsor.vue'
 // import AsideSponsor from './AsideSponsor.vue'
 import NotFound from './NotFound.vue'
 import ColorPalette from './ColorPalette.vue'
+import Loading from '../@components/Loading.vue'
 
 const { isDark } = useData()
 
@@ -56,7 +57,8 @@ provide('toggle-appearance', async ({ clientX: x, clientY: y }) => {
 </script>
 
 <template>
-  <DefaultTheme.Layout v-if="mounted">
+  <Loading v-if="!mounted" className="page-loading"/>
+  <DefaultTheme.Layout v-else>
     <template #layout-top>
       <Banner/>
     </template>
@@ -104,5 +106,12 @@ provide('toggle-appearance', async ({ clientX: x, clientY: y }) => {
 
 .VPSwitchAppearance .check {
   transform: none !important;
+}
+
+.page-loading {
+  position: fixed!important;
+  width: 100vw!important;
+  height: 100vh!important;
+  color: var(--vp-c-text-1)!important;
 }
 </style>

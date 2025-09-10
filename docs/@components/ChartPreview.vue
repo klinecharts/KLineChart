@@ -244,7 +244,7 @@ onUnmounted(() => {
     <div
       ref="chartContainer"
       class="content-item chart">
-      <Loading v-if="loading"/>
+      <Loading v-if="loading" className="loading"/>
     </div>
     <div
       class="code-action-container"
@@ -336,6 +336,12 @@ h3 + .chart-preview {
 .chart {
   position: relative;
   min-height: 350px;
+}
+
+.loading {
+  background-color: var(--vp-code-block-bg);
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
 }
 
 .code-action-container {

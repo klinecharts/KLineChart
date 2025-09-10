@@ -3,7 +3,7 @@ import { onMounted } from 'vue'
 
 onMounted(() => {
   const paths = document.querySelectorAll(".text-logo path");
-  paths.forEach((p, i) => {
+  paths.forEach((p) => {
     const len = p.getTotalLength()
     p.style.strokeDasharray = len
     p.style.strokeDashoffset = len
@@ -58,23 +58,21 @@ onMounted(() => {
   stroke-width: 1;
   stroke-linecap: round;
   stroke-linejoin: round;
-  animation: fillPath 1s ease forwards 2s;
 }
 
 .text-logo path {
-  animation: drawPath 2s ease forwards
-}
-
-@keyframes fillPath {
-  to {
-    fill: var(--vp-c-indigo-1);
-    stroke: transparent;
-  }
+  animation: drawPath 3s ease forwards;
 }
 
 @keyframes drawPath {
-  to {
+  66% {
     stroke-dashoffset: 0;
+    fill: transparent;
+    stroke: var(--vp-c-indigo-1);
+  }
+  100% {
+    stroke-dashoffset: 0;
+    fill: var(--vp-c-indigo-1);
   }
 }
 
