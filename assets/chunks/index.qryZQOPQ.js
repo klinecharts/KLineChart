@@ -1,0 +1,1 @@
+import{C as e}from"./theme.DCjf5ol3.js";import{b as t,o,k as r}from"./framework.Du7s_-5U.js";const s=JSON.parse(`{"js":"import { getSupportedLocales } from 'klinecharts'\\n\\nconst supports = getSupportedLocales()\\n"}`),d={__name:"index",setup(a){return(p,c)=>(o(),t(e,{title:"getSupportedLocales",hiddenChart:!0,code:r(s).js},null,8,["code"]))}};export{d as _};
