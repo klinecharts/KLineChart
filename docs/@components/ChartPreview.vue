@@ -32,6 +32,7 @@ const loading = ref(true)
 const showCode = ref(!props.chartId)
 
 const chartContainer = ref(null)
+const chartInitializedFlag = ref(false)
 
 const observer = ref(null)
 const codeHtml = ref(null)
@@ -165,50 +166,58 @@ onMounted(() => {
       defaultColor: 'light'
     })
   }
+  
   if (props.code) {
     highlightCode()
     if (!!props.chartId) {
-      const transformJs = props.code + '\n' + `window['chart_${props.chartId}'] = chart`
-      const ast = parse(transformJs, { sourceType: 'module' })
-
-      traverse(ast, {
-        CallExpression(path) {
-          if (
-            t.isCallExpression(path.node) &&
-            t.isIdentifier(path.node.callee, { name: 'callback' })
-          ) {
-            const postMessageFun = t.expressionStatement(
-              t.callExpression(
-                t.memberExpression(t.identifier('window'), t.identifier('postMessage')),
-                [t.stringLiteral(props.chartId)]
-              )
-            )
-            path.insertBefore(postMessageFun)
-          }
-        }
-      })
-
       window.addEventListener('message', handlerMessage, false);
-      
-      const { code } = transform(generator(ast, {}, transformJs).code, {
-        presets: [
-          'es2015',
-          ['stage-3', { decoratorsBeforeExport: true }],
-        ],
-        plugins: ['transform-modules-umd'],
-      })
-      const chartDom = document.createElement('div')
-      const height = `${props.chartHeight || 350}px`
-      chartDom.style.height = height
-      chartDom.id = props.chartId
-      chartContainer.value.appendChild(chartDom)
-      const script = document.createElement('script')
-      script.innerHTML = code
-      chartContainer.value.appendChild(script)
-      window[`chart_${props.chartId}`].setStyles(isDark.value ? 'dark' : 'light')
-
       observer.value = new ResizeObserver(_ => {
-        window[`chart_${props.chartId}`].resize()
+        if (!chartInitializedFlag.value) {
+          const bounding = chartContainer.value.getBoundingClientRect()
+          if (bounding.width === 0 || bounding.height === 0) {
+            return
+          }
+          chartInitializedFlag.value = true
+          const transformJs = props.code + '\n' + `window['chart_${props.chartId}'] = chart`
+          const ast = parse(transformJs, { sourceType: 'module' })
+
+          traverse(ast, {
+            CallExpression(path) {
+              if (
+                t.isCallExpression(path.node) &&
+                t.isIdentifier(path.node.callee, { name: 'callback' })
+              ) {
+                const postMessageFun = t.expressionStatement(
+                  t.callExpression(
+                    t.memberExpression(t.identifier('window'), t.identifier('postMessage')),
+                    [t.stringLiteral(props.chartId)]
+                  )
+                )
+                path.insertBefore(postMessageFun)
+              }
+            }
+          })
+
+          const { code } = transform(generator(ast, {}, transformJs).code, {
+            presets: [
+              'es2015',
+              ['stage-3', { decoratorsBeforeExport: true }],
+            ],
+            plugins: ['transform-modules-umd'],
+          })
+          const chartDom = document.createElement('div')
+          const height = `${props.chartHeight || 350}px`
+          chartDom.style.height = height
+          chartDom.id = props.chartId
+          chartContainer.value.appendChild(chartDom)
+          const script = document.createElement('script')
+          script.innerHTML = code
+          chartContainer.value.appendChild(script)
+          window[`chart_${props.chartId}`].setStyles(isDark.value ? 'dark' : 'light')
+        } else {
+          window[`chart_${props.chartId}`]?.resize()
+        }
+        
       })
       observer.value.observe(chartContainer.value)
     }
@@ -228,7 +237,7 @@ watch(isDark, (newValue) => {
 onUnmounted(() => {
   if (!!props.chartId) {
     if (observer.value && chartContainer.value) {
-    observer.value.unobserve(chartContainer.value)
+      observer.value.unobserve(chartContainer.value)
     }
     if (window.klinecharts) {
       window.klinecharts.dispose(props.chartId)
