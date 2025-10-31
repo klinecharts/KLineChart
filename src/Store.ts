@@ -60,7 +60,10 @@ const BarSpaceLimitConstants = {
 
 type ScrollLimitRole = 'bar_count' | 'distance'
 
-export type ZoomBehaviour = 'cursor_point' | 'last_bar'
+export type ZoomBehavior = {
+  main: 'cursor_point' | 'last_bar'
+  xAxis: 'cursor_point' | 'last_bar'
+}
 
 export interface ProgressOverlayInfo {
   paneId: string
@@ -124,8 +127,8 @@ export interface Store {
   removeOverlay: (filter?: OverlayFilter) => boolean
   setZoomEnabled: (enabled: boolean) => void
   isZoomEnabled: () => boolean
-  setZoomBehaviour: (behaviour: ZoomBehaviour) => void
-  zoomBehaviour: () => ZoomBehaviour
+  setZoomBehavior: (behavior: ZoomBehavior) => void
+  zoomBehavior: () => ZoomBehavior
   setScrollEnabled: (enabled: boolean) => void
   isScrollEnabled: () => boolean
   resetData: () => void
@@ -229,7 +232,10 @@ export default class StoreImp implements Store {
   /**
    * Zoom point flag
    */
-  private _zoomBehaviour: ZoomBehaviour = 'cursor_point'
+  private _zoomBehavior: ZoomBehavior = { 
+    main: 'cursor_point',
+    xAxis: 'cursor_point'
+  }
 
   /**
    * Scroll enabled flag
@@ -1044,12 +1050,12 @@ export default class StoreImp implements Store {
     return this._zoomEnabled
   }
 
-  setZoomBehaviour (behaviour: ZoomBehaviour): void {
-    this._zoomBehaviour = behaviour
+  setZoomBehavior (behavior: ZoomBehavior): void {
+    this._zoomBehavior = behavior
   }
 
-  zoomBehaviour (): ZoomBehaviour {
-    return this._zoomBehaviour
+  zoomBehavior (): ZoomBehavior {
+    return this._zoomBehavior
   }
 
   setScrollEnabled (enabled: boolean): void {
