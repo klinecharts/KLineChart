@@ -39,7 +39,7 @@ import type PickRequired from './common/PickRequired'
 import type { SymbolInfo } from './common/SymbolInfo'
 import type { Period } from './common/Period'
 
-import ChartStore, { SCALE_MULTIPLIER, type Store } from './Store'
+import ChartStore, { SCALE_MULTIPLIER, ZoomBehaviour, type Store } from './Store'
 
 import CandlePane from './pane/CandlePane'
 import IndicatorPane from './pane/IndicatorPane'
@@ -967,6 +967,14 @@ export default class ChartImp implements Chart {
 
   isZoomEnabled (): boolean {
     return this._chartStore.isZoomEnabled()
+  }
+
+  setZoomBehaviour (behaviour: ZoomBehaviour): void {
+    this._chartStore.setZoomBehaviour(behaviour)
+  }
+
+  zoomBehaviour (): ZoomBehaviour {
+    return this._chartStore.zoomBehaviour()
   }
 
   setScrollEnabled (enabled: boolean): void {
