@@ -3,13 +3,13 @@ outline: deep
 ---
 
 # setZoomBehaviour(behaviour)
-`setZoomBehaviour` 设置是否可以缩放。
+`setZoomBehaviour` 设置主窗格和 x 轴窗格的缩放锚点。
 
 ## 参考 {#reference}
 <!--@include: @/@views/api/references/instance/setZoomBehaviour.md-->
 
 ### 参数 {#parameters}
-- `behaviour` 是否可以缩放。
+- `behaviour` 主窗格和 x 轴窗格的缩放锚点类型。
 
 ### 返回值 {#returns}
 `setZoomBehaviour` 返回 `undefined` 。

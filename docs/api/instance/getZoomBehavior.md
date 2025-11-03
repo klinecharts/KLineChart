@@ -3,16 +3,16 @@ outline: deep
 ---
 
 # getZoomBehavior()
-`getZoomBehavior` 是否可以缩放。
+`getZoomBehavior` 主窗格和 x 轴窗格的缩放锚点。
 
 ## 参考 {#reference}
 <!--@include: @/@views/api/references/instance/getZoomBehavior.md-->
 
 ### 参数 {#parameters}
-`getZoomBehavior` 不接收任何参数。
+`getZoomBehavior` 不接受任何参数。
 
 ### 返回值 {#returns}
-`getZoomBehavior` 返回 `boolean` 。
+`getZoomBehavior` 回报 `boolean` 。
 
 ## 用法 {#usage}
 <script setup>
