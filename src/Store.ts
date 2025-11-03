@@ -60,7 +60,7 @@ const BarSpaceLimitConstants = {
 
 type ScrollLimitRole = 'bar_count' | 'distance'
 
-export type ZoomBehavior = {
+export interface ZoomBehavior {
   main: 'cursor_point' | 'last_bar'
   xAxis: 'cursor_point' | 'last_bar'
 }
@@ -232,7 +232,7 @@ export default class StoreImp implements Store {
   /**
    * Zoom point flag
    */
-  private _zoomBehavior: ZoomBehavior = { 
+  private _zoomBehavior: ZoomBehavior = {
     main: 'cursor_point',
     xAxis: 'cursor_point'
   }
