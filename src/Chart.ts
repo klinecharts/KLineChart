@@ -39,7 +39,7 @@ import type PickRequired from './common/PickRequired'
 import type { SymbolInfo } from './common/SymbolInfo'
 import type { Period } from './common/Period'
 
-import ChartStore, { SCALE_MULTIPLIER, ZoomBehavior, type Store } from './Store'
+import ChartStore, { SCALE_MULTIPLIER, type ZoomBehavior, type Store } from './Store'
 
 import CandlePane from './pane/CandlePane'
 import IndicatorPane from './pane/IndicatorPane'
