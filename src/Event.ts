@@ -72,11 +72,11 @@ export default class Event implements EventHandler {
     if (event.shiftKey) {
       switch (event.code) {
         case 'Equal': {
-          this._chart.getChartStore().zoom(0.5, this._chart.getChartStore().zoomBehavior().main == 'last_bar' ? this.lastDataCoordinate() : undefined)
+          this._chart.getChartStore().zoom(0.5, this._chart.getChartStore().zoomBehavior().main === 'last_bar' ? this.lastDataCoordinate() : undefined)
           break
         }
         case 'Minus': {
-          this._chart.getChartStore().zoom(-0.5, this._chart.getChartStore().zoomBehavior().main == 'last_bar' ? this.lastDataCoordinate() : undefined)
+          this._chart.getChartStore().zoom(-0.5, this._chart.getChartStore().zoomBehavior().main === 'last_bar' ? this.lastDataCoordinate() : undefined)
           break
         }
         case 'ArrowLeft': {
@@ -107,10 +107,10 @@ export default class Event implements EventHandler {
     })
     container.addEventListener('keydown', this._boundKeyBoardDownEvent)
   }
-  
-  private lastDataCoordinate(): Partial<Coordinate> {
+
+  private lastDataCoordinate (): Partial<Coordinate> {
     const store = this._chart.getChartStore()
-    return {x: store.dataIndexToCoordinate(store.getDataList().length - 1) }
+    return { x: store.dataIndexToCoordinate(store.getDataList().length - 1) }
   }
 
   pinchStartEvent (): boolean {
@@ -125,7 +125,7 @@ export default class Event implements EventHandler {
       const event = this._makeWidgetEvent(e, widget)
       const zoomScale = (scale - this._pinchScale) * 5
       this._pinchScale = scale
-      this._chart.getChartStore().zoom(zoomScale, this._chart.getChartStore().zoomBehavior().main == 'last_bar' ? this.lastDataCoordinate() : { x: event.x, y: event.y })
+      this._chart.getChartStore().zoom(zoomScale, this._chart.getChartStore().zoomBehavior().main === 'last_bar' ? this.lastDataCoordinate() : { x: event.x, y: event.y })
       return true
     }
     return false
@@ -143,7 +143,7 @@ export default class Event implements EventHandler {
     const event = this._makeWidgetEvent(e, widget)
     const name = widget?.getName()
     if (name === WidgetNameConstants.MAIN) {
-      this._chart.getChartStore().zoom(scale, this._chart.getChartStore().zoomBehavior().main == 'last_bar' ? this.lastDataCoordinate() : { x: event.x, y: event.y })
+      this._chart.getChartStore().zoom(scale, this._chart.getChartStore().zoomBehavior().main === 'last_bar' ? this.lastDataCoordinate() : { x: event.x, y: event.y })
       return true
     }
     return false
@@ -588,7 +588,7 @@ export default class Event implements EventHandler {
         if (Number.isFinite(scale)) {
           const zoomScale = (scale - this._xAxisScale) * 10
           this._xAxisScale = scale
-          this._chart.getChartStore().zoom(zoomScale, this._chart.getChartStore().zoomBehavior().xAxis == 'last_bar' ? this.lastDataCoordinate() : (this._xAxisStartScaleCoordinate ?? undefined))
+          this._chart.getChartStore().zoom(zoomScale, this._chart.getChartStore().zoomBehavior().xAxis === 'last_bar' ? this.lastDataCoordinate() : (this._xAxisStartScaleCoordinate ?? undefined))
         }
       }
     } else {
