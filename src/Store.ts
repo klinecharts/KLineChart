@@ -37,7 +37,7 @@ import { logWarn } from './common/utils/logger'
 import { UpdateLevel } from './common/Updater'
 import type { DataLoader, DataLoaderGetBarsParams, DataLoadMore, DataLoadType } from './common/DataLoader'
 
-import type { Options, Formatter, ThousandsSeparator, DecimalFold, FormatDateType, FormatDateParams, FormatBigNumber, FormatExtendText, FormatExtendTextParams } from './Options'
+import type { Options, Formatter, ThousandsSeparator, DecimalFold, FormatDateType, FormatDateParams, FormatBigNumber, FormatExtendText, FormatExtendTextParams, ZoomAnchor } from './Options'
 
 import type { IndicatorOverride, IndicatorCreate, IndicatorFilter } from './component/Indicator'
 import type IndicatorImp from './component/Indicator'
@@ -59,11 +59,6 @@ const BarSpaceLimitConstants = {
 }
 
 type ScrollLimitRole = 'bar_count' | 'distance'
-
-export interface ZoomBehavior {
-  main: 'cursor_point' | 'last_bar'
-  xAxis: 'cursor_point' | 'last_bar'
-}
 
 export interface ProgressOverlayInfo {
   paneId: string
@@ -127,8 +122,8 @@ export interface Store {
   removeOverlay: (filter?: OverlayFilter) => boolean
   setZoomEnabled: (enabled: boolean) => void
   isZoomEnabled: () => boolean
-  setZoomBehavior: (behavior: ZoomBehavior) => void
-  zoomBehavior: () => ZoomBehavior
+  setZoomAnchor: (behavior: ZoomAnchor) => void
+  zoomAnchor: () => ZoomAnchor
   setScrollEnabled: (enabled: boolean) => void
   isScrollEnabled: () => boolean
   resetData: () => void
@@ -230,9 +225,9 @@ export default class StoreImp implements Store {
   private _zoomEnabled = true
 
   /**
-   * Zoom point flag
+   * Zoom anchor point flag
    */
-  private _zoomBehavior: ZoomBehavior = {
+  private readonly _zoomAnchor: ZoomAnchor = {
     main: 'cursor_point',
     xAxis: 'cursor_point'
   }
@@ -374,7 +369,7 @@ export default class StoreImp implements Store {
     this._chart = chart
     this._calcOptimalBarSpace()
     this._lastBarRightSideDiffBarCount = this._offsetRightDistance / this._barSpace
-    const { styles, locale, timezone, formatter, thousandsSeparator, decimalFold } = options ?? {}
+    const { styles, locale, timezone, formatter, thousandsSeparator, decimalFold, zoomAnchor } = options ?? {}
     if (isValid(styles)) {
       this.setStyles(styles)
     }
@@ -390,6 +385,9 @@ export default class StoreImp implements Store {
     }
     if (isValid(decimalFold)) {
       this.setDecimalFold(decimalFold)
+    }
+    if (isValid(zoomAnchor)) {
+      this.setZoomAnchor(zoomAnchor)
     }
   }
 
@@ -1050,12 +1048,17 @@ export default class StoreImp implements Store {
     return this._zoomEnabled
   }
 
-  setZoomBehavior (behavior: ZoomBehavior): void {
-    this._zoomBehavior = behavior
+  setZoomAnchor (anchor: Partial<ZoomAnchor>): void {
+    if (isValid(anchor.main) && isString(anchor.main)) {
+      this._zoomAnchor.main = anchor.main
+    }
+    if (isValid(anchor.xAxis) && isString(anchor.xAxis)) {
+      this._zoomAnchor.xAxis = anchor.xAxis
+    }
   }
 
-  zoomBehavior (): ZoomBehavior {
-    return this._zoomBehavior
+  zoomAnchor (): ZoomAnchor {
+    return { ...this._zoomAnchor }
   }
 
   setScrollEnabled (enabled: boolean): void {
