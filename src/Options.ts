@@ -85,6 +85,11 @@ export interface ThousandsSeparator {
   format: (value: string | number) => string
 }
 
+export interface ZoomAnchor {
+  main: 'cursor_point' | 'last_bar'
+  xAxis: 'cursor_point' | 'last_bar'
+}
+
 export interface Options {
   locale?: string
   timezone?: string
@@ -93,4 +98,5 @@ export interface Options {
   thousandsSeparator?: Partial<ThousandsSeparator>
   decimalFold?: Partial<DecimalFold>
   layout?: LayoutChild[]
+  zoomAnchor?: Partial<ZoomAnchor>
 }

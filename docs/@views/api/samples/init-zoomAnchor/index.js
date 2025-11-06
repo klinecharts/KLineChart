@@ -1,6 +1,9 @@
 import { init } from 'klinecharts'
 
-const chart = init('getZoomBehavior-chart')
+const chart = init(
+  'init-zoomAnchor-chart',
+  { zoomAnchor: { main: 'last_bar', xAxis: 'last_bar' } }
+)
 
 chart.setSymbol({ ticker: 'TestSymbol' })
 chart.setPeriod({ span: 1, type: 'day' })
@@ -15,5 +18,3 @@ chart.setDataLoader({
       })
   }
 })
-
-const behavior = chart.zoomBehavior()

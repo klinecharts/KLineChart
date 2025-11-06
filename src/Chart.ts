@@ -25,7 +25,7 @@ import type Crosshair from './common/Crosshair'
 import type { ActionType, ActionCallback } from './common/Action'
 import type { DataLoader } from './common/DataLoader'
 import type VisibleRange from './common/VisibleRange'
-import type { Formatter, DecimalFold, LayoutChild, Options, ThousandsSeparator } from './Options'
+import type { Formatter, DecimalFold, LayoutChild, Options, ThousandsSeparator, ZoomAnchor } from './Options'
 import Animation from './common/Animation'
 import { createId } from './common/utils/id'
 import { createDom } from './common/utils/dom'
@@ -39,7 +39,7 @@ import type PickRequired from './common/PickRequired'
 import type { SymbolInfo } from './common/SymbolInfo'
 import type { Period } from './common/Period'
 
-import ChartStore, { SCALE_MULTIPLIER, type ZoomBehavior, type Store } from './Store'
+import ChartStore, { SCALE_MULTIPLIER, type Store } from './Store'
 
 import CandlePane from './pane/CandlePane'
 import IndicatorPane from './pane/IndicatorPane'
@@ -969,12 +969,12 @@ export default class ChartImp implements Chart {
     return this._chartStore.isZoomEnabled()
   }
 
-  setZoomBehavior (behavior: ZoomBehavior): void {
-    this._chartStore.setZoomBehavior(behavior)
+  setZoomAnchor (anchor: ZoomAnchor): void {
+    this._chartStore.setZoomAnchor(anchor)
   }
 
-  zoomBehavior (): ZoomBehavior {
-    return this._chartStore.zoomBehavior()
+  zoomAnchor (): ZoomAnchor {
+    return this._chartStore.zoomAnchor()
   }
 
   setScrollEnabled (enabled: boolean): void {

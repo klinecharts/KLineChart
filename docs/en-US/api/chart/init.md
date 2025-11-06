@@ -48,6 +48,7 @@ When calling, you need to wait until the container `dom` is ready.
   - `decimalFold` Decimal 0 folds the configuration.
     - `threshold` Fold threshold.
     - `format` Custom formatting method.
+  - `zoomAnchor` Set the anchor position when zooming the chart to `last_bar` or `cursor_point`
 
 ### Returns {#returns}
 `init` returns an object `Chart`。
@@ -68,6 +69,7 @@ import InitThousandsSeparatorNone from '../../../@views/api/samples/init-thousan
 import InitThousandsSeparatorFormat from '../../../@views/api/samples/init-thousandsSeparator-format/index.vue'
 import InitDecimalFoldNone from '../../../@views/api/samples/init-decimalFold-none/index.vue'
 import InitDecimalFoldFormat from '../../../@views/api/samples/init-decimalFold-format/index.vue'
+import InitZoomAnchor from '../../../@views/api/samples/init-zoomAnchor/index.vue'
 </script>
 
 ### Basic usage {#basic}
@@ -111,4 +113,7 @@ import InitDecimalFoldFormat from '../../../@views/api/samples/init-decimalFold-
 
 ### Decimal 0 fold custom display {#init-decimalFold-format}
 <InitDecimalFoldFormat />
+
+### Set the zoom anchor postion when zooming the chart to 'last_bar' {#init-zoomAnchor}
+<InitZoomAnchor />
 

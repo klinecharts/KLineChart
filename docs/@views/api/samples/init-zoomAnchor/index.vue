@@ -5,7 +5,7 @@ import { data } from './index.data'
 
 <template>
   <ChartPreview
-    title="setZoomBehavior"
-    chartId="setZoomBehavior-chart"
+    title="init-zoomAnchor"
+    chartId="init-zoomAnchor-chart"
     :code="data.js"/>
 </template>
