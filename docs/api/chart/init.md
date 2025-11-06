@@ -48,6 +48,7 @@ outline: deep
   - `decimalFold` 小数 0 折叠配置。
     - `threshold` 折叠阈值。
     - `format` 自定义格式化方法。
+  - `zoomAnchor` 将缩放图表时的锚点位置设置为 `last_bar` 或 `cursor_point`
 
 ### 返回值 {#returns}
 `init` 返回一个图表实例对象 `Chart`。
@@ -68,6 +69,7 @@ import InitThousandsSeparatorNone from '../../@views/api/samples/init-thousandsS
 import InitThousandsSeparatorFormat from '../../@views/api/samples/init-thousandsSeparator-format/index.vue'
 import InitDecimalFoldNone from '../../@views/api/samples/init-decimalFold-none/index.vue'
 import InitDecimalFoldFormat from '../../@views/api/samples/init-decimalFold-format/index.vue'
+import InitZoomAnchor from '../../@views/api/samples/init-zoomAnchor/index.vue'
 </script>
 
 ### 基本使用 {#basic}
@@ -111,4 +113,7 @@ import InitDecimalFoldFormat from '../../@views/api/samples/init-decimalFold-for
 
 ### 小数 0 折叠自定义显示 {#init-decimalFold-format}
 <InitDecimalFoldFormat />
+
+### 将缩放图表时的缩放锚点位置设置为“last_bar” {#init-zoomAnchor}
+<InitZoomAnchor />
 
