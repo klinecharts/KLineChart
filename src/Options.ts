@@ -90,6 +90,11 @@ export interface ZoomAnchor {
   xAxis: 'cursor_point' | 'last_bar'
 }
 
+export interface BarSpaceLimit {
+  min: number
+  max: number
+}
+
 export interface Options {
   locale?: string
   timezone?: string
@@ -99,4 +104,5 @@ export interface Options {
   decimalFold?: Partial<DecimalFold>
   layout?: LayoutChild[]
   zoomAnchor?: Partial<ZoomAnchor>
+  barSpaceLimit?: Partial<BarSpaceLimit>
 }
