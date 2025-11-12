@@ -35,7 +35,7 @@ const simpleMovingAverage: IndicatorTemplate<Sma, number> = {
     const params = indicator.calcParams
     let closeSum = 0
     let smaValue = 0
-    return dataList.reduce((prev, kLineData, i) => {
+    return dataList.map((kLineData, i) => {
       const sma: Sma = {}
       const close = kLineData.close
       closeSum += close
@@ -47,9 +47,8 @@ const simpleMovingAverage: IndicatorTemplate<Sma, number> = {
         }
         sma.sma = smaValue
       }
-      prev[kLineData.timestamp] = sma
-      return prev
-    }, {})
+      return sma
+    })
   }
 }
 

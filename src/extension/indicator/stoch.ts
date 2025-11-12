@@ -42,8 +42,7 @@ const stoch: IndicatorTemplate<Kdj, number> = {
   ],
   calc: (dataList, indicator) => {
     const params = indicator.calcParams
-    const kdjList: Kdj[] = []
-    const result: Record<number, Kdj> = {}
+    const result: Kdj[] = []
     dataList.forEach((kLineData, i) => {
       const kdj: Kdj = {}
       const close = kLineData.close
@@ -53,12 +52,11 @@ const stoch: IndicatorTemplate<Kdj, number> = {
         const ln = lhn[1]
         const hnSubLn = hn - ln
         const rsv = (close - ln) / (hnSubLn === 0 ? 1 : hnSubLn) * 100
-        kdj.k = ((params[1] - 1) * (kdjList[i - 1]?.k ?? 50) + rsv) / params[1]
-        kdj.d = ((params[2] - 1) * (kdjList[i - 1]?.d ?? 50) + kdj.k) / params[2]
+        kdj.k = ((params[1] - 1) * (result[i - 1]?.k ?? 50) + rsv) / params[1]
+        kdj.d = ((params[2] - 1) * (result[i - 1]?.d ?? 50) + kdj.k) / params[2]
         kdj.j = 3.0 * kdj.k - 2.0 * kdj.d
       }
-      kdjList.push(kdj)
-      result[kLineData.timestamp] = kdj
+      result.push(kdj)
     })
     return result
   }

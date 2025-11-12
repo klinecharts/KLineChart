@@ -42,7 +42,7 @@ const brar: IndicatorTemplate<Brar, number> = {
     let cyl = 0
     let ho = 0
     let ol = 0
-    return dataList.reduce((prev, kLineData, i) => {
+    return dataList.map((kLineData, i) => {
       const brar: Brar = {}
       const high = kLineData.high
       const low = kLineData.low
@@ -73,9 +73,8 @@ const brar: IndicatorTemplate<Brar, number> = {
         ho -= (agoHigh - agoOpen)
         ol -= (agoOpen - agoLow)
       }
-      prev[kLineData.timestamp] = brar
-      return prev
-    }, {})
+      return brar
+    })
   }
 }
 

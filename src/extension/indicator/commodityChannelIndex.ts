@@ -38,7 +38,7 @@ const commodityChannelIndex: IndicatorTemplate<Cci, number> = {
     const p = params[0] - 1
     let tpSum = 0
     const tpList: number[] = []
-    return dataList.reduce((prev, kLineData, i) => {
+    return dataList.map((kLineData, i) => {
       const cci: Cci = {}
       const tp = (kLineData.high + kLineData.low + kLineData.close) / 3
       tpSum += tp
@@ -55,9 +55,8 @@ const commodityChannelIndex: IndicatorTemplate<Cci, number> = {
         const agoTp = (dataList[i - p].high + dataList[i - p].low + dataList[i - p].close) / 3
         tpSum -= agoTp
       }
-      prev[kLineData.timestamp] = cci
-      return prev
-    }, {})
+      return cci
+    })
   }
 }
 

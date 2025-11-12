@@ -41,8 +41,7 @@ const volumeRatio: IndicatorTemplate<Vr, number> = {
     let dvs = 0
     let pvs = 0
     let vrSum = 0
-    const vrList: Vr[] = []
-    const result: Record<number, Vr> = {}
+    const result: Vr[] = []
     dataList.forEach((kLineData, i) => {
       const vr: Vr = {}
       const close = kLineData.close
@@ -65,7 +64,7 @@ const volumeRatio: IndicatorTemplate<Vr, number> = {
         vrSum += vr.vr
         if (i >= params[0] + params[1] - 2) {
           vr.maVr = vrSum / params[1]
-          vrSum -= (vrList[i - (params[1] - 1)].vr ?? 0)
+          vrSum -= (result[i - (params[1] - 1)].vr ?? 0)
         }
 
         const agoData = dataList[i - (params[0] - 1)]
@@ -80,8 +79,7 @@ const volumeRatio: IndicatorTemplate<Vr, number> = {
           pvs -= agoVolume
         }
       }
-      vrList.push(vr)
-      result[kLineData.timestamp] = vr
+      result.push(vr)
     })
     return result
   }

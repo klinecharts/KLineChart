@@ -68,7 +68,7 @@ const movingAverageConvergenceDivergence: IndicatorTemplate<Macd, number> = {
     let difSum = 0
     let dea = 0
     const maxPeriod = Math.max(params[0], params[1])
-    return dataList.reduce((prev, kLineData, i) => {
+    return dataList.map((kLineData, i) => {
       const macd: Macd = {}
       const close = kLineData.close
       closeSum += close
@@ -100,9 +100,8 @@ const movingAverageConvergenceDivergence: IndicatorTemplate<Macd, number> = {
           macd.dea = dea
         }
       }
-      prev[kLineData.timestamp] = macd
-      return prev
-    }, {})
+      return macd
+    })
   }
 }
 

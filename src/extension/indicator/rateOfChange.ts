@@ -33,8 +33,7 @@ const rateOfChange: IndicatorTemplate<Roc, number> = {
   ],
   calc: (dataList, indicator) => {
     const params = indicator.calcParams
-    const rocList: Roc[] = []
-    const result: Record<number, Roc> = {}
+    const result: Roc[] = []
     let rocSum = 0
     dataList.forEach((kLineData, i) => {
       const roc: Roc = {}
@@ -49,11 +48,10 @@ const rateOfChange: IndicatorTemplate<Roc, number> = {
         rocSum += roc.roc
         if (i >= params[0] - 1 + params[1] - 1) {
           roc.maRoc = rocSum / params[1]
-          rocSum -= (rocList[i - (params[1] - 1)].roc ?? 0)
+          rocSum -= (result[i - (params[1] - 1)].roc ?? 0)
         }
       }
-      rocList.push(roc)
-      result[kLineData.timestamp] = roc
+      result.push(roc)
     })
     return result
   }
