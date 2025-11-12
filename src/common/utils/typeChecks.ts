@@ -29,11 +29,8 @@ export function merge (target: any, source: any): void {
       ) {
         merge(targetProp, sourceProp)
       } else {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- ignore
-        if (isValid(source[key])) {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access -- ignore
-          target[key] = clone(source[key])
-        }
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access -- ignore
+        target[key] = clone(sourceProp)
       }
     }
   }
