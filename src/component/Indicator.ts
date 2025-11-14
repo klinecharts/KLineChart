@@ -111,7 +111,6 @@ export interface IndicatorOnDataStateChangeParams<D> {
 
   indicator: Indicator<D>
 }
-export type IndicatorOnDataStateChangeCallback<D> = (params: IndicatorOnDataStateChangeParams<D>) => void
 
 export interface Indicator<D = unknown, C = unknown, E = unknown> {
   /**
@@ -218,11 +217,6 @@ export interface Indicator<D = unknown, C = unknown, E = unknown> {
    * Custom draw
    */
   draw: Nullable<IndicatorDrawCallback<D, C, E>>
-
-  /**
-   * Data state change
-   */
-  onDataStateChange: Nullable<IndicatorOnDataStateChangeCallback<D>>
 
   /**
    * Calculation result
@@ -351,8 +345,6 @@ export default class IndicatorImp<D = unknown, C = unknown, E = unknown> impleme
   regenerateFigures: Nullable<IndicatorRegenerateFiguresCallback<D, C>> = null
   createTooltipDataSource: Nullable<IndicatorCreateTooltipDataSourceCallback<D>> = null
   draw: Nullable<IndicatorDrawCallback<D, C, E>> = null
-
-  onDataStateChange: Nullable<IndicatorOnDataStateChangeCallback<D>> = null
 
   result: D[] = []
 
