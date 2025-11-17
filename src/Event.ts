@@ -402,17 +402,18 @@ export default class Event implements EventHandler {
     const { pane, widget } = this._findWidgetByEvent(e)
     if (widget !== null) {
       const event = this._makeWidgetEvent(e, widget)
-      event.preventDefault?.()
       const name = widget.getName()
       const chartStore = this._chart.getChartStore()
       switch (name) {
         case WidgetNameConstants.MAIN: {
           if (widget.dispatchEvent('pressedMouseMoveEvent', event)) {
+            event.preventDefault?.()
             chartStore.setCrosshair(undefined, { notInvalidate: true })
             this._chart.updatePane(UpdateLevel.Overlay)
             return true
           }
           if (this._touchCoordinate !== null) {
+            event.preventDefault?.()
             chartStore.setCrosshair({ x: event.x, y: event.y, paneId: pane?.getId() })
           } else {
             this._processMainScrollingEvent(widget as Widget<DrawPane<YAxis>>, event)
@@ -420,6 +421,7 @@ export default class Event implements EventHandler {
           return true
         }
         case WidgetNameConstants.X_AXIS: {
+          event.preventDefault?.()
           return this._processXAxisScrollingEvent(widget as Widget<DrawPane<XAxis>>, event)
         }
         case WidgetNameConstants.Y_AXIS: {
@@ -531,6 +533,7 @@ export default class Event implements EventHandler {
     if (this._startScrollCoordinate !== null) {
       const yAxis = widget.getPane().getAxisComponent()
       if (this._prevYAxisRange !== null && !yAxis.getAutoCalcTickFlag() && yAxis.scrollZoomEnabled) {
+        event.preventDefault?.()
         const { from, to, range } = this._prevYAxisRange
         let distance = 0
         if (yAxis.reverse) {
@@ -608,6 +611,7 @@ export default class Event implements EventHandler {
     if (!consumed) {
       const yAxis = widget.getPane().getAxisComponent()
       if (this._prevYAxisRange !== null && yAxis.scrollZoomEnabled && this._yAxisStartScaleDistance !== 0) {
+        event.preventDefault?.()
         const { from, to, range } = this._prevYAxisRange
         const scale = event.pageY / this._yAxisStartScaleDistance
         const newRange = range * scale
