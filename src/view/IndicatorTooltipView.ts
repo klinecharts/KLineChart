@@ -213,7 +213,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
           featureInfo.indicator = indicator
         }
         const eventHandler = {
-          mouseClickEvent: this._featureClickEvent(actionType, featureInfo),
+          mouseDownEvent: this._featureClickEvent(actionType, featureInfo),
           mouseMoveEvent: this._featureMouseMoveEvent(featureInfo)
         }
         let contentWidth = 0

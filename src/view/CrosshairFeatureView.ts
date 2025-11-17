@@ -117,7 +117,7 @@ export default class CrosshairFeatureView extends View<YAxis> {
             finalBackgroundColor = activeBackgroundColor ?? backgroundColor
           }
           const eventHandler = {
-            mouseClickEvent: this._featureClickEvent({ crosshair, feature }),
+            mouseDownEvent: this._featureClickEvent({ crosshair, feature }),
             mouseMoveEvent: this._featureMouseMoveEvent({ crosshair, feature })
           }
           if (type === 'icon_font') {
