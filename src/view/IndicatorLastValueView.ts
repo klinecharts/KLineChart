@@ -40,7 +40,7 @@ export default class IndicatorLastValueView extends View<YAxis> {
       const thousandsSeparator = chartStore.getThousandsSeparator()
       indicators.forEach(indicator => {
         const result = indicator.result
-        const data = result[dataIndex] ?? result[dataIndex - 1] ?? {}
+        const data = result[dataIndex] ?? {}
         if (isValid(data) && indicator.visible) {
           const precision = indicator.precision
           eachFigures(indicator, dataIndex, defaultStyles, (figure: IndicatorFigure, figureStyles: Required<IndicatorFigureStyle>) => {
