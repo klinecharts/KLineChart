@@ -343,7 +343,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
     const thousandsSeparator = chartStore.getThousandsSeparator()
     const legends: TooltipLegend[] = []
     if (indicator.visible) {
-      const data = result[dataIndex] ?? result[dataIndex - 1] ?? {}
+      const data = result[dataIndex] ?? {}
       const defaultValue = tooltipStyles.legend.defaultValue
       eachFigures(indicator, dataIndex, styles, (figure: IndicatorFigure, figureStyles: Required<IndicatorFigureStyle>) => {
         if (isString(figure.title)) {
