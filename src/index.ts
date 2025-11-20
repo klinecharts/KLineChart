@@ -48,7 +48,7 @@ import type { ActionType } from './common/Action'
 import type { IndicatorSeries } from './component/Indicator'
 import type { OverlayMode } from './component/Overlay'
 
-import type { FormatDateType, Options } from './Options'
+import type { FormatDateType, Options, ZoomAnchor } from './Options'
 import ChartImp, { type Chart, type DomPosition } from './Chart'
 
 import { checkCoordinateOnArc } from './extension/figure/arc'
@@ -174,6 +174,6 @@ export {
   registerXAxis, registerYAxis,
   utils,
   type LineType, type PolygonType, type TooltipShowRule, type TooltipShowType, type FeatureType, type TooltipFeaturePosition, type CandleTooltipRectPosition,
-  type CandleType, type FormatDateType,
+  type CandleType, type FormatDateType, type ZoomAnchor,
   type DomPosition, type ActionType, type IndicatorSeries, type OverlayMode
 }

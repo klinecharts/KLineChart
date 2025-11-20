@@ -17,6 +17,7 @@ import InitThousandsSeparatorNone from '../../../@views/api/samples/init-thousan
 import InitThousandsSeparatorFormat from '../../../@views/api/samples/init-thousandsSeparator-format/index.vue'
 import InitDecimalFoldNone from '../../../@views/api/samples/init-decimalFold-none/index.vue'
 import InitDecimalFoldFormat from '../../../@views/api/samples/init-decimalFold-format/index.vue'
+import InitZoomAnchor from '../../../@views/api/samples/init-zoomAnchor/index.vue'
 import Tip from '../../../@components/Tip.vue'
 </script>
 
@@ -64,6 +65,7 @@ import Tip from '../../../@components/Tip.vue'
   - `decimalFold` Decimal 0 folds the configuration.
     - `threshold` Fold threshold.
     - `format` Custom formatting method.
+  - `zoomAnchor` Set the anchor position when zooming the chart to `last_bar` or `cursor`
 
 ### Returns {#returns}
 `init` returns an object `Chart`。
@@ -111,4 +113,7 @@ import Tip from '../../../@components/Tip.vue'
 
 ### Decimal 0 fold custom display {#init-decimalFold-format}
 <InitDecimalFoldFormat />
+
+### Set the zoom anchor position when zooming the chart to 'last_bar' {#init-zoomAnchor}
+<InitZoomAnchor />
 

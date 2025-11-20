@@ -25,7 +25,7 @@ import type Crosshair from './common/Crosshair'
 import type { ActionType, ActionCallback } from './common/Action'
 import type { DataLoader } from './common/DataLoader'
 import type VisibleRange from './common/VisibleRange'
-import type { Formatter, DecimalFold, LayoutChild, Options, ThousandsSeparator } from './Options'
+import type { Formatter, DecimalFold, LayoutChild, Options, ThousandsSeparator, ZoomAnchor } from './Options'
 import Animation from './common/Animation'
 import { createId } from './common/utils/id'
 import { createDom } from './common/utils/dom'
@@ -969,6 +969,14 @@ export default class ChartImp implements Chart {
     return this._chartStore.isZoomEnabled()
   }
 
+  setZoomAnchor (anchor: ZoomAnchor): void {
+    this._chartStore.setZoomAnchor(anchor)
+  }
+
+  getZoomAnchor (): ZoomAnchor {
+    return this._chartStore.getZoomAnchor()
+  }
+
   setScrollEnabled (enabled: boolean): void {
     this._chartStore.setScrollEnabled(enabled)
   }
@@ -1022,12 +1030,12 @@ export default class ChartImp implements Chart {
       animation.doFrame(frameTime => {
         const progressBarSpace = difSpace * (frameTime / duration)
         const scale = (progressBarSpace - prevProgressBarSpace) / this._chartStore.getBarSpace().bar * SCALE_MULTIPLIER
-        this._chartStore.zoom(scale, coordinate)
+        this._chartStore.zoom(scale, coordinate ?? null, 'main')
         prevProgressBarSpace = progressBarSpace
       })
       animation.start()
     } else {
-      this._chartStore.zoom(difSpace / barSpace * SCALE_MULTIPLIER, coordinate)
+      this._chartStore.zoom(difSpace / barSpace * SCALE_MULTIPLIER, coordinate ?? null, 'main')
     }
   }
 

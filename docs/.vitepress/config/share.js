@@ -67,6 +67,8 @@ export function getInstanceApiMenus (lang = '') {
     { text: 'removeOverlay', link: `${prefix}/removeOverlay` },
     { text: 'setPaneOptions', link: `${prefix}/setPaneOptions` },
     { text: 'getPaneOptions', link: `${prefix}/getPaneOptions` },
+    { text: 'setZoomAnchor', link: `${prefix}/setZoomAnchor` },
+    { text: 'getZoomAnchor', link: `${prefix}/getZoomAnchor` },
     { text: 'setZoomEnabled', link: `${prefix}/setZoomEnabled` },
     { text: 'isZoomEnabled', link: `${prefix}/isZoomEnabled` },
     { text: 'setScrollEnabled', link: `${prefix}/setScrollEnabled` },

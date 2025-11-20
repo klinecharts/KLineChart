@@ -72,11 +72,11 @@ export default class Event implements EventHandler {
     if (event.shiftKey) {
       switch (event.code) {
         case 'Equal': {
-          this._chart.getChartStore().zoom(0.5)
+          this._chart.getChartStore().zoom(0.5, null, 'main')
           break
         }
         case 'Minus': {
-          this._chart.getChartStore().zoom(-0.5)
+          this._chart.getChartStore().zoom(-0.5, null, 'main')
           break
         }
         case 'ArrowLeft': {
@@ -120,7 +120,7 @@ export default class Event implements EventHandler {
       const event = this._makeWidgetEvent(e, widget)
       const zoomScale = (scale - this._pinchScale) * 5
       this._pinchScale = scale
-      this._chart.getChartStore().zoom(zoomScale, { x: event.x, y: event.y })
+      this._chart.getChartStore().zoom(zoomScale, { x: event.x, y: event.y }, 'main')
       return true
     }
     return false
@@ -138,7 +138,7 @@ export default class Event implements EventHandler {
     const event = this._makeWidgetEvent(e, widget)
     const name = widget?.getName()
     if (name === WidgetNameConstants.MAIN) {
-      this._chart.getChartStore().zoom(scale, { x: event.x, y: event.y })
+      this._chart.getChartStore().zoom(scale, { x: event.x, y: event.y }, 'main')
       return true
     }
     return false
@@ -583,7 +583,7 @@ export default class Event implements EventHandler {
         if (Number.isFinite(scale)) {
           const zoomScale = (scale - this._xAxisScale) * 10
           this._xAxisScale = scale
-          this._chart.getChartStore().zoom(zoomScale, this._xAxisStartScaleCoordinate ?? undefined)
+          this._chart.getChartStore().zoom(zoomScale, this._xAxisStartScaleCoordinate, 'xAxis')
         }
       }
     } else {
