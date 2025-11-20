@@ -343,37 +343,23 @@ export default class IndicatorTooltipView extends View<YAxis> {
     const thousandsSeparator = chartStore.getThousandsSeparator()
     const legends: TooltipLegend[] = []
     if (indicator.visible) {
-      const kLineDataList = chartStore.getDataList()
-      const kLineData = kLineDataList[dataIndex] ?? {}
-      const prevKLineData = kLineDataList[dataIndex - 1] ?? {}
-      let data = result[kLineData.timestamp]
-      if (!isValid(data) && dataIndex === kLineDataList.length - 1) {
-        data = result[prevKLineData.timestamp]
-      }
+      const data = result[dataIndex] ?? result[dataIndex - 1] ?? {}
       const defaultValue = tooltipStyles.legend.defaultValue
-      eachFigures(
-        indicator,
-        {
-          prev: prevKLineData.timestamp,
-          current: kLineData.timestamp,
-          next: kLineDataList[dataIndex]?.timestamp
-        },
-        styles,
-        (figure: IndicatorFigure, figureStyles: Required<IndicatorFigureStyle>) => {
-          if (isString(figure.title)) {
-            const color = figureStyles.color
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- ignore
-            let value = data?.[figure.key]
-            if (isNumber(value)) {
-              value = formatPrecision(value, indicator.precision)
-              if (indicator.shouldFormatBigNumber) {
-                value = formatter.formatBigNumber(value as string)
-              }
-              value = decimalFold.format(thousandsSeparator.format(value as string))
+      eachFigures(indicator, dataIndex, styles, (figure: IndicatorFigure, figureStyles: Required<IndicatorFigureStyle>) => {
+        if (isString(figure.title)) {
+          const color = figureStyles.color
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment  -- ignore
+          let value = data[figure.key]
+          if (isNumber(value)) {
+            value = formatPrecision(value, indicator.precision)
+            if (indicator.shouldFormatBigNumber) {
+              value = formatter.formatBigNumber(value as string)
             }
-            legends.push({ title: { text: figure.title, color }, value: { text: (value ?? defaultValue) as string, color } })
+            value = decimalFold.format(thousandsSeparator.format(value as string))
           }
-        })
+          legends.push({ title: { text: figure.title, color }, value: { text: (value ?? defaultValue) as string, color } })
+        }
+      })
       tooltipData.legends = legends
     }
 

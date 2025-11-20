@@ -37,7 +37,7 @@ const bullAndBearIndex: IndicatorTemplate<Bbi, number> = {
     const maxPeriod = Math.max(...params)
     const closeSums: number[] = []
     const mas: number[] = []
-    return dataList.reduce((prev, kLineData, i) => {
+    return dataList.map((kLineData, i) => {
       const bbi: Bbi = {}
       const close = kLineData.close
       params.forEach((p, index) => {
@@ -54,9 +54,8 @@ const bullAndBearIndex: IndicatorTemplate<Bbi, number> = {
         })
         bbi.bbi = maSum / 4
       }
-      prev[kLineData.timestamp] = bbi
-      return prev
-    }, {})
+      return bbi
+    })
   }
 }
 

@@ -41,7 +41,7 @@ const movingAverage: IndicatorTemplate<Ma, number> = {
   calc: (dataList, indicator) => {
     const { calcParams: params, figures } = indicator
     const closeSums: number[] = []
-    return dataList.reduce((prev, kLineData, i) => {
+    return dataList.map((kLineData, i) => {
       const ma = {}
       const close = kLineData.close
       params.forEach((p, index) => {
@@ -51,9 +51,8 @@ const movingAverage: IndicatorTemplate<Ma, number> = {
           closeSums[index] -= dataList[i - (p - 1)].close
         }
       })
-      prev[kLineData.timestamp] = ma
-      return prev
-    }, {})
+      return ma
+    })
   }
 }
 

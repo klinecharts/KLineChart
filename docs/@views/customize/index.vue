@@ -72,9 +72,7 @@ const { lang } = useData()
   font-weight: bold;
   line-height: normal;
   letter-spacing: 4px;
-  color: transparent;
-  background-image: linear-gradient(to right, var(--vp-c-indigo-1), var(--vp-c-text-1));
-  background-clip: text;
+  color: var(--vp-c-text-1);
   padding-bottom: 50px;
 }
 
@@ -91,15 +89,14 @@ const { lang } = useData()
   flex-direction: column;
   align-items: center;
   width: 26%;
-  border-top: solid 4px;
-  border-left: solid 1px transparent;
-  border-right: solid 1px transparent;
-  border-bottom: solid 1px transparent;
+  border-top: solid 1px var(--vp-c-border);
+  border-left: solid 1px var(--vp-c-border);
+  border-right: solid 1px var(--vp-c-border);
+  border-bottom: solid 1px var(--vp-c-border);
   border-radius: 8px;
-  background-color: var(--vp-c-bg-soft);
   transform: scale(1);
   transform-origin: center bottom;
-  transition: all 0.25s ease-in-out;
+  transition: all 0.3s ease;
   cursor: pointer;
   max-width: 400px;
   box-sizing: border-box;
@@ -107,41 +104,10 @@ const { lang } = useData()
 }
 
 .customize-content-item:hover {
+  border-color: var(--vp-c-indigo-1);
+  border-top-width: 4px;
   transform: scale(1.02);
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03), 0 1px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px 0 rgba(0, 0, 0, 0.02);
-}
-
-.customize-content-free-item {
-  border-top-color: var(--custom-green);
-}
-
-.customize-content-free-item:hover {
-  border-left-color: var(--custom-green);
-  border-right-color: var(--custom-green);
-  border-bottom-color: var(--custom-green);
-  background-color: rgba(45, 192, 142, 0.05);
-}
-
-.customize-content-qa-item {
-  border-top-color: var(--vp-c-indigo-1);
-}
-
-.customize-content-qa-item:hover {
-  border-left-color: var(--vp-c-indigo-1);
-  border-right-color: var(--vp-c-indigo-1);
-  border-bottom-color: var(--vp-c-indigo-1);
-  background-color: rgba(22, 119, 255, 0.05);
-}
-
-.customize-content-custom-item {
-  border-top-color: var(--custom-red);
-}
-
-.customize-content-custom-item:hover {
-  border-left-color: var(--custom-red);
-  border-right-color: var(--custom-red);
-  border-bottom-color: var(--custom-red);
-  background-color: rgba(249, 40, 85, 0.05);
+  box-shadow: var(--vp-shadow-3);
 }
 
 .customize-content-item-title-container {
@@ -187,7 +153,7 @@ const { lang } = useData()
   height: 100px;
   font-size: 14px;
   padding: 0 20px;
-  color: #e77c0a;
+  color: #E6AC00;
   line-height: 18px;
   border-top: solid 1px var(--vp-c-gutter);
 }

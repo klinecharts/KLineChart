@@ -41,7 +41,7 @@ const relativeStrengthIndex: IndicatorTemplate<Rsi, number> = {
     const { calcParams: params, figures } = indicator
     const sumCloseAs: number[] = []
     const sumCloseBs: number[] = []
-    return dataList.reduce((prev, kLineData, i) => {
+    return dataList.map((kLineData, i) => {
       const rsi = {}
       const prevClose = (dataList[i - 1] ?? kLineData).close
       const tmp = kLineData.close - prevClose
@@ -67,9 +67,8 @@ const relativeStrengthIndex: IndicatorTemplate<Rsi, number> = {
           }
         }
       })
-      prev[kLineData.timestamp] = rsi
-      return prev
-    }, {})
+      return rsi
+    })
   }
 }
 

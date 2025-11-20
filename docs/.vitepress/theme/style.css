@@ -17,17 +17,17 @@
 :root {
   --light-c-text-1: #09090B;
   --light-c-text-2: #71717A;
-  --light-c-text-3: #71717A;
+  --light-c-text-3: #A1A1AA;
   --light-c-bg: #FFFFFF;
 
   --dark-c-text-1: #FAFAFA;
   --dark-c-text-2: #A1A1AA;
-  --dark-c-text-3: #A1A1AA;
+  --dark-c-text-3: #828282;
   --dark-c-bg: #09090B;
 
   --vp-c-indigo-1: #E6AC00;
-  --vp-c-indigo-2: #d6ac2e;
-  --vp-c-indigo-3: #c9aa4e;
+  --vp-c-indigo-2: #ebbc33;
+  --vp-c-indigo-3: #f0cd66;
 
   --vp-c-text-1: var(--light-c-text-1);
   --vp-c-text-2: var(--light-c-text-2);
@@ -41,21 +41,11 @@
 
   --vp-c-indigo-soft: rgb(22, 119, 255, 0.14);
 
-  --custom-red: #F92855;
-  --custom-green: #2DC08E;
-
   --vp-c-bg-soft: #F5F5F5;
   --vp-code-bg: var(--vp-c-bg-soft);
   --vp-code-color: var(--vp-c-text-1);
 
   --vp-nav-height: 60px;
-
-  --vp-button-brand-border: var(--vp-c-indigo-2);
-  --vp-button-brand-bg: var(--vp-c-indigo-1);
-  --vp-button-brand-hover-border: var(--vp-c-indigo-2);
-  --vp-button-brand-hover-bg: var(--vp-c-indigo-2);
-  --vp-button-brand-active-border: var(--vp-c-indigo-2);
-  --vp-button-brand-active-bg: var(--vp-button-brand-bg);
 
   --vp-sidebar-bg-color: var(--vp-c-bg);
   --vp-c-divider: #EFEFEF;
@@ -66,7 +56,8 @@
   --vp-font-family-mono: SourceCode, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   --vp-font-family-base: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Arial", "sans-serif";
 
-  --vp-home-hero-bg: linear-gradient(180deg, rgba(238, 238, 238, 0) 0%, rgba(234, 204, 117, 0.2) 52%, rgba(230, 172, 0, 0) 100%);
+  --custom-c-warn: #E6AC00;
+  --vp-custom-block-warning-bg: #f5dd99;
 }
 
 .dark {
@@ -79,12 +70,11 @@
   --vp-c-divider: #27272A;
 
   --vp-c-bg-alt: #161616;
+  --vp-c-bg-elv: #161616;
 
   --vp-c-bg-soft: #262626;
 
   --vp-local-search-bg: var(--vp-c-bg-alt);
-
-  --vp-home-hero-bg: linear-gradient(180deg, rgba(238, 238, 238, 0) 0%, rgba(234, 204, 117, 0.15) 52%, rgba(230, 172, 0, 0) 100%);
 }
 
 body {

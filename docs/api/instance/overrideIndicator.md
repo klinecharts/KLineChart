@@ -2,6 +2,12 @@
 outline: deep
 ---
 
+<script setup>
+import OverrideIndicatorBasic from '../../@views/api/samples/overrideIndicator-basic/index.vue'
+import OverrideIndicatorPaneId from '../../@views/api/samples/overrideIndicator-paneId/index.vue'
+import Tip from '../../@components/Tip.vue'
+</script>
+
 # overrideIndicator(indicator)
 `overrideIndicator` 覆盖指标属性。
 
@@ -38,18 +44,12 @@ outline: deep
   - `draw` 自定义绘制方法，如果返回值是 `true` ，则会覆盖默认的绘制。
   - `onDataStateChange` 数据变化回调通知。
 
-::: tip 提示
-其中 `id`，`paneId` 和 `name` 是索引，如果入参包含这三个参数，会根据这三个参数查找符合条件的指标来覆盖。
-:::
+<Tip title="提示" tip="其中 <code>id</code> ，<code>paneId</code> 和 <code>name</code> 是索引，如果入参包含这三个参数，会根据这三个参数查找符合条件的指标来覆盖。"/>
 
 ### 返回值 {#returns}
 `overrideIndicator` 返回 `undefined` 。
 
 ## 用法 {#usage}
-<script setup>
-import OverrideIndicatorBasic from '../../@views/api/samples/overrideIndicator-basic/index.vue'
-import OverrideIndicatorPaneId from '../../@views/api/samples/overrideIndicator-paneId/index.vue'
-</script>
 
 ### 基本使用 {#basic}
 <OverrideIndicatorBasic/>

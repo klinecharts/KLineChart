@@ -14,9 +14,7 @@
     
     <span>GitHub</span>
     
-    <!-- Star Icon with Animation -->
-    <div class="star-container" v-if="!isLoading">
-      <!-- Background Star -->
+    <Particle v-if="!isLoading" ref="particle">
       <svg
         aria-hidden="true"
         class="star star-bg"
@@ -33,18 +31,8 @@
         }">
         <path d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.751.751 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Z"/>
       </svg>
-      
-      <!-- Particle Effects -->
-      <div v-if="displayParticles" class="particles-container">
-        <!-- Individual Particles -->
-        <div class="particle-dot particle-dot-1"></div>
-        <div class="particle-dot particle-dot-2"></div>
-        <div class="particle-dot particle-dot-3"></div>
-        <div class="particle-dot particle-dot-4"></div>
-        <div class="particle-dot particle-dot-5"></div>
-        <div class="particle-dot particle-dot-6"></div>
-      </div>
-    </div>
+    </Particle>
+
     <!-- Number Display -->
     <span v-if="!isLoading" class="number-container">
       
@@ -68,7 +56,9 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch, nextTick } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
+
+import Particle from '../../../@components/Particle.vue'
 
 // Props
 const props = defineProps({
@@ -99,15 +89,22 @@ const props = defineProps({
   className: {
     type: String,
     default: ''
+  },
+  delay: {
+    type: Number,
+    default: 0
   }
 })
+
+const delayTimer = ref(null)
+
+const particle = ref(null)
 
 // Reactive data
 const stars = ref(0)
 const currentNumber = ref(0)
 const isLoading = ref(true)
 const isCompleted = ref(false)
-const displayParticles = ref(false)
 const buttonRef = ref(null)
 const isInView = ref(false)
 
@@ -166,7 +163,7 @@ function animateToValue(target) {
       currentNumber.value = target
       if (!isCompleted.value) {
         isCompleted.value = true
-        handleDisplayParticles()
+        showParticle()
       }
     }
   }
@@ -175,16 +172,15 @@ function animateToValue(target) {
 }
 
 // Event handlers
-function handleDisplayParticles() {
-  displayParticles.value = true
-  setTimeout(() => {
-    displayParticles.value = false
-  }, 1500)
+function showParticle() {
+  if (particle.value && particle.value.start) {
+    particle.value.start()
+  }
 }
 
 function handleClick(e) {
   e.preventDefault()
-  handleDisplayParticles()
+  showParticle()
   setTimeout(() => {
     window.open(repoUrl.value, '_blank')
   }, 500)
@@ -227,8 +223,10 @@ onMounted(async () => {
     const response = await fetch(`https://api.github.com/repos/${props.username}/${props.repo}`)
     const data = await response.json()
     if (data && typeof data.stargazers_count === 'number') {
-      stars.value = data.stargazers_count
-      isLoading.value = false
+      delayTimer.value = setTimeout(() => {
+        stars.value = data.stargazers_count
+        isLoading.value = false
+      }, props.delay * 1000)
     }
   } catch (error) {
     console.error('Failed to fetch GitHub stars:', error)
@@ -237,6 +235,12 @@ onMounted(async () => {
   // Setup intersection observer
   await nextTick()
   setupIntersectionObserver()
+})
+
+onUnmounted(() => {
+  if (delayTimer.value) {
+    clearTimeout(delayTimer.value)
+  }
 })
 
 // Watchers
@@ -279,16 +283,6 @@ watch([() => stars.value, () => isInView.value], ([newStars, newIsInView]) => {
   height: 16px;
 }
 
-/* Star Container */
-.star-container {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 14px;
-  height: 14px;
-}
-
 .star {
   width: 14px;
   height: 14px;
@@ -305,7 +299,7 @@ watch([() => stars.value, () => isInView.value], ([newStars, newIsInView]) => {
   left: 0;
   fill: var(--vp-c-indigo-1);
   color: var(--vp-c-indigo-1);
-  transition: clip-path 0.3s ease;
+  transition: all 0.3s ease;
 }
 
 /* Number Container */
@@ -328,76 +322,6 @@ watch([() => stars.value, () => isInView.value], ([newStars, newIsInView]) => {
   transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Particles Container */
-.particles-container {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-
-/* Particle Dots */
-.particle-dot {
-  position: absolute;
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background-color: var(--vp-c-indigo-1);
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  animation: particle-burst 0.8s ease-out;
-}
-
-.particle-dot-1 {
-  animation-delay: 0s;
-  --angle: 0deg;
-}
-
-.particle-dot-2 {
-  animation-delay: 0.05s;
-  --angle: 60deg;
-}
-
-.particle-dot-3 {
-  animation-delay: 0.1s;
-  --angle: 120deg;
-}
-
-.particle-dot-4 {
-  animation-delay: 0.15s;
-  --angle: 180deg;
-}
-
-.particle-dot-5 {
-  animation-delay: 0.2s;
-  --angle: 240deg;
-}
-
-.particle-dot-6 {
-  animation-delay: 0.25s;
-  --angle: 300deg;
-}
-
-@keyframes particle-burst {
-  0% {
-    transform: translate(-50%, -50%) scale(0);
-    opacity: 0;
-  }
-  50% {
-    transform: translate(
-      calc(-50% + cos(var(--angle)) * 30px),
-      calc(-50% + sin(var(--angle)) * 30px)
-    ) scale(1);
-    opacity: 1;
-  }
-  100% {
-    transform: translate(
-      calc(-50% + cos(var(--angle)) * 30px),
-      calc(-50% + sin(var(--angle)) * 30px)
-    ) scale(0);
-    opacity: 0;
-  }
-}
 @media (min-width: 640px) {
   .github-button {
     height: 40px;
@@ -408,10 +332,6 @@ watch([() => stars.value, () => isInView.value], ([newStars, newIsInView]) => {
   .github-icon {
     width: 18px;
     height: 18px;
-  }
-  .star-container {
-    width: 16px;
-    height: 16px;
   }
 
   .star {

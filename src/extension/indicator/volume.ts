@@ -69,7 +69,7 @@ const volume: IndicatorTemplate<Vol, number> = {
   calc: (dataList, indicator) => {
     const { calcParams: params, figures } = indicator
     const volSums: number[] = []
-    return dataList.reduce((prev, kLineData, i) => {
+    return dataList.map((kLineData, i) => {
       const volume = kLineData.volume ?? 0
       const vol: Vol = { volume, open: kLineData.open, close: kLineData.close }
       params.forEach((p, index) => {
@@ -79,9 +79,8 @@ const volume: IndicatorTemplate<Vol, number> = {
           volSums[index] -= (dataList[i - (p - 1)].volume ?? 0)
         }
       })
-      prev[kLineData.timestamp] = vol
-      return prev
-    }, {})
+      return vol
+    })
   }
 }
 

@@ -20,8 +20,8 @@ import type { Period } from './Period'
 export type DataLoadType = 'init' | 'forward' | 'backward' | 'update'
 
 export type DataLoadMore = boolean | {
-  backward: boolean
-  forward: boolean
+  backward?: boolean
+  forward?: boolean
 }
 
 export interface DataLoaderGetBarsParams {

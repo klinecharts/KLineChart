@@ -15,7 +15,7 @@
 import type Nullable from '../common/Nullable'
 import type DeepPartial from '../common/DeepPartial'
 import type ExcludePickPartial from '../common/ExcludePickPartial'
-import type { KLineData, NeighborData, Timestamp } from '../common/Data'
+import type { KLineData, NeighborData } from '../common/Data'
 import type Bounding from '../common/Bounding'
 import type BarSpace from '../common/BarSpace'
 import type Crosshair from '../common/Crosshair'
@@ -99,7 +99,7 @@ export interface IndicatorDrawParams<D, C, E> {
 
 export type IndicatorDrawCallback<D, C, E> = (params: IndicatorDrawParams<D, C, E>) => boolean
 
-export type IndicatorCalcCallback<D, C, E> = (dataList: KLineData[], indicator: Indicator<D, C, E>) => Promise<Record<Timestamp, D>> | Record<Timestamp, D>
+export type IndicatorCalcCallback<D, C, E> = (dataList: KLineData[], indicator: Indicator<D, C, E>) => Promise<D[]> | D[]
 
 export type IndicatorShouldUpdateCallback<D, C, E> = (prev: Indicator<D, C, E>, current: Indicator<D, C, E>) => (boolean | { calc: boolean, draw: boolean })
 
@@ -111,7 +111,6 @@ export interface IndicatorOnDataStateChangeParams<D> {
 
   indicator: Indicator<D>
 }
-export type IndicatorOnDataStateChangeCallback<D> = (params: IndicatorOnDataStateChangeParams<D>) => void
 
 export interface Indicator<D = unknown, C = unknown, E = unknown> {
   /**
@@ -220,14 +219,9 @@ export interface Indicator<D = unknown, C = unknown, E = unknown> {
   draw: Nullable<IndicatorDrawCallback<D, C, E>>
 
   /**
-   * Data state change
-   */
-  onDataStateChange: Nullable<IndicatorOnDataStateChangeCallback<D>>
-
-  /**
    * Calculation result
    */
-  result: Record<Timestamp, D>
+  result: D[]
 }
 
 export type IndicatorTemplate<D = unknown, C = unknown, E = unknown> = ExcludePickPartial<Omit<Indicator<D, C, E>, 'result' | 'paneId'>, 'name' | 'calc'>
@@ -244,7 +238,7 @@ export type EachFigureCallback<D> = (figure: IndicatorFigure<D>, figureStyles: I
 
 export function eachFigures<D = unknown> (
   indicator: Indicator,
-  timestamps: NeighborData<Nullable<number>>,
+  dataIndex: number,
   defaultStyles: IndicatorStyle,
   eachFigureCallback: EachFigureCallback<D>
 ): void {
@@ -295,9 +289,9 @@ export function eachFigures<D = unknown> (
     if (isValid(figure.type)) {
       const ss = figure.styles?.({
         data: {
-          prev: result[timestamps.prev ?? ''],
-          current: result[timestamps.current ?? ''],
-          next: result[timestamps.next ?? '']
+          prev: result[dataIndex - 1],
+          current: result[dataIndex],
+          next: result[dataIndex + 1]
         },
         indicator,
         defaultStyles
@@ -347,14 +341,12 @@ export default class IndicatorImp<D = unknown, C = unknown, E = unknown> impleme
     return { calc, draw }
   }
 
-  calc: IndicatorCalcCallback<D, C, E> = () => ({})
+  calc: IndicatorCalcCallback<D, C, E> = () => []
   regenerateFigures: Nullable<IndicatorRegenerateFiguresCallback<D, C>> = null
   createTooltipDataSource: Nullable<IndicatorCreateTooltipDataSourceCallback<D>> = null
   draw: Nullable<IndicatorDrawCallback<D, C, E>> = null
 
-  onDataStateChange: Nullable<IndicatorOnDataStateChangeCallback<D>> = null
-
-  result: Record<Timestamp, D> = {}
+  result: D[] = []
 
   private _prevIndicator: Indicator<D, C, E>
   private _lockSeriesPrecision = false

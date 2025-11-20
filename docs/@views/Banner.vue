@@ -49,10 +49,9 @@ onMounted(() => {
   background-color: var(--vp-c-bg);
   overflow: hidden;
   margin: 0;
-  color: var(--vp-c-indigo-1);
+  color: #E6AC00;
   font-size: 12px;
   border-bottom: solid 1px var(--vp-c-gutter);
-  transition: background-color 0.15s;
 }
 
 .banner span {
