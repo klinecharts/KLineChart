@@ -12,7 +12,7 @@ outline: deep
 `getZoomAnchor` 不接受任何参数。
 
 ### 返回值 {#returns}
-`getZoomAnchor` 回报 `ZoomAnchor` 。
+`getZoomAnchor` 返回对象 `ZoomAnchor` 。
 
 ## 用法 {#usage}
 <script setup>

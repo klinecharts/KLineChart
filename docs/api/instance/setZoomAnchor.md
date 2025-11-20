@@ -9,10 +9,10 @@ outline: deep
 <!--@include: @/@views/api/references/instance/setZoomAnchor.md-->
 
 ### 参数 {#parameters}
-- `anchor: ZoomAnchor` 主窗格和 x 轴窗格的缩放锚点类型。
+- `anchor`: 主窗格和 x 轴窗格的缩放锚点类型, 支持 `cursor` ， `last_bar` 和 `{ main: 'cursor' | 'last_bar', xAxis: 'cursor' | 'last_bar' }`。
 
 ### 返回值 {#returns}
-`setZoomAnchor` 返回 `void` 。
+`setZoomAnchor` 返回 `undefined` 。
 
 ## 用法 {#usage}
 <script setup>
