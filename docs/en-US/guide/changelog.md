@@ -1,87 +1,37 @@
 # 📠 Change Log
 
-## 10.0.0-alpha9
-`2025-09-02`
-+ 👉 Change the return value of the indicator method `calc` from an array to an object keyed by a timestamp.
-+ 💄 Optimize indicator calculation task execution.
-+ 🐞 Fix an issue where the instance APIs `setSymbol`, `setPeriod`, and `setDataLoader` did not reset the Y axis.
-
-## 10.0.0-alpha8
-`2025-06-14`
-+ 🐞 Fix typescript reference error.
-
-## 10.0.0-alpha7
-`2025-06-14`
-+ 👉 Chart api `init(ds, options)` , `options.customApi` changed to `options.formatter` , `formatDate` parameter changed to object.
-+ 👉 Instance api `setCustomApi` changed to `setFormatter` , `getCustomApi` changed to `getFormatter`.
-+ 🆕 Style configuration add `candle.priceMark.last.extendTexts` , `candle.tooltip.title` , `candle.tooltip.legend` , `indicator.tooltip.title` , `indicator.tooltip.legend` and `crosshair.horizontal.features` .
-+ 🆕 Instance api add `setDataLoader` , `setSymbol` , `getSymbol` , `setPeriod` , `getPeriod` and `resetData` .
-+ 🆕 Instance api `subscribeAction` and `unsubscribeAction` params add `onIndicatorTooltipFeatureClick` and `onCrosshairFeatureClick` .
-+ 🗑 Remove `candle.tooltip.defaultValue` in style configuration, replace `candle.tooltip.custom` with `candle.tooltip.legend`, remove `candle.tooltip.text`, remove `indicator.tooltip.showName`, `indicator.tooltip.showParams`, use `indicator.tooltip.title`, remove `indicator.tooltip.defaultValue`, replace with `indicator.tooltip.legend`, remove `indicator.tooltip.text`.
-+ 🗑 Remove `setLoadMoreData` , `applyNewData` , `updateData` in instance api, replace with `setDataLoader`, remove `clearData`, `setPrecision` and `getPrecision` .
-+ 🐞 Fix the confusion of overlay `onSelected` and `onDeselected` responses.
-+ 🐞 Fix the display problem when the style configuration `candle.type` is `ohlc` .
-+ 💄 Optimize the default event response of overlay events.
-+ 💄 Optimize the x-axis display.
-
-## 10.0.0-alpha6
-`2025-06-12`
-+ Error publish.
-
-## 10.0.0-alpha5
-`2025-03-09`
-+ 👉 Style configuration `candle.tooltip.icons` changed to `candle.tooltip.features`, `indicator.tooltip.icons` changed to `indicator.tooltip.features`.
-+ 👉 `icons` in the return value of the `createTooltipDataSource` method in the indicator changed to `features`.
-+ 👉 The instance api `subscribeAction` and `unsubscribeAction` input parameter `onTooltipIconClick` changed to `onCandleTooltipFeatureClick`, and the indicator event is replaced by `indicator.onClick`.
-+ 🐞 Fixed the problem that scrolling cannot be performed in certain situations on mobile terminals.
-+ 💄 Optimize the display of overlay event response.
-
-## 10.0.0-alpha4
-`2025-02-23`
-+ 🐞 Fix the issue that the parameter `more.backward` of `applyNewData` instance method is incorrect.
-+ 🐞 Fix the issue that a single piece of data causes a chart error.
-
-## 10.0.0-alpha3
-`2025-02-19`
-+ 👉 The return value of the instance api `createIndicator` is changed to return the indicator id.
-+ 👉 The input parameter `paneId` of the instance api `overlayIndicator` is merged into the input parameter `indicator`.
-+ 👉 The return value of the instance api `getIndicators` is changed to return an array.
-+ 👉 The return value of the instance api `getOverlays` is changed to return an array.
-+ 🆕 The style configuration adds `candle.bar.compareRule`, `indicator.ohlc.compareRule` and `candle.priceMark.last.compareRule`.
-+ 🆕 Supports dragging the y-axis on mobile devices.
-+ 🆕 Supports creating multiple indicators with the same name on the same window.
-+ 💄 Optimize `figure` in `overlay` template to ignore event type, and the event name is consistent with the event name in `overlay`.
-+ 🐞 Fix the problem that the indicator custom prompt information may be wrong.
-+ 🐞 Fix the problem that the overlay being drawn may not be deleted correctly.
-+ 🐞 Fix the problem that the api `createOverlay` may not be created correctly when `points` is specified.
-+ 🐞 Fix the problem that the api `executeAction` may cause the `subscribeAction` to trigger infinitely.
-
-## 10.0.0-alpha2
-`2024-12-20`
-+ 🆕 The x-axis supports displaying future time.
-+ 🐞 Fix the issue that `subscribeAction` type is `ActionType.OnCandleBarClick` and it does not work.
-
-## 10.0.0-alpha1
-`2024-12-01`
-+ 🆕 New features
-  + Support thousand separators and custom decimal folding.
-  + Rewrite the axis module, and customize the y-axis to support setting ranges.
-  + Add instance methods `setPrecision(precision)` , `getPrecision()` , `setThousandsSeparator(thousandsSeparator)` , `getThousandsSeparator()` , `setDecimalFold(decimalFold)` , `getDecimalFold()` and `setLoadMoreDataCallback(cb)` .
+## 10.0.0-beta1
+`2025-11-21`
++ 🆕 New Features
+  + Support thousands separators and custom decimal collapse.
+  + Support displaying future time on the x-axis.
+  + Support dragging the y-axis on mobile devices.
+  + Support creating multiple metrics with the same name on the same window.
+  + Rewrote the axis module; custom y-axis supports setting the range.
+  + Add `zoomAnchor` to the `options` method of the chart method `init(dom, options)`.
+  + New instance methods `setZoomAnchor(anchor)`, `getZoomAnchor()`, `setDataLoader(loader)`, `setSymbol(symbol)`, `getSymbol()`, `setPeriod(period)`, `getPeriod()`, `resetData()`, `setThousandsSeparator(thousandsSeparator)` , `getThousandsSeparator()` , `setDecimalFold(decimalFold)` , `getDecimalFold()` , `getIndicators()` and `getOverlays()` . 
+  + Add style configurations: `candle.priceMark.last.extendTexts`, `candle.tooltip.title`, `candle.tooltip.legend`, `indicator.tooltip.title`, `indicator.tooltip.legend`, `crosshair.horizontal.features`, `candle.bar.compareRule`, `indicator.ohlc.compareRule`, and `candle.priceMark.last.compareRule`.
+  + Add `onIndicatorTooltipFeatureClick` and `onCrosshairFeatureClick` to the `type` parameter in the instance methods `subscribeAction` and `unsubscribeAction`.
 + 👉 Changes
-  + Chart api `init(dcs, options)`, `position` in `options.layout` child changed to `order` , `formatDate(dateTimeFormat, timestamp, format, type)` in `options.customApi` changed to `formatDate(timestamp, format, type)` , `options.thousandsSeparator` changed to object `{ sign, format }` , `options.decimalFoldThreshold` changed to `options.decimalFold` .
-  + Instance api `applyNewData(dataList, more, callback)` changed to `applyNewData(dataList, more)` .
-  + Instance api `updateData(data, callback)` changed to `updateData(data)` .
-  + Instance api `getBarSpace()` return value changed to object.
-  + The return value of the custom indicator `createTooltipDataSource` method `values` is changed to `legends` .
+  + In the chart method `init(dcs, options)`, the `position` sub-item of `options.layout` has been changed to `order`, `options.thousandsSeparator` has been changed to the object `{ sign, format }`, `options.decimalFoldThreshold` has been changed to `options.decimalFold`, `options.customApi` has been changed to `options.formatter`, and the parameter of `formatDate` has been changed to an object.
+  + In the instance methods `setCustomApi` and `getCustomApi` have been changed to `getFormatter`, the return value of `getBarSpace()` has been changed to an object, the return value of `createIndicator` has been changed to return the indicator ID, and the input parameter `paneId` of `overlayIndicator` has been merged into the input parameter `indicator`.
+  + The return value of the custom metric `createTooltipDataSource` method has been changed from `values` to `legends`, and `icons` to `features`.
+  + The style configurations `candle.tooltip.icons` and `indicator.tooltip.icons` have been changed to `indicator.tooltip.features`.
++ 💄 Optimizations
+  + Optimized the `figure` element in the overlay template to ignore event types, ensuring the event name matches the event name in `overlay`.
+  + Optimized the execution of metric calculation tasks.
+  + Optimized the triggering of scroll events on mobile devices.
+
 + 🗑 Deprecated
-  + Remove chart api `utils.drawArc(ctx, arc, styles)`, `utils.drawCircle(ctx, circle, styles)`, `utils.drawLine(ctx, line, styles)`, `utils.drawPolygon(ctx, polygon, styles)`, `utils.drawRect(ctx, rect, styles)`, `utils.drawText(ctx, text, styles)`, `utils.drawRectText(ctx, rectText, styles)`, please use `getFigureClass(name)` instead.
-  + Remove instance api `setPriceVolumePrecision(pricePrecision, volumePrecision)`, please use `setPrecision(precision)` instead.
-  + Remove instance api `applyMoreData(dataList, more, callback)`, `setLoadDataCallback(cb)` and `loadMore(cb)`, please use `setLoadMoreDataCallback(cb)` instead.
-  + Remove instance api `getIndicatorByPaneId(paneId, name)`, please use `getIndicators(filter)` instead.
-  + Remove instance api `getOverlayById(id)`, please use `getOverlays(filter)` instead.
-  + Remove style configuration `yAxis.position` , `yAxis.type` , `yAxis.inside` and `yAxis.inside` , please use the properties in the window configuration `axis` instead. For details, refer to the chart API [init(dcs, options)](/api/chart/init#parameters), the instance API [createIndicator(value, isStack, paneOptions)](/api/instance/createIndicator#parameters) and [setPaneOptions(options)](/api/instance/setPaneOptions#parameters).
-  + Remove `overlay.rectText` from style configuration.
-  + Remove `rectText` from built-in basic graphics, please use `text` instead.
+  + The following chart methods have been removed: `utils.drawArc(ctx, arc, styles)`, `utils.drawCircle(ctx, circle, styles)`, `utils.drawLine(ctx, line, styles)`, `utils.drawPolygon(ctx, polygon, styles)`, `utils.drawRect(ctx, rect, styles)`, `utils.drawText(ctx, text, styles)`, `utils.drawRectText(ctx, rectText, styles)`. Please use `getFigureClass(name)` instead.
+  + The following instance method has been removed: `setPriceVolumePrecision(pricePrecision, volumePrecision)`. Please use `setPrecision(precision)` instead.
+  + In the instance API, remove `setLoadMoreData`, `applyNewData`, and `updateData`. Replace them with `setDataLoader`. Remove `clearData`, `setPrecision`, and `getPrecision`.
+  + In the instance method, remove `getIndicatorByPaneId(paneId, name)`. Replace it with `getIndicators(filter)`.
+  + In the instance method, remove `getOverlayById(id)`. Replace it with `getOverlays(filter)`.
+  + In the instance methods `subscribeAction` and `unsubscribeAction`, remove the parameter `onTooltipIconClick`. Replace it with `onCandleTooltipFeatureClick` and `onIndicatorTooltipFeatureClick`.
+  + The style configuration removes `yAxis.position`, `yAxis.type`, `yAxis.inside`, and `yAxis.inside`. Please use the properties in the `axis` section of the window configuration instead. For details, see the chart API `[init(dcs, options)](/api/chart/init#parameters)`, the instance APIs `[createIndicator(value, isStack, paneOptions)](/api/instance/createIndicator#parameters)`, and `[setPaneOptions(options)](/api/instance/setPaneOptions#parameters)`.
+  + In style configuration, remove `candle.tooltip.defaultValue` and replace `candle.tooltip.custom` with `candle.tooltip.legend`. Also remove `candle.tooltip.text`, `indicator.tooltip.showName`, and `indicator.tooltip.showParams`; use `indicator.tooltip.title` instead. Remove `indicator.tooltip.defaultValue` and replace it with `indicator.tooltip.legend`. Also remove `indicator.tooltip.text` and `overlay.rectText`.
+  + In built-in basic graphics, remove `rectText` and replace it with `text`.
 
 ## 9.x
 
