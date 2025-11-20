@@ -37,7 +37,7 @@ import { logWarn } from './common/utils/logger'
 import { UpdateLevel } from './common/Updater'
 import type { DataLoader, DataLoaderGetBarsParams, DataLoadMore, DataLoadType } from './common/DataLoader'
 
-import type { Options, Formatter, ThousandsSeparator, DecimalFold, FormatDateType, FormatDateParams, FormatBigNumber, FormatExtendText, FormatExtendTextParams, ZoomAnchor } from './Options'
+import type { Options, Formatter, ThousandsSeparator, DecimalFold, FormatDateType, FormatDateParams, FormatBigNumber, FormatExtendText, FormatExtendTextParams, ZoomAnchor, ZoomAnchorType } from './Options'
 
 import type { IndicatorOverride, IndicatorCreate, IndicatorFilter } from './component/Indicator'
 import type IndicatorImp from './component/Indicator'
@@ -123,7 +123,7 @@ export interface Store {
   setZoomEnabled: (enabled: boolean) => void
   isZoomEnabled: () => boolean
   setZoomAnchor: (behavior: ZoomAnchor) => void
-  zoomAnchor: () => ZoomAnchor
+  getZoomAnchor: () => ZoomAnchor
   setScrollEnabled: (enabled: boolean) => void
   isScrollEnabled: () => boolean
   resetData: () => void
@@ -228,8 +228,8 @@ export default class StoreImp implements Store {
    * Zoom anchor point flag
    */
   private readonly _zoomAnchor: ZoomAnchor = {
-    main: 'cursor_point',
-    xAxis: 'cursor_point'
+    main: 'cursor',
+    xAxis: 'cursor'
   }
 
   /**
@@ -1027,13 +1027,20 @@ export default class StoreImp implements Store {
     return Math.ceil(this.coordinateToFloatIndex(x)) - 1
   }
 
-  zoom (scale: number, coordinate?: Partial<Coordinate>): void {
+  zoom (scale: number, coordinate: Nullable<Partial<Coordinate>>, position: 'main' | 'xAxis'): void {
     if (!this._zoomEnabled) {
       return
     }
-    let zoomCoordinate: Nullable<Partial<Coordinate>> = coordinate ?? null
-    if (!isNumber(zoomCoordinate?.x)) {
-      zoomCoordinate = { x: this._crosshair.x ?? this._totalBarSpace / 2 }
+    const zoomCoordinate: Partial<Coordinate> = coordinate ?? { x: this._crosshair.x ?? this._totalBarSpace / 2 }
+
+    if (position === 'xAxis') {
+      if (this._zoomAnchor.xAxis === 'last_bar') {
+        zoomCoordinate.x = this.dataIndexToCoordinate(this._dataList.length - 1)
+      }
+    } else {
+      if (this._zoomAnchor.main === 'last_bar') {
+        zoomCoordinate.x = this.dataIndexToCoordinate(this._dataList.length - 1)
+      }
     }
     const x = zoomCoordinate.x!
     const floatIndex = this.coordinateToFloatIndex(x)
@@ -1056,16 +1063,21 @@ export default class StoreImp implements Store {
     return this._zoomEnabled
   }
 
-  setZoomAnchor (anchor: Partial<ZoomAnchor>): void {
-    if (isValid(anchor.main) && isString(anchor.main)) {
-      this._zoomAnchor.main = anchor.main
-    }
-    if (isValid(anchor.xAxis) && isString(anchor.xAxis)) {
-      this._zoomAnchor.xAxis = anchor.xAxis
+  setZoomAnchor (anchor: ZoomAnchorType | Partial<ZoomAnchor>): void {
+    if (isString(anchor)) {
+      this._zoomAnchor.main = anchor
+      this._zoomAnchor.xAxis = anchor
+    } else {
+      if (isString(anchor.main)) {
+        this._zoomAnchor.main = anchor.main
+      }
+      if (isString(anchor.xAxis)) {
+        this._zoomAnchor.xAxis = anchor.xAxis
+      }
     }
   }
 
-  zoomAnchor (): ZoomAnchor {
+  getZoomAnchor (): ZoomAnchor {
     return { ...this._zoomAnchor }
   }
 

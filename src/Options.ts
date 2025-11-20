@@ -85,9 +85,11 @@ export interface ThousandsSeparator {
   format: (value: string | number) => string
 }
 
+export type ZoomAnchorType = 'cursor' | 'last_bar'
+
 export interface ZoomAnchor {
-  main: 'cursor_point' | 'last_bar'
-  xAxis: 'cursor_point' | 'last_bar'
+  main: ZoomAnchorType
+  xAxis: ZoomAnchorType
 }
 
 export interface Options {
@@ -97,6 +99,6 @@ export interface Options {
   formatter?: Partial<Formatter>
   thousandsSeparator?: Partial<ThousandsSeparator>
   decimalFold?: Partial<DecimalFold>
+  zoomAnchor?: ZoomAnchorType | Partial<ZoomAnchor>
   layout?: LayoutChild[]
-  zoomAnchor?: Partial<ZoomAnchor>
 }
