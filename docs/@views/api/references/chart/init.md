@@ -61,7 +61,7 @@
       threshold?: number
       format?: (value: number | string) => string
     }
-    zoomAnchor?: { main?: 'cursor_point' | 'last_bar', xAxis?: 'cursor_point' | 'last_bar' }
+    zoomAnchor?: 'cursor' | 'last_bar' | { main?: 'cursor' | 'last_bar', xAxis?: 'cursor' | 'last_bar' }
   }
 ) => Chart
 ```

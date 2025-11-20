@@ -16,4 +16,5 @@ chart.setDataLoader({
   }
 })
 
-const anchor = chart.zoomAnchor()
+const anchor = chart.getZoomAnchor()
+console.log(anchor)

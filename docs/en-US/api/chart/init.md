@@ -65,7 +65,7 @@ import Tip from '../../../@components/Tip.vue'
   - `decimalFold` Decimal 0 folds the configuration.
     - `threshold` Fold threshold.
     - `format` Custom formatting method.
-  - `zoomAnchor` Set the anchor position when zooming the chart to `last_bar` or `cursor_point`
+  - `zoomAnchor` Set the anchor position when zooming the chart to `last_bar` or `cursor`
 
 ### Returns {#returns}
 `init` returns an object `Chart`。
