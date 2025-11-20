@@ -18,7 +18,7 @@ const styles = {
     }
   },
   candle: {
-    // 'candle_solid' | 'candle_stroke' | 'candle_up_stroke' | 'candle_down_stroke' | 'ohlc' | 'area'
+    // 'candle_solid' | 'candle_stroke' | 'candle_up_stroke' | 'candle_down_stroke' | 'ohlc' | 'area' | 'heikin_ashi'
     type: 'candle_solid',
     bar: {
       // 'current_open' | 'previous_close'
