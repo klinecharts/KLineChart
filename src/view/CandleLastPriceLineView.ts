@@ -28,8 +28,9 @@ export default class CandleLastPriceView extends View {
     const lastPriceMarkLineStyles = lastPriceMarkStyles.line
     if (priceMarkStyles.show && lastPriceMarkStyles.show && lastPriceMarkLineStyles.show) {
       const yAxis = pane.getAxisComponent() as YAxis
-      const dataList = chartStore.getDataList()
+      const dataList = chartStore.getDataList(true)
       const data = dataList[dataList.length - 1]
+
       if (isValid(data)) {
         const { close, open } = data
         const comparePrice = lastPriceMarkStyles.compareRule === 'current_open' ? open : (dataList[dataList.length - 2]?.close ?? close)

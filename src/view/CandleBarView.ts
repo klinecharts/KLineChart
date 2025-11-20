@@ -55,6 +55,7 @@ export default class CandleBarView extends ChildrenView {
         halfOhlcSize = Math.floor(ohlcSize / 2)
       }
       const yAxis = pane.getAxisComponent()
+
       this.eachChildren((visibleData, barSpace) => {
         const { x, data: { current, prev } } = visibleData
         if (isValid(current)) {
@@ -86,7 +87,8 @@ export default class CandleBarView extends ChildrenView {
           const correction = barSpace.gapBar % 2 === 0 ? 1 : 0
           let rects: Array<FigureCreate<RectAttrs | RectAttrs[], Partial<RectStyle>>> = []
           switch (type) {
-            case 'candle_solid': {
+            case 'candle_solid':
+            case 'heikin_ashi': {
               rects = this._createSolidBar(x, priceY, barSpace, colors, correction)
               break
             }
