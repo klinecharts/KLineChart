@@ -105,7 +105,7 @@ export interface Store {
   getSymbol: () => Nullable<SymbolInfo>
   setPeriod: (period: Period) => void
   getPeriod: () => Nullable<Period>
-  getDataList: () => KLineData[]
+  getDataList: (mutateToCandleType?: boolean) => KLineData[]
   setOffsetRightDistance: (distance: number) => void
   getOffsetRightDistance: () => number
   setMaxOffsetLeftDistance: (distance: number) => void
@@ -525,16 +525,92 @@ export default class StoreImp implements Store {
     return this._period
   }
 
-  getDataList (): KLineData[] {
-    return this._dataList
+  getDataList (mutateToCandleType = false): KLineData[] {
+    if (!mutateToCandleType || this._styles.candle.type !== 'heikin_ashi') {
+      return this._dataList
+    }
+
+    let prevHaBar: Nullable<KLineData> = null
+    return this._dataList.map(value => {
+      const data = this.ohlcvToHeikinAshi(value, prevHaBar)
+      prevHaBar = data
+      return data
+    })
   }
 
-  getVisibleRangeDataList (): VisibleRangeData[] {
-    return this._visibleRangeDataList
+  getVisibleRangeDataList (mutateToCandleType = false): VisibleRangeData[] {
+    if (!mutateToCandleType || this._styles.candle.type !== 'heikin_ashi') {
+      return this._visibleRangeDataList
+    }
+
+    const result: VisibleRangeData[] = []
+    let prevHaBar: Nullable<KLineData> = null
+    const list = this._visibleRangeDataList
+    const len = list.length
+
+    for (let i = 0; i < len; i++) {
+      const curOrig: Nullable<KLineData> = list[i].data.current ?? null
+      if (curOrig === null) {
+        continue
+      }
+      const curHa = this.ohlcvToHeikinAshi(curOrig, prevHaBar)
+      const prevHa = prevHaBar
+
+      let nextHa: Nullable<KLineData> = null
+      if (i + 1 < len) {
+        const nextOrig: Nullable<KLineData> = list[i + 1].data.current ?? null
+        nextHa = nextOrig === null ? null : this.ohlcvToHeikinAshi(nextOrig, curHa)
+      } else {
+        nextHa = null
+      }
+
+      result.push({
+        dataIndex: list[i].dataIndex,
+        x: list[i].x,
+        data: {
+          prev: prevHa,
+          current: curHa,
+          next: nextHa
+        }
+      })
+
+      prevHaBar = curHa
+    }
+
+    return result
   }
 
   getVisibleRangeHighLowPrice (): Array<{ price: number; x: number }> {
     return this._visibleRangeHighLowPrice
+  }
+
+  private ohlcvToHeikinAshi (currentBar: KLineData, prevHaBar: Nullable<KLineData>): KLineData {
+    if (prevHaBar === null) {
+      const firstHaBar: KLineData = {
+        timestamp: currentBar.timestamp,
+        open: (currentBar.open + currentBar.close) / 2, // Some methods use currentBar.o, but averaging is more common
+        high: currentBar.high,
+        low: currentBar.low,
+        close: (currentBar.open + currentBar.high + currentBar.low + currentBar.close) / 4
+      }
+
+      return firstHaBar
+    }
+
+    const haClose = (currentBar.open + currentBar.high + currentBar.low + currentBar.close) / 4
+    const haOpen = (prevHaBar.open + prevHaBar.close) / 2
+    const haHigh = Math.max(currentBar.high, haOpen, haClose)
+    const haLow = Math.min(currentBar.low, haOpen, haClose)
+
+    const newHaBar: KLineData = {
+      timestamp: currentBar.timestamp,
+      open: haOpen,
+      high: haHigh,
+      low: haLow,
+      close: haClose
+    }
+
+    return newHaBar
   }
 
   private _addData (

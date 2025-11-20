@@ -702,8 +702,8 @@ export default class ChartImp implements Chart {
     this._chartStore.resetData()
   }
 
-  getDataList (): KLineData[] {
-    return this._chartStore.getDataList()
+  getDataList (mutateToCandleType = false): KLineData[] {
+    return this._chartStore.getDataList(mutateToCandleType)
   }
 
   setDataLoader (dataLoader: DataLoader): void {
