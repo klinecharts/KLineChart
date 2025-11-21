@@ -1,0 +1,1 @@
+import{C as t}from"./theme.fzBbb_Fq.js";import{b as r,o as e,k as o}from"./framework.Du7s_-5U.js";const s=JSON.parse(`{"js":"import { getSupportedIndicators } from 'klinecharts'\\n\\nconst supports = getSupportedIndicators()\\n"}`),i={__name:"index",setup(n){return(a,p)=>(e(),r(t,{title:"getSupportedIndicators",hiddenChart:!0,code:o(s).js},null,8,["code"]))}};export{i as _};
