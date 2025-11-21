@@ -358,7 +358,15 @@ const styles = {
       //    }
       // }]
       features: []
-    }
+    },
+    grid: { // 优先取副图指标的grid样式，如果没有则取全局的grid配置
+      horizontal: {
+        show: true, 
+      },
+      vertical: {
+        show: true, 
+      },
+    },
   },
   xAxis: {
     show: true,
