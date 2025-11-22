@@ -81,18 +81,18 @@ const items = ref([
   flex-direction: column;
   align-items: center;
   width: 100%;
-  gap: 10px;
+  gap: 1px;
+  /* background-color: var(--vp-c-gutter); */
 }
 
 .item {
   display: flex;
   flex-direction: row;
   width: 100%;
-  background-color: var(--vp-code-block-bg);
-  padding: 16px 26px;
-  border-radius: 8px;
+  padding: 16px 0px;
   color: var(--vp-c-text-1);
   overflow: hidden;
+  border-bottom: solid 1px var(--vp-c-gutter);
 }
 
 .item-content {
@@ -132,11 +132,8 @@ const items = ref([
 }
 
 @media (min-width: 640px) {
-  .faq {
-    gap: 16px;
-  }
   .item {
-    padding: 18px 50px;
+    padding: 20px 0;
   }
   .item-content-q {
     font-size: 18px;

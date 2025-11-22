@@ -20,6 +20,7 @@ const mounted = ref(false)
 
 onMounted(() => {
   mounted.value = true
+  document.body.style.overflow = 'auto'
 })
 
 const enableTransitions = () =>
@@ -50,6 +51,7 @@ provide('toggle-appearance', async ({ clientX: x, clientY: y }) => {
     {
       duration: 300,
       easing: 'ease-in',
+      fill: 'forwards',
       pseudoElement: `::view-transition-${isDark.value ? 'old' : 'new'}(root)`
     }
   )
@@ -58,7 +60,7 @@ provide('toggle-appearance', async ({ clientX: x, clientY: y }) => {
 
 <template>
   <Loading v-if="!mounted" className="page-loading"/>
-  <DefaultTheme.Layout v-show="mounted">
+  <DefaultTheme.Layout>
     <template #layout-top>
       <Banner/>
     </template>
@@ -113,5 +115,6 @@ provide('toggle-appearance', async ({ clientX: x, clientY: y }) => {
   width: 100vw!important;
   height: 100vh!important;
   color: var(--vp-c-text-1)!important;
+  background-color: var(--vp-c-bg)!important;
 }
 </style>

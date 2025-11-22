@@ -1,5 +1,5 @@
 <template>
-  <button v-if="visible" class="color-palette" @click="popoverVisible = !popoverVisible" @blur="visible = false">
+  <button v-if="visible" class="color-palette" @click="popoverVisible = !popoverVisible" @blur="popoverVisible = false">
     <div class="content" :class="{ visible: popoverVisible }">
       <div
         v-for="color in colors"
@@ -112,7 +112,7 @@ function hexToRgba (hex, alpha) {
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    z-index: 1000;
+    z-index: 99;
     right: 36px;
     bottom: 96px;
     cursor: pointer;

@@ -119,7 +119,7 @@
   .sponsor-grid {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 2px;
   }
 
   .sponsor-grid-item {
@@ -129,7 +129,7 @@
     width: 100%;
     color: var(--vp-c-text-2)!important;
     background-color: var(--vp-code-block-bg);
-    border-radius: 8px;
+    border-radius: 2px;
     transition: background-color .3s ease;
     cursor: pointer;
     color: inherit;
@@ -204,12 +204,8 @@
   }
 
   @media (min-width: 640px) {
-    .sponsor-grid {
-      gap: 16px;
-    }
-
     .sponsor-top-grid .item-no2-no3 {
-      width: calc((100% - 16px) / 2);
+      width: calc((100% - 2px) / 2);
       height: 140px;
     }
 
