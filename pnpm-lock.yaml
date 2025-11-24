@@ -123,8 +123,8 @@ importers:
         specifier: ^5.8.3
         version: 5.8.3
       vitepress:
-        specifier: 2.0.0-alpha.14
-        version: 2.0.0-alpha.14(@types/node@20.17.30)(jiti@2.4.2)(postcss@8.5.6)(terser@5.39.0)(typescript@5.8.3)
+        specifier: 2.0.0-alpha.15
+        version: 2.0.0-alpha.15(@types/node@20.17.30)(jiti@2.4.2)(postcss@8.5.6)(terser@5.39.0)(typescript@5.8.3)
 
 packages:
 
@@ -4023,8 +4023,8 @@ packages:
       yaml:
         optional: true
 
-  vitepress@2.0.0-alpha.14:
-    resolution: {integrity: sha512-byPDAwYGP10NvH6BVeQcVYMJ96B5LktgCpOUmDA9HdNsRJZUG5pr7pe3B/DDEy9nTzi5JyOdhYPXvhI+s5tGew==}
+  vitepress@2.0.0-alpha.15:
+    resolution: {integrity: sha512-jhjSYd10Z6RZiKOa7jy0xMVf5NB5oSc/lS3bD/QoUc6V8PrvQR5JhC9104NEt6+oTGY/ftieVWxY9v7YI+1IjA==}
     hasBin: true
     peerDependencies:
       markdown-it-mathjax3: ^4
@@ -8763,7 +8763,7 @@ snapshots:
       jiti: 2.4.2
       terser: 5.39.0
 
-  vitepress@2.0.0-alpha.14(@types/node@20.17.30)(jiti@2.4.2)(postcss@8.5.6)(terser@5.39.0)(typescript@5.8.3):
+  vitepress@2.0.0-alpha.15(@types/node@20.17.30)(jiti@2.4.2)(postcss@8.5.6)(terser@5.39.0)(typescript@5.8.3):
     dependencies:
       '@docsearch/css': 4.3.2
       '@docsearch/js': 4.3.2
