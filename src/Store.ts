@@ -1090,7 +1090,7 @@ export default class StoreImp implements Store {
   }
 
   setCrosshair (
-    crosshair?: Crosshair,
+    crosshair?: Nullable<Crosshair>,
     options?: { notInvalidate?: boolean, notExecuteAction?: boolean, forceInvalidate?: boolean }
   ): void {
     const { notInvalidate, notExecuteAction, forceInvalidate } = options ?? {}

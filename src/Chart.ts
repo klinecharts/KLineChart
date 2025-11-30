@@ -1111,11 +1111,14 @@ export default class ChartImp implements Chart {
     return isArray(coordinates) ? points : (points[0] ?? {})
   }
 
-  executeAction (type: ActionType, data: Crosshair): void {
+  executeAction (type: ActionType, data: Nullable<Crosshair>): void {
     switch (type) {
       case 'onCrosshairChange': {
-        const crosshair: Crosshair = { ...data }
-        crosshair.paneId ??= PaneIdConstants.CANDLE
+        let crosshair: Nullable<Crosshair> = null
+        if (isValid(data)) {
+          crosshair = { ...data }
+          crosshair.paneId ??= PaneIdConstants.CANDLE
+        }
         this._chartStore.setCrosshair(crosshair, { notExecuteAction: true })
         break
       }
