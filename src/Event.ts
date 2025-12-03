@@ -13,7 +13,7 @@
  */
 
 import type Nullable from './common/Nullable'
-import EventHandlerImp, { type EventHandler, type MouseTouchEvent, TOUCH_MIN_RADIUS } from './common/EventHandler'
+import EventHandlerImp, { TOUCH_MIN_RADIUS, type EventHandler, type MouseTouchEvent } from './common/EventHandler'
 import type Coordinate from './common/Coordinate'
 import { UpdateLevel } from './common/Updater'
 import type Crosshair from './common/Crosshair'
@@ -49,6 +49,8 @@ export default class Event implements EventHandler {
   private _startScrollCoordinate: Nullable<Coordinate> = null
   // 开始触摸时坐标
   private _touchCoordinate: Nullable<Coordinate> = null
+  // 十字光标已存在，触摸移动开始坐标
+  private _touchMoveStartCoordinate: Nullable<Coordinate> = null
   // 是否是取消了十字光标
   private _touchCancelCrosshair = false
   // 是否缩放过
@@ -373,17 +375,18 @@ export default class Event implements EventHandler {
           chartStore.startScroll()
           this._touchZoomed = false
           if (this._touchCoordinate !== null) {
-            const xDif = event.x - this._touchCoordinate.x
-            const yDif = event.y - this._touchCoordinate.y
-            const radius = Math.sqrt(xDif * xDif + yDif * yDif)
-            if (radius < TOUCH_MIN_RADIUS) {
-              this._touchCoordinate = { x: event.x, y: event.y }
-              chartStore.setCrosshair({ x: event.x, y: event.y, paneId: pane?.getId() })
-            } else {
-              this._touchCoordinate = null
-              this._touchCancelCrosshair = true
-              chartStore.setCrosshair()
-            }
+            this._touchMoveStartCoordinate = { x: event.x, y: event.y }
+            // const xDif = event.x - this._touchCoordinate.x
+            // const yDif = event.y - this._touchCoordinate.y
+            // const radius = Math.sqrt(xDif * xDif + yDif * yDif)
+            // if (radius < TOUCH_MIN_RADIUS) {
+            //   this._touchCoordinate = { x: event.x, y: event.y }
+            //   chartStore.setCrosshair({ x: event.x, y: event.y, paneId: pane?.getId() })
+            // } else {
+            //   this._touchCoordinate = null
+            //   this._touchCancelCrosshair = true
+            //   chartStore.setCrosshair()
+            // }
           }
           return true
         }
@@ -414,7 +417,11 @@ export default class Event implements EventHandler {
           }
           if (this._touchCoordinate !== null) {
             event.preventDefault?.()
-            chartStore.setCrosshair({ x: event.x, y: event.y, paneId: pane?.getId() })
+            if (this._touchMoveStartCoordinate !== null) {
+              const xDif = event.x - this._touchMoveStartCoordinate.x
+              const yDif = event.y - this._touchMoveStartCoordinate.y
+              chartStore.setCrosshair({ x: this._touchCoordinate.x + xDif, y: this._touchCoordinate.y + yDif, paneId: pane?.getId() })
+            }
           } else {
             this._processMainScrollingEvent(widget as Widget<DrawPane<YAxis>>, event)
           }
@@ -463,6 +470,12 @@ export default class Event implements EventHandler {
               }
               flingScroll()
             }
+            return true
+          }
+          if (this._touchMoveStartCoordinate !== null && this._touchCoordinate !== null) {
+            const xDif = event.x - this._touchMoveStartCoordinate.x
+            const yDif = event.y - this._touchMoveStartCoordinate.y
+            this._touchCoordinate = { x: this._touchCoordinate.x + xDif, y: this._touchCoordinate.y + yDif }
           }
           return true
         }
@@ -499,9 +512,24 @@ export default class Event implements EventHandler {
           chartStore.setCrosshair(undefined, { notInvalidate: true })
           consumed = true
         } else {
-          if (!this._touchCancelCrosshair && !this._touchZoomed) {
-            this._touchCoordinate = { x: event.x, y: event.y }
-            chartStore.setCrosshair({ x: event.x, y: event.y, paneId: pane?.getId() }, { notInvalidate: true })
+          if (!this._touchZoomed) {
+            if (this._touchCoordinate !== null) {
+              this._touchMoveStartCoordinate = { x: event.x, y: event.y }
+              const xDif = event.x - this._touchCoordinate.x
+              const yDif = event.y - this._touchCoordinate.y
+              const radius = Math.sqrt(xDif * xDif + yDif * yDif)
+              if (radius < TOUCH_MIN_RADIUS) {
+                this._touchCoordinate = { x: event.x, y: event.y }
+                chartStore.setCrosshair({ x: event.x, y: event.y, paneId: pane?.getId() }, { notInvalidate: true })
+              } else {
+                this._touchCoordinate = null
+                this._touchCancelCrosshair = true
+                chartStore.setCrosshair(undefined, { notInvalidate: true })
+              }
+            } else {
+              this._touchCoordinate = { x: event.x, y: event.y }
+              chartStore.setCrosshair({ x: event.x, y: event.y, paneId: pane?.getId() }, { notInvalidate: true })
+            }
             consumed = true
           }
           this._touchCancelCrosshair = false
@@ -520,7 +548,7 @@ export default class Event implements EventHandler {
 
   longTapEvent (e: MouseTouchEvent): boolean {
     const { pane, widget } = this._findWidgetByEvent(e)
-    if (widget !== null && widget.getName() === WidgetNameConstants.MAIN) {
+    if (widget !== null && widget.getName() === WidgetNameConstants.MAIN && this._touchCoordinate === null) {
       const event = this._makeWidgetEvent(e, widget)
       this._touchCoordinate = { x: event.x, y: event.y }
       this._chart.getChartStore().setCrosshair({ x: event.x, y: event.y, paneId: pane?.getId() })

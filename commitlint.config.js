@@ -17,7 +17,8 @@ export default {
         'revert',
         'ci',
         'opt',
-        'release'
+        'release',
+        'wip'
       ]
     ],
     'subject-case': [0]
