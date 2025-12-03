@@ -23,6 +23,8 @@ export interface AxisTick {
   coord: number
   value: number | string
   text: string
+  height?: number
+  width?: number
 }
 
 export interface AxisRange extends VisibleRange {

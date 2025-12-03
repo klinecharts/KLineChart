@@ -33,12 +33,16 @@ export default class GridView extends View {
       const horizontalShow = horizontalStyles.show
       if (horizontalShow) {
         const yAxis = pane.getAxisComponent()
-        const attrs: LineAttrs[] = yAxis.getTicks().map(tick => ({
-          coordinates: [
-            { x: 0, y: tick.coord },
-            { x: bounding.width, y: tick.coord }
-          ]
-        }))
+        const attrs: LineAttrs[] = yAxis.getTicks().map(tick => {
+          // 如果 tick 有自定义的 width，使用 tick.width，否则使用 bounding.width
+          const lineWidth = tick.width ?? bounding.width
+          return {
+            coordinates: [
+              { x: 0, y: tick.coord },
+              { x: lineWidth, y: tick.coord }
+            ]
+          }
+        })
         this.createFigure({
           name: 'line',
           attrs,
@@ -49,12 +53,16 @@ export default class GridView extends View {
       const verticalShow = verticalStyles.show
       if (verticalShow) {
         const xAxis = chart.getXAxisPane().getAxisComponent()
-        const attrs: LineAttrs[] = xAxis.getTicks().map(tick => ({
-          coordinates: [
-            { x: tick.coord, y: 0 },
-            { x: tick.coord, y: bounding.height }
-          ]
-        }))
+        const attrs: LineAttrs[] = xAxis.getTicks().map(tick => {
+          // 如果 tick 有自定义的 height，使用 tick.height，否则使用 bounding.height
+          const lineHeight = tick.height ?? bounding.height
+          return {
+            coordinates: [
+              { x: tick.coord, y: 0 },
+              { x: tick.coord, y: lineHeight }
+            ]
+          }
+        })
         this.createFigure({
           name: 'line',
           attrs,
