@@ -212,7 +212,7 @@ export default class StoreImp implements Store {
   /**
   * Whether there are forward and backward more flag
    */
-  private readonly _dataLoadMore = { forward: false, backward: false }
+  private readonly _dataLoadMore = { forward: true, backward: true }
 
   /**
      * Time format
