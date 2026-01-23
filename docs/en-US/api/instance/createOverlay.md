@@ -49,6 +49,7 @@ import CreateOverlayBasic from '../../../@views/api/samples/createOverlay-basic/
 import CreateOverlayExtension from '../../../@views/api/samples/custom-figure-custom-overlay/index.vue'
 import CreateOverlayPoints from '../../../@views/api/samples/createOverlay-points/index.vue'
 import CreateOverlayBatch from '../../../@views/api/samples/createOverlay-batch/index.vue'
+import CreateOverlayBrush from '../../../@views/api/samples/createOverlay-brush/index.vue'
 </script>
 
 ### Basic usage {#basic}
@@ -62,3 +63,6 @@ import CreateOverlayBatch from '../../../@views/api/samples/createOverlay-batch/
 
 ### Batch create {#batch}
 <CreateOverlayBatch/>
+
+### Brush (double click and drag to draw unlimited times) {#brush}
+<CreateOverlayBrush/>
