@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.KLineChart" parent="android:Theme.Material.NoActionBar">
+        <item name="android:colorBackground">#0d0d0d</item>
+        <item name="android:windowBackground">@android:color/black</item>
+        <item name="android:statusBarColor">#0d0d0d</item>
+        <item name="android:navigationBarColor">#0d0d0d</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+    </style>
+</resources>

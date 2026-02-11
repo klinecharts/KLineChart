@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>BTCUSD Chart</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background: #0d0d0d;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+  #chart {
+    width: 100vw;
+    height: 100vh;
+  }
+  #status-dot {
+    position: fixed;
+    top: 8px;
+    right: 8px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ef5350;
+    z-index: 1000;
+    transition: background 0.3s;
+  }
+  #status-dot.connected {
+    background: #26a69a;
+  }
+</style>
+</head>
+<body>
+<div id="chart"></div>
+<div id="status-dot"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/klinecharts@9.8.12/dist/umd/klinecharts.min.js"></script>
+<script>
+(function() {
+  'use strict';
+
+  var REST_BASE = 'https://api.india.delta.exchange';
+  var WS_URL = 'wss://socket.india.delta.exchange';
+  var SYMBOL = 'BTCUSD';
+  var RESOLUTION = '1m';
+
+  var statusDot = document.getElementById('status-dot');
+  var ws = null;
+  var chart = null;
+
+  // Initialize chart with dark theme
+  chart = klinecharts.init('chart', {
+    styles: {
+      grid: {
+        show: true,
+        horizontal: {
+          show: true,
+          size: 1,
+          color: 'rgba(255,255,255,0.06)',
+          style: 'dashed',
+          dashedValue: [2, 2]
+        },
+        vertical: {
+          show: true,
+          size: 1,
+          color: 'rgba(255,255,255,0.06)',
+          style: 'dashed',
+          dashedValue: [2, 2]
+        }
+      },
+      candle: {
+        type: 'candle_solid',
+        bar: {
+          upColor: '#26a69a',
+          downColor: '#ef5350',
+          noChangeColor: '#888888',
+          upBorderColor: '#26a69a',
+          downBorderColor: '#ef5350',
+          noChangeBorderColor: '#888888',
+          upWickColor: '#26a69a',
+          downWickColor: '#ef5350',
+          noChangeWickColor: '#888888'
+        },
+        priceMark: {
+          show: true,
+          high: {
+            show: true,
+            color: '#888888',
+            textSize: 10
+          },
+          low: {
+            show: true,
+            color: '#888888',
+            textSize: 10
+          },
+          last: {
+            show: true,
+            upColor: '#26a69a',
+            downColor: '#ef5350',
+            noChangeColor: '#888888',
+            line: {
+              show: true,
+              style: 'dashed',
+              dashedValue: [4, 4],
+              size: 1
+            },
+            text: {
+              show: true,
+              style: 'fill',
+              color: '#ffffff',
+              size: 11,
+              borderRadius: 2,
+              paddingLeft: 6,
+              paddingTop: 3,
+              paddingRight: 6,
+              paddingBottom: 3,
+              borderSize: 0
+            }
+          }
+        },
+        tooltip: {
+          showRule: 'always',
+          showType: 'standard',
+          custom: [
+            { title: 'BTCUSD · Perp Futures  ', value: '' },
+            { title: 'O: ', value: '{open}' },
+            { title: 'H: ', value: '{high}' },
+            { title: 'L: ', value: '{low}' },
+            { title: 'C: ', value: '{close}' },
+            { title: 'Vol: ', value: '{volume}' }
+          ],
+          text: {
+            size: 12,
+            family: 'monospace',
+            color: '#26a69a',
+            marginLeft: 8,
+            marginTop: 4,
+            marginRight: 6,
+            marginBottom: 0
+          }
+        }
+      },
+      indicator: {
+        lastValueMark: {
+          show: false
+        },
+        tooltip: {
+          showRule: 'always',
+          showType: 'standard'
+        }
+      },
+      xAxis: {
+        show: true,
+        axisLine: {
+          show: true,
+          color: 'rgba(255,255,255,0.1)',
+          size: 1
+        },
+        tickLine: {
+          show: true,
+          size: 1,
+          length: 3,
+          color: 'rgba(255,255,255,0.1)'
+        },
+        tickText: {
+          show: true,
+          color: '#888888',
+          size: 10,
+          family: 'monospace'
+        }
+      },
+      yAxis: {
+        show: true,
+        axisLine: {
+          show: false
+        },
+        tickLine: {
+          show: false
+        },
+        tickText: {
+          show: true,
+          color: '#888888',
+          size: 10,
+          family: 'monospace'
+        }
+      },
+      separator: {
+        size: 1,
+        color: 'rgba(255,255,255,0.08)',
+        fill: true,
+        activeBackgroundColor: 'rgba(255,255,255,0.05)'
+      },
+      crosshair: {
+        show: true,
+        horizontal: {
+          show: true,
+          line: {
+            show: true,
+            style: 'dashed',
+            dashedValue: [4, 4],
+            size: 1,
+            color: 'rgba(255,255,255,0.2)'
+          },
+          text: {
+            show: true,
+            style: 'fill',
+            color: '#ffffff',
+            size: 10,
+            family: 'monospace',
+            borderSize: 0,
+            borderRadius: 2,
+            paddingLeft: 6,
+            paddingTop: 3,
+            paddingRight: 6,
+            paddingBottom: 3,
+            backgroundColor: '#333333'
+          }
+        },
+        vertical: {
+          show: true,
+          line: {
+            show: true,
+            style: 'dashed',
+            dashedValue: [4, 4],
+            size: 1,
+            color: 'rgba(255,255,255,0.2)'
+          },
+          text: {
+            show: true,
+            style: 'fill',
+            color: '#ffffff',
+            size: 10,
+            family: 'monospace',
+            borderSize: 0,
+            borderRadius: 2,
+            paddingLeft: 6,
+            paddingTop: 3,
+            paddingRight: 6,
+            paddingBottom: 3,
+            backgroundColor: '#333333'
+          }
+        }
+      }
+    }
+  });
+
+  // Phase 1: Load historical candles
+  function loadHistoricalData() {
+    var now = Math.floor(Date.now() / 1000);
+    var start = now - 86400; // 24 hours ago
+    var url = REST_BASE + '/v2/history/candles?resolution=' + RESOLUTION +
+              '&symbol=' + SYMBOL + '&start=' + start + '&end=' + now;
+
+    fetch(url)
+      .then(function(resp) { return resp.json(); })
+      .then(function(data) {
+        if (data && data.result && Array.isArray(data.result)) {
+          var candles = data.result.map(function(c) {
+            return {
+              timestamp: c.time * 1000,
+              open: parseFloat(c.open),
+              high: parseFloat(c.high),
+              low: parseFloat(c.low),
+              close: parseFloat(c.close),
+              volume: parseFloat(c.volume)
+            };
+          });
+          // Sort by timestamp ascending
+          candles.sort(function(a, b) { return a.timestamp - b.timestamp; });
+          chart.applyNewData(candles);
+          // Start WebSocket after historical data loaded
+          connectWebSocket();
+        }
+      })
+      .catch(function(err) {
+        console.error('Failed to load historical data:', err);
+        // Retry after 5 seconds
+        setTimeout(loadHistoricalData, 5000);
+      });
+  }
+
+  // Phase 2: Real-time updates via WebSocket
+  function connectWebSocket() {
+    if (ws) {
+      try { ws.close(); } catch(e) {}
+    }
+
+    ws = new WebSocket(WS_URL);
+
+    ws.onopen = function() {
+      statusDot.className = 'connected';
+      // Subscribe to candlestick channel
+      ws.send(JSON.stringify({
+        type: 'subscribe',
+        payload: {
+          channels: [{
+            name: 'candlestick_' + RESOLUTION,
+            symbols: [SYMBOL]
+          }]
+        }
+      }));
+    };
+
+    ws.onmessage = function(event) {
+      try {
+        var msg = JSON.parse(event.data);
+        if (msg.type === 'candlestick_' + RESOLUTION) {
+          var d = msg;
+          // candle_start_time is in microseconds, divide by 1000 for ms
+          var candle = {
+            timestamp: d.candle_start_time / 1000,
+            open: parseFloat(d.open),
+            high: parseFloat(d.high),
+            low: parseFloat(d.low),
+            close: parseFloat(d.close),
+            volume: parseFloat(d.volume)
+          };
+          chart.updateData(candle);
+        }
+      } catch(e) {
+        // Ignore non-JSON or non-candle messages
+      }
+    };
+
+    ws.onclose = function() {
+      statusDot.className = '';
+      // Reconnect after 3 seconds
+      setTimeout(connectWebSocket, 3000);
+    };
+
+    ws.onerror = function() {
+      statusDot.className = '';
+      try { ws.close(); } catch(e) {}
+    };
+  }
+
+  // Handle resize
+  window.addEventListener('resize', function() {
+    chart.resize();
+  });
+
+  // Start loading
+  loadHistoricalData();
+})();
+</script>
+</body>
+</html>
