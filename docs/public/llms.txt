@@ -1,0 +1,207 @@
+KLineChart - llms_zh.txt
+
+你是一个面向该代码库的 AI 助手。你的目标是：在回答“如何使用/如何扩展/如何修改代码/如何定位问题”时，尽量基于仓库文档与源码入口给出准确结论，并且用仓库内的路径与 API 名称进行定位，避免凭空编造。
+
+---
+
+1) 项目定位（What）
+
+- KLineChart：基于 HTML5 Canvas 的轻量级金融 K 线图表，支持多种内置技术指标与画线/覆盖物模型，并且可高度扩展。
+- TypeScript 开发，并产出类型声明（`dist/index.d.ts`）。
+- 典型使用方式：通过 `init()` 创建图表实例，然后用 `setSymbol()` / `setPeriod()` / `setDataLoader()` 进行数据驱动。
+
+关键文档入口：
+- README：根目录 `README.md` / `README.zh-CN.md`
+- 指南：`docs/guide/*`
+
+---
+
+2) 对外核心 API（使用者视角）
+
+源码入口：`src/index.ts` 导出（LLM 定位优先从这里开始）。
+
+2.1 初始化/销毁
+
+- `init(ds: HTMLElement | string, options?: Options): Chart | null`
+  - `ds` 可以是容器 `HTMLElement` 或容器 id（`string`）
+  - 初始化失败时返回 `null`（容器不存在时会报错）
+- `dispose(dcs: HTMLElement | Chart | string): void`
+  - 销毁图表实例并移除容器关联节点
+
+2.2 注册扩展（全局注册）
+
+- `registerFigure` / `getSupportedFigures` / `getFigureClass`（基本图形 Figure）
+- `registerIndicator` / `getSupportedIndicators`（技术指标 Indicator）
+- `registerOverlay` / `getSupportedOverlays` / `getOverlayClass`（覆盖物 Overlay）
+- `registerLocale` / `getSupportedLocales`（国际化 Locale）
+- `registerStyles`（样式注册）
+- `registerXAxis` / `registerYAxis`（坐标轴扩展）
+
+2.3 常用工具函数
+
+- `utils`：`clone`、`merge`、`formatValue`、`formatPrecision`、`formatBigNumber`、`formatThousands`、`formatFoldDecimal`、`formatDate`（时间格式化）、`calcTextWidth` 等
+
+---
+
+3) 最小可运行示例（Quick Start 片段）
+
+vanilla（来自 `docs/@views/quick-start/create-chart/vanilla.md`，JS 逻辑要点）：
+
+- 调用：`var chart = klinecharts.init('chart')`
+- 设置：
+  - `chart.setSymbol({ ticker: 'TestSymbol' })`
+  - `chart.setPeriod({ span: 1, type: 'day' })`
+  - `chart.setDataLoader({ getBars: ({ callback }) => { callback([...bars]) } })`
+- 在页面结束时释放：`dispose('chart')`
+
+Vue（来自 `docs/@views/quick-start/create-chart/vue.md`，API 逻辑与 vanilla 一致）：
+
+- `import { init, dispose } from 'klinecharts'`
+- `const chart = init('chart')`
+- `chart.setSymbol(...)` / `chart.setPeriod(...)` / `chart.setDataLoader({ getBars })`
+- `onUnmounted(() => { dispose('chart') })`
+
+---
+
+4) 数据加载约定（必须对齐源码类型）
+
+`setDataLoader` 接收 `DataLoader`，定义在：`src/common/DataLoader.ts`
+
+4.1 `DataLoader` 接口
+
+- `getBars(params): void | Promise<void>`
+- 可选订阅：
+  - `subscribeBar?(params)`
+  - `unsubscribeBar?(params)`
+
+4.2 `getBars` 回调参数
+
+- `params.callback: (data: KLineData[], more?: DataLoadMore) => void`
+- 数据项 `KLineData` 对应每根 K 线需要的字段（quick start 示例使用了 `timestamp/open/high/low/close/volume`）
+
+4.3 典型“分页/追加更多数据”标记
+
+- `DataLoadMore`：`boolean | { backward?: boolean; forward?: boolean }`
+- 当你实现 `getBars` 需要“加载更多”时，应该通过 `more` 告诉图表是否继续向前/向后加载
+
+---
+
+5) 扩展能力（开发者视角）
+
+5.1 自定义技术指标（Indicator）
+
+来自 `docs/guide/indicator.md` / `docs/en-US/guide/indicator.md`：
+
+- 自定义指标的流程：生成“指标信息”，然后通过图表 API 全局添加 `registerIndicator`
+- 注册成功后，就可以像使用内置指标一样调用 `chart.createIndicator(...)`
+- 示例位置（文档给出的目录）：`src/extension/indicator`
+
+5.2 自定义覆盖物（Overlay）
+
+来自 `docs/guide/overlay.md` / `docs/en-US/guide/overlay.md`：
+
+- 你可以自定义覆盖物，然后通过 `registerOverlay` 全局添加
+- 添加到图表后，与内置覆盖物一样使用
+- 示例位置（文档给出的目录）：`src/extension/overlay`
+
+内置覆盖物类型（来自 overlay 文档，常用于对照命名）：
+
+- `horizontalRayLine` / `horizontalSegment` / `horizontalStraightLine`
+- `verticalRayLine` / `verticalSegment` / `verticalStraightLine`
+- `rayLine` / `segment` / `straightLine`
+- `priceLine` / `priceChannelLine`
+- `parallelStraightLine`
+- `fibonacciLine`
+- `simpleAnnotation` / `simpleTag`
+
+---
+
+6) 内部架构分层（用于定位代码）
+
+来自 `docs/guide/local-development.md`：
+
+- `Figure`：基础图形（如 circle/polygon/rect/text）
+- `View`：从 `ChartStore` 中取数据并做“单一业务绘制”（如 K 线柱、面积图、网格线、十字光标线、指标等）
+- `Widget`：创建 canvas，将相关 `View` 组装在一起
+- `Pane`：创建 dom 容器，把 `Widget` 组装到一起
+- `Chart`：管理 `Pane`（添加/删除等），并进行事件分发，操作 `ChartStore`，再通知下级组件更新
+
+源码对应的核心文件线索（LLM 定位用）：
+- `src/index.ts`：对外导出 `init/dispose` 以及各类 register/getSupported API
+- `src/Chart.ts`：Chart 实现、并包含 `createIndicator` / `createOverlay` / `setDataLoader` 等实例方法
+
+---
+
+7) 目录地图（常用路径）
+
+来自文档给出的目录结构说明（`docs/@views/local-development/ProjectDirExplain.vue`）+ `src/index.ts`/`src/Chart.ts` 的导入线索：
+
+- `src/index.ts`：库入口与导出
+- `src/common/*`：通用类型与工具（例如 `DataLoader.ts`、格式化、Canvas 相关工具等）
+- `src/pane/*`：Pane（DOM 容器）相关实现（如 `CandlePane`、`XAxisPane` 等）
+- `src/component/*`：组件/绘制相关的封装（如 Axis、Indicator、Overlay 等）
+- `src/widget/*`、`src/view/*`：Widget 与 View 相关实现
+- `src/extension/figure/*`：图形 Figure 扩展
+- `src/extension/indicator/*`：技术指标扩展
+- `src/extension/overlay/*`：覆盖物扩展
+- `src/extension/styles/*`：样式扩展
+- `src/extension/x-axis/*`、`src/extension/y-axis/*`：坐标轴扩展
+- `tests/*`：测试
+- `dist/*`：构建产物（入口 JS/CJS/UMD 与类型声明）
+- `docs/*`：Vitepress 文档站点与示例
+- `scripts/*`：构建脚本等
+
+---
+
+8) 开发/构建（How）
+
+8.1 包管理器约束
+
+- 项目强制使用 `pnpm` 作为包管理器（见 `docs/guide/local-development.md`）
+
+8.2 安装与构建
+
+- 安装依赖：`pnpm install`
+- 代码校验：`pnpm run code-lint`（eslint，匹配 `src/**/*.ts`）
+- 清理：`pnpm run clean`
+- 构建：
+  - `pnpm run build-esm`
+  - `pnpm run build-cjs`
+  - `pnpm run build-umd:dev` / `pnpm run build-umd:prod` / `pnpm run build-umd`
+  - `pnpm run build`（同时打包并生成 types：会调用 `build-core` + `build-dts`）
+
+8.3 文档本地服务
+
+- `pnpm run docs:dev`：启动文档服务（Vitepress 端口在 `docs/.vitepress/config/index.js` 配置为 `8888`）
+- 浏览器打开：`http://localhost:8888`
+
+---
+
+9) 兼容性与排错要点（Docs/FAQ 归纳）
+
+9.1 浏览器环境
+
+- 图表基于 HTML5 Canvas，需要浏览器支持 canvas；移动端可用 webview 加载。
+- 兼容性 Polyfill（来自 `docs/en-US/guide/environment.md`）：
+  - `core.js`：内部数据集合使用 `Map`，用于老旧浏览器兼容
+  - `Intl.js`：依赖 `Intl` 做格式化，老旧浏览器可能需要 polyfill
+
+9.2 初始化后只看到一条线
+
+- 常见原因：容器高度为 0
+- 处理：检查图表容器是否有高度（FAQ：图表会填充容器）
+
+9.3 精度（K 线蜡烛接近一条线）
+
+- FAQ 提示：需要在设置交易对时配置精度，例如：
+  - `setSymbol({ ticker: 'TestSymbol', pricePrecision: 6, volumePrecision: 6 })`
+
+---
+
+10) 你在代码库中应优先遵循的工作流（给模型的“行为约束”）
+
+- 优先从 `src/index.ts`（导出与入口）和 `src/Chart.ts`（实例方法实现）开始理解对外行为。
+- 若要回答“如何扩展指标/覆盖物/图形”，优先定位到对应 `src/extension/*` 目录，并关注 register/getSupported/create* 的调用链。
+- 若要回答“如何接入数据”，优先对齐 `src/common/DataLoader.ts` 的类型与 `callback` 回传约定。
+- 若要回答“如何启动/构建/文档服务”，优先使用根目录 `package.json` 和 `docs/.vitepress/config/*` 的真实脚本与配置。
+
