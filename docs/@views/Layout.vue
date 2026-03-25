@@ -6,7 +6,8 @@ import { nextTick, provide, onMounted, ref } from 'vue'
 import Banner from './Banner.vue'
 import HomeHero from './home/hero/index.vue'
 import HomeTopSponsor from './home/TopSponsor.vue'
-import HomeCreateChart from './home/create-chart/index.vue'
+import HomeUseCases from './home/UseCases.vue'
+import HomeCoreAdvantages from './home/CoreAdvantages.vue'
 import HomeFAQ from './home/faq/index.vue'
 import HomeSponsor from './home/Sponsor.vue'
 // import AsideSponsor from './AsideSponsor.vue'
@@ -69,7 +70,8 @@ provide('toggle-appearance', async ({ clientX: x, clientY: y }) => {
       <HomeTopSponsor/>
     </template>
     <template #home-features-after>
-      <HomeCreateChart/>
+      <HomeUseCases/>
+      <HomeCoreAdvantages/>
       <HomeFAQ/>
       <HomeSponsor/>
     </template>

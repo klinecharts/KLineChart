@@ -30,19 +30,20 @@ const props = defineProps(['title', 'description', 'outClass'])
 }
 
 .title {
-  font-size: 28px;
-  line-height: 40px;
+  font-size: 26px;
+  line-height: 36px;
   text-align: center;
-  font-weight: bold;
+  font-weight: 700;
+  letter-spacing: -0.01em;
 }
 .description {
-  padding-top: 18px;
-  font-size: 18px;
-  line-height: 26px;
+  padding-top: 14px;
+  font-size: 16px;
+  line-height: 25px;
   text-align: center;
   color: var(--vp-c-text-2);
-  max-width: 660px;
-  padding-bottom: 32px;
+  max-width: 620px;
+  padding-bottom: 28px;
 }
 
 @media (min-width: 640px) {
@@ -58,15 +59,15 @@ const props = defineProps(['title', 'description', 'outClass'])
   }
 
   .title {
-    font-size: 36px;
-    line-height: 42px;
+    font-size: 32px;
+    line-height: 40px;
   }
   .description {
-    padding-top: 26px;
-    font-size: 20px;
-    line-height: 30px;
-    max-width: 660px;
-    padding-bottom: 52px;
+    padding-top: 18px;
+    font-size: 17px;
+    line-height: 28px;
+    max-width: 640px;
+    padding-bottom: 44px;
   }
 }
 

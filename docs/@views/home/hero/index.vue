@@ -54,7 +54,6 @@ const { lang } = useData()
 }
 
 .tagline {
-  max-width: 392px;
   line-height: 26px;
   font-size: 16px;
   font-weight: 500;
