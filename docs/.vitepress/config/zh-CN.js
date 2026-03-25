@@ -48,7 +48,7 @@ export default defineConfig({
           collapsed: false,
           items: [
             { text: '样式配置', link: '/guide/styles' },
-            { text: '数据', link: '/guide/data-source' },
+            { text: '数据接入', link: '/guide/data-integration' },
             { text: '国际化', link: '/guide/i18n' },
             { text: '环境要求', link: '/guide/environment' },
             { text: '快捷键', link: '/guide/hot-key' }

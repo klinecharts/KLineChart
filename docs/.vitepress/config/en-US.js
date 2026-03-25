@@ -43,7 +43,7 @@ export default defineConfig({
           collapsed: false,
           items: [
             { text: 'Style Configuration', link: '/en-US/guide/styles' },
-            { text: 'Data Source', link: '/en-US/guide/data-source' },
+            { text: 'Data Integration', link: '/en-US/guide/data-integration' },
             { text: 'Internationalization', link: '/en-US/guide/i18n' },
             { text: 'Environment', link: '/en-US/guide/environment' },
             { text: 'Hot Key', link: '/en-US/guide/hot-key' }

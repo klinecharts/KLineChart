@@ -44,7 +44,7 @@ import Tip from '../../../@components/Tip.vue'
   - `draw` Custom drawing method, if the return value is `true`, it will override the default drawing.
   - `onDataStateChange` Data change callback notification.
 
-<Tip title="Tip" tip="Among them, <code>id</code> , <code>paneId</code> and <code>name</code> are indexes. If the input parameters contain these three parameters, the indicators that meet the conditions will be searched for overwriting based on these three parameters."/>
+<Tip title="Tip" :tip="['Among them, <code>id</code> , <code>paneId</code> and <code>name</code> are indexes. If the input parameters contain these three parameters, the indicators that meet the conditions will be searched for overwriting based on these three parameters.']"/>
 
 
 ### Returns {#returns}

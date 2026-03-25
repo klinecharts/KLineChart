@@ -24,7 +24,7 @@ import Tip from '../../@components/Tip.vue'
 # init(ds, options?)
 `init` 用于初始化一个图表。
 
-<Tip title="提示" tip="调用时，需要等待容器准备完成之后。"/>
+<Tip title="提示" :tip="['调用时，需要等待容器准备完成之后。']"/>
 
 ## 参考 {#reference}
 <!-- @include: @/@views/api/references/chart/init.md -->

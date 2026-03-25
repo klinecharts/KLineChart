@@ -44,7 +44,7 @@ import Tip from '../../@components/Tip.vue'
   - `draw` 自定义绘制方法，如果返回值是 `true` ，则会覆盖默认的绘制。
   - `onDataStateChange` 数据变化回调通知。
 
-<Tip title="提示" tip="其中 <code>id</code> ，<code>paneId</code> 和 <code>name</code> 是索引，如果入参包含这三个参数，会根据这三个参数查找符合条件的指标来覆盖。"/>
+<Tip title="提示" :tip="['其中 <code>id</code> ，<code>paneId</code> 和 <code>name</code> 是索引，如果入参包含这三个参数，会根据这三个参数查找符合条件的指标来覆盖。']"/>
 
 ### 返回值 {#returns}
 `overrideIndicator` 返回 `undefined` 。

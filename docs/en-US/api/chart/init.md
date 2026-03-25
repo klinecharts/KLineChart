@@ -24,7 +24,7 @@ import Tip from '../../../@components/Tip.vue'
 # init(ds, options?)
 `init` used to initialize a chart.
 
-<Tip title="Tip" tip="When calling, you need to wait until the container is ready."/>
+<Tip title="Tip" :tip="['When calling, you need to wait until the container is ready.']"/>
 
 ## Reference {#reference}
 <!-- @include: @/@views/api/references/chart/init.md -->
