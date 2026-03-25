@@ -1,175 +1,74 @@
 <script setup>
-import SetDataLoaderSample from '../@views/api/samples/setDataLoader/index.vue'
+import Tip from '../../@components/Tip.vue'
 </script>
 
 # Data Integration
+This document explains how to integrate historical and real-time data into the chart.
 
-This guide shows how to integrate historical candles and real-time updates into the chart. The core task is implementing a data loader via `setDataLoader`.
-
-If you only want the fastest path to integration, remember this:
-
-- You only need to implement 3 functions: `getBars`, `subscribeBar`, and `unsubscribeBar`
-
-They are responsible for:
-
-- `getBars`: return historical candles for both initial load and pagination
-- `subscribeBar`: start pushing the latest candle after historical data is ready
-- `unsubscribeBar`: stop the real-time stream when symbol/period changes or the chart is disposed
-
-## Integration Flow
-
-You can understand the whole integration as 4 stages:
-
-```mermaid
-flowchart TD
-  A["init(dom)"] --> B["setSymbol(...)"]
-  B --> C["setPeriod(...)"]
-  C --> D["setDataLoader(...)"]
-  D --> E["Chart calls getBars({ type: 'init' })"]
-  E --> F["Return KLineData[]"]
-  F --> G["Chart calls subscribeBar(...)"]
-  G --> H["Push one real-time KLineData"]
-  H --> I{"User reaches boundary?"}
-  I -- "Yes" --> J["Chart calls getBars({ type: 'forward' | 'backward' })"]
-  J --> K["Return more history data"]
-  K --> H
-  I -- "No" --> H
-  H --> L{"Change symbol/period or dispose?"}
-  L -- "Yes" --> M["Chart calls unsubscribeBar(...)"]
-  L -- "No" --> H
-```
-
-### Stage 1: Initialize the Chart
-
-What you do:
-
-- Call `init(dom)` to create the chart instance
+The core of data integration is:
 - Call `setSymbol(...)` to set the symbol
 - Call `setPeriod(...)` to set the period
-- Call `setDataLoader(...)` to register the loader
+- Call `setDataLoader(...)` to set the data loader
 
-Result of this stage:
-
-- the chart is ready to request data
-
-### Stage 2: Load the First Screen of History
-
-Who triggers it:
-
-- the chart automatically
-
-What happens:
-
-- the chart calls `getBars({ type: 'init' })`
-- you request historical data
-- you return it through `callback(KLineData[])`
-
-Result of this stage:
-
-- the chart gets the first batch of candles and completes the initial render
-
-### Stage 3: Receive Real-Time Updates
-
-Who triggers it:
-
-- the chart automatically after the first historical load is completed
-
-What happens:
-
-- the chart calls `subscribeBar(...)`
-- you create a WebSocket / SSE / polling subscription
-- whenever a new latest candle arrives, you call `callback(KLineData)`
-
-Result of this stage:
-
-- the chart keeps updating the last candle or appending a new candle
-
-### Stage 4: Continue Pagination or Stop Subscription
-
-During pagination:
-
-- when the user reaches the left or right boundary, the chart calls `getBars({ type: 'forward' | 'backward' })`
-- you return more historical data and use `more` to tell the chart whether more pages still exist
-
-When stopping:
-
-- when `symbol` changes, `period` changes, `resetData` is called, or the chart is disposed
-- the chart calls `unsubscribeBar(...)`
-- you stop the corresponding real-time subscription
-
-Result of this stage:
-
-- the chart can keep loading more history or safely stop the data stream
-
-## Minimum Working Version
-
-If your goal is to get it working first, these are the only 3 requirements:
-
-1. `getBars` must call `callback(KLineData[])`
-2. `subscribeBar` must call `callback(KLineData)` when a new candle arrives
-3. `unsubscribeBar` must really stop your WebSocket / SSE / polling
-
-Once these 3 points are correct, the chart can complete the basic loop of historical data plus real-time updates.
+Among the three functions inside `setDataLoader(...)`:
+- `getBars`: returns historical data, used for both initialization and pagination
+- `subscribeBar`: starts pushing the latest data after historical data has finished loading
+- `unsubscribeBar`: stops the real-time subscription when switching symbol, switching period, or destroying the chart
 
 ## Common Integration Scenarios
 
-In real projects, you will usually see one of these patterns:
+In real projects, you will usually encounter the following data source combinations:
 
-- REST history + WebSocket real-time
-  - the most common setup
-  - `getBars` requests historical data from REST
-  - `subscribeBar` listens to WebSocket updates
-- REST history + polling real-time
-  - useful when no WebSocket is available
-  - `subscribeBar` internally uses `setInterval` to fetch the latest candle
-- Local cache/in-memory history + incremental push
-  - useful for replay, simulation, or offline demos
-  - `getBars` reads slices from local data
-  - `subscribeBar` pushes the next candle over time
+- REST historical data + WebSocket real-time data
+  - The most common approach
+  - `getBars` requests the REST API
+  - `subscribeBar` subscribes to WebSocket
+- REST historical data + polling real-time data
+  - Suitable when WebSocket is not available
+  - `subscribeBar` uses `setInterval` internally to fetch the latest record regularly
+- Local cache / in-memory data + incremental push
+  - Suitable for replay, paper trading, and offline demos
+  - `getBars` slices data from a local array
+  - `subscribeBar` pushes the next bar as time advances
 
-No matter where your data comes from, the final integration model is always the same:
+No matter where your data comes from, it eventually comes down to the same thing:
 
-- historical data returns `KLineData[]`
-- real-time data returns one `KLineData`
+- Historical data returns `KLineData[]`
+- Real-time data returns a single `KLineData`
 
 ## KLineData Structure
 
-The chart expects candle data in a fixed format. Both historical and real-time data returned through `setDataLoader` should be normalized to this shape:
+The historical data received by the chart must follow a fixed format. Both historical and real-time data in `setDataLoader` eventually need to be converted into this structure:
 
 ```ts
 {
-  // Timestamp, millisecond, required field
+  // Timestamp in milliseconds, required field
   timestamp: number
   // Open price, required field
   open: number
   // Close price, required field
   close: number
-  // Highest price, required field
+  // High price, required field
   high: number
-  // Lowest price, required field
+  // Low price, required field
   low: number
   // Volume, optional field
   volume: number
-  // Turnover, optional field. Required if you want to display 'EMV' and 'AVP'
+  // Turnover, optional field. Required if you need to display 'EMV' and 'AVP'
   turnover: number
 }
 ```
+<Tip title="Important" :tip="['<code>timestamp</code> must be a millisecond timestamp', '<code>timestamp</code>, <code>open</code>, <code>close</code>, <code>high</code>, <code>low</code>, <code>volume</code>, and <code>turnover</code> must all be numeric types']"/>
 
-Important notes:
+## Data Field Mapping Example
 
-- `timestamp` must be in milliseconds
-- Historical arrays should be returned in ascending `timestamp` order
-- Real-time pushes must use the same `KLineData` shape
+Your backend fields usually will not exactly match `KLineData`, so in most cases you should normalize them first.
 
-## Field Mapping Example
-
-Backend payloads usually do not match `KLineData` directly, so you will normally normalize them first.
-
-For example, if your backend returns:
+Assume the backend returns:
 
 ```ts
 {
-  time: 1711425600,
+  t: 1711425600,
   o: '68000.1',
   h: '68920.5',
   l: '67500.2',
@@ -178,12 +77,12 @@ For example, if your backend returns:
 }
 ```
 
-You can normalize it like this:
+It can be mapped like this:
 
 ```ts
 function normalizeToKLineData(data: any) {
   return {
-    timestamp: data.time * 1000,
+    timestamp: data.t * 1000,
     open: Number(data.o),
     high: Number(data.h),
     low: Number(data.l),
@@ -193,27 +92,18 @@ function normalizeToKLineData(data: any) {
 }
 ```
 
-If your API returns a list, it is also recommended to normalize everything through `map(normalizeToKLineData)` before calling `callback(...)`.
+If your API returns an array, it is also recommended to apply `map(normalizeToKLineData)` before calling `callback(...)`.
 
-## Required APIs
+## setDataLoader Implementation Notes
+Among the three functions in `setDataLoader({ getBars, subscribeBar, unsubscribeBar })`, `getBars` must be implemented. If you do not need real-time updates, you may leave out `subscribeBar` and `unsubscribeBar`.
 
-1. `init(dom)`
-2. `setSymbol(...)`
-3. `setPeriod(...)`
-4. `setDataLoader({ getBars, subscribeBar, unsubscribeBar })`
+<Tip title="Special Note" :tip="['<code>getBars</code> is triggered only after the chart has confirmed that symbol and period are set, and the visible area requires data.']"/>
 
-Notes:
+### getBars Fetches Historical Data (Including Pagination)
 
-- The chart triggers `getBars` only after the symbol and period are set and the visible area requires data.
-- Your `getBars` must return `KLineData[]` by calling `callback(...)`.
+The `getBars` function in `setDataLoader` is responsible for fetching and returning historical data when needed.
 
-<SetDataLoaderSample/>
-
-## getBars: Historical Candles with Pagination
-
-`getBars` fetches candles whenever the chart needs historical data.
-
-The parameter contract is:
+The signature of `getBars` comes from the chart's internal data loading contract:
 
 ```ts
 getBars: ({
@@ -225,81 +115,70 @@ getBars: ({
 }: DataLoaderGetBarsParams) => void | Promise<void>
 ```
 
-You can read it as:
+You can understand it as:
 
-- the chart tells you which range it needs
-- you request the backend or cache
-- you send the result back through `callback(...)`
+- The chart tells you which segment of data it needs right now
+- You request the backend or cache
+- You return the result through `callback(...)`
 
-Key fields:
+Key meanings:
 
 - `type`
-  - `init`: initial load. `timestamp = null` at this time.
-  - `forward`: load earlier candles on the left boundary.
-  - `backward`: load later candles on the right boundary.
+  - `init`: triggered after initialization or after switching symbol/period. At this time `timestamp = null`.
+  - `forward`: used to load older data on the left boundary, usually triggered when dragging to the left boundary.
+  - `backward`: used to load newer data on the right boundary, usually triggered when dragging to the right boundary.
+  - The exact meaning depends on how your data API is implemented.
 - `timestamp`
+  - `forward`: usually the `timestamp` of the current leftmost bar
+  - `backward`: usually the `timestamp` of the current rightmost bar
   - `init`: `null`
-  - other values: reference timestamp near the current boundary
 - `callback(data, more)`
   - `data`: `KLineData[]`
-  - `more`: whether there is more data on each side
-    - you can pass `boolean` (same for both sides)
-    - or `{ forward?: boolean, backward?: boolean }` to control each side
+  - `more`: tells the chart whether there is more data on the left or right boundary
+    - You can pass `boolean` to mean both sides are the same
+    - Or pass an object `{ forward?: boolean, backward?: boolean }` to control each side separately
 
-Most common implementation:
+The most common implementations are:
 
-- `init`: fetch a recent chunk of history
-- `forward`: fetch older candles using the left boundary `timestamp`
-- `backward`: fetch newer candles using the right boundary `timestamp`
+- `init`: load a recent chunk of historical data
+- `forward`: load older data using the left boundary `timestamp`
+- `backward`: load newer data using the right boundary `timestamp`
 
-If your API only supports backward-looking pagination, it is fine to first implement only `init` and `forward`.
+If your API only supports backward pagination in one direction, you can start by correctly handling only `init` and `forward`.
 
-### How to Return `more`
+#### How `more` Should Be Returned
 
-`more` does not mean “how much data was returned this time”. It means “is there still more data in this direction”.
+The purpose of `more` is not to tell the chart "how much data was returned this time", but to tell it "whether there is more data in this direction".
 
 For example:
 
-- if older data still exists, return `callback(bars, { forward: true })`
-- if you already reached the earliest page, return `callback(bars, { forward: false })`
-- if you do not need separate control for both directions, you can also return `callback(bars, false)`
+- After requesting older data, if the backend can continue paging, return `callback(bars, { forward: true })`
+- After requesting older data, if the earliest page has been reached, return `callback(bars, { forward: false })`
+- If you do not need separate control for left and right, you can also return `callback(bars, false)`
 
 A practical rule is:
 
-- if the backend returns fewer items than your page size, that direction usually has no more data
-- if the backend gives you `hasMore` or `nextCursor`, prefer that backend result
+- If the backend returns fewer items than your page size, that direction usually has no more data
+- If the backend explicitly returns `hasMore` or `nextCursor`, prefer the backend result
 
-### getBars Implementation Tips
+#### getBars Data Merge
+- `type: 'init'`: clears existing data and replaces it with the new array.
+- `type: 'forward'`: prepends the new data to the front of the array to fill older bars on the left.
+- `type: 'backward'`: appends the new data to the end of the array to fill newer bars on the right.
+- `more` only affects whether future left/right pagination can continue to be triggered.
 
-- Do not return unsorted data
-- Try to avoid duplicate timestamps
-- If the API fails, do not silently swallow the error and also skip callback handling
-- If requests can race, only keep the latest result for the current symbol/period
+#### getBars Implementation Suggestions
+- Do not return unsorted data directly from `getBars`
+- Try to avoid returning duplicate timestamps
+- If the API fails, at minimum do not catch the error and then return nothing
+- If you have concurrent requests, it is best to keep only the latest result for the current symbol/period
 
-## Data merge rules (historical pagination + real-time)
 
-Understanding “data merge” helps you implement correct pagination and real-time pushing.
+### subscribeBar Subscribes to Real-Time Single-Record Updates
 
-### Historical merge (`getBars` returning `KLineData[]`)
+The chart calls `subscribeBar` only after the `init` callback of `getBars` has completed, which means after historical data is ready.
 
-- `type: 'init'`：clear existing data and replace it with the new array.
-- `type: 'forward'`：prepend the new data (left side / earlier candles).
-- `type: 'backward'`：append the new data (right side / later candles).
-- `more` only controls whether pagination is allowed to continue on the left/right side.
-
-### Real-time merge (`subscribeBar` callback returning a single `KLineData`)
-
-When the chart receives one real-time candle, it merges by comparing `data.timestamp` to the current last candle:
-
-- `data.timestamp` is greater：append as a new last candle
-- `data.timestamp` is equal：overwrite the last candle
-- `data.timestamp` is smaller：ignore it (no insertion)
-
-## subscribeBar: Real-Time Single-Candle Updates
-
-The chart calls `subscribeBar` only after the `init` `getBars` callback is completed (i.e., after historical data is ready).
-
-Signature:
+The signature of `subscribeBar`:
 
 ```ts
 subscribeBar: ({
@@ -308,112 +187,29 @@ subscribeBar: ({
   callback
 }: DataLoaderSubscribeBarParams) => void
 ```
-
 Where:
+- `callback(data: KLineData)`: when your real-time source receives one data record, normalize it into `KLineData` and return it to the chart.
 
-- `callback(data: KLineData)`: when your real-time source receives one candle, normalize it to `KLineData` and call `callback`.
+<Tip title="Important" :tip="['Push only one record at a time. You do not need to push the entire array every time.', 'Make sure <code>data.timestamp</code> is a millisecond timestamp.', 'What you push is the record corresponding to the current period, not arbitrary trade details.', 'When time enters the next period, the newly pushed data should use a new <code>timestamp</code>.']"/>
 
-Real-time tips:
+#### subscribeBar Data Merge
+When the chart receives one real-time K-line record, it merges it with the current last record based on `data.timestamp`:
+- If `data.timestamp` is greater: append it as a new last record
+- If `data.timestamp` is the same: overwrite the last record with the new value
+- If `data.timestamp` is smaller: treat it as old data and ignore it without inserting
 
-- Push one latest candle at a time. You do not need to resend the full array
-- Use millisecond timestamps for `data.timestamp`
-- If `data.timestamp` equals the last candle's timestamp, the chart updates/overwrites that candle
-- Avoid sending “older” timestamps as new appended candles
 
-### Real-Time Update Notes
-
-- Push the candle for the current period bucket, not arbitrary trade ticks
-- The latest candle in the same period will often be updated multiple times, which is expected
-- Only when time enters the next period should you push a candle with a new `timestamp`
-
-For example, on a 1-minute period:
-
-- updates from `10:00:00` to `10:00:59` should all belong to the candle at `10:00:00`
-- only after `10:01:00` should you push a new candle at `10:01:00`
-
-## unsubscribeBar: Stop Real-Time Subscription
-
-When you call `setSymbol` / `setPeriod` / `resetData` / destroy the chart (`dispose`), the chart will trigger `unsubscribeBar`.
+## unsubscribeBar Unsubscribes from Real-Time Data
+When you call `setSymbol`, `setPeriod`, `resetData`, or `dispose` to reset or destroy the chart, the chart internally triggers `unsubscribeBar`.
 
 Best practice:
+- Maintain a Map of subscription handles or cleanup functions on the `dataLoader` side
+- `subscribeBar` creates the subscription and stores the cleanup function
+- `unsubscribeBar` retrieves the corresponding cleanup function and stops the push
 
-- Keep a Map of “stop handlers” keyed by `symbol`/`period`
-- Create the subscription in `subscribeBar` and store its stop function
-- Stop it in `unsubscribeBar`
 
-## Data Integration Template (Historical + Real-Time)
-
-Replace `fetchBars`, `subscribeRealTime`, and `unsubscribeRealTime` with your own implementations.
-
-```ts
-import { init, dispose } from 'klinecharts'
-
-const chart = init('chart')
-
-chart.setSymbol({ ticker: 'TestSymbol' /* optionally pricePrecision/volumePrecision */ })
-chart.setPeriod({ span: 1, type: 'day' })
-
-const stopMap = new Map<string, () => void>()
-
-function makeKey(symbol: any, period: any) {
-  return `${symbol?.ticker ?? ''}-${period?.type ?? ''}-${period?.span ?? ''}`
-}
-
-chart.setDataLoader({
-  async getBars({ type, timestamp, symbol, period, callback }) {
-    const { bars, forward, backward } = await fetchBars({
-      type,
-      timestamp,
-      symbol,
-      period,
-    })
-
-    // Strongly recommended: return bars sorted by timestamp asc
-    callback(bars, { forward: !!forward, backward: !!backward })
-  },
-
-  subscribeBar({ symbol, period, callback }) {
-    const key = makeKey(symbol, period)
-
-    const stop = subscribeRealTime({
-      symbol,
-      period,
-      onBar: (rawBar: any) => {
-        const klineBar = normalizeToKLineData(rawBar)
-        callback(klineBar)
-      },
-    })
-
-    stopMap.set(key, stop)
-  },
-
-  unsubscribeBar({ symbol, period }) {
-    const key = makeKey(symbol, period)
-    const stop = stopMap.get(key)
-    if (stop) stop()
-    stopMap.delete(key)
-  },
-})
-
-dispose('chart')
-```
-
-## Real Project Checklist
-
-For production integration, it is worth checking these items:
-
-1. How `symbol` maps to your backend symbol field
-2. How `period` maps to your backend interval parameter
-3. Whether timestamps are in seconds or milliseconds
-4. Whether price and volume fields need `Number(...)`
-5. Whether the history API guarantees ascending order
-6. Whether pagination can return duplicate candles
-7. Whether old subscriptions are cleaned up after symbol/period changes
-8. Whether polling or WebSocket connections stop after chart disposal
-
-## A More Realistic Pseudo Example
-
-This shows a typical REST-history + WebSocket-real-time approach:
+## Pseudo-Code Example from a Real Business Scenario
+The following example shows the typical idea of "REST for history + WebSocket for real-time":
 
 ```ts
 chart.setDataLoader({
@@ -456,40 +252,19 @@ chart.setDataLoader({
 })
 ```
 
-## What You Should Handle Yourself
-
-- Convert your backend payload into `KLineData`
-- Request the correct data using `symbol + period + timestamp`
-- Keep and clean up your real-time subscription handles
-
-## What the Chart Handles for You
-
-- Rendering the first screen of history
-- Merging paginated historical data
-- Overwriting or appending the latest real-time candle
-- Triggering unsubscribe when symbol/period changes or the chart is disposed
-
-## Common Edge Cases
-
-- No data on first load
-  - usually `getBars` did not call `callback(...)`
-- Real-time messages arrive but the chart does not update
-  - usually the pushed `timestamp` does not match the current period bucket
-- Old data still flashes after symbol change
-  - usually the previous real-time subscription was not cleaned up
-- Duplicate candles appear after loading older history
-  - usually boundary timestamp handling is inconsistent, or backend data already contains duplicate timestamps
-- Indicator values look wrong
-  - first check whether `volume` and `turnover` are passed correctly
-
 ## Quick Troubleshooting
-
-1. No data at all
-   - Ensure `getBars` always calls `callback(data)` with `KLineData[]`
-   - Ensure `timestamp` is in milliseconds
-   - Ensure you call `setSymbol` and `setPeriod`
-2. Pagination does not trigger
-   - Check `callback(bars, more)` and `more.forward/backward`
-3. Real-time updates do not work
-   - Ensure `subscribeBar` calls `callback(KLineData)`
-   - Ensure the real-time stream timestamp matches the candle time bucket
+1. No data on the chart at all
+   - Make sure `getBars` definitely calls `callback(data)` and returns `KLineData[]`
+   - Make sure `timestamp` is in milliseconds
+   - Make sure `setSymbol` and `setPeriod` have been set
+2. Pagination or dragging to the boundary no longer triggers loading
+   - Check whether `more.forward/backward` is returned correctly in `callback(bars, more)`
+3. Real-time data is not updating
+   - Make sure `subscribeBar` really calls `callback(KLineData)`
+   - Check whether the `timestamp` you push is smaller than the latest record's `timestamp`
+4. After switching symbol, old data is still flashing
+   - Usually the old real-time subscription was not released
+5. Duplicate K-lines appear after paging left
+   - Usually the pagination boundary timestamp is handled inconsistently, or the backend data contains duplicate timestamps
+6. Indicator values are incorrect
+   - First check whether `volume` and `turnover` are passed correctly
