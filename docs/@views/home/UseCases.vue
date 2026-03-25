@@ -71,13 +71,16 @@ const items = computed(() => [
 .use-cases {
   display: grid;
   width: 100%;
+  gap: 14px;
 }
 
 .use-case {
   display: flex;
   flex-direction: column;
   gap: 18px;
-  padding: 26px 0;
+  min-height: 100%;
+  padding: 18px 0 24px 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--vp-c-brand-1) 10%, var(--vp-c-divider));
 }
 
 .use-case h3 {
@@ -133,20 +136,12 @@ const items = computed(() => [
 @media (min-width: 960px) {
   .use-cases {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 26px;
   }
 
   .use-case {
-    padding: 0 24px 0 0;
+    padding: 8px 8px 0 0;
     border-bottom: none;
-    min-height: 100%;
-  }
-
-  .use-case:not(:last-child) {
-    padding-right: 28px;
-  }
-
-  .use-case:not(:first-child) {
-    padding-left: 28px;
   }
 }
 </style>

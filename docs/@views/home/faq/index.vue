@@ -49,16 +49,20 @@ const items = ref([
     :title="i18n('view_home_faq_title', lang)"
     :description="i18n('view_home_faq_desc', lang)">
     <ul class="faq">
-      <li class="item" v-for="item in items" :key="item.q">
+      <li
+        class="item"
+        :class="{ expanded: item.expanded }"
+        v-for="item in items"
+        :key="item.q"
+        @click="item.expanded = !item.expanded"
+      >
         <div class="item-content home-faq-item-content">
           <span class="item-content-q">{{ i18n(item.q, lang) }}</span>
           <SmoothExpand :expanded="item.expanded">
             <span class="item-content-a" v-html="i18n(item.a, lang)"/>
           </SmoothExpand>
         </div>
-        <span
-          class="icon"
-          @click="item.expanded = !item.expanded">
+        <span class="icon">
           <ExpandIcon :expanded="item.expanded"/>
         </span>
       </li>
@@ -77,22 +81,29 @@ const items = ref([
 
 <style scoped>
 .faq {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  display: grid;
   width: 100%;
-  gap: 1px;
-  /* background-color: var(--vp-c-gutter); */
+  gap: 0;
 }
 
 .item {
   display: flex;
   flex-direction: row;
   width: 100%;
-  padding: 16px 0px;
+  padding: 18px 0;
   color: var(--vp-c-text-1);
   overflow: hidden;
-  border-bottom: solid 1px var(--vp-c-gutter);
+  border-bottom: 1px solid color-mix(in srgb, var(--vp-c-brand-1) 10%, var(--vp-c-divider));
+  cursor: pointer;
+  transition: border-color .2s ease, color .2s ease;
+}
+
+.item:hover {
+  border-bottom-color: color-mix(in srgb, var(--vp-c-brand-1) 22%, var(--vp-c-divider));
+}
+
+.item.expanded {
+  border-bottom-color: color-mix(in srgb, var(--vp-c-brand-1) 18%, var(--vp-c-divider));
 }
 
 .item-content {
@@ -106,6 +117,12 @@ const items = ref([
 .item-content-q {
   font-size: 16px;
   line-height: 22px;
+  font-weight: 600;
+  transition: color .2s ease;
+}
+
+.item.expanded .item-content-q {
+  color: var(--vp-c-text-1);
 }
 
 .item-content-a-wrapper {
@@ -115,9 +132,10 @@ const items = ref([
 .item-content-a {
   display: block;
   font-size: 14px;
-  padding-top: 12px;
+  padding-top: 16px;
   color: var(--vp-c-text-2);
   word-break: break-word;
+  max-width: 72ch;
 }
 
 .icon {
@@ -125,15 +143,24 @@ const items = ref([
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  width: 16px;
-  height: 22px;
-  cursor: pointer;
+  width: 28px;
+  height: 28px;
   flex-shrink: 0;
+  margin-top: -2px;
+  border-radius: 999px;
+  color: var(--vp-c-text-2);
+  transition: background-color .2s ease, color .2s ease;
+}
+
+.item:hover .icon,
+.item.expanded .icon {
+  color: var(--vp-c-brand-1);
+  background: color-mix(in srgb, var(--vp-c-brand-1) 8%, transparent);
 }
 
 @media (min-width: 640px) {
   .item {
-    padding: 20px 0;
+    padding: 22px 0;
   }
   .item-content-q {
     font-size: 18px;
@@ -142,11 +169,11 @@ const items = ref([
 
   .item-content-a {
     font-size: 16px;
-    padding-top: 20px;
+    padding-top: 22px;
   }
   .icon {
-    width: 20px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
   }
 }
 </style>

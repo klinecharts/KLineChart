@@ -15,11 +15,24 @@ const props = defineProps(['title', 'description', 'outClass'])
 
 <style scoped>
 .section {
+  position: relative;
   display: flex;
   flex-direction: row;
   justify-content: center;
-  padding: 80px 24px 0 24px;
+  padding: 88px 24px 0 24px;
 }
+
+.section::before {
+  content: '';
+  position: absolute;
+  top: 34px;
+  left: 50%;
+  width: min(1120px, calc(100% - 40px));
+  height: 1px;
+  transform: translateX(-50%);
+  background: linear-gradient(90deg, transparent 0%, color-mix(in srgb, var(--vp-c-brand-1) 16%, var(--vp-c-divider)) 18%, color-mix(in srgb, var(--vp-c-brand-1) 16%, var(--vp-c-divider)) 82%, transparent 100%);
+}
+
 .content {
   display: flex;
   flex-direction: column;
@@ -48,14 +61,11 @@ const props = defineProps(['title', 'description', 'outClass'])
 
 @media (min-width: 640px) {
   .section {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    padding: 150px 48px 0 48px;
+    padding: 124px 48px 0 48px;
   }
 
   .content {
-    padding: 0 32px;
+    padding: 0 24px;
   }
 
   .title {
@@ -73,7 +83,7 @@ const props = defineProps(['title', 'description', 'outClass'])
 
 @media (min-width: 960px) {
   .section {
-    padding: 150px 64px 0 64px;
+    padding: 148px 64px 0 64px;
   }
 }
 </style>

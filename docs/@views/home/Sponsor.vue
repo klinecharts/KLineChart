@@ -1,239 +1,394 @@
 <script setup>
-  import { ref } from 'vue'
-  import Section from './Section.vue';
+import { computed, ref } from 'vue'
+import { useData } from 'vitepress'
 
-  import { useData } from 'vitepress'
-  import i18n from '../../@i18n';
-  import Particle from '../../@components/Particle.vue';
+import Section from './Section.vue'
+import i18n from '../../@i18n'
+import Particle from '../../@components/Particle.vue'
 
-  const sponsors = [
-    {
-      "name": "Northstar",
-      "logo": "/images/sponsors/Northstar.png",
-      "website": "https://northstar.quantit.tech:8443/",
-      "amount": 1600
-    },
-    {
-      "name": "flameOnYou",
-      "text": "flameOnYou",
-      "logo": "/images/sponsors/flameOnYou.jpg",
-      "website": "https://github.com/flameOnYou",
-      "amount": 2100
-    },
-    {
-      "name": "糊涂",
-      "text": "糊涂",
-      "logo": "/images/sponsors/hutu.png",
-      "website": "https://hutu.live",
-      "amount": 18.8
-    },
-    {
-      "name": "好主机",
-      "text": "好主机",
-      "website": "https://www.haozhuji.net/",
-      "amount": 88.8
-    }
-  ]
-
-  sponsors.sort((s1, s2) => s2.amount - s1.amount)
-
-  const pt = []
-
-  const gd = []
-
-  for (let i = 3; i < sponsors.length; i++) {
-    const s = sponsors[i]
-    if (s.amount >= 5000) {
-      pt.push(s)
-    } else {
-      gd.push(s)
-    }
+const sponsors = [
+  {
+    name: 'Northstar',
+    logo: '/images/sponsors/Northstar.png',
+    website: 'https://northstar.quantit.tech:8443/',
+    amount: 1600
+  },
+  {
+    name: 'flameOnYou',
+    text: 'flameOnYou',
+    logo: '/images/sponsors/flameOnYou.jpg',
+    website: 'https://github.com/flameOnYou',
+    amount: 2100
+  },
+  {
+    name: '糊涂',
+    text: '糊涂',
+    logo: '/images/sponsors/hutu.png',
+    website: 'https://hutu.live',
+    amount: 18.8
+  },
+  {
+    name: '好主机',
+    text: '好主机',
+    website: 'https://www.haozhuji.net/',
+    amount: 88.8
   }
+].sort((a, b) => b.amount - a.amount)
 
-  const platinum = ref(pt)
+const featuredSponsors = computed(() => sponsors.slice(0, 3))
+const supportingSponsors = computed(() => sponsors.slice(3))
 
-  const gold = ref(gd)
+const { lang } = useData()
+const particle = ref(null)
 
-  const { lang } = useData()
-
-  const particle = ref(null)
-
-  function showParticle() {
-    if (particle.value && particle.value.start) {
-      particle.value.start()
-    }
+function showParticle() {
+  if (particle.value && particle.value.start) {
+    particle.value.start()
   }
+}
 </script>
 
 <template>
   <Section
+    out-class="sponsor-section"
     :title="i18n('view_home_sponsor_title', lang)"
-    :description="i18n('view_home_sponsor_desc', lang)">
-    <div class="sponsor">
-      <div class="sponsor-grid sponsor-top-grid">
-        <a class="sponsor-grid-item item-no1" :href="sponsors[0].website" target="_blank" rel="noreferrer">
-          <img class="image" :src="sponsors[0].logo"/>
-          <span class="text" v-if="!!sponsors[0].text">{{ sponsors[0].text }}</span>
-        </a>
-        <a class="sponsor-grid-item item-no2-no3" :href="sponsors[1].website" target="_blank" rel="noreferrer">
-          <img class="image" :src="sponsors[1].logo"/>
-          <span class="text" v-if="!!sponsors[1].text">{{ sponsors[1].text }}</span>
-        </a>
-        <a v-if="!!sponsors[2]" class="sponsor-grid-item item-no2-no3" :href="sponsors[2].website" target="_blank" rel="noreferrer">
-          <img class="image" :src="sponsors[2].logo"/>
-          <span class="text" v-if="!!sponsors[2].text">{{ sponsors[2].text }}</span>
-        </a>
+    :description="i18n('view_home_sponsor_desc', lang)"
+  >
+    <div class="sponsor-shell">
+      <div class="intro">
+        <span class="eyebrow">
+          {{ lang === 'zh-CN' ? 'Backing The Ecosystem' : 'Backing The Ecosystem' }}
+        </span>
+        <p class="lead">
+          {{
+            lang === 'zh-CN'
+              ? '这些赞助者不仅提供资金支持，也让项目能够持续维护、迭代和保持公开可用。'
+              : 'These sponsors do more than fund the project. They help keep it maintained, iterated, and publicly available.'
+          }}
+        </p>
+        <div class="signal">
+          <span class="signal-dot"></span>
+          <span>
+            {{
+              lang === 'zh-CN'
+                ? '赞助位会展示在官网首页'
+                : 'Sponsor placements appear directly on the homepage'
+            }}
+          </span>
+        </div>
+        <div class="sponsor-become">
+          <a target="_blank" rel="noreferrer" href="./sponsor.html" @mouseenter="showParticle">
+            <Particle ref="particle">
+              <svg width="18" height="18" viewBox="0 0 24 24">
+                <path fill="currentColor" d="m12 21l-1.45-1.3q-2.525-2.275-4.175-3.925T3.75 12.812T2.388 10.4T2 8.15Q2 5.8 3.575 4.225T7.5 2.65q1.3 0 2.475.55T12 4.75q.85-1 2.025-1.55t2.475-.55q2.35 0 3.925 1.575T22 8.15q0 1.15-.387 2.25t-1.363 2.412t-2.625 2.963T13.45 19.7z"/>
+              </svg>
+            </Particle>
+            {{ i18n('view_home_sponsor_become_sponsor', lang) }}
+          </a>
+        </div>
       </div>
-      <!-- <h4 v-if="platinum.length > 0">{{ lang === 'zh-CN' ? '铂金赞助商' : 'Platinum Sponsors' }}</h4> -->
-      <div v-if="platinum.length > 0" class="sponsor-grid sponsor-platinum-grid">
-        <a v-for="item in platinum" class="sponsor-grid-item item" target="_blank" rel="noreferrer" :href="item.website">
-          <img class="image" v-if="!!item.logo" :src="item.logo"/>
-          <span class="text" v-if="!!item.text">{{ item.text }}</span>
-        </a>
-      </div>
-      <!-- <h4 v-if="gold.length > 0">{{ lang === 'zh-CN' ? '黄金赞助商' : 'Gold Sponsors' }}</h4> -->
-      <div v-if="gold.length > 0" class="sponsor-grid sponsor-gold-grid">
-        <a v-for="item in gold" class="sponsor-grid-item item" target="_blank" rel="noreferrer" :href="item.website">
-          <img class="image" v-if="!!item.logo" :src="item.logo"/>
-          <span class="text" v-if="!!item.text">{{ item.text }}</span>
-        </a>
-      </div>
-      <div class="sponsor-become">
-        <a target="_blank" rel="noreferrer" href="./sponsor.html" @mouseenter="showParticle" >
-          <Particle ref="particle">
-            <svg width="18" height="18" viewBox="0 0 24 24">
-              <path fill="currentColor" d="m12 21l-1.45-1.3q-2.525-2.275-4.175-3.925T3.75 12.812T2.388 10.4T2 8.15Q2 5.8 3.575 4.225T7.5 2.65q1.3 0 2.475.55T12 4.75q.85-1 2.025-1.55t2.475-.55q2.35 0 3.925 1.575T22 8.15q0 1.15-.387 2.25t-1.363 2.412t-2.625 2.963T13.45 19.7z"/>
-            </svg>
-          </Particle>
-          {{ i18n('view_home_sponsor_become_sponsor', lang) }}
-        </a>
+
+      <div class="board">
+        <div class="featured">
+          <a
+            v-if="featuredSponsors[0]"
+            class="featured-main"
+            :href="featuredSponsors[0].website"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <span class="tier">{{ lang === 'zh-CN' ? '主要赞助' : 'Featured Sponsor' }}</span>
+            <img class="featured-logo featured-logo-main" :src="featuredSponsors[0].logo" :alt="featuredSponsors[0].name">
+            <span v-if="featuredSponsors[0].text" class="featured-text">{{ featuredSponsors[0].text }}</span>
+          </a>
+
+          <div class="featured-side">
+            <a
+              v-for="item in featuredSponsors.slice(1)"
+              :key="item.name"
+              class="featured-sub"
+              :href="item.website"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <span class="tier">{{ lang === 'zh-CN' ? '支持者' : 'Supporter' }}</span>
+              <img v-if="item.logo" class="featured-logo" :src="item.logo" :alt="item.name">
+              <span v-if="item.text" class="featured-text">{{ item.text }}</span>
+            </a>
+          </div>
+        </div>
+
+        <div v-if="supportingSponsors.length > 0" class="supporting">
+          <div class="supporting-head">
+            <span>{{ lang === 'zh-CN' ? '更多支持者' : 'More Supporters' }}</span>
+          </div>
+          <div class="supporting-grid">
+            <a
+              v-for="item in supportingSponsors"
+              :key="item.name"
+              class="supporting-item"
+              :href="item.website"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <img v-if="item.logo" class="supporting-logo" :src="item.logo" :alt="item.name">
+              <span v-else class="supporting-text">{{ item.text || item.name }}</span>
+            </a>
+          </div>
+        </div>
       </div>
     </div>
   </Section>
 </template>
 
 <style scoped>
-  .sponsor {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    gap: 2px;
+.sponsor-section {
+  padding-bottom: 8px;
+}
+
+.sponsor-shell {
+  position: relative;
+  display: grid;
+  width: 100%;
+  gap: 28px;
+  padding: 24px 0 4px;
+}
+
+.intro {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 28px 24px;
+  overflow: hidden;
+  border-radius: 30px;
+  background:
+    radial-gradient(circle at top left, color-mix(in srgb, var(--vp-c-brand-1) 18%, transparent), transparent 38%),
+    linear-gradient(135deg, color-mix(in srgb, var(--vp-c-brand-1) 10%, transparent), transparent 60%),
+    color-mix(in srgb, var(--vp-c-bg-soft) 78%, var(--vp-c-bg));
+  border: 1px solid color-mix(in srgb, var(--vp-c-brand-1) 12%, var(--vp-c-divider));
+}
+
+.eyebrow {
+  display: inline-flex;
+  width: fit-content;
+  font-size: 11px;
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--vp-c-brand-1);
+}
+
+.lead {
+  max-width: 34ch;
+  font-size: 17px;
+  line-height: 29px;
+  font-weight: 600;
+  color: var(--vp-c-text-1);
+}
+
+.signal {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  line-height: 22px;
+  color: var(--vp-c-text-2);
+}
+
+.signal-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--vp-c-brand-1);
+  box-shadow: 0 0 0 8px color-mix(in srgb, var(--vp-c-brand-1) 12%, transparent);
+}
+
+.board {
+  display: grid;
+  gap: 18px;
+}
+
+.featured {
+  display: grid;
+  gap: 18px;
+}
+
+.featured-main,
+.featured-sub,
+.supporting-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+  text-decoration: none;
+  transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+}
+
+.featured-main:hover,
+.featured-sub:hover,
+.supporting-item:hover {
+  transform: translateY(-3px);
+}
+
+.featured-main {
+  min-height: 220px;
+  padding: 28px;
+  border-radius: 32px;
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--vp-c-brand-1) 20%, transparent), transparent 34%),
+    linear-gradient(135deg, color-mix(in srgb, var(--vp-c-brand-1) 16%, transparent), transparent 54%),
+    color-mix(in srgb, var(--vp-c-bg-soft) 72%, var(--vp-c-bg));
+  border: 1px solid color-mix(in srgb, var(--vp-c-brand-1) 16%, var(--vp-c-divider));
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.08);
+}
+
+.featured-side {
+  display: grid;
+  gap: 18px;
+}
+
+.featured-sub {
+  min-height: 128px;
+  padding: 22px 24px;
+  border-radius: 26px;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--vp-c-brand-1) 10%, transparent), transparent 58%),
+    color-mix(in srgb, var(--vp-code-block-bg) 86%, var(--vp-c-bg));
+  border: 1px solid color-mix(in srgb, var(--vp-c-brand-1) 10%, var(--vp-c-divider));
+}
+
+.tier {
+  display: inline-flex;
+  width: fit-content;
+  margin-bottom: 16px;
+  font-size: 11px;
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--vp-c-brand-1);
+}
+
+.featured-logo {
+  max-width: 148px;
+  max-height: 40px;
+  object-fit: contain;
+}
+
+.featured-logo-main {
+  max-width: 210px;
+  max-height: 62px;
+}
+
+.featured-text {
+  padding-top: 10px;
+  font-size: 22px;
+  line-height: 1.2;
+  font-weight: 700;
+  color: var(--vp-c-text-1);
+}
+
+.supporting {
+  display: grid;
+  gap: 12px;
+}
+
+.supporting-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 4px;
+  font-size: 12px;
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--vp-c-text-3);
+}
+
+.supporting-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.supporting-item {
+  min-height: 72px;
+  padding: 0 22px;
+  align-items: center;
+  border-radius: 20px;
+  background: color-mix(in srgb, var(--vp-c-bg-soft) 58%, transparent);
+  border: 1px solid color-mix(in srgb, var(--vp-c-brand-1) 8%, var(--vp-c-divider));
+}
+
+.supporting-logo {
+  max-width: 120px;
+  max-height: 28px;
+  object-fit: contain;
+}
+
+.supporting-text {
+  font-size: 16px;
+  line-height: 1;
+  font-weight: 700;
+  color: var(--vp-c-text-1);
+}
+
+.sponsor-become {
+  display: flex;
+  padding-top: 8px;
+}
+
+.sponsor-become a {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 22px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--vp-c-brand-1) 28%, var(--vp-c-divider));
+  background: color-mix(in srgb, var(--vp-c-bg) 64%, transparent);
+  color: var(--vp-c-text-1);
+  text-decoration: none;
+  transition: transform .25s ease, border-color .25s ease, background-color .25s ease;
+}
+
+.sponsor-become a:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--vp-c-brand-1) 44%, var(--vp-c-divider));
+  background: color-mix(in srgb, var(--vp-c-brand-1) 8%, var(--vp-c-bg));
+}
+
+@media (min-width: 768px) {
+  .supporting-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 960px) {
+  .sponsor-shell {
+    grid-template-columns: minmax(280px, 0.78fr) minmax(0, 1.22fr);
+    align-items: start;
+    gap: 26px;
   }
 
-  .sponsor h4 {
-    font-size: 20px;
-    font-weight: 500;
-    padding: 30px 0 20px 0;
-    text-align: left;
+  .intro {
+    position: sticky;
+    top: 96px;
+    min-height: 100%;
   }
 
-  .sponsor-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 2px;
+  .featured {
+    grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
   }
 
-  .sponsor-grid-item {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    color: var(--vp-c-text-2)!important;
-    background-color: var(--vp-code-block-bg);
-    border-radius: 2px;
-    transition: background-color .3s ease;
-    cursor: pointer;
-    color: inherit;
-    font-size: 32px;
+  .featured-side {
+    grid-template-rows: repeat(2, minmax(0, 1fr));
   }
 
-  .sponsor-grid-item .text {
-    font-weight: bold;
-    padding-left: 12px;
+  .supporting-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
-
-  .sponsor-top-grid .item-no1 {
-    height: 180px;
-    font-size: 36px;
-  }
-
-  .sponsor-top-grid .item-no1 .image {
-    height: 62px;
-  }
-
-  .sponsor-top-grid .item-no2-no3 {
-    height: 140px;
-  }
-
-  .sponsor-top-grid .item-no2-no3 .image {
-    height: 40px;
-  }
-
-  .sponsor-platinum-grid .item {
-    height: 100px;
-  }
-
-  .sponsor-platinum-grid .item .image {
-    height: 30px;
-  }
-
-  .sponsor-gold-grid .item {
-    width: calc((100% - 18px) / 4);
-    height: 50px;
-  }
-
-  .sponsor-gold-grid .item .image {
-    height: 16px;
-  }
-
-  .sponsor-gold-grid .item .text {
-    font-size: 14px;
-  }
-
-  .sponsor-become {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    padding-top: 50px;
-    font-size: 14px;
-    color: var(--vp-c-indigo-1);
-    font-weight: bold;
-  }
-
-  .sponsor-become a {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    padding: 8px 20px;
-    gap: 8px;
-    border-radius: 99px;
-    transition: all .3s ease;
-    border: solid 1px var(--vp-c-indigo-1);
-    color: var(--vp-c-indigo-1);
-    text-decoration: none;
-  }
-
-  .sponsor-become a:hover {
-    border-color: var(--vp-c-indigo-2);
-    color: var(--vp-c-indigo-2);
-  }
-
-  @media (min-width: 640px) {
-    .sponsor-top-grid .item-no2-no3 {
-      width: calc((100% - 2px) / 2);
-      height: 140px;
-    }
-
-    .sponsor-top-grid .item-no2-no3 .image {
-      height: 52px;
-    }
-
-    .sponsor-platinum-grid .item {
-      width: calc((100% - 32px) / 3);
-    }
-
-    .sponsor-gold-grid .item {
-      width: calc((100% - 48px) / 4);
-    }
-  }
+}
 </style>

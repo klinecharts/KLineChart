@@ -8,7 +8,7 @@ import HomeHero from './home/hero/index.vue'
 import HomeTopSponsor from './home/TopSponsor.vue'
 import HomeUseCases from './home/UseCases.vue'
 import HomeCoreAdvantages from './home/CoreAdvantages.vue'
-import HomeFAQ from './home/faq/index.vue'
+import HomeUsers from './home/Users.vue'
 import HomeSponsor from './home/Sponsor.vue'
 // import AsideSponsor from './AsideSponsor.vue'
 import NotFound from './NotFound.vue'
@@ -72,7 +72,7 @@ provide('toggle-appearance', async ({ clientX: x, clientY: y }) => {
     <template #home-features-after>
       <HomeUseCases/>
       <HomeCoreAdvantages/>
-      <HomeFAQ/>
+      <HomeUsers/>
       <HomeSponsor/>
     </template>
     <!-- <template #aside-bottom>

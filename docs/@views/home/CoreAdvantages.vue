@@ -163,6 +163,7 @@ const items = computed(() => [
 .advantage {
   display: grid;
   gap: 28px;
+  padding-top: 8px;
 }
 
 .panel {
@@ -185,8 +186,8 @@ const items = computed(() => [
   gap: 6px;
   padding: 14px 16px;
   border-radius: 18px;
-  background: color-mix(in srgb, var(--vp-c-bg) 72%, transparent);
-  border: 1px solid color-mix(in srgb, var(--vp-c-brand-1) 12%, var(--vp-c-divider));
+  background: color-mix(in srgb, var(--vp-c-bg) 82%, transparent);
+  border: 1px solid color-mix(in srgb, var(--vp-c-brand-1) 8%, var(--vp-c-divider));
 }
 
 .metric strong {
@@ -205,8 +206,8 @@ const items = computed(() => [
 .scenario {
   padding: 16px 18px;
   border-radius: 20px;
-  background: color-mix(in srgb, var(--vp-c-brand-1) 8%, transparent);
-  border: 1px dashed color-mix(in srgb, var(--vp-c-brand-1) 18%, var(--vp-c-divider));
+  background: color-mix(in srgb, var(--vp-c-brand-1) 5%, transparent);
+  border: 1px dashed color-mix(in srgb, var(--vp-c-brand-1) 12%, var(--vp-c-divider));
 }
 
 .scenario-label {
@@ -300,7 +301,7 @@ const items = computed(() => [
 .grid-item {
   padding: 16px;
   border-radius: 18px;
-  background: color-mix(in srgb, var(--vp-c-brand-1) 7%, transparent);
+  background: color-mix(in srgb, var(--vp-c-brand-1) 4%, transparent);
 }
 
 .stack-item {
@@ -329,9 +330,15 @@ const items = computed(() => [
   background: var(--vp-c-brand-1);
 }
 
+@media (min-width: 960px) {
+  .advantage {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 34px;
+  }
+}
+
 .variant-1 .overview {
   padding-left: 28px;
-  border-left: 3px solid color-mix(in srgb, var(--vp-c-brand-1) 82%, transparent);
 }
 
 .variant-1 .metrics {
@@ -342,19 +349,19 @@ const items = computed(() => [
   padding: 24px 28px;
   border-radius: 28px;
   background:
-    linear-gradient(135deg, color-mix(in srgb, var(--vp-c-brand-1) 10%, transparent), transparent 40%),
-    var(--vp-c-bg-soft);
-  border: 1px solid color-mix(in srgb, var(--vp-c-brand-1) 16%, var(--vp-c-divider));
+    linear-gradient(135deg, color-mix(in srgb, var(--vp-c-brand-1) 3%, transparent), transparent 42%),
+    color-mix(in srgb, var(--vp-c-bg-soft) 72%, var(--vp-c-bg));
+  border: 1px solid color-mix(in srgb, var(--vp-c-brand-1) 6%, var(--vp-c-divider));
 }
 
 .variant-2 .overview {
   padding: 28px;
   border-radius: 32px;
   background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--vp-c-brand-1) 16%, transparent), transparent 32%),
-    linear-gradient(180deg, color-mix(in srgb, var(--vp-c-brand-1) 10%, transparent), transparent 62%),
-    var(--vp-c-bg-soft);
-  border: 1px solid color-mix(in srgb, var(--vp-c-brand-1) 16%, var(--vp-c-divider));
+    radial-gradient(circle at top right, color-mix(in srgb, var(--vp-c-brand-1) 6%, transparent), transparent 34%),
+    linear-gradient(180deg, color-mix(in srgb, var(--vp-c-brand-1) 3%, transparent), transparent 64%),
+    color-mix(in srgb, var(--vp-c-bg-soft) 68%, var(--vp-c-bg));
+  border: 1px solid color-mix(in srgb, var(--vp-c-brand-1) 6%, var(--vp-c-divider));
 }
 
 .variant-2 .metric {
@@ -376,8 +383,6 @@ const items = computed(() => [
 
 .variant-3 .overview {
   padding: 24px 0 28px;
-  border-top: 1px solid color-mix(in srgb, var(--vp-c-brand-1) 20%, var(--vp-c-divider));
-  border-bottom: 1px solid color-mix(in srgb, var(--vp-c-brand-1) 20%, var(--vp-c-divider));
 }
 
 .variant-3 .metrics {
@@ -397,10 +402,10 @@ const items = computed(() => [
 }
 
 .variant-3 .grid-item {
-  min-height: 106px;
-  border: 1px solid color-mix(in srgb, var(--vp-c-brand-1) 16%, var(--vp-c-divider));
+  min-height: 90px;
+  border: 1px solid color-mix(in srgb, var(--vp-c-brand-1) 10%, var(--vp-c-divider));
   background:
-    linear-gradient(180deg, color-mix(in srgb, var(--vp-c-brand-1) 8%, transparent), transparent 62%),
+    linear-gradient(180deg, color-mix(in srgb, var(--vp-c-brand-1) 5%, transparent), transparent 62%),
     var(--vp-code-block-bg);
 }
 
@@ -408,23 +413,13 @@ const items = computed(() => [
   padding: 24px;
   border-radius: 24px;
   background:
-    linear-gradient(180deg, color-mix(in srgb, var(--vp-c-brand-1) 8%, transparent), transparent 65%),
-    var(--vp-c-bg-soft);
+    linear-gradient(180deg, color-mix(in srgb, var(--vp-c-brand-1) 2.5%, transparent), transparent 68%),
+    color-mix(in srgb, var(--vp-c-bg-soft) 68%, var(--vp-c-bg));
 }
 
 .variant-4 .detail {
   position: relative;
   padding-left: 26px;
-}
-
-.variant-4 .detail::before {
-  content: '';
-  position: absolute;
-  top: 22px;
-  bottom: 8px;
-  left: 7px;
-  width: 2px;
-  background: linear-gradient(180deg, color-mix(in srgb, var(--vp-c-brand-1) 82%, transparent), color-mix(in srgb, var(--vp-c-brand-1) 18%, transparent));
 }
 
 .variant-4 .detail-title {
