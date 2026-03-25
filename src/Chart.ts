@@ -25,7 +25,7 @@ import type Crosshair from './common/Crosshair'
 import type { ActionType, ActionCallback } from './common/Action'
 import type { DataLoader } from './common/DataLoader'
 import type VisibleRange from './common/VisibleRange'
-import type { Formatter, DecimalFold, LayoutChild, Options, ThousandsSeparator, ZoomAnchor } from './Options'
+import type { Formatter, DecimalFold, LayoutChild, Options, ThousandsSeparator, ZoomAnchor, ZoomAnchorType } from './Options'
 import Animation from './common/Animation'
 import { createId } from './common/utils/id'
 import { createDom } from './common/utils/dom'
@@ -969,7 +969,7 @@ export default class ChartImp implements Chart {
     return this._chartStore.isZoomEnabled()
   }
 
-  setZoomAnchor (anchor: ZoomAnchor): void {
+  setZoomAnchor (anchor: ZoomAnchorType | Partial<ZoomAnchor>): void {
     this._chartStore.setZoomAnchor(anchor)
   }
 
