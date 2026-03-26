@@ -178,7 +178,7 @@ const items = computed(() => [
 }
 
 .metric strong {
-  font-size: 22px;
+  font-size: 21px;
   line-height: 1;
   font-weight: 700;
   color: var(--vp-c-text-1);
@@ -224,13 +224,13 @@ const items = computed(() => [
 
 .scenario p {
   padding-top: 10px;
-  font-size: 14px;
-  line-height: 23px;
+  font-size: clamp(14px, 1.6vw, 15px);
+  line-height: clamp(22px, 2.7vw, 24px);
   color: var(--vp-c-text-1);
 }
 
 .detail-title {
-  font-size: 13px;
+  font-size: 12px;
   line-height: 1;
   font-weight: 700;
   letter-spacing: .08em;
@@ -264,8 +264,8 @@ const items = computed(() => [
 
 .bar-head span,
 .bar-head strong {
-  font-size: 14px;
-  line-height: 22px;
+  font-size: clamp(14px, 1.6vw, 15px);
+  line-height: clamp(22px, 2.7vw, 24px);
   color: var(--vp-c-text-1);
 }
 

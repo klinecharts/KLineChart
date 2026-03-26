@@ -113,16 +113,16 @@ const items = computed(() => [
 }
 
 .use-case h3 {
-  font-size: 20px;
-  line-height: 28px;
+  font-size: clamp(18px, 2.2vw, 20px);
+  line-height: clamp(26px, 3vw, 28px);
   font-weight: 700;
   color: var(--vp-c-text-1);
 }
 
 .summary {
   max-width: 30ch;
-  font-size: 15px;
-  line-height: 24px;
+  font-size: clamp(14px, 1.5vw, 15px);
+  line-height: clamp(22px, 2.6vw, 24px);
   color: var(--vp-c-text-2);
 }
 
@@ -158,8 +158,8 @@ const items = computed(() => [
 }
 
 .point p {
-  font-size: 14px;
-  line-height: 23px;
+  font-size: clamp(14px, 1.4vw, 15px);
+  line-height: clamp(22px, 2.6vw, 24px);
   color: var(--vp-c-text-1);
 }
 

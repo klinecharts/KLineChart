@@ -89,21 +89,27 @@ function showParticle() {
             target="_blank"
             rel="noreferrer"
           >
-            <span class="tier">{{ i18n('view_home_sponsor_featured', lang) }}</span>
+            <span class="tier tier-featured">
+              <span class="tier-icon" aria-hidden="true">🥇</span>
+              {{ i18n('view_home_sponsor_featured', lang) }}
+            </span>
             <img class="featured-logo featured-logo-main" :src="featuredSponsors[0].logo" :alt="featuredSponsors[0].name">
             <span v-if="featuredSponsors[0].text" class="featured-text">{{ featuredSponsors[0].text }}</span>
           </a>
 
           <div class="featured-side">
             <a
-              v-for="item in featuredSponsors.slice(1)"
+              v-for="(item, supporterIndex) in featuredSponsors.slice(1)"
               :key="item.name"
               class="featured-sub"
               :href="item.website"
               target="_blank"
               rel="noreferrer"
             >
-              <span class="tier">{{ i18n('view_home_sponsor_supporter', lang) }}</span>
+              <span class="tier tier-supporter">
+                <span class="tier-icon" aria-hidden="true">{{ supporterIndex === 0 ? '🥈' : '🥉' }}</span>
+                {{ i18n('view_home_sponsor_supporter', lang) }}
+              </span>
               <img v-if="item.logo" class="featured-logo" :src="item.logo" :alt="item.name">
               <span v-if="item.text" class="featured-text">{{ item.text }}</span>
             </a>
@@ -176,18 +182,18 @@ function showParticle() {
 .eyebrow {
   display: inline-flex;
   width: fit-content;
-  font-size: 11px;
+  font-size: 14px;
   line-height: 1;
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--vp-c-brand-1);
+  color: var(--vp-c-text-1);
 }
 
 .lead {
   max-width: 34ch;
-  font-size: 17px;
-  line-height: 29px;
+  font-size: clamp(15px, 2vw, 18px);
+  line-height: clamp(25px, 3.2vw, 30px);
   font-weight: 600;
   color: var(--vp-c-text-1);
 }
@@ -196,8 +202,8 @@ function showParticle() {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  font-size: 14px;
-  line-height: 22px;
+  font-size: clamp(13px, 1.6vw, 15px);
+  line-height: clamp(21px, 2.7vw, 24px);
   color: var(--vp-c-text-2);
 }
 
@@ -290,14 +296,56 @@ function showParticle() {
 
 .tier {
   display: inline-flex;
+  align-items: center;
+  gap: 10px;
   width: fit-content;
   margin-bottom: 16px;
-  font-size: 11px;
+  min-height: 32px;
+  padding: 4px 12px 4px 12px;
+  font-size: 12px;
   line-height: 1;
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--vp-c-brand-1) 12%, var(--vp-c-divider));
+  background: color-mix(in srgb, var(--vp-c-bg-soft) 42%, var(--vp-c-bg));
   color: var(--vp-c-brand-1);
+  transition: border-color .25s ease, background-color .25s ease, transform .25s ease;
+}
+
+.tier::before {
+  content: none;
+}
+
+.tier::after {
+  content: none;
+}
+
+.tier-featured {
+  border-color: color-mix(in srgb, var(--vp-c-brand-1) 24%, var(--vp-c-divider));
+  background: color-mix(in srgb, var(--vp-c-brand-1) 12%, var(--vp-c-bg));
+}
+
+.tier-featured::before {
+  content: none;
+}
+
+.tier-icon {
+  font-size: 14px;
+  line-height: 1;
+}
+
+.tier-supporter {
+  color: color-mix(in srgb, var(--vp-c-brand-1) 84%, var(--vp-c-text-2));
+  border-color: color-mix(in srgb, var(--vp-c-brand-1) 16%, var(--vp-c-divider));
+  background: color-mix(in srgb, var(--vp-c-bg-soft) 56%, var(--vp-c-bg));
+}
+
+.featured-main:hover .tier-featured,
+.featured-sub:hover .tier-supporter {
+  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--vp-c-brand-1) 28%, var(--vp-c-divider));
 }
 
 .featured-logo {
@@ -313,7 +361,7 @@ function showParticle() {
 
 .featured-text {
   padding-top: 10px;
-  font-size: 22px;
+  font-size: clamp(20px, 2.5vw, 24px);
   line-height: 1.2;
   font-weight: 700;
   color: var(--vp-c-text-1);
@@ -358,7 +406,7 @@ function showParticle() {
 }
 
 .supporting-text {
-  font-size: 16px;
+  font-size: clamp(15px, 1.8vw, 17px);
   line-height: 1;
   font-weight: 700;
   color: var(--vp-c-text-1);
@@ -374,6 +422,7 @@ function showParticle() {
   align-items: center;
   gap: 10px;
   padding: 9px 20px;
+  font-size: clamp(13px, 1.6vw, 15px);
   border-radius: 999px;
   border: 1px solid color-mix(in srgb, var(--vp-c-brand-1) 28%, var(--vp-c-divider));
   background: color-mix(in srgb, var(--vp-c-bg-soft) 42%, var(--vp-c-bg));
@@ -463,6 +512,7 @@ function showParticle() {
   .featured-main,
   .featured-sub,
   .supporting-item,
+  .tier,
   .featured-main::after,
   .featured-sub::after,
   .supporting-item::after,

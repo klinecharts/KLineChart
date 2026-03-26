@@ -141,15 +141,15 @@ const { isDark, lang } = useData()
 }
 
 .copy strong {
-  font-size: 18px;
+  font-size: clamp(18px, 2.1vw, 22px);
   line-height: 1.1;
   font-weight: 700;
   color: var(--vp-c-text-1);
 }
 
 .copy p {
-  font-size: 13px;
-  line-height: 20px;
+  font-size: clamp(13px, 1.5vw, 14px);
+  line-height: clamp(20px, 2.3vw, 22px);
   color: var(--vp-c-text-2);
 }
 
@@ -200,10 +200,6 @@ const { isDark, lang } = useData()
     max-width: 360px;
   }
 
-  .copy strong {
-    font-size: 20px;
-  }
-
   .brand {
     align-self: auto;
     min-width: 220px;
@@ -231,14 +227,6 @@ const { isDark, lang } = useData()
 
   .copy {
     max-width: 400px;
-  }
-
-  .copy strong {
-    font-size: 22px;
-  }
-
-  .copy p {
-    font-size: 14px;
   }
 
   .brand {

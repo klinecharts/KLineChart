@@ -127,8 +127,8 @@ function handlePointerLeave () {
 }
 
 .tagline {
-  line-height: 26px;
-  font-size: 16px;
+  line-height: clamp(26px, 3.2vw, 34px);
+  font-size: clamp(16px, 2.35vw, 22px);
   font-weight: 500;
   white-space: pre-wrap;
   color: var(--vp-c-text-2);
@@ -165,7 +165,6 @@ function handlePointerLeave () {
   }
   .tagline {
     max-width: 576px;
-    font-size: 20px;
   }
   .actions {
     gap: 20px;
@@ -178,8 +177,7 @@ function handlePointerLeave () {
     padding: calc(var(--vp-nav-height) + var(--vp-layout-top-height, 0px) + 120px) 64px 120px 64px;
   }
   .tagline {
-    font-size: 24px;
-    max-width: 660px;
+    max-width: 640px;
   }
   .actions {
     padding-top: 48px;

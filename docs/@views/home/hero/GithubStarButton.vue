@@ -325,7 +325,7 @@ watch([() => stars.value, () => isInView.value], ([newStars, newIsInView]) => {
 @media (min-width: 640px) {
   .github-button {
     height: 40px;
-    font-size: 16px;
+    font-size: 15px;
     gap: 8px;
     padding: 0 20px;
   }

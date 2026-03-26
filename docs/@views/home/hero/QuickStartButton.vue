@@ -61,7 +61,7 @@ const { lang } = useData()
 @media (min-width: 640px) {
   .quick-start-button {
     height: 40px;
-    font-size: 16px;
+    font-size: 15px;
     padding: 0 20px;
   }
   .quick-start-button svg {

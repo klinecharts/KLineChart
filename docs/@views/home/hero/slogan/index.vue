@@ -21,8 +21,8 @@ const { lang } = useData()
   display: flex;
   justify-content: center;
   align-items: center;
-  line-height: 36px;
-  font-size: 30px;
+  line-height: 1.16;
+  font-size: clamp(28px, 4.4vw, 50px);
   font-weight: 700;
   padding: 10px 0 12px 0;
   max-width: 80%;
@@ -41,8 +41,6 @@ const { lang } = useData()
 
 @media (min-width: 640px) {
   .slogan {
-    line-height: 50px;
-    font-size: 44px;
     padding: 18px 0 28px 0;
     max-width: 70%;
   }
@@ -50,9 +48,7 @@ const { lang } = useData()
 
 @media (min-width: 960px) {
   .slogan {
-    line-height: 60px;
     padding: 26px 0 36px 0;
-    font-size: 54px;
     max-width: 700px;
   }
 }

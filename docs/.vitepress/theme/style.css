@@ -106,17 +106,20 @@ body {
 
 .VPFeatures .VPFeature .title {
   padding: 8px 0;
+  font-size: 17px;
   line-height: normal;
 }
 
 .VPFeatures .VPFeature .details {
   padding: 0;
+  font-size: 14px;
+  line-height: 23px;
   font-weight: normal;
 }
 
 @media (min-width: 640px) {
   .VPFeatures .VPFeature .title {
-    font-size: 18px;
+    font-size: 19px;
     line-height: normal;
     padding: 12px 0;
   }
@@ -140,13 +143,13 @@ body {
 
 @media (min-width: 960px) {
   .VPFeatures .VPFeature .title {
-    font-size: 20px;
+    font-size: 21px;
     padding: 16px 0;
   }
   
   .VPFeatures .VPFeature .details {
-    font-size: 16px;
-    line-height: 26px;
+    font-size: 15px;
+    line-height: 24px;
   }
 }
 

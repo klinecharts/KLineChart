@@ -149,7 +149,7 @@ const marqueeUsers = computed(() => [...users.value, ...users.value])
 }
 
 .text {
-  font-size: 18px;
+  font-size: clamp(16px, 2.4vw, 18px);
   line-height: 1;
   font-weight: 700;
   letter-spacing: 0.01em;
