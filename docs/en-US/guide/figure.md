@@ -3,7 +3,9 @@ import Tip from '../../@components/Tip.vue'
 </script>
 
 # Figure
-Figure are an important part of the chart. All elements on the chart are composed of figures. If you need to make complex custom technical indicators and overlays, it is recommended to read carefully. This document describes the built-in figures and how to customize a figure. The basic figure can be obtained through the chart method `klinecharts.getFigureClass(name)`.
+Figure is the smallest rendering unit in the chart. Indicators, overlays, and some interactive elements are all finally rendered through figures. If you are going to build custom indicators or custom overlays, this guide is recommended first.
+
+Figure class can be obtained through `klinecharts.getFigureClass(name)`.
 
 ## Example of use
 <Tip type="warn" title="Note" :tip="['It needs to be used when there is a canvas context.']"/>
@@ -16,11 +18,16 @@ const Figure = klinecharts.getFigureClass(name)
 // attrs attribute
 // styles styles
 // ctx canvas context
-new Figure(attrs, styles).draw(ctx)
+new Figure({ attrs, styles }).draw(ctx)
 ```
 
+## Common conventions
+- Built-in figures usually support both a single object and an array in `attrs`, which is convenient for batch drawing.
+- Hit testing is defined by `checkEventOn`; each figure may use different hit rules.
+- `styles` can be partially provided. Unspecified fields use figure-level defaults.
+
 ## Built-in figures
-These figures are built into the chart, `arc`, `circle`, `line`, `polygon`, `rect`, `text`, `rectText`.
+These figures are built into the chart: `arc`, `circle`, `line`, `polygon`, `rect`, `text`, `path`.
 ### arc
 ```typescript
 new ({
@@ -90,6 +97,8 @@ new ({
   styles: {
     // style, optional `solid`, `dashed`
     style?: 'solid' | 'dashed'
+    // smoothing, true means default smoothing; number is suggested in 0 ~ 1
+    smooth?: boolean | number
     // size
     size?: number
     // color
@@ -167,16 +176,16 @@ new ({
     x: number
     // The y-axis coordinate value of the starting point
     y: number
-    // Fixed width
-    width: number
-    // Fixed height
-    height: number
     // text content
-    text: any
+    text: string
+    // Fixed width
+    width?: number
+    // Fixed height
+    height?: number
     // alignment
-    align: CanvasTextAlign
-     // benchmark
-    baseline: CanvasTextBaseline
+    align?: CanvasTextAlign
+    // baseline
+    baseline?: CanvasTextBaseline
   },
   styles: {
     // style, optional `fill`, `stroke`, `stroke_fill`
@@ -213,5 +222,64 @@ new ({
 }) => Figure
 ```
 
+### path
+```typescript
+new ({
+  attrs: {
+    // offset x of the path (applied to absolute path commands)
+    x: number
+    // offset y of the path (applied to absolute path commands)
+    y: number
+    // hit test width
+    width: number
+    // hit test height
+    height: number
+    // SVG path string, supports M/L/H/V/C/S/Q/T/A/Z and lowercase relative commands
+    path: string
+  },
+  styles: {
+    // style, optional `stroke`, `fill`
+    style?: 'stroke' | 'fill'
+    // color
+    color?: string
+    // line width (works when style is `stroke`)
+    lineWidth?: number
+  }
+}) => Figure
+```
+
 ## Customize figure
 To create a custom figure, you only need to generate the basic figure information, and then add it globally through the chart API [registerFigure(figure)](/en-US/api/chart/registerFigure) , and add it to the chart to use it like a built-in basic figure. For more examples, refer to the files under [https://github.com/klinecharts/KLineChart/tree/main/src/extension/figure](https://github.com/klinecharts/KLineChart/tree/main/src/extension/figure) .
+
+### Example: Custom diamond figure
+```javascript
+import { registerFigure } from 'klinecharts'
+
+registerFigure({
+  name: 'diamond',
+  draw: (ctx, attrs, styles) => {
+    const { x, y, width, height } = attrs
+    const { color = '#1677ff' } = styles
+    ctx.beginPath()
+    ctx.moveTo(x, y - height / 2)
+    ctx.lineTo(x + width / 2, y)
+    ctx.lineTo(x, y + height / 2)
+    ctx.lineTo(x - width / 2, y)
+    ctx.closePath()
+    ctx.fillStyle = color
+    ctx.fill()
+  },
+  checkEventOn: (coordinate, attrs) => {
+    const { x, y } = coordinate
+    const { width, height } = attrs
+    return (
+      x >= attrs.x - width / 2 &&
+      x <= attrs.x + width / 2 &&
+      y >= attrs.y - height / 2 &&
+      y <= attrs.y + height / 2
+    )
+  }
+})
+```
+
+After registration, you can use `type: 'diamond'` in custom indicator `figures[].type` or overlay `createPointFigures` just like built-in figures.
