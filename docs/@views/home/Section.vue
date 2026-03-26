@@ -48,6 +48,9 @@ const props = defineProps(['title', 'description', 'outClass'])
   text-align: center;
   font-weight: 700;
   letter-spacing: -0.01em;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: sectionReveal .6s ease forwards;
 }
 .description {
   padding-top: 14px;
@@ -57,6 +60,27 @@ const props = defineProps(['title', 'description', 'outClass'])
   color: var(--vp-c-text-2);
   max-width: 620px;
   padding-bottom: 28px;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: sectionReveal .6s ease forwards .12s;
+}
+
+.content > :deep(*:last-child) {
+  opacity: 0;
+  transform: translateY(22px);
+  animation: sectionReveal .7s ease forwards .22s;
+}
+
+@keyframes sectionReveal {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @media (min-width: 640px) {
@@ -84,6 +108,16 @@ const props = defineProps(['title', 'description', 'outClass'])
 @media (min-width: 960px) {
   .section {
     padding: 148px 64px 0 64px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .title,
+  .description,
+  .content > :deep(*:last-child) {
+    opacity: 1;
+    transform: none;
+    animation: none;
   }
 }
 </style>

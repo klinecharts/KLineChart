@@ -57,23 +57,15 @@ function showParticle() {
     <div class="sponsor-shell">
       <div class="intro">
         <span class="eyebrow">
-          {{ lang === 'zh-CN' ? 'Backing The Ecosystem' : 'Backing The Ecosystem' }}
+          {{ i18n('view_home_sponsor_eyebrow', lang) }}
         </span>
         <p class="lead">
-          {{
-            lang === 'zh-CN'
-              ? '这些赞助者不仅提供资金支持，也让项目能够持续维护、迭代和保持公开可用。'
-              : 'These sponsors do more than fund the project. They help keep it maintained, iterated, and publicly available.'
-          }}
+          {{ i18n('view_home_sponsor_lead', lang) }}
         </p>
         <div class="signal">
           <span class="signal-dot"></span>
           <span>
-            {{
-              lang === 'zh-CN'
-                ? '赞助位会展示在官网首页'
-                : 'Sponsor placements appear directly on the homepage'
-            }}
+            {{ i18n('view_home_sponsor_signal', lang) }}
           </span>
         </div>
         <div class="sponsor-become">
@@ -97,7 +89,7 @@ function showParticle() {
             target="_blank"
             rel="noreferrer"
           >
-            <span class="tier">{{ lang === 'zh-CN' ? '主要赞助' : 'Featured Sponsor' }}</span>
+            <span class="tier">{{ i18n('view_home_sponsor_featured', lang) }}</span>
             <img class="featured-logo featured-logo-main" :src="featuredSponsors[0].logo" :alt="featuredSponsors[0].name">
             <span v-if="featuredSponsors[0].text" class="featured-text">{{ featuredSponsors[0].text }}</span>
           </a>
@@ -111,7 +103,7 @@ function showParticle() {
               target="_blank"
               rel="noreferrer"
             >
-              <span class="tier">{{ lang === 'zh-CN' ? '支持者' : 'Supporter' }}</span>
+              <span class="tier">{{ i18n('view_home_sponsor_supporter', lang) }}</span>
               <img v-if="item.logo" class="featured-logo" :src="item.logo" :alt="item.name">
               <span v-if="item.text" class="featured-text">{{ item.text }}</span>
             </a>
@@ -120,7 +112,7 @@ function showParticle() {
 
         <div v-if="supportingSponsors.length > 0" class="supporting">
           <div class="supporting-head">
-            <span>{{ lang === 'zh-CN' ? '更多支持者' : 'More Supporters' }}</span>
+            <span>{{ i18n('view_home_sponsor_more', lang) }}</span>
           </div>
           <div class="supporting-grid">
             <a
@@ -151,7 +143,6 @@ function showParticle() {
   display: grid;
   width: 100%;
   gap: 28px;
-  padding: 24px 0 4px;
 }
 
 .intro {
@@ -163,10 +154,23 @@ function showParticle() {
   overflow: hidden;
   border-radius: 30px;
   background:
-    radial-gradient(circle at top left, color-mix(in srgb, var(--vp-c-brand-1) 18%, transparent), transparent 38%),
-    linear-gradient(135deg, color-mix(in srgb, var(--vp-c-brand-1) 10%, transparent), transparent 60%),
-    color-mix(in srgb, var(--vp-c-bg-soft) 78%, var(--vp-c-bg));
-  border: 1px solid color-mix(in srgb, var(--vp-c-brand-1) 12%, var(--vp-c-divider));
+    radial-gradient(circle at top left, color-mix(in srgb, var(--vp-c-brand-1) 7%, transparent), transparent 38%),
+    linear-gradient(135deg, color-mix(in srgb, var(--vp-c-brand-1) 4%, transparent), transparent 60%),
+    color-mix(in srgb, var(--vp-c-bg-soft) 54%, var(--vp-c-bg));
+  border: 1px solid color-mix(in srgb, var(--vp-c-brand-1) 6%, var(--vp-c-divider));
+}
+
+.intro::before {
+  content: '';
+  position: absolute;
+  inset: -24% auto auto -12%;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--vp-c-brand-1) 18%, transparent) 0%, transparent 72%);
+  opacity: 0.65;
+  pointer-events: none;
+  animation: sponsorGlow 8s ease-in-out infinite;
 }
 
 .eyebrow {
@@ -203,6 +207,7 @@ function showParticle() {
   border-radius: 50%;
   background: var(--vp-c-brand-1);
   box-shadow: 0 0 0 8px color-mix(in srgb, var(--vp-c-brand-1) 12%, transparent);
+  animation: sponsorPulse 2.8s ease-in-out infinite;
 }
 
 .board {
@@ -227,10 +232,33 @@ function showParticle() {
   transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
 }
 
+.featured-main::after,
+.featured-sub::after,
+.supporting-item::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(115deg, transparent 24%, color-mix(in srgb, #ffffff 8%, transparent) 50%, transparent 76%);
+  opacity: 0;
+  transform: translateX(-26%);
+  transition: opacity .25s ease, transform .45s ease;
+  pointer-events: none;
+}
+
 .featured-main:hover,
 .featured-sub:hover,
 .supporting-item:hover {
   transform: translateY(-3px);
+  border-color: color-mix(in srgb, var(--vp-c-brand-1) 14%, var(--vp-c-divider));
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.07);
+}
+
+.featured-main:hover::after,
+.featured-sub:hover::after,
+.supporting-item:hover::after {
+  opacity: 1;
+  transform: translateX(18%);
 }
 
 .featured-main {
@@ -238,11 +266,11 @@ function showParticle() {
   padding: 28px;
   border-radius: 32px;
   background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--vp-c-brand-1) 20%, transparent), transparent 34%),
-    linear-gradient(135deg, color-mix(in srgb, var(--vp-c-brand-1) 16%, transparent), transparent 54%),
-    color-mix(in srgb, var(--vp-c-bg-soft) 72%, var(--vp-c-bg));
-  border: 1px solid color-mix(in srgb, var(--vp-c-brand-1) 16%, var(--vp-c-divider));
-  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.08);
+    radial-gradient(circle at top right, color-mix(in srgb, var(--vp-c-brand-1) 8%, transparent), transparent 34%),
+    linear-gradient(135deg, color-mix(in srgb, var(--vp-c-brand-1) 5%, transparent), transparent 54%),
+    color-mix(in srgb, var(--vp-c-bg-soft) 54%, var(--vp-c-bg));
+  border: 1px solid color-mix(in srgb, var(--vp-c-brand-1) 7%, var(--vp-c-divider));
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.05);
 }
 
 .featured-side {
@@ -255,9 +283,9 @@ function showParticle() {
   padding: 22px 24px;
   border-radius: 26px;
   background:
-    linear-gradient(135deg, color-mix(in srgb, var(--vp-c-brand-1) 10%, transparent), transparent 58%),
-    color-mix(in srgb, var(--vp-code-block-bg) 86%, var(--vp-c-bg));
-  border: 1px solid color-mix(in srgb, var(--vp-c-brand-1) 10%, var(--vp-c-divider));
+    linear-gradient(135deg, color-mix(in srgb, var(--vp-c-brand-1) 4.5%, transparent), transparent 58%),
+    color-mix(in srgb, var(--vp-code-block-bg) 72%, var(--vp-c-bg));
+  border: 1px solid color-mix(in srgb, var(--vp-c-brand-1) 6%, var(--vp-c-divider));
 }
 
 .tier {
@@ -319,7 +347,7 @@ function showParticle() {
   padding: 0 22px;
   align-items: center;
   border-radius: 20px;
-  background: color-mix(in srgb, var(--vp-c-bg-soft) 58%, transparent);
+  background: color-mix(in srgb, var(--vp-c-bg-soft) 44%, var(--vp-c-bg));
   border: 1px solid color-mix(in srgb, var(--vp-c-brand-1) 8%, var(--vp-c-divider));
 }
 
@@ -345,19 +373,53 @@ function showParticle() {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  padding: 12px 22px;
+  padding: 9px 20px;
   border-radius: 999px;
   border: 1px solid color-mix(in srgb, var(--vp-c-brand-1) 28%, var(--vp-c-divider));
-  background: color-mix(in srgb, var(--vp-c-bg) 64%, transparent);
-  color: var(--vp-c-text-1);
+  background: color-mix(in srgb, var(--vp-c-bg-soft) 42%, var(--vp-c-bg));
+  color: var(--vp-c-brand-1);
   text-decoration: none;
   transition: transform .25s ease, border-color .25s ease, background-color .25s ease;
+}
+
+.sponsor-become a svg {
+  transition: transform .25s ease;
 }
 
 .sponsor-become a:hover {
   transform: translateY(-2px);
   border-color: color-mix(in srgb, var(--vp-c-brand-1) 44%, var(--vp-c-divider));
   background: color-mix(in srgb, var(--vp-c-brand-1) 8%, var(--vp-c-bg));
+}
+
+.sponsor-become a:hover svg {
+  transform: scale(1.08);
+}
+
+@keyframes sponsorPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--vp-c-brand-1) 18%, transparent);
+    transform: scale(1);
+  }
+
+  50% {
+    box-shadow: 0 0 0 10px color-mix(in srgb, var(--vp-c-brand-1) 8%, transparent);
+    transform: scale(1.08);
+  }
+}
+
+@keyframes sponsorGlow {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.55;
+  }
+
+  50% {
+    transform: translate3d(18px, 8px, 0) scale(1.08);
+    opacity: 0.8;
+  }
 }
 
 @media (min-width: 768px) {
@@ -389,6 +451,39 @@ function showParticle() {
 
   .supporting-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro::before,
+  .signal-dot {
+    animation: none;
+  }
+
+  .featured-main,
+  .featured-sub,
+  .supporting-item,
+  .featured-main::after,
+  .featured-sub::after,
+  .supporting-item::after,
+  .sponsor-become a,
+  .sponsor-become a svg {
+    transition: none;
+  }
+
+  .featured-main:hover,
+  .featured-sub:hover,
+  .supporting-item:hover,
+  .sponsor-become a:hover,
+  .sponsor-become a:hover svg {
+    transform: none;
+  }
+
+  .featured-main:hover::after,
+  .featured-sub:hover::after,
+  .supporting-item:hover::after {
+    opacity: 0;
+    transform: none;
   }
 }
 </style>

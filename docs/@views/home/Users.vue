@@ -78,6 +78,8 @@ const marqueeUsers = computed(() => [...users.value, ...users.value])
   position: relative;
   width: 100%;
   overflow: hidden;
+  padding: 4px 0;
+  margin-top: -4px;
   mask-image: linear-gradient(90deg, transparent 0, black 8%, black 92%, transparent 100%);
 }
 
@@ -93,15 +95,41 @@ const marqueeUsers = computed(() => [...users.value, ...users.value])
 }
 
 .user {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   min-width: 180px;
   height: 72px;
   padding: 0 26px;
+  overflow: hidden;
   border-radius: 999px;
   border: 1px solid color-mix(in srgb, var(--vp-c-brand-1) 8%, var(--vp-c-divider));
   background: color-mix(in srgb, var(--vp-c-bg-soft) 55%, transparent);
+  transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+}
+
+.user::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(110deg, transparent 22%, color-mix(in srgb, #ffffff 10%, transparent) 48%, transparent 72%);
+  opacity: 0;
+  transform: translateX(-28%);
+  transition: opacity .25s ease, transform .45s ease;
+  pointer-events: none;
+}
+
+.user:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--vp-c-brand-1) 14%, var(--vp-c-divider));
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.07);
+}
+
+.user:hover::after {
+  opacity: 1;
+  transform: translateX(20%);
 }
 
 .logo {
@@ -109,10 +137,15 @@ const marqueeUsers = computed(() => [...users.value, ...users.value])
   max-height: 30px;
   object-fit: contain;
   opacity: 0.9;
+  transition: transform .25s ease;
 }
 
 .logo.invert {
   filter: invert(1);
+}
+
+.user:hover .logo {
+  transform: scale(1.03);
 }
 
 .text {
@@ -152,6 +185,22 @@ const marqueeUsers = computed(() => [...users.value, ...users.value])
 @media (prefers-reduced-motion: reduce) {
   .track {
     animation: none;
+  }
+
+  .user,
+  .user::after,
+  .logo {
+    transition: none;
+  }
+
+  .user:hover,
+  .user:hover .logo {
+    transform: none;
+  }
+
+  .user:hover::after {
+    opacity: 0;
+    transform: none;
   }
 }
 </style>

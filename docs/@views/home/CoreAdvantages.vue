@@ -123,30 +123,12 @@ const items = computed(() => [
         </div>
         <div class="panel detail">
           <div class="detail-title">{{ i18n('view_home_advantage_detail_title', lang) }}</div>
-          <div v-if="index === 0" class="detail-flow">
-            <div v-for="detail in item.details" :key="detail" class="flow-step">
-              <span class="flow-dot"></span>
-              <p>{{ detail }}</p>
-            </div>
-          </div>
-          <div v-else-if="index === 1" class="detail-bars">
+          <div class="detail-bars">
             <div v-for="(detail, detailIndex) in item.details" :key="detail" class="bar-row">
               <div class="bar-head">
                 <strong>{{ ['01', '02', '03'][detailIndex] }}</strong>
                 <span>{{ detail }}</span>
               </div>
-            </div>
-          </div>
-          <div v-else-if="index === 2" class="detail-grid">
-            <div v-for="detail in item.details" :key="detail" class="grid-item">
-              <span class="grid-icon"></span>
-              <p>{{ detail }}</p>
-            </div>
-          </div>
-          <div v-else class="detail-stack">
-            <div v-for="detail in item.details" :key="detail" class="stack-item">
-              <span class="stack-line"></span>
-              <p>{{ detail }}</p>
             </div>
           </div>
         </div>
@@ -162,8 +144,12 @@ const items = computed(() => [
 
 .advantage {
   display: grid;
+  width: 100%;
   gap: 28px;
-  padding-top: 8px;
+  padding-top: 0;
+  opacity: 0;
+  transform: translateY(22px);
+  animation: advantageReveal .7s ease forwards;
 }
 
 .panel {
@@ -176,7 +162,7 @@ const items = computed(() => [
 
 .metrics {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 180px));
   gap: 12px;
 }
 
@@ -188,6 +174,7 @@ const items = computed(() => [
   border-radius: 18px;
   background: color-mix(in srgb, var(--vp-c-bg) 82%, transparent);
   border: 1px solid color-mix(in srgb, var(--vp-c-brand-1) 8%, var(--vp-c-divider));
+  transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
 }
 
 .metric strong {
@@ -195,6 +182,7 @@ const items = computed(() => [
   line-height: 1;
   font-weight: 700;
   color: var(--vp-c-text-1);
+  transition: transform .25s ease, color .25s ease;
 }
 
 .metric-label {
@@ -204,10 +192,24 @@ const items = computed(() => [
 }
 
 .scenario {
+  position: relative;
+  overflow: hidden;
   padding: 16px 18px;
   border-radius: 20px;
   background: color-mix(in srgb, var(--vp-c-brand-1) 5%, transparent);
   border: 1px dashed color-mix(in srgb, var(--vp-c-brand-1) 12%, var(--vp-c-divider));
+  transition: transform .25s ease, border-color .25s ease, background-color .25s ease;
+}
+
+.scenario::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 22%, color-mix(in srgb, #ffffff 8%, transparent) 48%, transparent 72%);
+  opacity: 0;
+  transform: translateX(-28%);
+  transition: opacity .25s ease, transform .45s ease;
+  pointer-events: none;
 }
 
 .scenario-label {
@@ -234,51 +236,30 @@ const items = computed(() => [
   letter-spacing: .08em;
   text-transform: uppercase;
   color: var(--vp-c-text-3);
+  padding-left: 2px;
 }
 
-.detail-flow,
-.detail-bars,
-.detail-grid,
-.detail-stack {
+.detail-bars {
   display: grid;
   gap: 14px;
-}
-
-.flow-step,
-.stack-item,
-.grid-item {
-  display: flex;
-  gap: 14px;
-}
-
-.flow-dot,
-.grid-icon {
-  flex-shrink: 0;
-  width: 10px;
-  height: 10px;
-  margin-top: 7px;
-  border-radius: 50%;
-  background: var(--vp-c-brand-1);
-  box-shadow: 0 0 0 6px color-mix(in srgb, var(--vp-c-brand-1) 12%, transparent);
-}
-
-.flow-step p,
-.grid-item p,
-.stack-item p {
-  font-size: 15px;
-  line-height: 24px;
-  color: var(--vp-c-text-1);
 }
 
 .bar-row {
   display: grid;
   gap: 8px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--vp-c-divider);
+  transition: border-color .25s ease, transform .25s ease;
 }
 
 .bar-head {
   display: flex;
   align-items: center;
   gap: 12px;
+}
+
+.bar-head span {
+  transition: color .25s ease;
 }
 
 .bar-head span,
@@ -291,6 +272,7 @@ const items = computed(() => [
 .bar-head strong {
   color: var(--vp-c-brand-1);
   min-width: 24px;
+  transition: transform .25s ease, color .25s ease;
 }
 
 
@@ -298,36 +280,67 @@ const items = computed(() => [
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-.grid-item {
-  padding: 16px;
-  border-radius: 18px;
-  background: color-mix(in srgb, var(--vp-c-brand-1) 4%, transparent);
+.advantage:hover .metric {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--vp-c-brand-1) 18%, var(--vp-c-divider));
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.04);
 }
 
-.stack-item {
-  position: relative;
-  padding-left: 20px;
+.advantage:hover .metric strong {
+  transform: translateY(-1px);
+  color: var(--vp-c-brand-1);
 }
 
-.stack-line {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 2px;
-  height: 100%;
-  border-radius: 999px;
-  background: linear-gradient(180deg, var(--vp-c-brand-1), color-mix(in srgb, var(--vp-c-brand-1) 20%, transparent));
+.advantage:hover .scenario {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--vp-c-brand-1) 20%, var(--vp-c-divider));
+  background: color-mix(in srgb, var(--vp-c-brand-1) 7%, transparent);
 }
 
-.stack-item::before {
-  content: '';
-  position: absolute;
-  top: 7px;
-  left: -4px;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: var(--vp-c-brand-1);
+.advantage:hover .scenario::after {
+  opacity: 1;
+  transform: translateX(18%);
+}
+
+.bar-row:hover {
+  transform: translateX(4px);
+  border-color: color-mix(in srgb, var(--vp-c-brand-1) 18%, var(--vp-c-divider));
+}
+
+.bar-row:hover .bar-head strong {
+  transform: scale(1.08);
+}
+
+.bar-row:hover .bar-head span {
+  color: var(--vp-c-text-1);
+}
+
+.advantage:nth-child(1) {
+  animation-delay: .04s;
+}
+
+.advantage:nth-child(2) {
+  animation-delay: .1s;
+}
+
+.advantage:nth-child(3) {
+  animation-delay: .16s;
+}
+
+.advantage:nth-child(4) {
+  animation-delay: .22s;
+}
+
+@keyframes advantageReveal {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @media (min-width: 960px) {
@@ -337,93 +350,12 @@ const items = computed(() => [
   }
 }
 
-.variant-1 .overview {
-  padding-left: 28px;
-}
-
 .variant-1 .metrics {
   grid-template-columns: repeat(2, minmax(0, 180px));
 }
 
-.variant-1 .detail {
-  padding: 24px 28px;
-  border-radius: 28px;
-  background:
-    linear-gradient(135deg, color-mix(in srgb, var(--vp-c-brand-1) 3%, transparent), transparent 42%),
-    color-mix(in srgb, var(--vp-c-bg-soft) 72%, var(--vp-c-bg));
-  border: 1px solid color-mix(in srgb, var(--vp-c-brand-1) 6%, var(--vp-c-divider));
-}
-
-.variant-2 .overview {
-  padding: 28px;
-  border-radius: 32px;
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--vp-c-brand-1) 6%, transparent), transparent 34%),
-    linear-gradient(180deg, color-mix(in srgb, var(--vp-c-brand-1) 3%, transparent), transparent 64%),
-    color-mix(in srgb, var(--vp-c-bg-soft) 68%, var(--vp-c-bg));
-  border: 1px solid color-mix(in srgb, var(--vp-c-brand-1) 6%, var(--vp-c-divider));
-}
-
-.variant-2 .metric {
-  background: rgba(255, 255, 255, 0.04);
-}
-
-.variant-2 .detail {
+.detail {
   padding-top: 8px;
-}
-
-.variant-2 .detail-title {
-  padding-left: 2px;
-}
-
-.variant-2 .bar-row {
-  padding: 16px 0;
-  border-bottom: 1px solid var(--vp-c-divider);
-}
-
-.variant-3 .overview {
-  padding: 24px 0 28px;
-}
-
-.variant-3 .metrics {
-  grid-template-columns: repeat(2, minmax(0, 160px));
-}
-
-.variant-3 .metric {
-  padding: 0 0 0 14px;
-  border: none;
-  border-left: 2px solid color-mix(in srgb, var(--vp-c-brand-1) 36%, transparent);
-  border-radius: 0;
-  background: transparent;
-}
-
-.variant-3 .detail-title {
-  padding-bottom: 4px;
-}
-
-.variant-3 .grid-item {
-  min-height: 90px;
-  border: 1px solid color-mix(in srgb, var(--vp-c-brand-1) 10%, var(--vp-c-divider));
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--vp-c-brand-1) 5%, transparent), transparent 62%),
-    var(--vp-code-block-bg);
-}
-
-.variant-4 .overview {
-  padding: 24px;
-  border-radius: 24px;
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--vp-c-brand-1) 2.5%, transparent), transparent 68%),
-    color-mix(in srgb, var(--vp-c-bg-soft) 68%, var(--vp-c-bg));
-}
-
-.variant-4 .detail {
-  position: relative;
-  padding-left: 26px;
-}
-
-.variant-4 .detail-title {
-  padding-bottom: 4px;
 }
 
 @media (min-width: 640px) {
@@ -436,30 +368,14 @@ const items = computed(() => [
   .metrics {
     grid-template-columns: minmax(0, 1fr);
   }
-
-  .detail-grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
 }
 
 @media (min-width: 960px) {
-  .variant-1 {
-    grid-template-columns: minmax(0, 1fr) minmax(0, .95fr);
-    align-items: start;
-  }
-
-  .variant-2 {
-    grid-template-columns: minmax(0, 1.08fr) minmax(0, .92fr);
-    align-items: start;
-  }
-
-  .variant-3 {
-    grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr);
-    align-items: start;
-  }
-
+  .variant-1,
+  .variant-2,
+  .variant-3,
   .variant-4 {
-    grid-template-columns: minmax(0, .92fr) minmax(0, 1.08fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     align-items: start;
   }
 
@@ -469,6 +385,41 @@ const items = computed(() => [
   .variant-4 .overview {
     position: sticky;
     top: calc(var(--vp-nav-height) + 24px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .metric,
+  .scenario,
+  .scenario::after,
+  .metric strong,
+  .bar-row,
+  .bar-head span,
+  .bar-head strong {
+    transition: none;
+  }
+
+  .advantage {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+
+  .advantage:hover .metric,
+  .advantage:hover .scenario {
+    transform: none;
+    box-shadow: none;
+  }
+
+  .advantage:hover .metric strong,
+  .bar-row:hover,
+  .bar-row:hover .bar-head strong {
+    transform: none;
+  }
+
+  .advantage:hover .scenario::after {
+    opacity: 0;
+    transform: none;
   }
 }
 </style>

@@ -75,12 +75,41 @@ const items = computed(() => [
 }
 
 .use-case {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 18px;
   min-height: 100%;
-  padding: 18px 0 24px 0;
-  border-bottom: 1px solid color-mix(in srgb, var(--vp-c-brand-1) 10%, var(--vp-c-divider));
+  padding: 20px 18px 24px;
+  overflow: hidden;
+  border-radius: 24px;
+  border: 1px solid color-mix(in srgb, var(--vp-c-brand-1) 8%, var(--vp-c-divider));
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--vp-c-brand-1) 3%, transparent), transparent 54%),
+    color-mix(in srgb, var(--vp-c-bg-soft) 48%, var(--vp-c-bg));
+  transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+}
+
+.use-case::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 22%, color-mix(in srgb, #ffffff 10%, transparent) 48%, transparent 72%);
+  opacity: 0;
+  transform: translateX(-28%);
+  transition: opacity .25s ease, transform .45s ease;
+  pointer-events: none;
+}
+
+.use-case:hover {
+  transform: translateY(-4px);
+  border-color: color-mix(in srgb, var(--vp-c-brand-1) 18%, var(--vp-c-divider));
+  box-shadow: 0 18px 36px rgba(0, 0, 0, 0.06);
+}
+
+.use-case:hover::before {
+  opacity: 1;
+  transform: translateX(20%);
 }
 
 .use-case h3 {
@@ -119,6 +148,13 @@ const items = computed(() => [
   margin-top: 8px;
   border-radius: 50%;
   background: var(--vp-c-brand-1);
+  box-shadow: 0 0 0 0 color-mix(in srgb, var(--vp-c-brand-1) 20%, transparent);
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+
+.use-case:hover .point-dot {
+  transform: scale(1.1);
+  box-shadow: 0 0 0 6px color-mix(in srgb, var(--vp-c-brand-1) 12%, transparent);
 }
 
 .point p {
@@ -133,6 +169,21 @@ const items = computed(() => [
   }
 }
 
+@media (min-width: 768px) and (max-width: 959px) {
+  .use-cases {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px 28px;
+  }
+
+  .use-case {
+    padding: 18px 18px 22px;
+  }
+
+  .summary {
+    max-width: 36ch;
+  }
+}
+
 @media (min-width: 960px) {
   .use-cases {
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -140,8 +191,30 @@ const items = computed(() => [
   }
 
   .use-case {
-    padding: 8px 8px 0 0;
-    border-bottom: none;
+    padding: 20px 20px 24px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .use-case,
+  .use-case::before,
+  .point-dot {
+    transition: none;
+  }
+
+  .use-case:hover {
+    transform: none;
+    box-shadow: none;
+  }
+
+  .use-case:hover::before {
+    opacity: 0;
+    transform: none;
+  }
+
+  .use-case:hover .point-dot {
+    transform: none;
+    box-shadow: none;
   }
 }
 </style>
