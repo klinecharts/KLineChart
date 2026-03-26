@@ -141,6 +141,7 @@ function showParticle() {
 
 <style scoped>
 .sponsor-section {
+  margin-top: 0 !important;
   padding-bottom: 8px;
 }
 
@@ -535,5 +536,20 @@ function showParticle() {
     opacity: 0;
     transform: none;
   }
+}
+
+:global(html:not(.dark)) .featured-main:hover,
+:global(html:not(.dark)) .featured-sub:hover,
+:global(html:not(.dark)) .supporting-item:hover {
+  box-shadow:
+    0 24px 46px color-mix(in srgb, var(--vp-c-brand-1) 20%, transparent),
+    0 14px 28px rgba(15, 23, 42, 0.14);
+  border-color: color-mix(in srgb, var(--vp-c-brand-1) 30%, var(--vp-c-divider));
+}
+
+:global(html:not(.dark)) .featured-main:hover::after,
+:global(html:not(.dark)) .featured-sub:hover::after,
+:global(html:not(.dark)) .supporting-item:hover::after {
+  opacity: 1;
 }
 </style>

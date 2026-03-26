@@ -80,6 +80,7 @@ const marqueeUsers = computed(() => [...users.value, ...users.value])
   overflow: hidden;
   padding: 4px 0;
   margin-top: -4px;
+  margin-bottom: 0;
   mask-image: linear-gradient(90deg, transparent 0, black 8%, black 92%, transparent 100%);
 }
 
@@ -124,7 +125,7 @@ const marqueeUsers = computed(() => [...users.value, ...users.value])
 .user:hover {
   transform: translateY(-2px);
   border-color: color-mix(in srgb, var(--vp-c-brand-1) 14%, var(--vp-c-divider));
-  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.07);
+  box-shadow: none;
 }
 
 .user:hover::after {
@@ -202,5 +203,14 @@ const marqueeUsers = computed(() => [...users.value, ...users.value])
     opacity: 0;
     transform: none;
   }
+}
+
+:global(html:not(.dark)) .user:hover {
+  box-shadow: none;
+  border-color: color-mix(in srgb, var(--vp-c-brand-1) 30%, var(--vp-c-divider));
+}
+
+:global(html:not(.dark)) .user:hover::after {
+  opacity: 1;
 }
 </style>

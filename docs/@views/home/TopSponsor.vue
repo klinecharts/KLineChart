@@ -128,9 +128,7 @@ const { isDark, lang } = useData()
   font-weight: 800;
   letter-spacing: 0.18em;
   color: white;
-  background:
-    linear-gradient(135deg, color-mix(in srgb, #ffffff 16%, transparent), transparent 34%),
-    linear-gradient(135deg, color-mix(in srgb, var(--vp-c-brand-1) 78%, black 4%), color-mix(in srgb, var(--vp-c-brand-1) 58%, #0f172a));
+  background: var(--vp-c-brand-1);
   box-shadow: 0 8px 18px color-mix(in srgb, var(--vp-c-brand-1) 18%, transparent);
 }
 
@@ -256,5 +254,16 @@ const { isDark, lang } = useData()
     opacity: 0;
     transform: none;
   }
+}
+
+:global(html:not(.dark)) .top-sponsor-link:hover {
+  box-shadow:
+    0 22px 44px color-mix(in srgb, var(--vp-c-brand-1) 18%, transparent),
+    0 14px 26px rgba(15, 23, 42, 0.12);
+  border-color: color-mix(in srgb, var(--vp-c-brand-1) 28%, var(--vp-c-divider));
+}
+
+:global(html:not(.dark)) .top-sponsor-link:hover::after {
+  opacity: 1;
 }
 </style>

@@ -217,4 +217,15 @@ const items = computed(() => [
     box-shadow: none;
   }
 }
+
+:global(html:not(.dark)) .use-case:hover {
+  box-shadow:
+    0 22px 44px color-mix(in srgb, var(--vp-c-brand-1) 20%, transparent),
+    0 14px 28px rgba(15, 23, 42, 0.14);
+  border-color: color-mix(in srgb, var(--vp-c-brand-1) 30%, var(--vp-c-divider));
+}
+
+:global(html:not(.dark)) .use-case:hover::before {
+  opacity: 1;
+}
 </style>

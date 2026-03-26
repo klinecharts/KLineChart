@@ -162,8 +162,9 @@ const items = computed(() => [
 
 .metrics {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 180px));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
+  width: 100%;
 }
 
 .metric {
@@ -241,7 +242,7 @@ const items = computed(() => [
 
 .detail-bars {
   display: grid;
-  gap: 14px;
+  gap: 0;
 }
 
 .bar-row {
@@ -350,12 +351,10 @@ const items = computed(() => [
   }
 }
 
-.variant-1 .metrics {
-  grid-template-columns: repeat(2, minmax(0, 180px));
-}
-
 .detail {
-  padding-top: 8px;
+  gap: 0;
+  margin-top: 0;
+  padding-top: 0;
 }
 
 @media (min-width: 640px) {
@@ -421,5 +420,19 @@ const items = computed(() => [
     opacity: 0;
     transform: none;
   }
+}
+
+:global(html:not(.dark)) .advantage:hover .metric {
+  box-shadow:
+    0 20px 42px color-mix(in srgb, var(--vp-c-brand-1) 20%, transparent),
+    0 12px 24px rgba(15, 23, 42, 0.12);
+  border-color: color-mix(in srgb, var(--vp-c-brand-1) 30%, var(--vp-c-divider));
+}
+
+:global(html:not(.dark)) .advantage:hover .scenario {
+  box-shadow:
+    0 18px 36px color-mix(in srgb, var(--vp-c-brand-1) 14%, transparent),
+    0 10px 22px rgba(15, 23, 42, 0.1);
+  border-color: color-mix(in srgb, var(--vp-c-brand-1) 26%, var(--vp-c-divider));
 }
 </style>
