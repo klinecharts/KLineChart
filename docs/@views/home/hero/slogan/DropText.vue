@@ -20,13 +20,17 @@ const rootClass = computed(() => {
   return props.className ? `drop-text ${props.className}` : 'drop-text'
 })
 
-const charClass = computed(() => {
-  return props.disableAnimation ? `char disableAnimation` : 'char'
+const foregroundClass = computed(() => {
+  return props.disableAnimation ? 'char-fg disableAnimation' : 'char-fg'
 })
 
 const words = computed(() => {
   return props.text.split(/(\s+)/)
 })
+
+function normalizeChar (char) {
+  return char === ' ' ? '\u00A0' : char
+}
 
 const animateDelay = computed(() => {
   return 1.8 / props.text.length
@@ -51,11 +55,12 @@ function getCharAnimDelay (currentWordIndex, currentCharIndex) {
     <span class="word" :class="{ 'wrap-word': words.length === 1 }" v-for="(word, wordIndex) in words" :key="`word-${wordIndex}`">
       <span
         v-for="(char, charIndex) in Array.from(word)"
-        :class="charClass"
+        class="char"
         :key="`char-${wordIndex}-${charIndex}`"
         :style="{ '--drop-text-anim-delay': `${getCharAnimDelay(wordIndex, charIndex)}s` }"
       >
-        {{ char }}
+        <span class="char-bg">{{ normalizeChar(char) }}</span>
+        <span :class="foregroundClass">{{ normalizeChar(char) }}</span>
       </span>
     </span>
   </div>
@@ -64,6 +69,7 @@ function getCharAnimDelay (currentWordIndex, currentCharIndex) {
 <style scoped>
 .drop-text {
   display: flex;
+  width: 100%;
   flex-direction: row;
   justify-content: center;
   flex-wrap: wrap;
@@ -82,11 +88,27 @@ function getCharAnimDelay (currentWordIndex, currentCharIndex) {
 }
 
 .char {
+  position: relative;
+  display: inline-grid;
+}
+
+.char-bg,
+.char-fg {
+  grid-area: 1 / 1;
+}
+
+.char-bg {
+  color: var(--vp-c-text-3);
+  opacity: 0.6;
+}
+
+.char-fg {
+  color: var(--vp-c-text-1);
   opacity: 0;
   animation: show var(--drop-text-anim-duration) ease-out var(--drop-text-anim-delay) forwards;
 }
 
-.char.disableAnimation {
+.char-fg.disableAnimation {
   opacity: 1;
   animation: none;
 }

@@ -51,7 +51,7 @@ onMounted(() => {
 
 <style scoped>
 .text-logo {
-  height: 22px;
+  height: 20px;
   transition: fill .3s ease;
   fill: transparent;
   stroke: var(--vp-c-indigo-1);
@@ -78,13 +78,13 @@ onMounted(() => {
 
 @media (min-width: 640px) {
   .text-logo {
-    height: 34px;
+    height: 30px;
   }
 }
 
 @media (min-width: 960px) {
   .text-logo {
-    height: 40px;
+    height: 36px;
   }
 }
 </style>

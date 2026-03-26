@@ -127,6 +127,7 @@ function handlePointerLeave () {
 }
 
 .tagline {
+  margin: 14px 0 0;
   line-height: clamp(26px, 3.2vw, 34px);
   font-size: clamp(16px, 2.35vw, 22px);
   font-weight: 500;
@@ -142,7 +143,7 @@ function handlePointerLeave () {
   flex-wrap: wrap;
   justify-content: center;
   gap: 12px;
-  padding-top: 32px;
+  padding-top: 24px;
   font-weight: 500;
   opacity: 0;
   animation: toTop .6s ease forwards 0.6s;
@@ -164,11 +165,12 @@ function handlePointerLeave () {
     padding: calc(var(--vp-nav-height) + var(--vp-layout-top-height, 0px) + 100px) 48px 110px 48px;
   }
   .tagline {
+    margin-top: 16px;
     max-width: 576px;
   }
   .actions {
     gap: 20px;
-    padding-top: 40px;
+    padding-top: 30px;
   }
 }
 
@@ -177,10 +179,11 @@ function handlePointerLeave () {
     padding: calc(var(--vp-nav-height) + var(--vp-layout-top-height, 0px) + 120px) 64px 120px 64px;
   }
   .tagline {
+    margin-top: 18px;
     max-width: 640px;
   }
   .actions {
-    padding-top: 48px;
+    padding-top: 36px;
     font-size: 16px;
   }
 }
