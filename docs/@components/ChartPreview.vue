@@ -39,7 +39,8 @@ const codeHtml = ref(null)
 
 const copied = ref(false)
 
-const version = ref(window.klinecharts.version())
+const inBrowser = typeof window !== 'undefined'
+const version = ref('latest')
 
 const handlerMessage = (e) => {
   if (e.data === props.chartId) {
@@ -154,6 +155,9 @@ async function copyHandler () {
 }
 
 onMounted(() => {
+  if (window.klinecharts) {
+    version.value = window.klinecharts.version()
+  }
   href.value = location.href
   loading.value = true
   const highlightCode = async () => {
@@ -225,7 +229,7 @@ onMounted(() => {
 })
 
 watch(isDark, (newValue) => {
-  if (!!props.chartId) {
+  if (inBrowser && !!props.chartId) {
     if (newValue) {
       window[`chart_${props.chartId}`].setStyles('dark')
     } else {
@@ -235,7 +239,7 @@ watch(isDark, (newValue) => {
 })
 
 onUnmounted(() => {
-  if (!!props.chartId) {
+  if (inBrowser && !!props.chartId) {
     if (observer.value && chartContainer.value) {
       observer.value.unobserve(chartContainer.value)
     }
@@ -243,7 +247,9 @@ onUnmounted(() => {
       window.klinecharts.dispose(props.chartId)
     }
   }
-  window.removeEventListener('message', handlerMessage)
+  if (inBrowser) {
+    window.removeEventListener('message', handlerMessage)
+  }
 })
 </script>
 
