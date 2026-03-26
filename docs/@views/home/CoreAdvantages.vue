@@ -179,7 +179,7 @@ const items = computed(() => [
 }
 
 .metric strong {
-  font-size: 21px;
+  font-size: clamp(20px, 2.2vw, 22px);
   line-height: 1;
   font-weight: 700;
   color: var(--vp-c-text-1);
@@ -187,8 +187,8 @@ const items = computed(() => [
 }
 
 .metric-label {
-  font-size: 12px;
-  line-height: 18px;
+  font-size: 13px;
+  line-height: 19px;
   color: var(--vp-c-text-2);
 }
 
@@ -215,7 +215,7 @@ const items = computed(() => [
 
 .scenario-label {
   display: block;
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1;
   font-weight: 700;
   letter-spacing: .08em;
@@ -225,13 +225,13 @@ const items = computed(() => [
 
 .scenario p {
   padding-top: 10px;
-  font-size: clamp(14px, 1.6vw, 15px);
-  line-height: clamp(22px, 2.7vw, 24px);
+  font-size: clamp(14px, 1.5vw, 16px);
+  line-height: clamp(23px, 2.6vw, 26px);
   color: var(--vp-c-text-1);
 }
 
 .detail-title {
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1;
   font-weight: 700;
   letter-spacing: .08em;
@@ -265,8 +265,8 @@ const items = computed(() => [
 
 .bar-head span,
 .bar-head strong {
-  font-size: clamp(14px, 1.6vw, 15px);
-  line-height: clamp(22px, 2.7vw, 24px);
+  font-size: clamp(14px, 1.5vw, 16px);
+  line-height: clamp(23px, 2.6vw, 26px);
   color: var(--vp-c-text-1);
 }
 

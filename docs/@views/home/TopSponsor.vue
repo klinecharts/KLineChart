@@ -106,7 +106,7 @@ const { isDark, lang } = useData()
 }
 
 .eyebrow span {
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1;
   font-weight: 700;
   letter-spacing: 0.16em;
@@ -122,7 +122,7 @@ const { isDark, lang } = useData()
   min-height: 24px;
   padding: 0 9px;
   border-radius: 999px;
-  font-size: 10px;
+  font-size: 11px;
   line-height: 1;
   font-style: normal;
   font-weight: 800;
@@ -139,15 +139,15 @@ const { isDark, lang } = useData()
 }
 
 .copy strong {
-  font-size: clamp(18px, 2.1vw, 22px);
-  line-height: 1.1;
+  font-size: clamp(19px, 2.2vw, 23px);
+  line-height: 1.15;
   font-weight: 700;
   color: var(--vp-c-text-1);
 }
 
 .copy p {
-  font-size: clamp(13px, 1.5vw, 14px);
-  line-height: clamp(20px, 2.3vw, 22px);
+  font-size: clamp(14px, 1.55vw, 15px);
+  line-height: clamp(22px, 2.4vw, 24px);
   color: var(--vp-c-text-2);
 }
 

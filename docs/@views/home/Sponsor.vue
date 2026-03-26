@@ -193,8 +193,8 @@ function showParticle() {
 
 .lead {
   max-width: 34ch;
-  font-size: clamp(15px, 2vw, 18px);
-  line-height: clamp(25px, 3.2vw, 30px);
+  font-size: clamp(16px, 2.1vw, 19px);
+  line-height: clamp(26px, 3.2vw, 31px);
   font-weight: 600;
   color: var(--vp-c-text-1);
 }
@@ -203,8 +203,8 @@ function showParticle() {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  font-size: clamp(13px, 1.6vw, 15px);
-  line-height: clamp(21px, 2.7vw, 24px);
+  font-size: clamp(14px, 1.7vw, 16px);
+  line-height: clamp(22px, 2.7vw, 25px);
   color: var(--vp-c-text-2);
 }
 
@@ -362,8 +362,8 @@ function showParticle() {
 
 .featured-text {
   padding-top: 10px;
-  font-size: clamp(20px, 2.5vw, 24px);
-  line-height: 1.2;
+  font-size: clamp(18px, 2.3vw, 22px);
+  line-height: 1.25;
   font-weight: 700;
   color: var(--vp-c-text-1);
 }
@@ -407,7 +407,7 @@ function showParticle() {
 }
 
 .supporting-text {
-  font-size: clamp(15px, 1.8vw, 17px);
+  font-size: clamp(14px, 1.6vw, 16px);
   line-height: 1;
   font-weight: 700;
   color: var(--vp-c-text-1);

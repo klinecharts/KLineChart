@@ -5,34 +5,36 @@ import { useData } from 'vitepress'
 import i18n from '../../@i18n'
 import Section from './Section.vue'
 
-const { lang, isDark } = useData()
+const { lang } = useData()
+
+const userLogos = {
+  pandaai: '/images/users/pandaai.png',
+  fmz: '/images/users/fmz.svg',
+  northstar: '/images/users/Northstar.png',
+  ths: '/images/users/ths.png'
+}
 
 const users = computed(() => [
   {
-    name: 'TradingX',
-    logo: '/images/sponsors/tradingx.png',
-    website: 'https://www.tradingx.cloud/',
-    invertOnDark: true
+    name: '同花顺',
+    logo: userLogos.ths,
+    website: 'https://www.10jqka.com.cn/'
+  },
+  {
+    name: 'PandaAI',
+    logo: userLogos.pandaai,
+    website: 'https://www.pandaai.online/',
+    showName: true
+  },
+  {
+    name: 'FMZ',
+    logo: userLogos.fmz,
+    website: 'https://www.fmz.com/',
   },
   {
     name: 'Northstar',
-    logo: '/images/sponsors/Northstar.png',
-    website: 'https://northstar.quantit.tech:8443/'
-  },
-  {
-    name: 'flameOnYou',
-    logo: '/images/sponsors/flameOnYou.jpg',
-    website: 'https://github.com/flameOnYou'
-  },
-  {
-    name: '糊涂',
-    logo: '/images/sponsors/hutu.png',
-    website: 'https://hutu.live'
-  },
-  {
-    name: '好主机',
-    text: '好主机',
-    website: 'https://www.haozhuji.net/'
+    logo: userLogos.northstar,
+    website: 'https://northstar.quantit.tech:8443/#/welcome?v=8.10.0'
   }
 ])
 
@@ -47,23 +49,23 @@ const marqueeUsers = computed(() => [...users.value, ...users.value])
   >
     <div class="marquee" role="presentation">
       <div class="track">
-        <a
-          v-for="(item, index) in marqueeUsers"
-          :key="`${item.name}-${index}`"
-          class="user"
-          :href="item.website"
-          target="_blank"
-          rel="noreferrer"
+      <a
+        v-for="(item, index) in marqueeUsers"
+        :key="`${item.name}-${index}`"
+        class="user-item"
+        :href="item.website"
+        target="_blank"
+        rel="noreferrer"
+      >
+        <img
+          v-if="item.logo"
+          class="logo"
+          :src="item.logo"
+          :alt="item.name"
+          :style="{ '--logo-h': item.logoHeight }"
         >
-          <img
-            v-if="item.logo"
-            class="logo"
-            :class="{ invert: item.invertOnDark && isDark }"
-            :src="item.logo"
-            :alt="item.name"
-          >
-          <span v-else class="text">{{ item.text }}</span>
-        </a>
+        <span v-if="item.showName" class="name">{{ item.name }}</span>
+      </a>
       </div>
     </div>
   </Section>
@@ -75,19 +77,17 @@ const marqueeUsers = computed(() => [...users.value, ...users.value])
 }
 
 .marquee {
-  position: relative;
   width: 100%;
   overflow: hidden;
-  padding: 4px 0;
-  margin-top: -4px;
-  margin-bottom: 0;
-  mask-image: linear-gradient(90deg, transparent 0, black 8%, black 92%, transparent 100%);
+  margin-top: 8px;
+  mask-image: linear-gradient(90deg, transparent 0, black 6%, black 94%, transparent 100%);
 }
 
 .track {
   display: flex;
+  align-items: center;
   width: max-content;
-  gap: 16px;
+  gap: 28px;
   animation: marquee 28s linear infinite;
 }
 
@@ -95,66 +95,63 @@ const marqueeUsers = computed(() => [...users.value, ...users.value])
   animation-play-state: paused;
 }
 
-.user {
-  position: relative;
-  display: inline-flex;
+.user-item {
+  display: flex;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
-  min-width: 180px;
-  height: 72px;
-  padding: 0 26px;
-  overflow: hidden;
-  border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--vp-c-brand-1) 8%, var(--vp-c-divider));
-  background: color-mix(in srgb, var(--vp-c-bg-soft) 55%, transparent);
-  transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+  gap: 8px;
+  min-width: 140px;
+  padding: 8px 4px;
+  text-decoration: none;
+  transition: opacity .2s ease;
 }
 
-.user::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: linear-gradient(110deg, transparent 22%, color-mix(in srgb, #ffffff 10%, transparent) 48%, transparent 72%);
-  opacity: 0;
-  transform: translateX(-28%);
-  transition: opacity .25s ease, transform .45s ease;
-  pointer-events: none;
-}
-
-.user:hover {
-  transform: translateY(-2px);
-  border-color: color-mix(in srgb, var(--vp-c-brand-1) 14%, var(--vp-c-divider));
-  box-shadow: none;
-}
-
-.user:hover::after {
+.user-item:hover {
   opacity: 1;
-  transform: translateX(20%);
 }
 
 .logo {
-  max-width: 124px;
-  max-height: 30px;
+  height: 30px;
   object-fit: contain;
   opacity: 0.9;
-  transition: transform .25s ease;
+  filter: grayscale(1);
+  transition: filter .2s ease;
 }
 
-.logo.invert {
-  filter: invert(1);
+.name {
+  font-size: 16px;
+  line-height: 20px;
+  font-weight: bold;
+  color: var(--vp-c-text-2);
+  transition: color .2s ease;
 }
 
-.user:hover .logo {
-  transform: scale(1.03);
+.user-item:hover .logo {
+  filter: grayscale(0);
 }
 
-.text {
-  font-size: clamp(16px, 2.4vw, 18px);
-  line-height: 1;
-  font-weight: 700;
-  letter-spacing: 0.01em;
+.user-item:hover .name {
   color: var(--vp-c-text-1);
+}
+
+@media (min-width: 640px) {
+  .track {
+    gap: 34px;
+  }
+
+  .user-item {
+    min-width: 180px;
+    padding: 10px 6px;
+  }
+
+  .logo {
+    height: 36px;
+  }
+  .name {
+    font-size: 19px;
+    line-height: 23px;
+  }
 }
 
 @keyframes marquee {
@@ -162,55 +159,7 @@ const marqueeUsers = computed(() => [...users.value, ...users.value])
     transform: translateX(0);
   }
   to {
-    transform: translateX(calc(-50% - 8px));
+    transform: translateX(calc(-50% - 17px));
   }
-}
-
-@media (min-width: 640px) {
-  .track {
-    gap: 18px;
-  }
-
-  .user {
-    min-width: 220px;
-    height: 78px;
-    padding: 0 30px;
-  }
-
-  .logo {
-    max-width: 138px;
-    max-height: 34px;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .track {
-    animation: none;
-  }
-
-  .user,
-  .user::after,
-  .logo {
-    transition: none;
-  }
-
-  .user:hover,
-  .user:hover .logo {
-    transform: none;
-  }
-
-  .user:hover::after {
-    opacity: 0;
-    transform: none;
-  }
-}
-
-:global(html:not(.dark)) .user:hover {
-  box-shadow: none;
-  border-color: color-mix(in srgb, var(--vp-c-brand-1) 30%, var(--vp-c-divider));
-}
-
-:global(html:not(.dark)) .user:hover::after {
-  opacity: 1;
 }
 </style>

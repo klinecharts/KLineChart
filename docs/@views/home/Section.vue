@@ -36,8 +36,8 @@ const props = defineProps(['title', 'description', 'outClass'])
 }
 
 .title {
-  font-size: clamp(24px, 3.4vw, 30px);
-  line-height: clamp(34px, 4.2vw, 38px);
+  font-size: clamp(25px, 3.2vw, 31px);
+  line-height: clamp(35px, 4vw, 40px);
   text-align: center;
   font-weight: 700;
   letter-spacing: -0.01em;
@@ -47,8 +47,8 @@ const props = defineProps(['title', 'description', 'outClass'])
 }
 .description {
   padding-top: 14px;
-  font-size: clamp(15px, 1.8vw, 16px);
-  line-height: clamp(24px, 3vw, 27px);
+  font-size: clamp(15px, 1.7vw, 17px);
+  line-height: clamp(24px, 2.8vw, 28px);
   text-align: center;
   color: var(--vp-c-text-2);
   max-width: 620px;
