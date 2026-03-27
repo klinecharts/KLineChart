@@ -9,6 +9,7 @@ const { lang } = useData()
 
 const userLogos = {
   pandaai: '/images/users/pandaai.png',
+  dolphindb: '/images/users/dolphindb.svg',
   fmz: '/images/users/fmz.svg',
   northstar: '/images/users/Northstar.png',
   ths: '/images/users/ths.png'
@@ -25,6 +26,11 @@ const users = computed(() => [
     logo: userLogos.pandaai,
     website: 'https://www.pandaai.online/',
     showName: true
+  },
+  {
+    name: 'DolphinDB',
+    logo: userLogos.dolphindb,
+    website: 'https://dolphindb.cn/',
   },
   {
     name: 'FMZ',
@@ -148,6 +154,7 @@ const marqueeUsers = computed(() => [...users.value, ...users.value])
   .logo {
     height: 36px;
   }
+
   .name {
     font-size: 19px;
     line-height: 23px;

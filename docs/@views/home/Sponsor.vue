@@ -271,6 +271,9 @@ function showParticle() {
 .featured-main {
   min-height: 220px;
   padding: 28px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  text-align: left;
   border-radius: 32px;
   background:
     radial-gradient(circle at top right, color-mix(in srgb, var(--vp-c-brand-1) 8%, transparent), transparent 34%),
@@ -325,7 +328,7 @@ function showParticle() {
 
 .tier-featured {
   border-color: color-mix(in srgb, var(--vp-c-brand-1) 24%, var(--vp-c-divider));
-  background: color-mix(in srgb, var(--vp-c-brand-1) 12%, var(--vp-c-bg));
+  background: transparent;
 }
 
 .tier-featured::before {
@@ -358,6 +361,7 @@ function showParticle() {
 .featured-logo-main {
   max-width: 210px;
   max-height: 62px;
+  margin-top: auto;
 }
 
 .featured-text {
@@ -366,6 +370,11 @@ function showParticle() {
   line-height: 1.25;
   font-weight: 700;
   color: var(--vp-c-text-1);
+}
+
+.featured-main .featured-text {
+  margin-bottom: auto;
+  text-align: left;
 }
 
 .supporting {

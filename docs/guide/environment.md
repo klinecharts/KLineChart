@@ -1,27 +1,67 @@
 # 🏝️ 环境要求
 
+## 推荐环境
+
+推荐在现代浏览器中，配合 `npm` / `pnpm` / `yarn` / `bun` 等包管理工具使用。
+
+如果你是在业务项目中接入，优先建议：
+
+- 使用 ESM 构建工具，如 Vite、Rspack、Webpack、Rollup 等
+- 在客户端组件挂载后再初始化图表
+- 通过包管理器安装，而不是直接依赖 CDN 脚本
+
 ## 浏览器支持
 
-图表基于 html5 canvas 构建，需要运行在支持 canvas 的浏览器上，如果需要运行在移动端，请用 webview 加载。
+图表基于 HTML5 Canvas 构建，需要运行在支持 Canvas 的浏览器上。如果需要运行在移动端，请使用现代 WebView 加载。
 
-## 兼容处理
+对于现代桌面浏览器和移动端浏览器，一般都可以直接运行；如果你的业务需要兼容较老环境，建议至少确认下面这些能力：
 
-### [core.js](https://github.com/zloirock/core-js)
+- `Map`
+- `Intl`
+- `requestAnimationFrame`
+- Canvas 相关 API
 
-图表内部集合使用 `Map` ，用于兼容不支持的老版浏览器。
+其中 Canvas 相关 API 支持是必须的。`Map` ， `Intl` 和 `requestAnimationFrame` 是比较常见的兼容补齐项，如果缺失，自行补齐相关 polyfill。
 
-```javascript
-import 'core.js';
-import { init } from 'klincharts';
-```
+## SSR / Next.js / Nuxt 注意事项
 
-### [Intl.js](https://github.com/andyearnshaw/Intl.js)
+图表依赖 DOM 和 Canvas，因此不能在服务端渲染阶段直接初始化。
 
-图表依赖 `Intl` ，某些浏览器无此 API。
+推荐做法：
 
-```javascript
-import 'intl';
-import 'intl/local-data/jsonp/en';
-import { init } from 'klincharts';
-```
+- 在组件挂载完成后，再执行 `init(...)`
+- 不要在模块顶层直接读取容器 DOM
+- 如果页面是按需显示的，等容器真正可见后再初始化或主动调用 `resize(...)`
 
+## 容器尺寸与初始化时机
+
+图表会自动填充容器，因此容器本身必须有明确尺寸。
+
+常见建议：
+
+- 容器需要有确定的高度
+- 如果宽度来自父容器自适应，确保父级布局已稳定
+- 如果容器初始是 `display: none` 或位于未激活的 tab 中，显示后建议调用一次 `resize(...)`
+
+如果初始化后只能看到一条线，或图表区域高度异常，优先检查容器尺寸。
+
+## 高清屏与清晰度
+
+在高分辨率屏幕上，如果你发现图表发虚，建议先检查页面是否对图表容器做了额外的 CSS 缩放。
+
+推荐：
+
+- 避免对图表容器使用 `transform: scale(...)`
+- 避免在图表外层再套一层模糊缩放容器
+- 尺寸变化后及时调用 `resize(...)`
+
+## 移动端 WebView 注意事项
+
+移动端使用时，建议优先在较新的 WebView 环境中运行。
+
+接入时通常要注意：
+
+- 页面滚动和图表拖拽是否冲突
+- 父容器是否拦截了触摸事件
+- 键盘弹起、横竖屏切换后是否需要重新 `resize(...)`
+- 是否需要根据交互习惯调整样式和 tooltip 展示
