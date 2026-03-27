@@ -1,6 +1,4 @@
 <script setup>
-import { Transition } from 'vue'
-
 const props = defineProps({
   expanded: {
     type: Boolean,
