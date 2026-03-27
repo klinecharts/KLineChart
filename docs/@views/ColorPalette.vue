@@ -56,6 +56,12 @@ import { computed, ref, watch, onMounted, onBeforeUnmount } from 'vue'
 import { inBrowser, useData } from 'vitepress'
 import { useLocalStorage, onClickOutside } from '@vueuse/core'
 import i18n from '../@i18n'
+import {
+  applyThemeColorStyle,
+  DEFAULT_THEME_COLOR,
+  normalizeThemeColor,
+  THEME_COLOR_STORAGE_KEY
+} from '../.vitepress/theme/theme-color'
 
 const visible = ref(false)
 const { lang } = useData()
@@ -64,7 +70,7 @@ const popoverVisible = ref(false)
 const rootRef = ref(null)
 const trackRef = ref(null)
 
-const currentColor = useLocalStorage('klinecharts-primary-color')
+const currentColor = useLocalStorage(THEME_COLOR_STORAGE_KEY)
 const previewColor = ref(null)
 const sliderValue = ref(0)
 const dragging = ref(false)
@@ -82,14 +88,11 @@ const colors = [
   '#8F6CEE'
 ]
 
-const DEFAULT_COLOR = '#E6AC00'
-const finalColor = computed(() => normalizeColor(currentColor.value) || DEFAULT_COLOR)
+const finalColor = computed(() => normalizeThemeColor(currentColor.value) || DEFAULT_THEME_COLOR)
 const activeColor = computed(() => previewColor.value || finalColor.value)
 const sliderPercent = computed(() => sliderValue.value * 100)
 const paletteAriaLabel = computed(() => i18n('view_color_palette_aria_label', lang.value))
 const setColorAriaLabel = (color) => `${i18n('view_color_palette_set_color_aria_label', lang.value)} ${color}`
-
-let colorStyle = null
 
 onMounted(() => {
   visible.value = true
@@ -112,26 +115,7 @@ watch(finalColor, (color) => {
 })
 
 watch(activeColor, (color) => {
-  const targetColor = color || DEFAULT_COLOR
-  if (!colorStyle) {
-    colorStyle = document.getElementById('klinecharts-theme-color-style')
-    if (!colorStyle) {
-      colorStyle = document.createElement('style')
-      colorStyle.id = 'klinecharts-theme-color-style'
-      document.body.appendChild(colorStyle)
-    }
-  }
-  colorStyle.innerHTML = `
-    :root {
-      --vp-c-indigo-1: ${targetColor};
-      --vp-c-indigo-2: ${lighten(targetColor, 20)};
-      --vp-c-indigo-3: ${lighten(targetColor, 40)};
-      --vp-home-hero-bg:
-        radial-gradient(circle at 50% 0%, ${hexToRgba(targetColor, 0.12)} 0%, transparent 34%),
-        radial-gradient(circle at 18% 24%, ${hexToRgba(targetColor, 0.05)} 0%, transparent 24%),
-        radial-gradient(circle at 82% 22%, ${hexToRgba(targetColor, 0.04)} 0%, transparent 26%),
-        linear-gradient(180deg, ${hexToRgba(targetColor, 0.025)} 0%, transparent 60%);
-    }`
+  applyThemeColorStyle(color || DEFAULT_THEME_COLOR)
 }, { immediate: inBrowser, flush: 'post' })
 
 function changePrimaryColor (color) {
@@ -146,8 +130,8 @@ function selectPreset (color) {
 
 function resetColor () {
   previewColor.value = null
-  sliderValue.value = getColorValue(DEFAULT_COLOR)
-  currentColor.value = DEFAULT_COLOR
+  sliderValue.value = getColorValue(DEFAULT_THEME_COLOR)
+  currentColor.value = DEFAULT_THEME_COLOR
 }
 
 function startDrag (event) {
@@ -248,7 +232,7 @@ function rgbToHex (r, g, b) {
 function findNearestValue (color) {
   const target = hexToRgb(color)
   const steps = 240
-  let bestValue = getColorValue(DEFAULT_COLOR)
+  let bestValue = getColorValue(DEFAULT_THEME_COLOR)
   let bestDistance = Number.POSITIVE_INFINITY
   for (let i = 0; i <= steps; i++) {
     const value = i / steps
@@ -271,41 +255,6 @@ function colorDistance (left, right) {
 
 function clamp (value, min, max) {
   return Math.min(max, Math.max(min, value))
-}
-
-function normalizeColor (color) {
-  if (typeof color !== 'string') {
-    return null
-  }
-  const value = color.trim()
-  return /^#[0-9a-fA-F]{6}$/.test(value) ? value.toUpperCase() : null
-}
-
-function lighten (color, percent) {
-  color = color.replace(/^#/, "")
-
-  let r = parseInt(color.substring(0, 2), 16)
-  let g = parseInt(color.substring(2, 4), 16)
-  let b = parseInt(color.substring(4, 6), 16)
-
-  r = Math.min(255, Math.floor(r + (255 - r) * (percent / 100)))
-  g = Math.min(255, Math.floor(g + (255 - g) * (percent / 100)))
-  b = Math.min(255, Math.floor(b + (255 - b) * (percent / 100)))
-
-  return (
-    "#" +
-    [r, g, b]
-      .map(x => x.toString(16).padStart(2, "0"))
-      .join("")
-  )
-}
-
-function hexToRgba (hex, alpha) {
-  const r = parseInt(hex.slice(1, 3), 16)
-  const g = parseInt(hex.slice(3, 5), 16)
-  const b = parseInt(hex.slice(5, 7), 16)
-
-  return `rgba(${r}, ${g}, ${b}, ${alpha})`
 }
 
 onBeforeUnmount(() => {

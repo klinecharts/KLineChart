@@ -6,6 +6,7 @@ import { transformerTwoslash } from '@shikijs/vitepress-twoslash'
 
 import zhCN, { search as zhCNSearch } from './zh-CN'
 import enUS, { search as enUSSearch } from './en-US'
+import { getThemeColorInitScript } from '../theme/theme-color'
 
 function config () {
   const klinecharts = fs.readFileSync(
@@ -49,6 +50,7 @@ function config () {
     },
     head: [
       ['link', { rel: 'icon', type: 'image/x-icon', href: '/images/fav.png' }],
+      ['script', {}, getThemeColorInitScript()],
       ['script', {}, `${klinecharts}`],
       [
         'script',
