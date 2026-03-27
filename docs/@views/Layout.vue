@@ -13,7 +13,6 @@ import HomeSponsor from './home/Sponsor.vue'
 // import AsideSponsor from './AsideSponsor.vue'
 import NotFound from './NotFound.vue'
 import ColorPalette from './ColorPalette.vue'
-import Loading from '../@components/Loading.vue'
 
 const { isDark } = useData()
 
@@ -21,7 +20,6 @@ const mounted = ref(false)
 
 onMounted(() => {
   mounted.value = true
-  document.body.style.overflow = 'auto'
 })
 
 const enableTransitions = () =>
@@ -60,7 +58,6 @@ provide('toggle-appearance', async ({ clientX: x, clientY: y }) => {
 </script>
 
 <template>
-  <Loading v-if="!mounted" className="page-loading"/>
   <DefaultTheme.Layout>
     <!-- <template #layout-top>
       <Banner/>
