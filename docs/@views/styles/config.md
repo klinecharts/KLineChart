@@ -35,7 +35,7 @@ const styles = {
     },
     area: {
       lineSize: 2,
-      lineColor: '#2196F3',
+      lineColor: '#1677FF',
       smooth: false,
       value: 'close',
       backgroundColor: [{
@@ -253,7 +253,7 @@ const styles = {
         smooth: false,
         size: 1,
         dashedValue: [2, 2],
-        color: '#2196F3'
+        color: '#1677FF'
       }, {
         style: 'solid',
         smooth: false,
@@ -278,6 +278,23 @@ const styles = {
       upColor: 'rgba(45, 192, 142, .7)',
       downColor: 'rgba(249, 40, 85, .7)',
       noChangeColor: '#888888'
+    }],
+    texts: [{
+      paddingLeft: 0,
+      paddingTop: 0,
+      paddingRight: 0,
+      paddingBottom: 0,
+      style: 'fill',
+      size: 12,
+      color: '#1677FF',
+      family: 'Helvetica Neue',
+      weight: 'normal',
+      borderStyle: 'solid',
+      borderDashedValue: [2, 2],
+      borderSize: 0,
+      borderColor: 'transparent',
+      borderRadius: 0,
+      backgroundColor: 'transparent'
     }],
     lastValueMark: {
       show: false,

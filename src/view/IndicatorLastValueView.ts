@@ -33,6 +33,7 @@ export default class IndicatorLastValueView extends View<YAxis> {
       const yAxis = pane.getAxisComponent()
       const yAxisRange = yAxis.getRange()
       const dataList = chartStore.getDataList()
+      const barSpace = chartStore.getBarSpace()
       const dataIndex = dataList.length - 1
       const indicators = chartStore.getIndicatorsByPaneId(pane.getId())
       const formatter = chartStore.getInnerFormatter()
@@ -43,7 +44,7 @@ export default class IndicatorLastValueView extends View<YAxis> {
         const data = result[dataIndex] ?? {}
         if (isValid(data) && indicator.visible) {
           const precision = indicator.precision
-          eachFigures(indicator, dataIndex, defaultStyles, (figure: IndicatorFigure, figureStyles: Required<IndicatorFigureStyle>) => {
+          eachFigures(indicator, dataIndex, barSpace, defaultStyles, (figure: IndicatorFigure, figureStyles: Required<IndicatorFigureStyle>) => {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- ignore
             const value = data[figure.key]
             if (isNumber(value)) {

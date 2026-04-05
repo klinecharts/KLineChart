@@ -122,7 +122,7 @@ export default class IndicatorView extends CandleBarView {
                 nextCoordinate[key] = yAxis.convertToPixel(nextValue)
               }
             })
-            eachFigures(indicator, dataIndex, defaultStyles, (figure: IndicatorFigure, figureStyles: IndicatorFigureStyle, figureIndex: number) => {
+            eachFigures(indicator, dataIndex, barSpace, defaultStyles, (figure: IndicatorFigure, figureStyles: IndicatorFigureStyle, figureIndex: number) => {
               if (isValid(currentData?.[figure.key])) {
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- ignore
                 const valueY = currentCoordinate[figure.key]
@@ -134,55 +134,68 @@ export default class IndicatorView extends CandleBarView {
                   xAxis,
                   yAxis
                 })
-                if (!isValid<IndicatorFigureAttrs>(attrs)) {
-                  switch (figure.type) {
-                    case 'circle': {
+                switch (figure.type) {
+                  case 'text': {
+                    attrs = {
+                      x,
                       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- ignore
-                      attrs = { x, y: valueY, r: Math.max(1, halfGapBar) }
-                      break
+                      y: valueY,
+                      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- ignore
+                      text: currentData?.[figure.key],
+                      align: 'center',
+                      baseline: 'middle',
+                      ...attrs
                     }
-                    case 'rect':
-                    case 'bar': {
-                      const baseValue = figure.baseValue ?? yAxis.getRange().from
-                      const baseValueY = yAxis.convertToPixel(baseValue)
-                      let height = Math.abs(baseValueY - (valueY as number))
-                      if (baseValue !== currentData?.[figure.key]) {
-                        height = Math.max(1, height)
-                      }
-                      let y = 0
-                      if (valueY > baseValueY) {
-                        y = baseValueY
-                      } else {
-                        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- ignore
-                        y = valueY
-                      }
-                      attrs = {
-                        x: x - halfGapBar,
-                        y,
-                        width: Math.max(1, halfGapBar * 2),
-                        height
-                      }
-                      break
-                    }
-                    case 'line': {
-                      if (!isValid(lines[figureIndex])) {
-                        lines[figureIndex] = []
-                      }
-                      if (isNumber(currentCoordinate[figure.key]) && isNumber(nextCoordinate[figure.key])) {
-                        lines[figureIndex].push({
-                          coordinates: [
-                            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- ignore
-                            { x: currentCoordinate.x, y: currentCoordinate[figure.key] },
-                            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- ignore
-                            { x: nextCoordinate.x, y: nextCoordinate[figure.key] }
-                          ],
-                          styles: figureStyles as unknown as SmoothLineStyle
-                        })
-                      }
-                      break
-                    }
-                    default: { break }
+                    break
                   }
+                  case 'circle': {
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- ignore
+                    attrs = { x, y: valueY, r: Math.max(1, halfGapBar), ...attrs }
+                    break
+                  }
+                  case 'rect':
+                  case 'bar': {
+                    const baseValue = figure.baseValue ?? yAxis.getRange().from
+                    const baseValueY = yAxis.convertToPixel(baseValue)
+                    let height = Math.abs(baseValueY - (valueY as number))
+                    if (baseValue !== currentData?.[figure.key]) {
+                      height = Math.max(1, height)
+                    }
+                    let y = 0
+                    if (valueY > baseValueY) {
+                      y = baseValueY
+                    } else {
+                      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- ignore
+                      y = valueY
+                    }
+                    const barWidth = attrs?.width ?? halfGapBar * 2
+                    attrs = {
+                      x: x - barWidth / 2,
+                      y,
+                      width: Math.max(1, barWidth),
+                      height,
+                      ...attrs
+                    }
+                    break
+                  }
+                  case 'line': {
+                    if (!isValid(lines[figureIndex])) {
+                      lines[figureIndex] = []
+                    }
+                    if (isNumber(currentCoordinate[figure.key]) && isNumber(nextCoordinate[figure.key])) {
+                      lines[figureIndex].push({
+                        coordinates: attrs?.coordinates ?? [
+                          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- ignore
+                          { x: currentCoordinate.x, y: currentCoordinate[figure.key] },
+                          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- ignore
+                          { x: nextCoordinate.x, y: nextCoordinate[figure.key] }
+                        ],
+                        styles: figureStyles as unknown as SmoothLineStyle
+                      })
+                    }
+                    break
+                  }
+                  default: { break }
                 }
                 const type = figure.type!
                 if (isValid<IndicatorFigureAttrs>(attrs) && type !== 'line') {

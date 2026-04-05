@@ -276,6 +276,7 @@ export interface IndicatorStyle {
   bars: IndicatorPolygonStyle[]
   lines: SmoothLineStyle[]
   circles: IndicatorPolygonStyle[]
+  texts: TextStyle[]
   lastValueMark: IndicatorLastValueMarkStyle
   tooltip: IndicatorTooltipStyle
   [key: string]: unknown
@@ -560,6 +561,23 @@ function getDefaultIndicatorStyle (): IndicatorStyle {
       upColor: alphaGreen,
       downColor: alphaRed,
       noChangeColor: Color.GREY
+    }],
+    texts: [{
+      paddingLeft: 0,
+      paddingTop: 0,
+      paddingRight: 0,
+      paddingBottom: 0,
+      style: 'fill',
+      size: 12,
+      color: Color.BLUE,
+      family: 'Helvetica Neue',
+      weight: 'normal',
+      borderStyle: 'solid',
+      borderDashedValue: [2, 2],
+      borderSize: 0,
+      borderColor: 'transparent',
+      borderRadius: 0,
+      backgroundColor: 'transparent'
     }],
     lastValueMark: {
       show: false,

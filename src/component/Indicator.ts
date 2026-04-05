@@ -19,7 +19,7 @@ import type { KLineData, NeighborData } from '../common/Data'
 import type Bounding from '../common/Bounding'
 import type BarSpace from '../common/BarSpace'
 import type Crosshair from '../common/Crosshair'
-import type { IndicatorStyle, IndicatorPolygonStyle, SmoothLineStyle, RectStyle, TextStyle, TooltipFeatureStyle, LineStyle, LineType, TooltipLegend } from '../common/Styles'
+import type { IndicatorStyle, IndicatorPolygonStyle, SmoothLineStyle, RectStyle, TextStyle, TooltipFeatureStyle, LineType, TooltipLegend } from '../common/Styles'
 import { isNumber, isValid, merge, isBoolean, isString, clone, isFunction } from '../common/utils/typeChecks'
 import type { DataLoadType } from '../common/DataLoader'
 
@@ -32,12 +32,13 @@ import type { ArcAttrs } from '../extension/figure/arc'
 import type { RectAttrs } from '../extension/figure/rect'
 import type { TextAttrs } from '../extension/figure/text'
 import type { Chart } from '../Chart'
+import type { LineAttrs } from '../extension/figure/line'
 
 export type IndicatorSeries = 'normal' | 'price' | 'volume'
 
 export type IndicatorFigureStyle = Partial<Omit<SmoothLineStyle, 'style'>> & Partial<Omit<RectStyle, 'style'>> & Partial<TextStyle> & Partial<{ style: LineType[keyof LineType] }> & Record<string, unknown>
 
-export type IndicatorFigureAttrs = Partial<ArcAttrs> & Partial<LineStyle> & Partial<RectAttrs> & Partial<TextAttrs> & Record<string, unknown>
+export type IndicatorFigureAttrs = Partial<ArcAttrs> & Partial<LineAttrs> & Partial<RectAttrs> & Partial<TextAttrs> & Record<string, unknown>
 
 export interface IndicatorFigureAttrsCallbackParams<D> {
   data: NeighborData<Nullable<D>>
@@ -51,11 +52,12 @@ export interface IndicatorFigureAttrsCallbackParams<D> {
 export interface IndicatorFigureStylesCallbackParams<D> {
   data: NeighborData<Nullable<D>>
   indicator: Indicator<D>
+  barSpace: BarSpace
   defaultStyles?: IndicatorStyle
 }
 
-export type IndicatorFigureAttrsCallback<D> = (params: IndicatorFigureAttrsCallbackParams<D>) => IndicatorFigureAttrs
-export type IndicatorFigureStylesCallback<D> = (params: IndicatorFigureStylesCallbackParams<D>) => IndicatorFigureStyle
+export type IndicatorFigureAttrsCallback<D> = (params: IndicatorFigureAttrsCallbackParams<D>) => Nullable<IndicatorFigureAttrs>
+export type IndicatorFigureStylesCallback<D> = (params: IndicatorFigureStylesCallbackParams<D>) => Nullable<IndicatorFigureStyle>
 
 export interface IndicatorFigure<D = unknown> {
   key: string
@@ -239,12 +241,16 @@ export type EachFigureCallback<D> = (figure: IndicatorFigure<D>, figureStyles: I
 export function eachFigures<D = unknown> (
   indicator: Indicator,
   dataIndex: number,
+  barSpace: BarSpace,
   defaultStyles: IndicatorStyle,
   eachFigureCallback: EachFigureCallback<D>
 ): void {
   const result = indicator.result
   const figures = indicator.figures
   const styles = indicator.styles
+
+  const textStyles = formatValue(styles, 'texts', defaultStyles.texts) as TextStyle[]
+  const textStyleCount = textStyles.length
 
   const circleStyles = formatValue(styles, 'circles', defaultStyles.circles) as IndicatorPolygonStyle[]
   const circleStyleCount = circleStyles.length
@@ -255,6 +261,7 @@ export function eachFigures<D = unknown> (
   const lineStyles = formatValue(styles, 'lines', defaultStyles.lines) as SmoothLineStyle[]
   const lineStyleCount = lineStyles.length
 
+  let textCount = 0
   let circleCount = 0
   let barCount = 0
   let lineCount = 0
@@ -264,6 +271,12 @@ export function eachFigures<D = unknown> (
   let figureIndex = 0
   figures.forEach(figure => {
     switch (figure.type) {
+      case 'text': {
+        figureIndex = textCount
+        defaultFigureStyles = textStyles[textCount % textStyleCount]
+        textCount++
+        break
+      }
       case 'circle': {
         figureIndex = circleCount
         const styles = circleStyles[circleCount % circleStyleCount]
@@ -294,6 +307,7 @@ export function eachFigures<D = unknown> (
           next: result[dataIndex + 1]
         },
         indicator,
+        barSpace,
         defaultStyles
       })
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument -- ignore
