@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, onBeforeUnmount, ref } from 'vue'
 import { useData } from 'vitepress'
 
 import i18n from '../../../@i18n'
@@ -13,14 +13,52 @@ const { lang } = useData()
 const pointer = ref({
   active: false,
   x: 50,
-  y: 0
+  y: -18
 })
+
+const targetPointer = {
+  active: false,
+  x: 50,
+  y: -18
+}
+
+let frameId = 0
+
+function animatePointer () {
+  const nextX = pointer.value.x + (targetPointer.x - pointer.value.x) * 0.16
+  const nextY = pointer.value.y + (targetPointer.y - pointer.value.y) * 0.16
+  const isSettled =
+    Math.abs(nextX - targetPointer.x) < 0.12 &&
+    Math.abs(nextY - targetPointer.y) < 0.12
+
+  pointer.value = {
+    active: targetPointer.active,
+    x: isSettled ? targetPointer.x : nextX,
+    y: isSettled ? targetPointer.y : nextY
+  }
+
+  if (!isSettled) {
+    frameId = window.requestAnimationFrame(animatePointer)
+    return
+  }
+
+  frameId = 0
+}
+
+function syncPointer () {
+  if (frameId !== 0) {
+    return
+  }
+  frameId = window.requestAnimationFrame(animatePointer)
+}
 
 const heroStyle = computed(() => ({
   '--hero-mouse-x': `${pointer.value.x}%`,
   '--hero-mouse-y': `${pointer.value.y}%`,
   '--hero-shift-x': `${(pointer.value.x - 50) * 0.12}px`,
-  '--hero-shift-y': `${pointer.value.y * 0.08}px`
+  '--hero-shift-y': `${pointer.value.y * 0.08}px`,
+  '--hero-spot-opacity': pointer.value.active ? 1 : 0,
+  '--hero-spot-scale': pointer.value.active ? 1 : 0.96
 }))
 
 function handlePointerMove (event) {
@@ -29,20 +67,24 @@ function handlePointerMove (event) {
     return
   }
   const rect = currentTarget.getBoundingClientRect()
-  pointer.value = {
-    active: true,
-    x: ((event.clientX - rect.left) / rect.width) * 100,
-    y: ((event.clientY - rect.top) / rect.height) * 100
-  }
+  targetPointer.active = true
+  targetPointer.x = ((event.clientX - rect.left) / rect.width) * 100
+  targetPointer.y = ((event.clientY - rect.top) / rect.height) * 100
+  syncPointer()
 }
 
 function handlePointerLeave () {
-  pointer.value = {
-    active: false,
-    x: 50,
-    y: 0
-  }
+  targetPointer.active = false
+  targetPointer.x = 50
+  targetPointer.y = -18
+  syncPointer()
 }
+
+onBeforeUnmount(() => {
+  if (frameId !== 0) {
+    window.cancelAnimationFrame(frameId)
+  }
+})
 
 </script>
 
@@ -90,22 +132,32 @@ function handlePointerLeave () {
 
 .hero::before {
   background:
-    radial-gradient(circle at var(--hero-mouse-x) var(--hero-mouse-y), color-mix(in srgb, var(--vp-c-indigo-1) 10%, transparent) 0%, transparent 24%),
+    radial-gradient(circle at var(--hero-mouse-x) var(--hero-mouse-y), color-mix(in srgb, var(--vp-c-brand-1) 42%, transparent) 0%, color-mix(in srgb, var(--vp-c-brand-1) 28%, transparent) 10%, transparent 32%),
+    radial-gradient(circle at var(--hero-mouse-x) var(--hero-mouse-y), color-mix(in srgb, var(--vp-c-brand-1) 24%, transparent) 0%, color-mix(in srgb, var(--vp-c-brand-1) 14%, transparent) 24%, transparent 58%),
+    radial-gradient(circle at calc(var(--hero-mouse-x) + 8%) calc(var(--hero-mouse-y) - 6%), color-mix(in srgb, var(--vp-c-brand-1) 12%, transparent) 0%, transparent 20%),
+    radial-gradient(circle at calc(var(--hero-mouse-x) - 14%) calc(var(--hero-mouse-y) + 10%), color-mix(in srgb, var(--vp-c-brand-1) 8%, transparent) 0%, transparent 28%),
     linear-gradient(180deg, color-mix(in srgb, var(--vp-c-indigo-1) 4%, transparent), transparent 26%),
     linear-gradient(90deg, color-mix(in srgb, var(--vp-c-indigo-1) 15%, transparent) 1px, transparent 1px),
     linear-gradient(180deg, color-mix(in srgb, var(--vp-c-indigo-1) 13%, transparent) 1px, transparent 1px);
-  background-size: auto, auto, 88px 88px, 88px 88px;
+  background-size: auto, auto, auto, auto, auto, 88px 88px, 88px 88px;
   background-position:
     var(--hero-shift-x) var(--hero-shift-y),
+    var(--hero-shift-x) var(--hero-shift-y),
+    calc(var(--hero-shift-x) * 0.72) calc(var(--hero-shift-y) * 0.72),
+    calc(var(--hero-shift-x) * 1.16) calc(var(--hero-shift-y) * 1.16),
     center top,
     var(--hero-shift-x) var(--hero-shift-y),
     var(--hero-shift-x) var(--hero-shift-y);
   mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.5), transparent 78%);
-  opacity: 0.72;
+  opacity: calc(0.72 * var(--hero-spot-opacity));
+  filter: saturate(1.06) brightness(1.02);
+  transform: scale(var(--hero-spot-scale));
+  transform-origin: center top;
+  mix-blend-mode: screen;
   transition:
-    background-position .18s ease-out,
-    opacity .2s ease,
-    transform .18s ease-out;
+    opacity .42s ease-out,
+    transform .34s ease-out,
+    filter .34s ease-out;
 }
 
 .hero::after {
