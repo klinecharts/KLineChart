@@ -16,9 +16,6 @@ import type { KLineData } from './common/Data'
 import type DeepPartial from './common/DeepPartial'
 import type { Styles } from './common/Styles'
 
-import type { IndicatorCreate } from './component/Indicator'
-import type { PaneOptions } from './pane/types'
-
 export type FormatDateType = 'tooltip' | 'crosshair' | 'xAxis'
 
 export interface FormatDateParams {
@@ -67,14 +64,6 @@ export interface Locales {
   [key: string]: string
 }
 
-export type LayoutChildType = 'candle' | 'indicator' | 'xAxis'
-
-export interface LayoutChild {
-  type: LayoutChildType
-  content?: Array<string | IndicatorCreate>
-  options?: PaneOptions
-}
-
 export interface DecimalFold {
   threshold: number
   format: (value: string | number) => string
@@ -100,5 +89,4 @@ export interface Options {
   thousandsSeparator?: Partial<ThousandsSeparator>
   decimalFold?: Partial<DecimalFold>
   zoomAnchor?: ZoomAnchorType | Partial<ZoomAnchor>
-  layout?: LayoutChild[]
 }

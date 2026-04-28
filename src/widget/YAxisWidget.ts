@@ -43,20 +43,15 @@ export default class YAxisWidget extends DrawWidget<DrawPane<YAxis>> {
   }
 
   override updateMain (ctx: CanvasRenderingContext2D): void {
-    const minimize = this.getPane().getOptions().state === 'minimize'
-    this._yAxisView.draw(ctx, minimize)
-    if (!minimize) {
-      if (this.getPane().getAxisComponent().isInCandle()) {
-        this._candleLastPriceLabelView.draw(ctx)
-      }
-      this._indicatorLastValueView.draw(ctx)
+    this._yAxisView.draw(ctx)
+    if (this.getPane().getAxisComponent().isInCandle()) {
+      this._candleLastPriceLabelView.draw(ctx)
     }
+    this._indicatorLastValueView.draw(ctx)
   }
 
   override updateOverlay (ctx: CanvasRenderingContext2D): void {
-    if (this.getPane().getOptions().state !== 'minimize') {
-      this._overlayYAxisView.draw(ctx)
-      this._crosshairHorizontalLabelView.draw(ctx)
-    }
+    this._overlayYAxisView.draw(ctx)
+    this._crosshairHorizontalLabelView.draw(ctx)
   }
 }

@@ -25,12 +25,12 @@ import type Crosshair from './common/Crosshair'
 import type { ActionType, ActionCallback } from './common/Action'
 import type { DataLoader } from './common/DataLoader'
 import type VisibleRange from './common/VisibleRange'
-import type { Formatter, DecimalFold, LayoutChild, Options, ThousandsSeparator, ZoomAnchor, ZoomAnchorType } from './Options'
+import type { Formatter, DecimalFold, Options, ThousandsSeparator, ZoomAnchor, ZoomAnchorType } from './Options'
 import Animation from './common/Animation'
 import { createId } from './common/utils/id'
 import { createDom } from './common/utils/dom'
 import { getPixelRatio } from './common/utils/canvas'
-import { isString, isArray, isValid, merge, isNumber } from './common/utils/typeChecks'
+import { isString, isArray, isValid, isNumber } from './common/utils/typeChecks'
 import { logWarn } from './common/utils/logger'
 import { binarySearchNearest } from './common/utils/number'
 import type { Styles } from './common/Styles'
@@ -47,7 +47,7 @@ import XAxisPane from './pane/XAxisPane'
 import type DrawPane from './pane/DrawPane'
 import SeparatorPane from './pane/SeparatorPane'
 
-import { type PaneOptions, PANE_DEFAULT_HEIGHT, PaneIdConstants, PANE_MIN_HEIGHT } from './pane/types'
+import { type PaneOptions, PaneIdConstants } from './pane/types'
 
 import type AxisImp from './component/Axis'
 import type { YAxis } from './component/YAxis'
@@ -106,8 +106,8 @@ export default class ChartImp implements Chart {
   private readonly _chartEvent: Event
   private readonly _chartStore: ChartStore
   private _drawPanes: DrawPane[] = []
-  private _candlePane: CandlePane
-  private _xAxisPane: XAxisPane
+  private readonly _candlePane: CandlePane
+  private readonly _xAxisPane: XAxisPane
   private readonly _separatorPanes = new Map<DrawPane, SeparatorPane>()
 
   private _layoutOptions = {
@@ -128,7 +128,8 @@ export default class ChartImp implements Chart {
     this._initContainer(container)
     this._chartEvent = new Event(this._chartContainer, this)
     this._chartStore = new ChartStore(this, options)
-    this._initPanes(options)
+    this._candlePane = this._createPane<CandlePane>(CandlePane, { id: PaneIdConstants.CANDLE })
+    this._xAxisPane = this._createPane<XAxisPane>(XAxisPane, { id: PaneIdConstants.X_AXIS, order: Number.MAX_SAFE_INTEGER })
     this._layout()
   }
 
@@ -161,123 +162,13 @@ export default class ChartImp implements Chart {
     this._chartBounding.height = Math.floor(this._chartContainer.clientHeight)
   }
 
-  private _initPanes (options?: Options): void {
-    const layout = options?.layout ?? [{ type: 'candle' }]
-
-    const createCandlePane: ((child: LayoutChild) => void) = child => {
-      if (!isValid(this._candlePane)) {
-        const paneOptions = child.options ?? {}
-        merge(paneOptions, { id: PaneIdConstants.CANDLE })
-        this._candlePane = this._createPane<CandlePane>(CandlePane, PaneIdConstants.CANDLE, paneOptions)
-        const content = child.content ?? []
-        content.forEach(v => {
-          this.createIndicator(v, true, paneOptions)
-        })
-      }
-    }
-
-    const createXAxisPane: ((ops?: PaneOptions) => void) = (ops?: PaneOptions) => {
-      if (!isValid(this._xAxisPane)) {
-        const pane = this._createPane<XAxisPane>(XAxisPane, PaneIdConstants.X_AXIS, ops ?? {})
-        this._xAxisPane = pane
-      }
-    }
-
-    layout.forEach(child => {
-      switch (child.type) {
-        case 'candle': {
-          createCandlePane(child)
-          break
-        }
-        case 'indicator': {
-          const content = child.content ?? []
-          if (content.length > 0) {
-            let paneId: Nullable<string> = child.options?.id ?? null
-            if (isValid(paneId)) {
-              paneId = createId(PaneIdConstants.INDICATOR)
-            }
-            const paneOptions = { ...child.options, id: paneId! }
-            content.forEach(v => {
-              this.createIndicator(v, true, paneOptions)
-            })
-          }
-          break
-        }
-        case 'xAxis': {
-          createXAxisPane(child.options)
-          break
-        }
-      }
-    })
-    createCandlePane({ type: 'candle' })
-    createXAxisPane({ order: Number.MAX_SAFE_INTEGER })
-  }
-
   private _createPane<P extends DrawPane> (
-    DrawPaneClass: new (chart: Chart, id: string, options: Omit<PaneOptions, 'id' | 'height'>) => P,
-    id: string,
-    options?: PaneOptions
+    DrawPaneClass: new (chart: Chart, options: PickRequired<PaneOptions, 'id'>) => P,
+    options: PickRequired<PaneOptions, 'id'>
   ): P {
-    const pane = new DrawPaneClass(this, id, options ?? {})
+    const pane = new DrawPaneClass(this, options)
     this._drawPanes.push(pane)
     return pane
-  }
-
-  private _recalculatePaneHeight (currentPane: DrawPane, currentHeight: number, changeHeight: number): boolean {
-    if (changeHeight === 0) {
-      return false
-    }
-    const normalStatePanes = this._drawPanes.filter(pane => {
-      const paneId = pane.getId()
-      return (
-        pane.getOptions().state === 'normal' &&
-        paneId !== currentPane.getId() &&
-        paneId !== PaneIdConstants.X_AXIS
-      )
-    })
-
-    const count = normalStatePanes.length
-    if (count === 0) {
-      return false
-    }
-    if (
-      currentPane.getId() !== PaneIdConstants.CANDLE &&
-      isValid(this._candlePane) &&
-      this._candlePane.getOptions().state === 'normal'
-    ) {
-      const height = this._candlePane.getBounding().height
-      if (height > 0) {
-        const minHeight = this._candlePane.getOptions().minHeight
-        let newHeight = height + changeHeight
-        if (newHeight < minHeight) {
-          newHeight = minHeight
-          currentHeight -= (height + changeHeight - newHeight)
-        }
-        this._candlePane.setBounding({ height: newHeight })
-      }
-    } else {
-      let remainingHeight = changeHeight
-      const normalStatePaneChangeHeight = Math.floor(changeHeight / count)
-      normalStatePanes.forEach((pane, index) => {
-        const height = pane.getBounding().height
-        let newHeight = 0
-        if (index === count - 1) {
-          newHeight = height + remainingHeight
-        } else {
-          newHeight = height + normalStatePaneChangeHeight
-        }
-        if (newHeight < pane.getOptions().minHeight) {
-          newHeight = pane.getOptions().minHeight
-        }
-        pane.setBounding({ height: newHeight })
-        remainingHeight -= (newHeight - height)
-      })
-      if (Math.abs(remainingHeight) > 0) {
-        currentHeight -= remainingHeight
-      }
-    }
-    currentPane.setBounding({ height: currentHeight })
-    return true
   }
 
   getDrawPaneById (paneId: string): Nullable<DrawPane> {
@@ -376,7 +267,7 @@ export default class ChartImp implements Chart {
         if (isValid(this._separatorPanes.get(pane))) {
           remainingHeight -= separatorSize
         }
-        if (paneId !== PaneIdConstants.X_AXIS && paneId !== PaneIdConstants.CANDLE && pane.getVisible()) {
+        if (paneId !== PaneIdConstants.X_AXIS && paneId !== PaneIdConstants.CANDLE) {
           let paneHeight = pane.getBounding().height
           if (paneHeight > remainingHeight) {
             paneHeight = remainingHeight
@@ -703,30 +594,26 @@ export default class ChartImp implements Chart {
     this._chartStore.setDataLoader(dataLoader)
   }
 
-  createIndicator (value: string | IndicatorCreate, isStack?: boolean, paneOptions?: PaneOptions): Nullable<string> {
+  createIndicator (value: string | IndicatorCreate, isStack?: boolean): Nullable<string> {
     const indicator = isString(value) ? { name: value } : value
     if (getIndicatorClass(indicator.name) === null) {
       logWarn('createIndicator', 'value', 'indicator not supported, you may need to use registerIndicator to add one!!!')
       return null
     }
-
-    const paneOpts = paneOptions ?? {}
-
-    if (!isString(paneOpts.id)) {
-      paneOpts.id = createId(PaneIdConstants.INDICATOR)
+    if (!isValid(indicator.paneId)) {
+      indicator.paneId = createId(PaneIdConstants.INDICATOR)
     }
     if (!isString(indicator.id)) {
       indicator.id = createId(indicator.name)
     }
-    const result = this._chartStore.addIndicator(indicator as PickRequired<IndicatorCreate, 'id' | 'name'>, paneOpts.id, isStack ?? false)
+
+    const result = this._chartStore.addIndicator(indicator as PickRequired<IndicatorCreate, 'id' | 'name'>, isStack ?? false)
     if (result) {
       let shouldSort = false
-      if (!isValid(this.getDrawPaneById(paneOpts.id))) {
-        this._createPane(IndicatorPane, paneOpts.id, paneOpts)
-        paneOpts.height ??= PANE_DEFAULT_HEIGHT
+      if (!isValid(this.getDrawPaneById(indicator.paneId))) {
+        this._createPane(IndicatorPane, { id: indicator.paneId })
         shouldSort = true
       }
-      this.setPaneOptions(paneOpts)
       this.layout({
         sort: shouldSort,
         measureHeight: true,
@@ -766,16 +653,11 @@ export default class ChartImp implements Chart {
           const pane = this._drawPanes[index]
           if (isValid(pane)) {
             shouldMeasureHeight = true
-            this._recalculatePaneHeight(pane, 0, pane.getBounding().height)
             this._drawPanes.splice(index, 1)
             pane.destroy()
           }
         }
       })
-      if (this._drawPanes.length === 2) {
-        this._candlePane.setVisible(true)
-        this._candlePane.setBounding({ height: this._chartBounding.height - this._xAxisPane.getBounding().height })
-      }
       this.layout({
         sort: shouldMeasureHeight,
         measureHeight: shouldMeasureHeight,
@@ -849,93 +731,13 @@ export default class ChartImp implements Chart {
             const height = Math.max(minHeight, options.height)
             shouldLayout = true
             shouldMeasureHeight = true
-            currentPane.setOriginalBounding({ height })
-            this._recalculatePaneHeight(currentPane, height, -height)
-          }
-          if (
-            isValid(options.state) &&
-            currentPane.getOptions().state !== options.state
-          ) {
-            shouldMeasureHeight = true
-            shouldLayout = true
-            const state = options.state
-            switch (state) {
-              case 'maximize': {
-                const maximizePane = this._drawPanes.find(pane => {
-                  const paneId = pane.getId()
-                  return pane.getOptions().state === 'maximize' && paneId !== PaneIdConstants.X_AXIS
-                })
-                if (!isValid(maximizePane)) {
-                  if (currentPane.getOptions().state === 'normal') {
-                    currentPane.setOriginalBounding({ height: currentPane.getBounding().height })
-                  }
-                  currentPane.setOptions({ state })
-                  const totalHeight = this._chartBounding.height
-                  currentPane.setBounding({ height: totalHeight - this._xAxisPane.getBounding().height })
-                  this._drawPanes.forEach(pane => {
-                    if (pane.getId() !== PaneIdConstants.X_AXIS && pane.getId() !== currentPaneId) {
-                      pane.setBounding({ height: pane.getOriginalBounding().height })
-                      pane.setVisible(false)
-                      this._separatorPanes.get(pane)?.setVisible(false)
-                    }
-                  })
-                }
-                break
-              }
-              case 'minimize': {
-                const height = currentPane.getBounding().height
-                const currentState = currentPane.getOptions().state
-                let changeHeight = height - PANE_MIN_HEIGHT
-                if (currentState === 'maximize') {
-                  changeHeight = currentPane.getOriginalBounding().height - PANE_MIN_HEIGHT
-                }
-                if (
-                  this._recalculatePaneHeight(
-                    currentPane,
-                    PANE_MIN_HEIGHT,
-                    changeHeight
-                  )
-                ) {
-                  if (currentState === 'normal') {
-                    currentPane.setOriginalBounding({ height })
-                  }
-                  currentPane.setOptions({ state })
-                }
-                this._drawPanes.forEach(pane => {
-                  if (pane.getId() !== PaneIdConstants.X_AXIS) {
-                    pane.setVisible(true)
-                    this._separatorPanes.get(pane)?.setVisible(true)
-                  }
-                })
-                break
-              }
-              default: {
-                const height = currentPane.getOriginalBounding().height
-                if (
-                  this._recalculatePaneHeight(
-                    currentPane,
-                    height,
-                    currentPane.getBounding().height - height
-                  )
-                ) {
-                  currentPane.setOptions({ state })
-                }
-                this._drawPanes.forEach(pane => {
-                  if (pane.getId() !== PaneIdConstants.X_AXIS) {
-                    pane.setVisible(true)
-                    this._separatorPanes.get(pane)?.setVisible(true)
-                  }
-                })
-                break
-              }
-            }
+            currentPane.setBounding({ height })
           }
         }
         if (isValid(options.axis)) {
           shouldLayout = true
         }
         const ops = { ...options }
-        delete ops.state
         currentPane.setOptions(ops)
         if (currentPaneId === options.id) {
           break

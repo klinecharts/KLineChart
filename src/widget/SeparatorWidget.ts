@@ -64,30 +64,8 @@ export default class SeparatorWidget extends Widget<SeparatorPane> {
     this._dragFlag = true
     this._dragStartY = event.pageY
     const pane = this.getPane()
-    const chart = pane.getChart()
     this._topPane = pane.getTopPane()
     this._bottomPane = pane.getBottomPane()
-    const drawPanes = chart.getDrawPanes()
-    if (this._topPane.getOptions().state === 'minimize') {
-      const index = drawPanes.findIndex(pane => pane.getId() === this._topPane?.getId())
-      for (let i = index - 1; i > -1; i--) {
-        const pane = drawPanes[i]
-        if (pane.getOptions().state !== 'minimize') {
-          this._topPane = pane
-          break
-        }
-      }
-    }
-    if (this._bottomPane.getOptions().state === 'minimize') {
-      const index = drawPanes.findIndex(pane => pane.getId() === this._bottomPane?.getId())
-      for (let i = index + 1; i < drawPanes.length; i++) {
-        const pane = drawPanes[i]
-        if (pane.getOptions().state !== 'minimize') {
-          this._bottomPane = pane
-          break
-        }
-      }
-    }
     this._topPaneHeight = this._topPane.getBounding().height
     this._bottomPaneHeight = this._bottomPane.getBounding().height
     return true
@@ -112,8 +90,6 @@ export default class SeparatorWidget extends Widget<SeparatorPane> {
     if (isValid(this._topPane) && isValid(this._bottomPane)) {
       const bottomPaneOptions = this._bottomPane.getOptions()
       if (
-        this._topPane.getOptions().state !== 'minimize' &&
-        bottomPaneOptions.state !== 'minimize' &&
         bottomPaneOptions.dragEnabled
       ) {
         let reducedPane: Nullable<DrawPane> = null

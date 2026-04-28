@@ -43,11 +43,9 @@ export default class IndicatorWidget extends DrawWidget<DrawPane<YAxis>> {
   }
 
   protected updateMain (ctx: CanvasRenderingContext2D): void {
-    if (this.getPane().getOptions().state !== 'minimize') {
-      this.updateMainContent(ctx)
-      this._indicatorView.draw(ctx)
-      this._gridView.draw(ctx)
-    }
+    this.updateMainContent(ctx)
+    this._indicatorView.draw(ctx)
+    this._gridView.draw(ctx)
   }
 
   protected createTooltipView (): IndicatorTooltipView {
@@ -63,11 +61,9 @@ export default class IndicatorWidget extends DrawWidget<DrawPane<YAxis>> {
   }
 
   override updateOverlay (ctx: CanvasRenderingContext2D): void {
-    if (this.getPane().getOptions().state !== 'minimize') {
-      this._overlayView.draw(ctx)
-      this._crosshairLineView.draw(ctx)
-      this.updateOverlayContent(ctx)
-    }
+    this._overlayView.draw(ctx)
+    this._crosshairLineView.draw(ctx)
+    this.updateOverlayContent(ctx)
     this._tooltipView.draw(ctx)
   }
 }

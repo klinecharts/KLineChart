@@ -13,6 +13,8 @@
  */
 
 import type DeepRequired from '../common/DeepRequired'
+import type PickRequired from '../common/PickRequired'
+
 import type Nullable from '../common/Nullable'
 import type { UpdateLevel } from '../common/Updater'
 import type Bounding from '../common/Bounding'
@@ -45,12 +47,12 @@ export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
     dragEnabled: true,
     order: 0,
     height: PANE_DEFAULT_HEIGHT,
-    state: 'normal',
+    // state: 'normal',
     axis: { name: 'normal', scrollZoomEnabled: true }
   }
 
-  constructor (chart: Chart, id: string, options: Omit<PaneOptions, 'id' | 'height'>) {
-    super(chart, id)
+  constructor (chart: Chart, options: PickRequired<PaneOptions, 'id'>) {
+    super(chart, options.id)
     const container = this.getContainer()
     this._mainWidget = this.createMainWidget(container)
     this._yAxisWidget = this.createYAxisWidget(container)
@@ -94,6 +96,7 @@ export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
     } else {
       container.style.cursor = 'default'
     }
+    this.setBounding({ height: this._options.height })
     return this
   }
 

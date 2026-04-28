@@ -14,7 +14,7 @@
 
 import type { AxisCreate } from '../component/Axis'
 
-export type PaneState = 'normal' | 'maximize' | 'minimize'
+// export type PaneState = 'normal' | 'maximize' | 'minimize'
 
 export interface PaneOptions {
   id?: string
@@ -22,7 +22,6 @@ export interface PaneOptions {
   minHeight?: number
   dragEnabled?: boolean
   order?: number
-  state?: PaneState,
   axis?: Partial<AxisCreate>
 }
 
