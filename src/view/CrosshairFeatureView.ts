@@ -60,7 +60,7 @@ export default class CrosshairFeatureView extends View<YAxis> {
     const chartStore = widget.getPane().getChart().getChartStore()
     const crosshair = chartStore.getCrosshair()
     const weight = this.getWidget()
-    const yAxis = weight.getPane().getAxisComponent()
+    const yAxis = weight.getPane().getYAxisComponentById()
     if (isString(crosshair.paneId) && crosshair.paneId === pane.getId() && yAxis.isInCandle()) {
       const styles = chartStore.getStyles().crosshair
       const features = styles.horizontal.features

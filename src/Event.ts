@@ -21,12 +21,13 @@ import { requestAnimationFrame, cancelAnimationFrame } from './common/utils/comp
 import { isValid } from './common/utils/typeChecks'
 
 import type { AxisRange } from './component/Axis'
-import type YAxis from './component/YAxis'
+import type YAxisImp from './component/YAxis'
 import type XAxis from './component/XAxis'
 
 import type Chart from './Chart'
 import type Pane from './pane/Pane'
 import type DrawPane from './pane/DrawPane'
+import type XAxisPane from './pane/XAxisPane'
 import { PaneIdConstants } from './pane/types'
 import type Widget from './widget/Widget'
 import type YAxisWidget from './widget/YAxisWidget'
@@ -69,11 +70,11 @@ export default class Event implements EventHandler {
 
   private _mouseMoveTriggerWidgetInfo: EventTriggerWidgetInfo = { pane: null, widget: null }
 
-  private _getYAxisByWidget (widget: Widget<DrawPane<YAxis>>): YAxis {
+  private _getYAxisByWidget (widget: Widget<DrawPane<YAxisImp>>): YAxisImp {
     if (widget.getName() === WidgetNameConstants.Y_AXIS) {
-      return (widget as unknown as YAxisWidget).getAxisComponent() as unknown as YAxis
+      return (widget as unknown as YAxisWidget).getAxisComponent() as unknown as YAxisImp
     }
-    return widget.getPane().getAxisComponent()
+    return widget.getPane().getYAxisComponentById() as unknown as YAxisImp
   }
 
   private readonly _boundKeyBoardDownEvent: ((event: KeyboardEvent) => void) = (event: KeyboardEvent) => {
@@ -163,7 +164,7 @@ export default class Event implements EventHandler {
           return widget.dispatchEvent('mouseDownEvent', event)
         }
         case WidgetNameConstants.MAIN: {
-          const yAxis = (pane as DrawPane<YAxis>).getAxisComponent()
+          const yAxis = (pane as DrawPane<YAxisImp>).getYAxisComponentById() as unknown as YAxisImp
           if (!yAxis.getAutoCalcTickFlag()) {
             const range = yAxis.getRange()
             this._prevYAxisRange = { ...range }
@@ -176,7 +177,7 @@ export default class Event implements EventHandler {
           return this._processXAxisScrollStartEvent(widget, event)
         }
         case WidgetNameConstants.Y_AXIS: {
-          return this._processYAxisScaleStartEvent(widget as Widget<DrawPane<YAxis>>, event)
+          return this._processYAxisScaleStartEvent(widget as Widget<DrawPane<YAxisImp>>, event)
         }
       }
     }
@@ -241,7 +242,7 @@ export default class Event implements EventHandler {
           let crosshair: Crosshair | undefined
           const consumed = widget.dispatchEvent('pressedMouseMoveEvent', event)
           if (!consumed) {
-            this._processMainScrollingEvent(widget as Widget<DrawPane<YAxis>>, event)
+            this._processMainScrollingEvent(widget as Widget<DrawPane<YAxisImp>>, event)
           }
           if (!consumed || widget.getForceCursor() === 'pointer') {
             crosshair = { x: event.x, y: event.y, paneId: pane?.getId() }
@@ -253,7 +254,7 @@ export default class Event implements EventHandler {
           return this._processXAxisScrollingEvent(widget as Widget<DrawPane<XAxis>>, event)
         }
         case WidgetNameConstants.Y_AXIS: {
-          return this._processYAxisScalingEvent(widget as Widget<DrawPane<YAxis>>, event)
+          return this._processYAxisScalingEvent(widget as Widget<DrawPane<YAxisImp>>, event)
         }
       }
     }
@@ -329,7 +330,7 @@ export default class Event implements EventHandler {
           return widget.dispatchEvent('mouseDoubleClickEvent', event)
         }
         case WidgetNameConstants.Y_AXIS: {
-          const yAxis = this._getYAxisByWidget(widget as Widget<DrawPane<YAxis>>)
+          const yAxis = this._getYAxisByWidget(widget as Widget<DrawPane<YAxisImp>>)
           if (!yAxis.getAutoCalcTickFlag()) {
             yAxis.setAutoCalcTickFlag(true)
             this._chart.layout({
@@ -372,7 +373,7 @@ export default class Event implements EventHandler {
             this._flingScrollRequestId = null
           }
           this._flingStartTime = new Date().getTime()
-          const yAxis = (pane as DrawPane<YAxis>).getAxisComponent()
+          const yAxis = (pane as DrawPane<YAxisImp>).getYAxisComponentById() as unknown as YAxisImp
           if (!yAxis.getAutoCalcTickFlag()) {
             const range = yAxis.getRange()
             this._prevYAxisRange = { ...range }
@@ -399,7 +400,7 @@ export default class Event implements EventHandler {
           return this._processXAxisScrollStartEvent(widget, event)
         }
         case WidgetNameConstants.Y_AXIS: {
-          return this._processYAxisScaleStartEvent(widget as Widget<DrawPane<YAxis>>, event)
+          return this._processYAxisScaleStartEvent(widget as Widget<DrawPane<YAxisImp>>, event)
         }
       }
     }
@@ -424,7 +425,7 @@ export default class Event implements EventHandler {
             event.preventDefault?.()
             chartStore.setCrosshair({ x: event.x, y: event.y, paneId: pane?.getId() })
           } else {
-            this._processMainScrollingEvent(widget as Widget<DrawPane<YAxis>>, event)
+            this._processMainScrollingEvent(widget as Widget<DrawPane<YAxisImp>>, event)
           }
           return true
         }
@@ -433,7 +434,7 @@ export default class Event implements EventHandler {
           return this._processXAxisScrollingEvent(widget as Widget<DrawPane<XAxis>>, event)
         }
         case WidgetNameConstants.Y_AXIS: {
-          return this._processYAxisScalingEvent(widget as Widget<DrawPane<YAxis>>, event)
+          return this._processYAxisScalingEvent(widget as Widget<DrawPane<YAxisImp>>, event)
         }
       }
     }
@@ -537,7 +538,7 @@ export default class Event implements EventHandler {
     return false
   }
 
-  private _processMainScrollingEvent (widget: Widget<DrawPane<YAxis>>, event: MouseTouchEvent): void {
+  private _processMainScrollingEvent (widget: Widget<DrawPane<YAxisImp>>, event: MouseTouchEvent): void {
     if (this._startScrollCoordinate !== null) {
       const yAxis = this._getYAxisByWidget(widget)
       if (this._prevYAxisRange !== null && !yAxis.getAutoCalcTickFlag() && yAxis.scrollZoomEnabled) {
@@ -588,7 +589,7 @@ export default class Event implements EventHandler {
   private _processXAxisScrollingEvent (widget: Widget<DrawPane<XAxis>>, event: MouseTouchEvent): boolean {
     const consumed = widget.dispatchEvent('pressedMouseMoveEvent', event)
     if (!consumed) {
-      const xAxis = widget.getPane().getAxisComponent()
+      const xAxis = (widget.getPane() as unknown as XAxisPane).getXAxisComponent()
       if (xAxis.scrollZoomEnabled && this._xAxisStartScaleDistance !== 0) {
         const scale = this._xAxisStartScaleDistance / event.pageX
         if (Number.isFinite(scale)) {
@@ -603,7 +604,7 @@ export default class Event implements EventHandler {
     return consumed
   }
 
-  private _processYAxisScaleStartEvent (widget: Widget<DrawPane<YAxis>>, event: MouseTouchEvent): boolean {
+  private _processYAxisScaleStartEvent (widget: Widget<DrawPane<YAxisImp>>, event: MouseTouchEvent): boolean {
     const consumed = widget.dispatchEvent('mouseDownEvent', event)
     if (consumed) {
       this._chart.updatePane(UpdateLevel.Overlay)
@@ -614,7 +615,7 @@ export default class Event implements EventHandler {
     return consumed
   }
 
-  private _processYAxisScalingEvent (widget: Widget<DrawPane<YAxis>>, event: MouseTouchEvent): boolean {
+  private _processYAxisScalingEvent (widget: Widget<DrawPane<YAxisImp>>, event: MouseTouchEvent): boolean {
     const consumed = widget.dispatchEvent('pressedMouseMoveEvent', event)
     if (!consumed) {
       const yAxis = this._getYAxisByWidget(widget)

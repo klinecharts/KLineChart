@@ -34,7 +34,7 @@ export default class CandleLastPriceLabelView extends View {
     const lastPriceMarkTextStyles = lastPriceMarkStyles.text
     if (priceMarkStyles.show && lastPriceMarkStyles.show && lastPriceMarkTextStyles.show) {
       const precision = chartStore.getSymbol()?.pricePrecision ?? SymbolDefaultPrecisionConstants.PRICE
-      const yAxis = pane.getAxisComponent() as YAxis
+      const yAxis = pane.getYAxisComponentById() as YAxis
       const dataList = chartStore.getDataList()
       const data = dataList[dataList.length - 1]
       if (isValid(data)) {

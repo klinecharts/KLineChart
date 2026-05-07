@@ -32,7 +32,7 @@ export default class GridView extends View {
       const horizontalStyles = styles.horizontal
       const horizontalShow = horizontalStyles.show
       if (horizontalShow) {
-        const yAxis = pane.getAxisComponent()
+        const yAxis = pane.getYAxisComponentById()
         const attrs: LineAttrs[] = yAxis.getTicks().map(tick => ({
           coordinates: [
             { x: 0, y: tick.coord },
@@ -48,7 +48,7 @@ export default class GridView extends View {
       const verticalStyles = styles.vertical
       const verticalShow = verticalStyles.show
       if (verticalShow) {
-        const xAxis = chart.getXAxisPane().getAxisComponent()
+        const xAxis = chart.getXAxisPane().getXAxisComponent()
         const attrs: LineAttrs[] = xAxis.getTicks().map(tick => ({
           coordinates: [
             { x: tick.coord, y: 0 },

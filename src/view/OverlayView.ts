@@ -345,14 +345,14 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     const paneId = pane.getId()
     const chartStore = chart.getChartStore()
     if (this.coordinateToPointTimestampDataIndexFlag()) {
-      const xAxis = chart.getXAxisPane().getAxisComponent()
+      const xAxis = chart.getXAxisPane().getXAxisComponent()
       const dataIndex = xAxis.convertFromPixel(coordinate.x)
       const timestamp = chartStore.dataIndexToTimestamp(dataIndex) ?? undefined
       point.timestamp = timestamp
       point.dataIndex = dataIndex
     }
     if (this.coordinateToPointValueFlag()) {
-      const yAxis = pane.getAxisComponent()
+      const yAxis = pane.getYAxisComponentById()
       let value = yAxis.convertFromPixel(coordinate.y)
       if (o.mode !== 'normal' && paneId === PaneIdConstants.CANDLE && isNumber(point.dataIndex)) {
         const kLineData = chartStore.getDataByDataIndex(point.dataIndex)
@@ -442,8 +442,8 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     const pane = this.getWidget().getPane()
     const chart = pane.getChart()
     const chartStore = chart.getChartStore()
-    const yAxis = pane.getAxisComponent() as unknown as Nullable<YAxis>
-    const xAxis = chart.getXAxisPane().getAxisComponent()
+    const yAxis = pane.getYAxisComponentById() as unknown as Nullable<YAxis>
+    const xAxis = chart.getXAxisPane().getXAxisComponent()
     const coordinates = points.map(point => {
       let dataIndex: Nullable<number> = null
       if (isNumber(point.timestamp)) {
@@ -516,8 +516,8 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     const widget = this.getWidget()
     const pane = widget.getPane()
     const chart = pane.getChart()
-    const yAxis = pane.getAxisComponent() as unknown as Nullable<YAxis>
-    const xAxis = chart.getXAxisPane().getAxisComponent()
+    const yAxis = pane.getYAxisComponentById() as unknown as Nullable<YAxis>
+    const xAxis = chart.getXAxisPane().getXAxisComponent()
     const bounding = widget.getBounding()
     return o.createPointFigures?.({ chart, overlay: o, coordinates, bounding, xAxis, yAxis }) ?? []
   }

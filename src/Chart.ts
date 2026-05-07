@@ -259,7 +259,7 @@ export default class ChartImp implements Chart {
     if (measureHeight) {
       const totalHeight = this._chartBounding.height
       const separatorSize = this.getStyles().separator.size
-      const xAxisHeight = this._xAxisPane.getAxisComponent().getAutoSize()
+      const xAxisHeight = this._xAxisPane.getXAxisComponent().getAutoSize()
       let remainingHeight = totalHeight - xAxisHeight
       if (remainingHeight < 0) {
         remainingHeight = 0
@@ -298,8 +298,8 @@ export default class ChartImp implements Chart {
     let forceMeasureWidth = measureWidth
     if (buildYAxisTick || forceBuildYAxisTick) {
       this._drawPanes.forEach(pane => {
-        pane.getAxisComponents().forEach(axis => {
-          const success = (axis as AxisImp).buildTicks(forceBuildYAxisTick)
+        pane.getYAxisComponents().forEach(axis => {
+          const success = (axis as unknown as AxisImp).buildTicks(forceBuildYAxisTick)
           forceMeasureWidth ||= success
         })
       })
@@ -322,9 +322,9 @@ export default class ChartImp implements Chart {
         const leftInsideAxes: YAxis[] = []
         const rightInsideAxes: YAxis[] = []
         const rightOutsideAxes: YAxis[] = []
-        pane.getAxisComponents().forEach(axis => {
+        pane.getYAxisComponents().forEach(axis => {
           if (pane.getId() !== PaneIdConstants.X_AXIS) {
-            const yAxis = axis as YAxis
+            const yAxis = axis
             if (yAxis.position === 'left') {
               if (yAxis.inside) {
                 leftInsideAxes.push(yAxis)
@@ -390,9 +390,9 @@ export default class ChartImp implements Chart {
         const leftInsideAxes: YAxis[] = []
         const rightInsideAxes: YAxis[] = []
         const rightOutsideAxes: YAxis[] = []
-        pane.getAxisComponents().forEach(axis => {
+        pane.getYAxisComponents().forEach(axis => {
           if (pane.getId() !== PaneIdConstants.X_AXIS) {
-            const yAxis = axis as YAxis
+            const yAxis = axis
             if (yAxis.position === 'left') {
               if (yAxis.inside) {
                 leftInsideAxes.push(yAxis)
@@ -433,7 +433,7 @@ export default class ChartImp implements Chart {
       })
     }
     if (update) {
-      (this._xAxisPane.getAxisComponent() as unknown as AxisImp).buildTicks(true)
+      (this._xAxisPane.getXAxisComponent() as unknown as AxisImp).buildTicks(true)
       this.updatePane(UpdateLevel.All)
     }
     this._layoutOptions = {
@@ -507,8 +507,8 @@ export default class ChartImp implements Chart {
 
   private _resetYAxisAutoCalcTickFlag (): void {
     this._drawPanes.forEach(pane => {
-      pane.getAxisComponents().forEach(axis => {
-        (axis as AxisImp).setAutoCalcTickFlag(true)
+      pane.getYAxisComponents().forEach(axis => {
+        (axis as unknown as AxisImp).setAutoCalcTickFlag(true)
       })
     })
   }
@@ -933,8 +933,8 @@ export default class ChartImp implements Chart {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- ignore
         // @ts-expect-error
         const ps: Array<Partial<Point>> = [].concat(points)
-        const xAxis = this._xAxisPane.getAxisComponent()
-        const yAxis = pane.getAxisComponentById(yAxisId)
+        const xAxis = this._xAxisPane.getXAxisComponent()
+        const yAxis = pane.getYAxisComponentById(yAxisId)
         coordinates = ps.map(point => {
           const coordinate: Partial<Coordinate> = {}
           let dataIndex = point.dataIndex
@@ -965,8 +965,8 @@ export default class ChartImp implements Chart {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- ignore
         // @ts-expect-error
         const cs: Array<Partial<Coordinate>> = [].concat(coordinates)
-        const xAxis = this._xAxisPane.getAxisComponent()
-        const yAxis = pane.getAxisComponentById(yAxisId)
+        const xAxis = this._xAxisPane.getXAxisComponent()
+        const yAxis = pane.getYAxisComponentById(yAxisId)
         points = cs.map(coordinate => {
           const point: Partial<Point> = {}
           if (isNumber(coordinate.x)) {

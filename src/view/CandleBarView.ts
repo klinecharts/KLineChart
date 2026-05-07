@@ -54,7 +54,7 @@ export default class CandleBarView extends ChildrenView {
         }
         halfOhlcSize = Math.floor(ohlcSize / 2)
       }
-      const yAxis = pane.getAxisComponent()
+      const yAxis = pane.getYAxisComponentById()
       this.eachChildren((visibleData, barSpace) => {
         const { x, data: { current, prev } } = visibleData
         if (isValid(current)) {

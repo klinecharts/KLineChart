@@ -245,7 +245,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
             rectX = realX + rectOffsetLeft
           }
         } else {
-          const yAxis = this.getWidget().getPane().getAxisComponent()
+          const yAxis = this.getWidget().getPane().getYAxisComponentById()
           if (isLeft) {
             rectX = rectOffsetLeft + offsetLeft
             if (yAxis.inside && yAxis.position === 'left') {

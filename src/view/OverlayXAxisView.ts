@@ -76,8 +76,8 @@ export default class OverlayXAxisView extends OverlayYAxisView<XAxis> {
     const widget = this.getWidget()
     const pane = widget.getPane()
     const chart = pane.getChart()
-    const yAxis = pane.getAxisComponent() as unknown as Nullable<YAxis>
-    const xAxis = chart.getXAxisPane().getAxisComponent()
+    const yAxis = pane.getYAxisComponentById() as unknown as Nullable<YAxis>
+    const xAxis = chart.getXAxisPane().getXAxisComponent()
     const bounding = widget.getBounding()
     return o.createXAxisFigures?.({ chart, overlay: o, coordinates, bounding, xAxis, yAxis }) ?? []
   }

@@ -58,7 +58,7 @@ export default class OverlayYAxisView<C extends Axis = YAxis> extends OverlayVie
       overlay.id === clickOverlayInfo.overlay?.id &&
       clickOverlayInfo.paneId === pane.getId()
     ) {
-      const yAxis = pane.getAxisComponent() as unknown as YAxisImp
+      const yAxis = pane.getYAxisComponentById() as unknown as YAxisImp
       const bounding = widget.getBounding()
       let topY = Number.MAX_SAFE_INTEGER
       let bottomY = Number.MIN_SAFE_INTEGER
@@ -97,8 +97,8 @@ export default class OverlayYAxisView<C extends Axis = YAxis> extends OverlayVie
     const widget = this.getWidget()
     const pane = widget.getPane()
     const chart = pane.getChart()
-    const yAxis = pane.getAxisComponent() as unknown as Nullable<YAxis>
-    const xAxis = chart.getXAxisPane().getAxisComponent()
+    const yAxis = pane.getYAxisComponentById() as unknown as Nullable<YAxis>
+    const xAxis = chart.getXAxisPane().getXAxisComponent()
     const bounding = widget.getBounding()
     return overlay.createYAxisFigures?.({ chart, overlay, coordinates, bounding, xAxis, yAxis }) ?? []
   }

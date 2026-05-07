@@ -12,17 +12,50 @@
  * limitations under the License.
  */
 
+import { isValid } from '../common/utils/typeChecks'
+import type PickRequired from '../common/PickRequired'
+
 import type DrawWidget from '../widget/DrawWidget'
 import XAxisWidget from '../widget/XAxisWidget'
 
 import type { XAxis } from '../component/XAxis'
 
 import DrawPane from './DrawPane'
+import type { PaneOptions } from './types'
 
 import { getXAxisClass } from '../extension/x-axis'
 
+import type Chart from '../Chart'
+
 export default class XAxisPane extends DrawPane<XAxis> {
-  override createAxisComponent (name: string): XAxis {
+  private _xAxis: XAxis
+
+  constructor (chart: Chart, options: PickRequired<PaneOptions, 'id'>) {
+    super(chart, options)
+    this._xAxis = this.createXAxisComponent(options.axis?.name ?? 'normal')
+  }
+
+  override setOptions (options: PaneOptions): this {
+    const axisName = options.axis?.name
+    if (
+      !isValid(this._xAxis) ||
+      (isValid(axisName) && this.getOptions().axis.name !== axisName)
+    ) {
+      this._xAxis = this.createXAxisComponent(axisName ?? 'normal')
+    }
+    super.setOptions(options)
+    this._xAxis.override({
+      ...this.getOptions().axis,
+      name: options.axis?.name ?? 'normal'
+    })
+    return this
+  }
+
+  getXAxisComponent (): XAxis {
+    return this._xAxis
+  }
+
+  private createXAxisComponent (name: string): XAxis {
     const XAxisClass = getXAxisClass(name)
     return new XAxisClass(this)
   }

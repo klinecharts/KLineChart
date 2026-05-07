@@ -107,7 +107,6 @@ function getDefaultAxisRange (): AxisRange {
 }
 
 export default abstract class AxisImp implements Axis {
-  id: string
   name: string
   scrollZoomEnabled = true
   createTicks: AxisCreateTicksCallback

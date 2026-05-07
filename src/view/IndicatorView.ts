@@ -25,7 +25,7 @@ import CandleBarView, { type CandleBarOptions } from './CandleBarView'
 export default class IndicatorView extends CandleBarView {
   override getCandleBarOptions (): Nullable<CandleBarOptions> {
     const pane = this.getWidget().getPane()
-    const yAxis = pane.getAxisComponent()
+    const yAxis = pane.getYAxisComponentById()
     if (!yAxis.isInCandle()) {
       const chartStore = pane.getChart().getChartStore()
       const indicators = chartStore.getIndicatorsByPaneId(pane.getId())
@@ -64,13 +64,13 @@ export default class IndicatorView extends CandleBarView {
     const pane = widget.getPane()
     const chart = pane.getChart()
     const bounding = widget.getBounding()
-    const xAxis = chart.getXAxisPane().getAxisComponent()
+    const xAxis = chart.getXAxisPane().getXAxisComponent()
     const chartStore = chart.getChartStore()
     const indicators = chartStore.getIndicatorsByPaneId(pane.getId())
     const defaultStyles = chartStore.getStyles().indicator
     ctx.save()
     indicators.forEach(indicator => {
-      const yAxis = pane.getAxisComponentById(indicator.yAxisId)
+      const yAxis = pane.getYAxisComponentById(indicator.yAxisId)
       if (indicator.visible) {
         if (indicator.zLevel < 0) {
           ctx.globalCompositeOperation = 'destination-over'

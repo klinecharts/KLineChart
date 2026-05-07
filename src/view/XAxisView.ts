@@ -22,8 +22,13 @@ import type { AxisTick } from '../component/Axis'
 import type { XAxis } from '../component/XAxis'
 
 import AxisView from './AxisView'
+import type XAxisPane from '../pane/XAxisPane'
 
 export default class XAxisView extends AxisView<XAxis> {
+  protected override getAxis (): XAxis {
+    return (this.getWidget().getPane() as unknown as XAxisPane).getXAxisComponent()
+  }
+
   override getAxisStyles (styles: Styles): AxisStyle {
     return styles.xAxis
   }

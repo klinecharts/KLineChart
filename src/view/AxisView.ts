@@ -27,9 +27,7 @@ export default abstract class AxisView<C extends Axis = Axis> extends View<C> {
     const widget = this.getWidget()
     const pane = widget.getPane()
     const bounding = widget.getBounding()
-    const axis = 'getAxisComponent' in widget
-      ? (widget as unknown as { getAxisComponent: () => Axis }).getAxisComponent()
-      : pane.getAxisComponent()
+    const axis = this.getAxis()
     const styles: AxisStyle = this.getAxisStyles(pane.getChart().getStyles())
     if (styles.show) {
       if (styles.axisLine.show) {
@@ -62,6 +60,8 @@ export default abstract class AxisView<C extends Axis = Axis> extends View<C> {
   }
 
   protected abstract getAxisStyles (styles: Styles): AxisStyle
+
+  protected abstract getAxis (): Axis
 
   protected abstract createAxisLine (bounding: Bounding, styles: AxisStyle): LineAttrs
   protected abstract createTickLines (ticks: AxisTick[], bounding: Bounding, styles: AxisStyle): LineAttrs[]

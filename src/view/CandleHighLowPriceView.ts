@@ -32,7 +32,7 @@ export default class CandleHighLowPriceView extends View<YAxis> {
     if (priceMarkStyles.show && (highPriceMarkStyles.show || lowPriceMarkStyles.show)) {
       const highestLowestPrice = chartStore.getVisibleRangeHighLowPrice()
       const precision = chartStore.getSymbol()?.pricePrecision ?? SymbolDefaultPrecisionConstants.PRICE
-      const yAxis = pane.getAxisComponent()
+      const yAxis = pane.getYAxisComponentById()
 
       const { price: high, x: highX } = highestLowestPrice[0]
       const { price: low, x: lowX } = highestLowestPrice[1]
