@@ -34,7 +34,7 @@ export default class IndicatorPane extends DrawPane<YAxis> {
     return new IndicatorWidget(container, this)
   }
 
-  override createYAxisWidget (container: HTMLElement): Nullable<YAxisWidget> {
-    return new YAxisWidget(container, this)
+  override createYAxisWidget (container: HTMLElement, yAxis: YAxis): Nullable<YAxisWidget> {
+    return new YAxisWidget(container, this, yAxis)
   }
 }

@@ -90,7 +90,7 @@ export interface Axis {
   convertFromPixel: (px: number) => number
 }
 
-export type AxisCreate = Omit<AxisTemplate, 'displayValueToText' | 'valueToRealValue' | 'realValueToDisplayValue' | 'displayValueToRealValue' | 'realValueToValue'>
+export type AxisCreate = Omit<AxisTemplate, 'displayValueToText' | 'valueToRealValue' | 'realValueToDisplayValue' | 'displayValueToRealValue' | 'realValueToValue'> & { id: string }
 
 function getDefaultAxisRange (): AxisRange {
   return {
@@ -107,6 +107,7 @@ function getDefaultAxisRange (): AxisRange {
 }
 
 export default abstract class AxisImp implements Axis {
+  id: string
   name: string
   scrollZoomEnabled = true
   createTicks: AxisCreateTicksCallback

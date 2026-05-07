@@ -65,12 +65,12 @@ export default class IndicatorView extends CandleBarView {
     const chart = pane.getChart()
     const bounding = widget.getBounding()
     const xAxis = chart.getXAxisPane().getAxisComponent()
-    const yAxis = pane.getAxisComponent()
     const chartStore = chart.getChartStore()
     const indicators = chartStore.getIndicatorsByPaneId(pane.getId())
     const defaultStyles = chartStore.getStyles().indicator
     ctx.save()
     indicators.forEach(indicator => {
+      const yAxis = pane.getAxisComponentById(indicator.yAxisId)
       if (indicator.visible) {
         if (indicator.zLevel < 0) {
           ctx.globalCompositeOperation = 'destination-over'

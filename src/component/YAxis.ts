@@ -28,13 +28,14 @@ import AxisImp, {
 
 import type DrawPane from '../pane/DrawPane'
 
-import { PaneIdConstants } from '../pane/types'
+import { PaneIdConstants, YAxisIdConstants } from '../pane/types'
 
 export type YAxisTemplate = AxisTemplate
 
 const TICK_COUNT = 8
 
 export interface YAxis extends Axis, Required<YAxisTemplate> {
+  id: string
   isFromZero: () => boolean
   isInCandle: () => boolean
   convertToNicePixel: (value: number) => number
@@ -43,6 +44,7 @@ export interface YAxis extends Axis, Required<YAxisTemplate> {
 export type YAxisConstructor = new (parent: DrawPane) => YAxis
 
 export default abstract class YAxisImp extends AxisImp implements YAxis {
+  id = YAxisIdConstants.DEFAULT
   reverse = false
   inside = false
   position: AxisPosition = 'right'
@@ -88,7 +90,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
     let specifyMin = Number.MAX_SAFE_INTEGER
     let specifyMax = Number.MIN_SAFE_INTEGER
     let indicatorPrecision = Number.MAX_SAFE_INTEGER
-    const indicators = chartStore.getIndicatorsByPaneId(paneId)
+    const indicators = chartStore.getIndicatorsByPaneId(paneId).filter(indicator => indicator.yAxisId === this.id)
     indicators.forEach(indicator => {
       shouldOhlc ||= indicator.shouldOhlc
       indicatorPrecision = Math.min(indicatorPrecision, indicator.precision)
@@ -102,6 +104,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
 
     let precision = 4
     const inCandle = this.isInCandle()
+    const isDefaultYAxis = this.id === YAxisIdConstants.DEFAULT
     if (inCandle) {
       const pricePrecision = chartStore.getSymbol()?.pricePrecision ?? SymbolDefaultPrecisionConstants.PRICE
       if (indicatorPrecision !== Number.MAX_SAFE_INTEGER) {
@@ -118,7 +121,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
     const candleStyles = chart.getStyles().candle
     const isArea = candleStyles.type === 'area'
     const areaValueKey = candleStyles.area.value
-    const shouldCompareHighLow = (inCandle && !isArea) || (!inCandle && shouldOhlc)
+    const shouldCompareHighLow = (inCandle && isDefaultYAxis && !isArea) || (!inCandle && shouldOhlc)
     visibleRangeDataList.forEach((visibleData) => {
       const dataIndex = visibleData.dataIndex
       const data = visibleData.data.current
@@ -127,7 +130,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
           min = Math.min(min, data.low)
           max = Math.max(max, data.high)
         }
-        if (inCandle && isArea) {
+        if (inCandle && isDefaultYAxis && isArea) {
           const value = data[areaValueKey]
           if (isNumber(value)) {
             min = Math.min(min, value)
@@ -265,11 +268,11 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
     const height = pane.getYAxisWidget()?.getBounding().height ?? 0
     const chartStore = pane.getChart().getChartStore()
     const optimalTicks: AxisTick[] = []
-    const indicators = chartStore.getIndicatorsByPaneId(pane.getId())
+    const indicators = chartStore.getIndicatorsByPaneId(pane.getId()).filter(indicator => indicator.yAxisId === this.id)
     const styles = chartStore.getStyles()
     let precision = 0
     let shouldFormatBigNumber = false
-    if (this.isInCandle()) {
+    if (this.isInCandle() && this.id === YAxisIdConstants.DEFAULT) {
       precision = chartStore.getSymbol()?.pricePrecision ?? SymbolDefaultPrecisionConstants.PRICE
     } else {
       indicators.forEach(indicator => {
@@ -369,7 +372,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
       }
 
       if (crosshairHorizontalTextVisible) {
-        const indicators = chartStore.getIndicatorsByPaneId(pane.getId())
+        const indicators = chartStore.getIndicatorsByPaneId(pane.getId()).filter(indicator => indicator.yAxisId === this.id)
         let indicatorPrecision = 0
         let shouldFormatBigNumber = false
         indicators.forEach(indicator => {
@@ -377,7 +380,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
           shouldFormatBigNumber ||= indicator.shouldFormatBigNumber
         })
         let precision = 2
-        if (this.isInCandle()) {
+        if (this.isInCandle() && this.id === YAxisIdConstants.DEFAULT) {
           const lastValueMarkStyles = styles.indicator.lastValueMark
           if (lastValueMarkStyles.show && lastValueMarkStyles.text.show) {
             precision = Math.max(indicatorPrecision, pricePrecision)

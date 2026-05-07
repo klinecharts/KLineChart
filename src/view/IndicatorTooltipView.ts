@@ -374,7 +374,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
         crosshair: chartStore.getCrosshair(),
         bounding: widget.getBounding(),
         xAxis: pane.getChart().getXAxisPane().getAxisComponent(),
-        yAxis: pane.getAxisComponent()
+        yAxis: pane.getAxisComponentById(indicator.yAxisId)
       })
       if (tooltipTitleStyles.show) {
         if (isString(customName) && tooltipTitleStyles.showName) {

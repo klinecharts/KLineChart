@@ -33,6 +33,7 @@ import type { RectAttrs } from '../extension/figure/rect'
 import type { TextAttrs } from '../extension/figure/text'
 import type { Chart } from '../Chart'
 import type { LineAttrs } from '../extension/figure/line'
+import { YAxisIdConstants } from '../pane/types'
 
 export type IndicatorSeries = 'normal' | 'price' | 'volume'
 
@@ -124,6 +125,11 @@ export interface Indicator<D = unknown, C = unknown, E = unknown> {
    * Pane id
    */
   paneId: string
+
+  /**
+   * Y-axis id
+   */
+  yAxisId: string
 
   /**
    * Indicator name
@@ -226,11 +232,11 @@ export interface Indicator<D = unknown, C = unknown, E = unknown> {
   result: D[]
 }
 
-export type IndicatorTemplate<D = unknown, C = unknown, E = unknown> = ExcludePickPartial<Omit<Indicator<D, C, E>, 'result' | 'paneId'>, 'name' | 'calc'>
+export type IndicatorTemplate<D = unknown, C = unknown, E = unknown> = ExcludePickPartial<Omit<Indicator<D, C, E>, 'result' | 'paneId' | 'yAxisId'>, 'name' | 'calc'>
 
-export type IndicatorCreate<D = unknown, C = unknown, E = unknown> = ExcludePickPartial<Omit<Indicator<D, C, E>, 'result'>, 'name'>
+export type IndicatorCreate<D = unknown, C = unknown, E = unknown> = ExcludePickPartial<Omit<Indicator<D, C, E>, 'result' | 'paneId' | 'yAxisId'>, 'name'>
 
-export type IndicatorOverride<D = unknown, C = unknown, E = unknown> = Partial<Omit<Indicator<D, C, E>, 'result'>>
+export type IndicatorOverride<D = unknown, C = unknown, E = unknown> = Partial<Omit<Indicator<D, C, E>, 'result' | 'paneId' | 'yAxisId'>>
 
 export type IndicatorFilter = Partial<Pick<Indicator, 'id' | 'paneId' | 'name'>>
 
@@ -319,6 +325,7 @@ export function eachFigures<D = unknown> (
 export default class IndicatorImp<D = unknown, C = unknown, E = unknown> implements Indicator<D, C, E> {
   id: string
   paneId: string
+  yAxisId = YAxisIdConstants.DEFAULT
   name: string
   shortName: string
   precision = 4
@@ -339,6 +346,7 @@ export default class IndicatorImp<D = unknown, C = unknown, E = unknown> impleme
       prev.calc !== current.calc
     const draw = calc ||
       prev.shortName !== current.shortName ||
+      prev.yAxisId !== current.yAxisId ||
       prev.series !== current.series ||
       prev.minValue !== current.minValue ||
       prev.maxValue !== current.maxValue ||

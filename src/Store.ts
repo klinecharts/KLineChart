@@ -15,7 +15,6 @@
 import type Nullable from './common/Nullable'
 import type PickPartial from './common/PickPartial'
 import type DeepPartial from './common/DeepPartial'
-import type PickRequired from './common/PickRequired'
 import type { KLineData, VisibleRangeData } from './common/Data'
 import type VisibleRange from './common/VisibleRange'
 import type Coordinate from './common/Coordinate'
@@ -39,7 +38,7 @@ import type { DataLoader, DataLoaderGetBarsParams, DataLoadMore, DataLoadType } 
 
 import type { Options, Formatter, ThousandsSeparator, DecimalFold, FormatDateType, FormatDateParams, FormatBigNumber, FormatExtendText, FormatExtendTextParams, ZoomAnchor, ZoomAnchorType } from './Options'
 
-import type { IndicatorOverride, IndicatorCreate, IndicatorFilter } from './component/Indicator'
+import type { IndicatorOverride, IndicatorCreate, IndicatorFilter, Indicator } from './component/Indicator'
 import type IndicatorImp from './component/Indicator'
 import { getIndicatorClass } from './extension/indicator/index'
 
@@ -52,6 +51,7 @@ import { getStyles as getExtensionStyles } from './extension/styles/index'
 import { PaneIdConstants } from './pane/types'
 
 import type Chart from './Chart'
+import type ExcludePickPartial from './common/ExcludePickPartial'
 
 const BarSpaceLimitConstants = {
   MIN: 1,
@@ -1181,13 +1181,13 @@ export default class StoreImp implements Store {
     }
   }
 
-  addIndicator (create: PickRequired<IndicatorCreate, 'id' | 'name'>, isStack: boolean): boolean {
+  addIndicator (create: ExcludePickPartial<Indicator, 'id' | 'name' | 'paneId'>, isStack: boolean): boolean {
     const { name } = create
     const filterIndicators = this.getIndicatorsByFilter(create)
     if (filterIndicators.length > 0) {
       return false
     }
-    const paneId = create.paneId!
+    const paneId = create.paneId
     let paneIndicators = this.getIndicatorsByPaneId(paneId)
     const IndicatorClazz = getIndicatorClass(name)!
     const indicator = new IndicatorClazz()
