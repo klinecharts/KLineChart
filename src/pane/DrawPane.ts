@@ -83,8 +83,8 @@ export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
     }
   }
 
-  createYAxis (axis?: Partial<AxisCreate> & { yAxisId?: string }): YAxis {
-    const yAxisId = axis?.yAxisId ?? YAxisIdConstants.DEFAULT
+  createYAxis (axis?: Partial<AxisCreate>): YAxis {
+    const yAxisId = axis?.id ?? YAxisIdConstants.DEFAULT
     let yAxis = this._yAxisComponents.get(yAxisId)
     if (!isValid(yAxis)) {
       yAxis = this.createYAxisComponent(axis?.name ?? this._options.axis.name ?? 'normal')

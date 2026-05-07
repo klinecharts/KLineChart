@@ -666,7 +666,7 @@ export default class ChartImp implements Chart {
       return null
     }
     indicator.paneId = paneOptions?.id ?? createId(PaneIdConstants.INDICATOR)
-    indicator.yAxisId = paneOptions?.axis?.yAxisId ?? YAxisIdConstants.DEFAULT
+    indicator.yAxisId = paneOptions?.axis?.id ?? YAxisIdConstants.DEFAULT
 
     if (!isString(indicator.id)) {
       indicator.id = createId(indicator.name)
@@ -680,7 +680,7 @@ export default class ChartImp implements Chart {
         pane = this._createPane(IndicatorPane, { id: indicator.paneId, ...paneOptions })
         shouldSort = true
       }
-      pane.createYAxis({ ...paneOptions?.axis, yAxisId: indicator.yAxisId })
+      pane.createYAxis(paneOptions?.axis)
       this.layout({
         sort: shouldSort,
         measureHeight: true,
@@ -805,7 +805,7 @@ export default class ChartImp implements Chart {
           shouldLayout = true
         }
         const ops = { ...options }
-        if (isValid(options.axis?.yAxisId)) {
+        if (isValid(options.axis?.id)) {
           currentPane.createYAxis(options.axis)
           currentPane.setBounding({ height: currentPane.getBounding().height })
         } else {

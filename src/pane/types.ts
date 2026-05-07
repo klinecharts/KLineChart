@@ -22,7 +22,7 @@ export interface PaneOptions {
   minHeight?: number
   dragEnabled?: boolean
   order?: number
-  axis?: Partial<AxisCreate> & { yAxisId?: string }
+  axis?: Partial<AxisCreate>
 }
 
 export const PANE_MIN_HEIGHT = 30

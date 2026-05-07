@@ -23,11 +23,11 @@ import type { YAxis } from '../component/YAxis'
 import { getYAxisClass } from '../extension/y-axis'
 
 import DrawPane from './DrawPane'
-import { type PaneOptions, YAxisIdConstants } from './types'
+import type { PaneOptions } from './types'
 
 export default class IndicatorPane extends DrawPane<YAxis> {
   override setOptions (options: PaneOptions): this {
-    this.createYAxis({ ...options.axis, yAxisId: options.axis?.yAxisId ?? YAxisIdConstants.DEFAULT })
+    this.createYAxis(options.axis)
     return super.setOptions(options)
   }
 
