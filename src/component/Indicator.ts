@@ -33,7 +33,7 @@ import type { RectAttrs } from '../extension/figure/rect'
 import type { TextAttrs } from '../extension/figure/text'
 import type { Chart } from '../Chart'
 import type { LineAttrs } from '../extension/figure/line'
-import { YAxisIdConstants } from '../pane/types'
+import { DEFAULT_AXIS_ID } from './Axis'
 
 export type IndicatorSeries = 'normal' | 'price' | 'volume'
 
@@ -234,9 +234,9 @@ export interface Indicator<D = unknown, C = unknown, E = unknown> {
 
 export type IndicatorTemplate<D = unknown, C = unknown, E = unknown> = ExcludePickPartial<Omit<Indicator<D, C, E>, 'result' | 'paneId' | 'yAxisId'>, 'name' | 'calc'>
 
-export type IndicatorCreate<D = unknown, C = unknown, E = unknown> = ExcludePickPartial<Omit<Indicator<D, C, E>, 'result' | 'paneId' | 'yAxisId'>, 'name'>
+export type IndicatorCreate<D = unknown, C = unknown, E = unknown> = ExcludePickPartial<Omit<Indicator<D, C, E>, 'result'>, 'name'>
 
-export type IndicatorOverride<D = unknown, C = unknown, E = unknown> = Partial<Omit<Indicator<D, C, E>, 'result' | 'paneId' | 'yAxisId'>>
+export type IndicatorOverride<D = unknown, C = unknown, E = unknown> = Partial<Omit<Indicator<D, C, E>, 'result'>>
 
 export type IndicatorFilter = Partial<Pick<Indicator, 'id' | 'paneId' | 'name'>>
 
@@ -325,7 +325,7 @@ export function eachFigures<D = unknown> (
 export default class IndicatorImp<D = unknown, C = unknown, E = unknown> implements Indicator<D, C, E> {
   id: string
   paneId: string
-  yAxisId = YAxisIdConstants.DEFAULT
+  yAxisId = DEFAULT_AXIS_ID
   name: string
   shortName: string
   precision = 4

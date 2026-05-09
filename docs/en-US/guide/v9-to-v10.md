@@ -2,7 +2,7 @@
 This document will help you upgrade from klinecharts version 9.x to klinecharts version 10.x. If you are using version 8.x or older, please refer to [v8 to v9](https://v9.klinecharts.com/en-US/guide/v8-to-v9) to upgrade to 9.x first.
 
 ## Style configuration adjustment
-+ Remove `yAxis.position` , `yAxis.type` , `yAxis.inside` and `yAxis.inside` . Please use the properties in the window configuration `axis` instead. For details, see the chart API [init(dcs, options)](/en-US/api/chart/init#parameters), instance API [createIndicator(value, isStack, paneOptions)](/en-US/api/instance/createIndicator#parameters) and [setPaneOptions(options)](/en-US/api/instance/setPaneOptions#parameters) .
++ Remove `yAxis.position` , `yAxis.type` , `yAxis.inside` and `yAxis.inside` . Please use [overrideYAxis(options)](/en-US/api/instance/overrideYAxis#parameters) instead. For details, see the chart API [init(dcs, options)](/en-US/api/chart/init#parameters), instance API [createIndicator(indicator, options)](/en-US/api/instance/createIndicator#parameters), [setPaneOptions(options)](/en-US/api/instance/setPaneOptions#parameters) and [overrideYAxis(options)](/en-US/api/instance/overrideYAxis#parameters) .
 + Remove `overlay.rectText`, `candle.tooltip.text`, `indicator.tooltip.text`.
 + Remove `candle.tooltip.defaultValue`, `candle.tooltip.custom`, please use `candle.tooltip.legend` instead.
 + Remove `indicator.tooltip.showName`, `indicator.tooltip.showParams`, please use `indicator.tooltip.title` instead.

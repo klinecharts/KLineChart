@@ -26,28 +26,30 @@ import type { PaneOptions } from './types'
 import { getXAxisClass } from '../extension/x-axis'
 
 import type Chart from '../Chart'
+import type { AxisOverride } from '../component/Axis'
 
 export default class XAxisPane extends DrawPane<XAxis> {
   private _xAxis: XAxis
 
   constructor (chart: Chart, options: PickRequired<PaneOptions, 'id'>) {
     super(chart, options)
-    this._xAxis = this.createXAxisComponent(options.axis?.name ?? 'normal')
+    this.overrideXAxis({ name: 'normal', scrollZoomEnabled: true })
   }
 
   override setOptions (options: PaneOptions): this {
-    const axisName = options.axis?.name
+    return super.setOptions(options)
+  }
+
+  overrideXAxis (xAxis: AxisOverride): this {
+    const axisName = xAxis.name
     if (
       !isValid(this._xAxis) ||
-      (isValid(axisName) && this.getOptions().axis.name !== axisName)
+      (isValid(axisName) && this._xAxis.name !== axisName)
     ) {
       this._xAxis = this.createXAxisComponent(axisName ?? 'normal')
     }
-    super.setOptions(options)
-    this._xAxis.override({
-      ...this.getOptions().axis,
-      name: options.axis?.name ?? 'normal'
-    })
+    this._xAxis.override(xAxis)
+    this.setAxisCursor(this._xAxis.scrollZoomEnabled)
     return this
   }
 

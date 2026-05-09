@@ -52,8 +52,8 @@ limitations under the License.
             }
           }
         })
-        chart.createIndicator('MA', false, { id: 'candle_pane' })
-        chart.createIndicator('EMA', true, { id: 'candle_pane' })
+        chart.createIndicator({ name: 'MA', paneId: 'candle_pane' })
+        chart.createIndicator({ name: 'EMA', paneId: 'candle_pane' }, { isStack: true })
         chart.createIndicator('VOL')
         chart.createIndicator('MACD')
         chart.applyNewData(generated(), true)

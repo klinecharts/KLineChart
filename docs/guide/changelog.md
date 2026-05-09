@@ -28,7 +28,7 @@
   + 实例方法删除 `getIndicatorByPaneId(paneId, name)` ，请使用 `getIndicators(filter)` 代替。
   + 实例方法删除 `getOverlayById(id)` ，请使用 `getOverlays(filter)` 代替。
   + 实例方法 `subscribeAction` 和 `unsubscribeAction` 删除入参 `onTooltipIconClick` ，请使用 `onCandleTooltipFeatureClick` 和 `onIndicatorTooltipFeatureClick` 代替。
-  + 样式配置删除 `yAxis.position` ， `yAxis.type` ， `yAxis.inside` 和 `yAxis.inside` ，请使用窗口配置 `axis` 中的属性代替。详情参阅图表API [init(dcs, options)](/api/chart/init#parameters) ，实例API [createIndicator(value, isStack, paneOptions)](/api/instance/createIndicator#parameters) 和 [setPaneOptions(options)](/api/instance/setPaneOptions#parameters) 。
+  + 样式配置删除 `yAxis.position` ， `yAxis.type` ， `yAxis.inside` 和 `yAxis.inside` ，请使用 [overrideYAxis(options)](/api/instance/overrideYAxis#parameters) 代替。详情参阅图表API [init(dcs, options)](/api/chart/init#parameters) ，实例API [createIndicator(indicator, options)](/api/instance/createIndicator#parameters) 、 [setPaneOptions(options)](/api/instance/setPaneOptions#parameters) 和 [overrideYAxis(options)](/api/instance/overrideYAxis#parameters) 。
   + 样式配置删除 `candle.tooltip.defaultValue` ， `candle.tooltip.custom` 请替换为 `candle.tooltip.legend` ，删除 `candle.tooltip.text` ，删除 `indicator.tooltip.showName` ， `indicator.tooltip.showParams` ，请用 `indicator.tooltip.title` ，删除 `indicator.tooltip.defaultValue` ， 请替换为 `indicator.tooltip.legend` ， 删除 `indicator.tooltip.text` ， 删除 `overlay.rectText` 。
   + 内置的基础图形删除 `rectText` ，请使用 `text` 代替。
 

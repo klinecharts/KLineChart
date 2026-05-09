@@ -19,15 +19,15 @@ import type Nullable from '../common/Nullable'
 import type { UpdateLevel } from '../common/Updater'
 import type Bounding from '../common/Bounding'
 
-import { isValid, merge } from '../common/utils/typeChecks'
+import { isBoolean, isValid, merge } from '../common/utils/typeChecks'
 
-import type { Axis, AxisCreate } from '../component/Axis'
+import { DEFAULT_AXIS_ID, type Axis, type AxisOverride } from '../component/Axis'
 
 import type DrawWidget from '../widget/DrawWidget'
 import type YAxisWidget from '../widget/YAxisWidget'
 
+import { type PaneOptions, PANE_DEFAULT_HEIGHT, PANE_MIN_HEIGHT, PaneIdConstants } from './types'
 import Pane from './Pane'
-import { type PaneOptions, PANE_DEFAULT_HEIGHT, PANE_MIN_HEIGHT, PaneIdConstants, YAxisIdConstants } from './types'
 
 import type Chart from '../Chart'
 
@@ -47,9 +47,8 @@ export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
     minHeight: PANE_MIN_HEIGHT,
     dragEnabled: true,
     order: 0,
-    height: PANE_DEFAULT_HEIGHT,
+    height: PANE_DEFAULT_HEIGHT
     // state: 'normal',
-    axis: { name: 'normal', scrollZoomEnabled: true }
   }
 
   constructor (chart: Chart, options: PickRequired<PaneOptions, 'id'>) {
@@ -61,20 +60,22 @@ export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
 
   setOptions (options: PaneOptions): this {
     merge(this._options, options)
-    this.setAxisCursor(options.axis?.scrollZoomEnabled ?? true)
     this.setBounding({ height: this._options.height })
     return this
   }
 
-  protected setAxisCursor (scrollZoomEnabled: boolean): void {
+  protected setAxisCursor (scrollZoomEnabled?: boolean, yAxisId?: string): void {
     let container: Nullable<HTMLElement> = null
     let cursor = 'default'
     if (this.getId() === PaneIdConstants.X_AXIS) {
       container = this.getMainWidget().getContainer()
       cursor = 'ew-resize'
     } else {
-      container = this.getYAxisWidget()!.getContainer()
+      container = this.getYAxisWidgetById(yAxisId)?.getContainer() ?? null
       cursor = 'ns-resize'
+    }
+    if (!isValid(container) || !isBoolean(scrollZoomEnabled)) {
+      return
     }
     if (scrollZoomEnabled) {
       container.style.cursor = cursor
@@ -83,24 +84,31 @@ export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
     }
   }
 
-  createYAxis (axis?: Partial<AxisCreate>): YAxis {
-    const yAxisId = axis?.id ?? YAxisIdConstants.DEFAULT
+  createYAxis (axis: AxisOverride): YAxis {
+    const yAxisId = axis.id ?? DEFAULT_AXIS_ID
+    const yAxisName = axis.name ?? 'normal'
     let yAxis = this._yAxisComponents.get(yAxisId)
-    if (!isValid(yAxis)) {
-      yAxis = this.createYAxisComponent(axis?.name ?? this._options.axis.name ?? 'normal')
+    const shouldCreateYAxis = !isValid(yAxis) || (isValid(axis.name) && yAxis.name !== axis.name)
+    if (shouldCreateYAxis) {
+      this._yAxisWidgets.get(yAxisId)?.destroy()
+      yAxis = this.createYAxisComponent(yAxisName)
       yAxis.id = yAxisId
+      yAxis.paneId = this.getId()
       this._yAxisComponents.set(yAxisId, yAxis)
       const yAxisWidget = this.createYAxisWidget(this.getContainer(), yAxis)
       if (isValid(yAxisWidget)) {
         this._yAxisWidgets.set(yAxisId, yAxisWidget)
       }
     }
+    if (!isValid(yAxis)) {
+      throw new Error('create yAxis failed.')
+    }
     ;(yAxis as unknown as YAxisImp).setAutoCalcTickFlag(true)
     yAxis.override({
-      ...this._options.axis,
       ...axis,
-      name: axis?.name ?? this._options.axis.name ?? 'normal'
+      name: yAxisName
     })
+    this.setAxisCursor(yAxis.scrollZoomEnabled, yAxisId)
     return yAxis
   }
 
@@ -111,7 +119,7 @@ export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
   }
 
   getYAxisComponentById (yAxisId?: string): YAxis {
-    return this._yAxisComponents.get(yAxisId ?? YAxisIdConstants.DEFAULT)!
+    return this._yAxisComponents.get(yAxisId ?? DEFAULT_AXIS_ID)!
   }
 
   setYAxesBounding (bounding: Record<string, Partial<Bounding>>): void {
@@ -174,7 +182,7 @@ export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
   getYAxisWidgets (): YAxisWidget[] { return Array.from(this._yAxisWidgets.values()) }
 
   getYAxisWidgetById (yAxisId?: string): Nullable<YAxisWidget> {
-    return this._yAxisWidgets.get(yAxisId ?? YAxisIdConstants.DEFAULT) ?? null
+    return this._yAxisWidgets.get(yAxisId ?? DEFAULT_AXIS_ID) ?? null
   }
 
   override updateImp (level: UpdateLevel): void {

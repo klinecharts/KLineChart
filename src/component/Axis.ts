@@ -64,8 +64,14 @@ export type AxisCreateTicksCallback = (params: AxisCreateTicksParams) => AxisTic
 
 export type AxisMinSpanCallback = (value: number) => number
 
+export const TICK_COUNT = 8
+
+export const DEFAULT_AXIS_ID = 'default'
+
 export interface AxisTemplate {
   name: string
+  id?: string
+  paneId?: string
   reverse?: boolean
   inside?: boolean
   position?: AxisPosition
@@ -82,7 +88,7 @@ export interface AxisTemplate {
 }
 
 export interface Axis {
-  override: (axis: AxisTemplate) => void
+  override: (axis: AxisOverride) => void
   getTicks: () => AxisTick[]
   getRange: () => AxisRange
   getAutoSize: () => number
@@ -90,7 +96,7 @@ export interface Axis {
   convertFromPixel: (px: number) => number
 }
 
-export type AxisCreate = Omit<AxisTemplate, 'displayValueToText' | 'valueToRealValue' | 'realValueToDisplayValue' | 'displayValueToRealValue' | 'realValueToValue'> & { id: string }
+export type AxisOverride = Partial<AxisTemplate>
 
 function getDefaultAxisRange (): AxisRange {
   return {

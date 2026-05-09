@@ -16,7 +16,7 @@ import type Nullable from '../common/Nullable'
 import type Bounding from '../common/Bounding'
 import { isFunction, isNumber, isString } from '../common/utils/typeChecks'
 
-import AxisImp, { type AxisTemplate, type Axis, type AxisRange, type AxisTick } from './Axis'
+import AxisImp, { type AxisTemplate, type Axis, type AxisRange, type AxisTick, TICK_COUNT } from './Axis'
 
 import type DrawPane from '../pane/DrawPane'
 import { calcTextWidth } from '../common/utils/canvas'
@@ -80,7 +80,7 @@ export default abstract class XAxisImp extends AxisImp implements XAxis {
 
     const barSpace = chartStore.getBarSpace().bar
     const textStyles = chartStore.getStyles().xAxis.tickText
-    const tickTextWidth = Math.max(calcTextWidth('YYYY-MM-DD HH:mm:ss', textStyles.size, textStyles.weight, textStyles.family), this.getBounding().width / 8)
+    const tickTextWidth = Math.max(calcTextWidth('YYYY-MM-DD HH:mm:ss', textStyles.size, textStyles.weight, textStyles.family), this.getBounding().width / TICK_COUNT)
     let tickBetweenBarCount = Math.ceil(tickTextWidth / barSpace)
     if (tickBetweenBarCount % 2 !== 0) {
       tickBetweenBarCount += 1

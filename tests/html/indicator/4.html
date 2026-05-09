@@ -64,9 +64,9 @@ limitations under the License.
           }
         })
         var chart = klinecharts.init('chart')
-        chart.createIndicator('MA', false, { id: 'candle_pane' })
-        chart.createIndicator('EMA', true, { id: 'candle_pane' })
-        chart.createIndicator('TEST-Render', true, { id: 'candle_pane' })
+        chart.createIndicator({ name: 'MA', paneId: 'candle_pane' })
+        chart.createIndicator({ name: 'EMA', paneId: 'candle_pane' }, { isStack: true })
+        chart.createIndicator({ name: 'TEST-Render', paneId: 'candle_pane' }, { isStack: true })
         chart.createIndicator('KDJ')
         chart.applyNewData(generated())
       }

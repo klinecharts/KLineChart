@@ -13,7 +13,7 @@
  */
 
 import type Bounding from '../common/Bounding'
-import { isFunction, isNumber, isString, isValid, merge } from '../common/utils/typeChecks'
+import { isFunction, isNumber, isValid, merge } from '../common/utils/typeChecks'
 import { index10, getPrecision, nice, round } from '../common/utils/number'
 import { calcTextWidth } from '../common/utils/canvas'
 import { formatPrecision } from '../common/utils/format'
@@ -23,19 +23,19 @@ import AxisImp, {
   type AxisTemplate, type Axis, type AxisRange,
   type AxisTick, type AxisValueToValueCallback,
   type AxisMinSpanCallback, type AxisCreateRangeCallback,
-  type AxisPosition
+  type AxisPosition,
+  type AxisOverride,
+  TICK_COUNT,
+  DEFAULT_AXIS_ID
 } from './Axis'
 
 import type DrawPane from '../pane/DrawPane'
 
-import { PaneIdConstants, YAxisIdConstants } from '../pane/types'
+import { PaneIdConstants } from '../pane/types'
 
 export type YAxisTemplate = AxisTemplate
 
-const TICK_COUNT = 8
-
 export interface YAxis extends Axis, Required<YAxisTemplate> {
-  id: string
   isFromZero: () => boolean
   isInCandle: () => boolean
   convertToNicePixel: (value: number) => number
@@ -44,7 +44,8 @@ export interface YAxis extends Axis, Required<YAxisTemplate> {
 export type YAxisConstructor = new (parent: DrawPane) => YAxis
 
 export default abstract class YAxisImp extends AxisImp implements YAxis {
-  id = YAxisIdConstants.DEFAULT
+  id = DEFAULT_AXIS_ID
+  paneId = ''
   reverse = false
   inside = false
   position: AxisPosition = 'right'
@@ -66,14 +67,14 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
     this.override(yAxis)
   }
 
-  override (yAxis: YAxisTemplate): void {
+  override (yAxis: AxisOverride): void {
     const {
       name,
       gap,
       ...others
     } = yAxis
-    if (!isString(this.name)) {
-      this.name = name
+    if (isValid(yAxis.id) && this.id === DEFAULT_AXIS_ID) {
+      this.id = yAxis.id
     }
     merge(this.gap, gap)
     merge(this, others)
@@ -104,7 +105,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
 
     let precision = 4
     const inCandle = this.isInCandle()
-    const isDefaultYAxis = this.id === YAxisIdConstants.DEFAULT
+    const isDefaultYAxis = this.id === DEFAULT_AXIS_ID
     if (inCandle) {
       const pricePrecision = chartStore.getSymbol()?.pricePrecision ?? SymbolDefaultPrecisionConstants.PRICE
       if (indicatorPrecision !== Number.MAX_SAFE_INTEGER) {
@@ -272,7 +273,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
     const styles = chartStore.getStyles()
     let precision = 0
     let shouldFormatBigNumber = false
-    if (this.isInCandle() && this.id === YAxisIdConstants.DEFAULT) {
+    if (this.isInCandle() && this.id === DEFAULT_AXIS_ID) {
       precision = chartStore.getSymbol()?.pricePrecision ?? SymbolDefaultPrecisionConstants.PRICE
     } else {
       indicators.forEach(indicator => {
@@ -380,7 +381,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
           shouldFormatBigNumber ||= indicator.shouldFormatBigNumber
         })
         let precision = 2
-        if (this.isInCandle() && this.id === YAxisIdConstants.DEFAULT) {
+        if (this.isInCandle() && this.id === DEFAULT_AXIS_ID) {
           const lastValueMarkStyles = styles.indicator.lastValueMark
           if (lastValueMarkStyles.show && lastValueMarkStyles.text.show) {
             precision = Math.max(indicatorPrecision, pricePrecision)

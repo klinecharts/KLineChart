@@ -167,7 +167,7 @@ import { init } from 'klinecharts'
 const chart = init('createIndicator-basic-chart')
 
 // Create MA on the candle pane (overlay)
-chart.createIndicator('MA', false, { id: 'candle_pane' })
+chart.createIndicator({ name: 'MA', paneId: 'candle_pane' })
 
 // Create a volume indicator on a separate pane
 chart.createIndicator('VOL')
@@ -220,4 +220,3 @@ setTimeout(() => {
 - When generating code, import from the published package (`import { init } from 'klinecharts'`) instead of internal paths.
 - Only use APIs documented in `docs/en-US/api/chart/` and `docs/en-US/api/instance/`; do not invent new methods or options.
 - When in doubt about behavior, follow the concrete patterns in `docs/@views/api/samples/` rather than guessing.
-

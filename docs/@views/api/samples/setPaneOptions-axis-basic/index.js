@@ -3,12 +3,10 @@ import { init } from 'klinecharts'
 const chart = init('setPaneOptions-axis-basic-chart')
 chart.createIndicator('MACD')
 
-chart.setPaneOptions({
-  id: 'candle_pane',
-  axis: {
-    name: 'logarithm',
-    reverse: true
-  }
+chart.overrideYAxis({
+  paneId: 'candle_pane',
+  name: 'logarithm',
+  reverse: true
 })
 
 chart.setSymbol({ ticker: 'TestSymbol' })

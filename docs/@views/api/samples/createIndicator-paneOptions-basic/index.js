@@ -1,7 +1,8 @@
 import { init } from 'klinecharts'
 
 const chart = init('createIndicator-paneOptions-basic-chart')
-chart.createIndicator('VOL', false, { height: 200, dragEnabled: false })
+chart.createIndicator({ name: 'VOL', paneId: 'vol_pane' })
+chart.setPaneOptions({ id: 'vol_pane', height: 200, dragEnabled: false })
 
 chart.setSymbol({ ticker: 'TestSymbol' })
 chart.setPeriod({ span: 1, type: 'day' })

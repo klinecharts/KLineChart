@@ -2,7 +2,7 @@
 本文档将帮助你从 klinecharts 9.x 版本升级到 klinecharts 10.x 版本，如果你是 8.x 或者更老的版本，请先参考 [v8 到 v9](https://v9.klinecharts.com/guide/v8-to-v9) 升级到 9.x。
 
 ## 样式配置调整
-+ 删除 `yAxis.position` ， `yAxis.type` ， `yAxis.inside` 和 `yAxis.inside` ，请使用窗口配置 `axis` 中的属性代替。详情参阅图表API [init(dcs, options)](/api/chart/init#parameters) ，实例API [createIndicator(value, isStack, paneOptions)](/api/instance/createIndicator#parameters) 和 [setPaneOptions(options)](/api/instance/setPaneOptions#parameters) 。
++ 删除 `yAxis.position` ， `yAxis.type` ， `yAxis.inside` 和 `yAxis.inside` ，请使用 [overrideYAxis(options)](/api/instance/overrideYAxis#parameters) 代替。详情参阅图表API [init(dcs, options)](/api/chart/init#parameters) ，实例API [createIndicator(indicator, options)](/api/instance/createIndicator#parameters) 、 [setPaneOptions(options)](/api/instance/setPaneOptions#parameters) 和 [overrideYAxis(options)](/api/instance/overrideYAxis#parameters) 。
 + 删除 `overlay.rectText` ， `candle.tooltip.text` ， `indicator.tooltip.text`。
 + 删除 `candle.tooltip.defaultValue` ， `candle.tooltip.custom` 请用 `candle.tooltip.legend` 代替。
 + 删除 `indicator.tooltip.showName` ， `indicator.tooltip.showParams` ，请用 `indicator.tooltip.title` 代替。

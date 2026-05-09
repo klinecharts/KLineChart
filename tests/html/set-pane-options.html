@@ -33,7 +33,8 @@ limitations under the License.
         var chart = klinecharts.init('chart')
         var paneId = chart.createIndicator('EMA')
         chart.applyNewData(generated(), true)
-        chart.setPaneOptions({ id: paneId, height: 300, dragEnabled: false, gap: { top: 0.3, bottom: 0.3 } })
+        chart.setPaneOptions({ id: paneId, height: 300, dragEnabled: false })
+        chart.overrideYAxis({ paneId: paneId, gap: { top: 0.3, bottom: 0.3 } })
       }
     </script>
   </body>

@@ -47,18 +47,19 @@ import XAxisPane from './pane/XAxisPane'
 import type DrawPane from './pane/DrawPane'
 import SeparatorPane from './pane/SeparatorPane'
 
-import { type PaneOptions, PaneIdConstants, YAxisIdConstants } from './pane/types'
+import { type PaneOptions, PaneIdConstants } from './pane/types'
 
 import type AxisImp from './component/Axis'
 import type { YAxis } from './component/YAxis'
 
 import type { IndicatorFilter, Indicator, IndicatorCreate, IndicatorOverride } from './component/Indicator'
 import type { OverlayFilter, Overlay, OverlayCreate, OverlayOverride } from './component/Overlay'
+import type ExcludePickPartial from './common/ExcludePickPartial'
+import { DEFAULT_AXIS_ID, type AxisOverride } from './component/Axis'
 
 import { getIndicatorClass } from './extension/indicator/index'
 
 import Event from './Event'
-import type ExcludePickPartial from './common/ExcludePickPartial'
 
 export type DomPosition = 'root' | 'main' | 'yAxis'
 
@@ -77,11 +78,13 @@ export interface Chart extends Store {
   id: string
   getDom: (paneId?: string, position?: DomPosition) => Nullable<HTMLElement>
   getSize: (paneId?: string, position?: DomPosition) => Nullable<Bounding>
-  createIndicator: (value: string | IndicatorCreate, isStack?: boolean, paneOptions?: PaneOptions) => Nullable<string>
+  createIndicator: (value: string | IndicatorCreate, options?: { isStack?: boolean }) => Nullable<string>
   getIndicators: (filter?: IndicatorFilter) => Indicator[]
   createOverlay: (value: string | OverlayCreate | Array<string | OverlayCreate>) => Nullable<string> | Array<Nullable<string>>
   getOverlays: (filter?: OverlayFilter) => Overlay[]
   setPaneOptions: (options: PaneOptions) => void
+  overrideYAxis: (xAxis: AxisOverride) => void
+  overrideXAxis: (yAxis: AxisOverride) => void
   getPaneOptions: (id?: string) => Nullable<PaneOptions> | PaneOptions[]
   scrollByDistance: (distance: number, animationDuration?: number) => void
   scrollToRealTime: (animationDuration?: number) => void
@@ -131,6 +134,7 @@ export default class ChartImp implements Chart {
     this._chartEvent = new Event(this._chartContainer, this)
     this._chartStore = new ChartStore(this, options)
     this._candlePane = this._createPane<CandlePane>(CandlePane, { id: PaneIdConstants.CANDLE })
+    this._candlePane.createYAxis({ id: DEFAULT_AXIS_ID })
     this._xAxisPane = this._createPane<XAxisPane>(XAxisPane, { id: PaneIdConstants.X_AXIS, order: Number.MAX_SAFE_INTEGER })
     this._layout()
   }
@@ -659,28 +663,29 @@ export default class ChartImp implements Chart {
     this._chartStore.setDataLoader(dataLoader)
   }
 
-  createIndicator (value: string | IndicatorCreate, isStack?: boolean, paneOptions?: PaneOptions): Nullable<string> {
-    const indicator: ExcludePickPartial<Indicator, 'name'> = isString(value) ? { name: value } : value
+  createIndicator (value: string | IndicatorCreate, options?: { isStack?: boolean }): Nullable<string> {
+    const indicator: IndicatorCreate = isString(value) ? { name: value } : value
     if (getIndicatorClass(indicator.name) === null) {
       logWarn('createIndicator', 'value', 'indicator not supported, you may need to use registerIndicator to add one!!!')
       return null
     }
-    indicator.paneId = paneOptions?.id ?? createId(PaneIdConstants.INDICATOR)
-    indicator.yAxisId = paneOptions?.axis?.id ?? YAxisIdConstants.DEFAULT
+
+    indicator.paneId ??= createId(PaneIdConstants.INDICATOR)
+    indicator.yAxisId ??= DEFAULT_AXIS_ID
 
     if (!isString(indicator.id)) {
       indicator.id = createId(indicator.name)
     }
 
-    const result = this._chartStore.addIndicator(indicator as ExcludePickPartial<Indicator, 'id' | 'name' | 'paneId'>, isStack ?? false)
+    const result = this._chartStore.addIndicator(indicator as ExcludePickPartial<Indicator, 'id' | 'name' | 'paneId'>, options?.isStack ?? false)
     if (result) {
       let shouldSort = false
       let pane = this.getDrawPaneById(indicator.paneId)
       if (!isValid(pane)) {
-        pane = this._createPane(IndicatorPane, { id: indicator.paneId, ...paneOptions })
+        pane = this._createPane(IndicatorPane, { id: indicator.paneId })
         shouldSort = true
       }
-      pane.createYAxis(paneOptions?.axis)
+      pane.createYAxis({ id: indicator.yAxisId })
       this.layout({
         sort: shouldSort,
         measureHeight: true,
@@ -788,6 +793,7 @@ export default class ChartImp implements Chart {
   setPaneOptions (options: PaneOptions): void {
     let shouldMeasureHeight = false
     let shouldLayout = false
+    let shouldSort = false
     const validId = isValid(options.id)
     for (const currentPane of this._drawPanes) {
       const currentPaneId = currentPane.getId()
@@ -801,16 +807,11 @@ export default class ChartImp implements Chart {
             currentPane.setBounding({ height })
           }
         }
-        if (isValid(options.axis)) {
+        if (isNumber(options.order)) {
           shouldLayout = true
+          shouldSort = true
         }
-        const ops = { ...options }
-        if (isValid(options.axis?.id)) {
-          currentPane.createYAxis(options.axis)
-          currentPane.setBounding({ height: currentPane.getBounding().height })
-        } else {
-          currentPane.setOptions(ops)
-        }
+        currentPane.setOptions(options)
         if (currentPaneId === options.id) {
           break
         }
@@ -818,6 +819,7 @@ export default class ChartImp implements Chart {
     }
     if (shouldLayout) {
       this.layout({
+        sort: shouldSort,
         measureHeight: shouldMeasureHeight,
         measureWidth: true,
         update: true,
@@ -825,6 +827,39 @@ export default class ChartImp implements Chart {
         forceBuildYAxisTick: true
       })
     }
+  }
+
+  overrideYAxis (yAxis: AxisOverride): void {
+    const validPaneId = isValid(yAxis.paneId)
+    let shouldLayout = false
+    for (const currentPane of this._drawPanes) {
+      const currentPaneId = currentPane.getId()
+      if (currentPaneId !== PaneIdConstants.X_AXIS && ((validPaneId && yAxis.paneId === currentPaneId) || !validPaneId)) {
+        currentPane.createYAxis(yAxis)
+        shouldLayout = true
+        if (currentPaneId === yAxis.paneId) {
+          break
+        }
+      }
+    }
+    if (shouldLayout) {
+      this.layout({
+        measureWidth: true,
+        update: true,
+        buildYAxisTick: true,
+        forceBuildYAxisTick: true
+      })
+    }
+  }
+
+  overrideXAxis (xAxis: AxisOverride): void {
+    this._xAxisPane.overrideXAxis(xAxis)
+    this.layout({
+      measureHeight: true,
+      update: true,
+      buildYAxisTick: true,
+      forceBuildYAxisTick: true
+    })
   }
 
   getPaneOptions (id?: string): Nullable<PaneOptions> | PaneOptions[] {

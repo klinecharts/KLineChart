@@ -1,8 +1,15 @@
 import { init } from 'klinecharts'
 
-const chart = init('removeIndicator-chart')
-chart.createIndicator({ name: 'MA', paneId: 'candle_pane' })
-chart.createIndicator('VOL')
+const chart = init('overrideXAxis-chart')
+
+chart.overrideXAxis({
+  scrollZoomEnabled: false,
+  createTicks: ({ defaultTicks }) => {
+    return defaultTicks.map(
+      ({ coord, value, text }) => ({ coord, value, text: `${text}` })
+    )
+  }
+})
 
 chart.setSymbol({ ticker: 'TestSymbol' })
 chart.setPeriod({ span: 1, type: 'day' })
@@ -17,7 +24,3 @@ chart.setDataLoader({
       })
   }
 })
-
-setTimeout(() => {
-  chart.removeIndicator({ name: 'MA' })
-}, 5000)

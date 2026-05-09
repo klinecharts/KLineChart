@@ -2,7 +2,7 @@
 outline: deep
 ---
 
-# createIndicator(indicator, isStack?, paneOptions?)
+# createIndicator(indicator, options?)
 `createIndicator` create an indicator.
 
 ## Reference {#reference}
@@ -36,25 +36,10 @@ outline: deep
   - `createTooltipDataSource` Create custom prompts.
   - `draw` Custom drawing method, if the return value is `true`, it will override the default drawing.
   - `onDataStateChange` Data change callback notification.
-- `isStack` Whether to stack.
-- `paneOptions` Pane configuration.
-  - `id` Pane id.
-  - `height` Height.
-  - `minHeight` Min height.
-  - `dragEnabled` Whether the height can be adjusted by dragging.
-  - `order` Order.
-  - `state` State, supports `normal` , `maximize` and `minimize` .
-  - `axis` Axis configuration.
-    - `name` The name of the axis.
-    - `reverse` Whether to reverse.
-    - `inside` Whether it is inside.
-    - `position` Position, supports `left` and `right`.
-    - `scrollZoomEnabled` Whether to allow scrolling and zooming.
-    - `gap` Top and bottom margin configuration.
-      - `top` Top margin.
-      - `bottom` Bottom margin.
-    - `createRange` Create an axis value range callback method.
-    - `createTicks` Create ticks information callback method.
+  - `paneId` Pane id.
+  - `yAxisId` Y-axis id.
+- `options` Create options.
+  - `isStack` Whether to stack.
 
 ### Returns {#returns}
 `createIndicator` returns indicator id `string` or `null` .
