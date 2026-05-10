@@ -346,6 +346,7 @@ export default class IndicatorImp<D = unknown, C = unknown, E = unknown> impleme
       prev.calc !== current.calc
     const draw = calc ||
       prev.shortName !== current.shortName ||
+      prev.paneId !== current.paneId ||
       prev.yAxisId !== current.yAxisId ||
       prev.series !== current.series ||
       prev.minValue !== current.minValue ||

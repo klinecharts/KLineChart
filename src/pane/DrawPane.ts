@@ -118,8 +118,43 @@ export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
     return Array.from(this._yAxisComponents.values())
   }
 
+  hasYAxisComponent (yAxisId: string): boolean {
+    return this._yAxisComponents.has(yAxisId)
+  }
+
+  removeYAxis (yAxisId: string): boolean {
+    const yAxis = this._yAxisComponents.get(yAxisId)
+    if (!isValid(yAxis)) {
+      return false
+    }
+    this._yAxisComponents.delete(yAxisId)
+    this._yAxisWidgets.get(yAxisId)?.destroy()
+    this._yAxisWidgets.delete(yAxisId)
+    this._yAxesBounding = Object.keys(this._yAxesBounding).reduce<Record<string, Partial<Bounding>>>((bounding, id) => {
+      if (id !== yAxisId) {
+        bounding[id] = this._yAxesBounding[id]
+      }
+      return bounding
+    }, {})
+    return true
+  }
+
+  private _getDefaultYAxisId (): Nullable<string> {
+    if (this._yAxisComponents.has(DEFAULT_AXIS_ID)) {
+      return DEFAULT_AXIS_ID
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return -- ignore
+    return this._yAxisComponents.keys().next().value ?? null
+  }
+
   getYAxisComponentById (yAxisId?: string): YAxis {
-    return this._yAxisComponents.get(yAxisId ?? DEFAULT_AXIS_ID)!
+    const id = yAxisId ?? this._getDefaultYAxisId()
+    return this._yAxisComponents.get(id!)!
+  }
+
+  getYAxisWidgetById (yAxisId?: string): Nullable<YAxisWidget> {
+    const id = yAxisId ?? this._getDefaultYAxisId()
+    return isValid(id) ? this._yAxisWidgets.get(id) ?? null : null
   }
 
   setYAxesBounding (bounding: Record<string, Partial<Bounding>>): void {
@@ -180,10 +215,6 @@ export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
   getYAxisWidget (): Nullable<YAxisWidget> { return this.getYAxisWidgetById() }
 
   getYAxisWidgets (): YAxisWidget[] { return Array.from(this._yAxisWidgets.values()) }
-
-  getYAxisWidgetById (yAxisId?: string): Nullable<YAxisWidget> {
-    return this._yAxisWidgets.get(yAxisId ?? DEFAULT_AXIS_ID) ?? null
-  }
 
   override updateImp (level: UpdateLevel): void {
     this._mainWidget.update(level)

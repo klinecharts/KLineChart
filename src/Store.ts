@@ -1286,7 +1286,25 @@ export default class StoreImp implements Store {
     let sortFlag = false
     const filterIndicators = this.getIndicatorsByFilter(override)
     filterIndicators.forEach(indicator => {
+      const prevPaneId = indicator.paneId
       indicator.override(override)
+      const currentPaneId = indicator.paneId
+      if (prevPaneId !== currentPaneId) {
+        const prevPaneIndicators = this.getIndicatorsByPaneId(prevPaneId)
+        const index = prevPaneIndicators.findIndex(ins => ins.id === indicator.id)
+        if (index > -1) {
+          prevPaneIndicators.splice(index, 1)
+        }
+        if (prevPaneIndicators.length === 0) {
+          this._indicators.delete(prevPaneId)
+        }
+        const currentPaneIndicators = this.getIndicatorsByPaneId(currentPaneId)
+        if (!currentPaneIndicators.some(ins => ins.id === indicator.id)) {
+          currentPaneIndicators.push(indicator)
+          this._indicators.set(currentPaneId, currentPaneIndicators)
+        }
+        sortFlag = true
+      }
       const { calc, draw, sort } = indicator.shouldUpdateImp()
       if (sort) {
         sortFlag = true
@@ -1305,11 +1323,7 @@ export default class StoreImp implements Store {
       this._sortIndicators()
     }
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- ignore
-    if (updateFlag) {
-      this._chart.layout({ update: true })
-      return true
-    }
-    return false
+    return updateFlag || sortFlag
   }
 
   getOverlaysByFilter (filter: OverlayFilter): OverlayImp[] {

@@ -650,6 +650,63 @@ export default class ChartImp implements Chart {
     return this._chartStore.getVisibleRange()
   }
 
+  private _syncIndicatorPanesByData (): boolean {
+    let changed = false
+    const usedPaneIds = new Set<string>([PaneIdConstants.CANDLE, PaneIdConstants.X_AXIS])
+    this._chartStore.getIndicatorsByFilter({}).forEach(indicator => {
+      usedPaneIds.add(indicator.paneId)
+      if (!isValid(this.getDrawPaneById(indicator.paneId))) {
+        this._createPane(IndicatorPane, { id: indicator.paneId })
+        changed = true
+      }
+    })
+
+    const removePaneIds: string[] = []
+    this._drawPanes.forEach(pane => {
+      const paneId = pane.getId()
+      if (!usedPaneIds.has(paneId)) {
+        removePaneIds.push(paneId)
+      }
+    })
+    removePaneIds.forEach(paneId => {
+      const index = this._drawPanes.findIndex(pane => pane.getId() === paneId)
+      const pane = this._drawPanes[index]
+      if (isValid(pane)) {
+        this._drawPanes.splice(index, 1)
+        pane.destroy()
+        changed = true
+      }
+    })
+    return changed
+  }
+
+  private _syncYAxesByData (): boolean {
+    let changed = false
+    this._drawPanes.forEach(pane => {
+      const paneId = pane.getId()
+      if (paneId === PaneIdConstants.X_AXIS) {
+        return
+      }
+      const usedYAxisIds = new Set<string>()
+      if (paneId === PaneIdConstants.CANDLE) {
+        usedYAxisIds.add(DEFAULT_AXIS_ID)
+      }
+      this._chartStore.getIndicatorsByPaneId(paneId).forEach(indicator => {
+        usedYAxisIds.add(indicator.yAxisId)
+        if (!pane.hasYAxisComponent(indicator.yAxisId)) {
+          pane.createYAxis({ id: indicator.yAxisId })
+          changed = true
+        }
+      })
+      pane.getYAxisComponents().forEach(yAxis => {
+        if (!usedYAxisIds.has(yAxis.id)) {
+          changed = pane.removeYAxis(yAxis.id) || changed
+        }
+      })
+    })
+    return changed
+  }
+
   resetData (): void {
     this._chartStore.resetData()
   }
@@ -686,6 +743,7 @@ export default class ChartImp implements Chart {
         shouldSort = true
       }
       pane.createYAxis({ id: indicator.yAxisId })
+      this._syncYAxesByData()
       this.layout({
         sort: shouldSort,
         measureHeight: true,
@@ -700,7 +758,24 @@ export default class ChartImp implements Chart {
   }
 
   overrideIndicator (override: IndicatorOverride): boolean {
-    return this._chartStore.overrideIndicator(override)
+    const indicators = this._chartStore.getIndicatorsByFilter(isValid(override.id) ? { id: override.id } : override)
+    if (indicators.length === 0) {
+      return false
+    }
+    const updated = this._chartStore.overrideIndicator(override)
+    const panesChanged = this._syncIndicatorPanesByData()
+    const yAxesChanged = this._syncYAxesByData()
+    if (updated || panesChanged || yAxesChanged) {
+      this.layout({
+        sort: panesChanged,
+        measureHeight: panesChanged,
+        measureWidth: true,
+        update: true,
+        buildYAxisTick: true,
+        forceBuildYAxisTick: true
+      })
+    }
+    return updated
   }
 
   getIndicators (filter?: IndicatorFilter): Indicator[] {
@@ -710,29 +785,11 @@ export default class ChartImp implements Chart {
   removeIndicator (filter?: IndicatorFilter): boolean {
     const removed = this._chartStore.removeIndicator(filter ?? {})
     if (removed) {
-      let shouldMeasureHeight = false
-      const paneIds: string[] = []
-      this._drawPanes.forEach(pane => {
-        const paneId = pane.getId()
-        if (paneId !== PaneIdConstants.CANDLE && paneId !== PaneIdConstants.X_AXIS) {
-          paneIds.push(paneId)
-        }
-      })
-
-      paneIds.forEach(paneId => {
-        if (!this._chartStore.hasIndicators(paneId)) {
-          const index = this._drawPanes.findIndex(pane => pane.getId() === paneId)
-          const pane = this._drawPanes[index]
-          if (isValid(pane)) {
-            shouldMeasureHeight = true
-            this._drawPanes.splice(index, 1)
-            pane.destroy()
-          }
-        }
-      })
+      const panesChanged = this._syncIndicatorPanesByData()
+      this._syncYAxesByData()
       this.layout({
-        sort: shouldMeasureHeight,
-        measureHeight: shouldMeasureHeight,
+        sort: panesChanged,
+        measureHeight: panesChanged,
         measureWidth: true,
         update: true,
         buildYAxisTick: true,
