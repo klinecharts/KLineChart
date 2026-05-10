@@ -25,32 +25,31 @@ import CandleBarView, { type CandleBarOptions } from './CandleBarView'
 export default class IndicatorView extends CandleBarView {
   override getCandleBarOptions (): Nullable<CandleBarOptions> {
     const pane = this.getWidget().getPane()
-    const yAxis = pane.getYAxisComponentById()
-    if (!yAxis.isInCandle()) {
-      const chartStore = pane.getChart().getChartStore()
-      const indicators = chartStore.getIndicatorsByPaneId(pane.getId())
-      for (const indicator of indicators) {
-        if (indicator.shouldOhlc && indicator.visible) {
-          const indicatorStyles = indicator.styles
-          const defaultStyles = chartStore.getStyles().indicator
-          const compareRule = formatValue(indicatorStyles, 'ohlc.compareRule', defaultStyles.ohlc.compareRule) as CandleColorCompareRule
-          const upColor = formatValue(indicatorStyles, 'ohlc.upColor', defaultStyles.ohlc.upColor) as string
-          const downColor = formatValue(indicatorStyles, 'ohlc.downColor', defaultStyles.ohlc.downColor) as string
-          const noChangeColor = formatValue(indicatorStyles, 'ohlc.noChangeColor', defaultStyles.ohlc.noChangeColor) as string
-          return {
-            type: 'ohlc',
-            styles: {
-              compareRule,
-              upColor,
-              downColor,
-              noChangeColor,
-              upBorderColor: upColor,
-              downBorderColor: downColor,
-              noChangeBorderColor: noChangeColor,
-              upWickColor: upColor,
-              downWickColor: downColor,
-              noChangeWickColor: noChangeColor
-            }
+    const chartStore = pane.getChart().getChartStore()
+    const indicators = chartStore.getIndicatorsByPaneId(pane.getId())
+    for (const indicator of indicators) {
+      const yAxis = pane.getYAxisComponentById(indicator.yAxisId)
+      if (indicator.shouldOhlc && indicator.visible && !yAxis.isInCandle()) {
+        const indicatorStyles = indicator.styles
+        const defaultStyles = chartStore.getStyles().indicator
+        const compareRule = formatValue(indicatorStyles, 'ohlc.compareRule', defaultStyles.ohlc.compareRule) as CandleColorCompareRule
+        const upColor = formatValue(indicatorStyles, 'ohlc.upColor', defaultStyles.ohlc.upColor) as string
+        const downColor = formatValue(indicatorStyles, 'ohlc.downColor', defaultStyles.ohlc.downColor) as string
+        const noChangeColor = formatValue(indicatorStyles, 'ohlc.noChangeColor', defaultStyles.ohlc.noChangeColor) as string
+        return {
+          yAxisId: indicator.yAxisId,
+          type: 'ohlc',
+          styles: {
+            compareRule,
+            upColor,
+            downColor,
+            noChangeColor,
+            upBorderColor: upColor,
+            downBorderColor: downColor,
+            noChangeBorderColor: noChangeColor,
+            upWickColor: upColor,
+            downWickColor: downColor,
+            noChangeWickColor: noChangeColor
           }
         }
       }

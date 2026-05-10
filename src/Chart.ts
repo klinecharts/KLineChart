@@ -326,8 +326,8 @@ export default class ChartImp implements Chart {
         const leftInsideAxes: YAxis[] = []
         const rightInsideAxes: YAxis[] = []
         const rightOutsideAxes: YAxis[] = []
-        pane.getYAxisComponents().forEach(axis => {
-          if (pane.getId() !== PaneIdConstants.X_AXIS) {
+        if (pane.getId() !== PaneIdConstants.X_AXIS) {
+          pane.getYAxisComponents().forEach(axis => {
             const yAxis = axis
             if (yAxis.position === 'left') {
               if (yAxis.inside) {
@@ -342,8 +342,9 @@ export default class ChartImp implements Chart {
                 rightOutsideAxes.push(yAxis)
               }
             }
-          }
-        })
+          })
+        }
+
         leftOutsideAxes.forEach((yAxis, index) => { updateColumnWidth(leftOutsideYAxisWidths, index, yAxis.getAutoSize()) })
         leftInsideAxes.forEach((yAxis, index) => { updateColumnWidth(leftInsideYAxisWidths, index, yAxis.getAutoSize()) })
         rightInsideAxes.forEach((yAxis, index) => { updateColumnWidth(rightInsideYAxisWidths, index, yAxis.getAutoSize()) })
@@ -394,8 +395,8 @@ export default class ChartImp implements Chart {
         const leftInsideAxes: YAxis[] = []
         const rightInsideAxes: YAxis[] = []
         const rightOutsideAxes: YAxis[] = []
-        pane.getYAxisComponents().forEach(axis => {
-          if (pane.getId() !== PaneIdConstants.X_AXIS) {
+        if (pane.getId() !== PaneIdConstants.X_AXIS) {
+          pane.getYAxisComponents().forEach(axis => {
             const yAxis = axis
             if (yAxis.position === 'left') {
               if (yAxis.inside) {
@@ -410,8 +411,9 @@ export default class ChartImp implements Chart {
                 rightOutsideAxes.push(yAxis)
               }
             }
-          }
-        })
+          })
+        }
+
         leftOutsideAxes.forEach((yAxis, index) => {
           const width = leftOutsideYAxisWidths[index] ?? 0
           yAxisBounding[yAxis.id] = { width, left: leftOutsideOffset }
@@ -758,7 +760,7 @@ export default class ChartImp implements Chart {
   }
 
   overrideIndicator (override: IndicatorOverride): boolean {
-    const indicators = this._chartStore.getIndicatorsByFilter(isValid(override.id) ? { id: override.id } : override)
+    const indicators = this._chartStore.getIndicatorsByFilter(override, true)
     if (indicators.length === 0) {
       return false
     }
@@ -768,7 +770,7 @@ export default class ChartImp implements Chart {
     if (updated || panesChanged || yAxesChanged) {
       this.layout({
         sort: panesChanged,
-        measureHeight: panesChanged,
+        measureHeight: yAxesChanged,
         measureWidth: true,
         update: true,
         buildYAxisTick: true,

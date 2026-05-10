@@ -128,8 +128,12 @@ export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
       return false
     }
     this._yAxisComponents.delete(yAxisId)
-    this._yAxisWidgets.get(yAxisId)?.destroy()
-    this._yAxisWidgets.delete(yAxisId)
+    const yAxisWidget = this._yAxisWidgets.get(yAxisId)
+    if (isValid(yAxisWidget)) {
+      yAxisWidget.destroy()
+      this._yAxisWidgets.delete(yAxisId)
+      this.getContainer().removeChild(yAxisWidget.getContainer())
+    }
     this._yAxesBounding = Object.keys(this._yAxesBounding).reduce<Record<string, Partial<Bounding>>>((bounding, id) => {
       if (id !== yAxisId) {
         bounding[id] = this._yAxesBounding[id]
