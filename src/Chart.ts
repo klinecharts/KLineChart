@@ -25,7 +25,7 @@ import type Crosshair from './common/Crosshair'
 import type { ActionType, ActionCallback } from './common/Action'
 import type { DataLoader } from './common/DataLoader'
 import type VisibleRange from './common/VisibleRange'
-import type { Formatter, DecimalFold, Options, ThousandsSeparator, ZoomAnchor, ZoomAnchorType } from './Options'
+import type { Formatter, DecimalFold, Options, ThousandsSeparator, ZoomAnchor, ZoomAnchorType, Layout, LayoutBasicParams, LayoutPaneContentChild, LayoutPaneContentChildMultipleParams } from './Options'
 import Animation from './common/Animation'
 import { createId } from './common/utils/id'
 import { createDom } from './common/utils/dom'
@@ -139,9 +139,12 @@ export default class ChartImp implements Chart {
     this._initContainer(container)
     this._chartEvent = new Event(this._chartContainer, this)
     this._chartStore = new ChartStore(this, options)
-    this._candlePane = this._createPane<CandlePane>(CandlePane, { id: PaneIdConstants.CANDLE })
-    this._candlePane.createYAxis({ id: DEFAULT_AXIS_ID })
-    this._xAxisPane = this._createPane<XAxisPane>(XAxisPane, { id: PaneIdConstants.X_AXIS, order: Number.MAX_SAFE_INTEGER })
+    const defaultPaneOptions = this._getLayoutDefaultPaneOptions(this._chartStore.getLayoutBasicParams())
+    const defaultYAxis = this._getLayoutDefaultYAxis(this._chartStore.getLayoutBasicParams())
+    this._candlePane = this._createPane<CandlePane>(CandlePane, { ...defaultPaneOptions, id: PaneIdConstants.CANDLE })
+    this._candlePane.createYAxis({ ...defaultYAxis, id: DEFAULT_AXIS_ID })
+    this._xAxisPane = this._createPane<XAxisPane>(XAxisPane, { ...defaultPaneOptions, id: PaneIdConstants.X_AXIS, order: Number.MAX_SAFE_INTEGER })
+    this._applyLayout(options?.layout)
     this._layout()
   }
 
@@ -204,6 +207,115 @@ export default class ChartImp implements Chart {
 
   getSeparatorPanes (): Map<DrawPane, SeparatorPane> { return this._separatorPanes }
 
+  private _getLayoutDefaultPaneOptions (basicParams: LayoutBasicParams): PaneOptions {
+    const options: PaneOptions = {}
+    if (isNumber(basicParams.paneMinHeight)) {
+      options.minHeight = basicParams.paneMinHeight
+    }
+    if (isNumber(basicParams.paneHeight)) {
+      options.height = basicParams.paneHeight
+    }
+    return options
+  }
+
+  private _getLayoutDefaultYAxis (basicParams: LayoutBasicParams): AxisOverride {
+    const yAxis: AxisOverride = {}
+    if (isString(basicParams.yAxisPosition)) {
+      yAxis.position = basicParams.yAxisPosition
+    }
+    if (isValid(basicParams.yAxisInside)) {
+      yAxis.inside = basicParams.yAxisInside
+    }
+    return yAxis
+  }
+
+  private _createLayoutIndicator (
+    paneId: string,
+    content: LayoutPaneContentChild,
+    paneOptions: PaneOptions,
+    yAxis: AxisOverride
+  ): void {
+    let indicator: string | IndicatorCreate = ''
+    let contentYAxis: Nullable<Omit<AxisOverride, 'paneId' | 'id'>> = null
+    if (isString(content)) {
+      indicator = content
+    } else if (isValid((content as LayoutPaneContentChildMultipleParams).indicator)) {
+      const child = content as LayoutPaneContentChildMultipleParams
+      indicator = child.indicator
+      contentYAxis = child.yAxis ?? null
+    } else {
+      indicator = content as Omit<IndicatorCreate, 'paneId'>
+    }
+    this.createIndicator(
+      { ...(isString(indicator) ? { name: indicator } : indicator), paneId },
+      {
+        isStack: true,
+        pane: paneOptions,
+        yAxis: { ...yAxis, ...contentYAxis }
+      }
+    )
+  }
+
+  private _applyLayout (layout?: Layout): void {
+    const basicParams = this._chartStore.getLayoutBasicParams()
+
+    const defaultPaneOptions = this._getLayoutDefaultPaneOptions(basicParams)
+    const defaultYAxis = this._getLayoutDefaultYAxis(basicParams)
+    if (Object.keys(defaultPaneOptions).length > 0) {
+      this._candlePane.setOptions({ ...defaultPaneOptions, id: PaneIdConstants.CANDLE })
+    }
+    if (Object.keys(defaultYAxis).length > 0) {
+      this._candlePane.createYAxis({ ...defaultYAxis, id: DEFAULT_AXIS_ID, paneId: PaneIdConstants.CANDLE })
+    }
+
+    if (!isValid(layout)) {
+      return
+    }
+
+    const panes = layout.panes ?? []
+    panes.forEach((pane, index) => {
+      const paneOptions = { ...defaultPaneOptions, ...pane.options }
+      switch (pane.type) {
+        case 'candle': {
+          this._candlePane.setOptions({ ...paneOptions, id: PaneIdConstants.CANDLE })
+          this._candlePane.createYAxis({ ...defaultYAxis, id: DEFAULT_AXIS_ID, paneId: PaneIdConstants.CANDLE })
+          pane.content?.forEach(content => {
+            this._createLayoutIndicator(
+              PaneIdConstants.CANDLE,
+              content,
+              { ...paneOptions, id: PaneIdConstants.CANDLE },
+              defaultYAxis
+            )
+          })
+          break
+        }
+        case 'indicator': {
+          const paneId = paneOptions.id ?? createId(PaneIdConstants.INDICATOR)
+          let currentPane = this.getDrawPaneById(paneId)
+          if (!isValid(currentPane)) {
+            currentPane = this._createPane(IndicatorPane, { ...paneOptions, id: paneId, order: paneOptions.order ?? index + 1 })
+          } else {
+            currentPane.setOptions({ ...paneOptions, id: paneId })
+          }
+          currentPane.createYAxis({ ...defaultYAxis, id: DEFAULT_AXIS_ID, paneId })
+          pane.content?.forEach(content => {
+            this._createLayoutIndicator(
+              paneId,
+              content,
+              { ...paneOptions, id: paneId },
+              defaultYAxis
+            )
+          })
+          break
+        }
+        case 'xAxis': {
+          this._xAxisPane.setOptions({ ...paneOptions, id: PaneIdConstants.X_AXIS })
+          break
+        }
+      }
+    })
+  }
+
   layout (options: {
     sort?: boolean
     measureHeight?: boolean
@@ -231,7 +343,7 @@ export default class ChartImp implements Chart {
     if (options.cacheYAxisWidth ?? false) {
       this._layoutOptions.cacheYAxisWidth = options.cacheYAxisWidth!
     }
-    if (options.buildYAxisTick ?? false) {
+    if (options.forceBuildYAxisTick ?? false) {
       this._layoutOptions.forceBuildYAxisTick = options.forceBuildYAxisTick!
     }
     if (!this._layoutPending) {
@@ -661,10 +773,11 @@ export default class ChartImp implements Chart {
   private _syncIndicatorPanesByData (): boolean {
     let changed = false
     const usedPaneIds = new Set<string>([PaneIdConstants.CANDLE, PaneIdConstants.X_AXIS])
+    const defaultPaneOptions = this._getLayoutDefaultPaneOptions(this._chartStore.getLayoutBasicParams())
     this._chartStore.getIndicatorsByFilter({}).forEach(indicator => {
       usedPaneIds.add(indicator.paneId)
       if (!isValid(this.getDrawPaneById(indicator.paneId))) {
-        this._createPane(IndicatorPane, { id: indicator.paneId })
+        this._createPane(IndicatorPane, { ...defaultPaneOptions, id: indicator.paneId })
         changed = true
       }
     })
@@ -690,6 +803,7 @@ export default class ChartImp implements Chart {
 
   private _syncYAxesByData (): boolean {
     let changed = false
+    const defaultYAxis = this._getLayoutDefaultYAxis(this._chartStore.getLayoutBasicParams())
     this._drawPanes.forEach(pane => {
       const paneId = pane.getId()
       if (paneId === PaneIdConstants.X_AXIS) {
@@ -702,7 +816,7 @@ export default class ChartImp implements Chart {
       this._chartStore.getIndicatorsByPaneId(paneId).forEach(indicator => {
         usedYAxisIds.add(indicator.yAxisId)
         if (!pane.hasYAxisComponent(indicator.yAxisId)) {
-          pane.createYAxis({ id: indicator.yAxisId })
+          pane.createYAxis({ ...defaultYAxis, id: indicator.yAxisId, paneId })
           changed = true
         }
       })
@@ -746,14 +860,16 @@ export default class ChartImp implements Chart {
     if (result) {
       let shouldSort = false
       let pane = this.getDrawPaneById(indicator.paneId)
+      const defaultPaneOptions = this._getLayoutDefaultPaneOptions(this._chartStore.getLayoutBasicParams())
+      const defaultYAxis = this._getLayoutDefaultYAxis(this._chartStore.getLayoutBasicParams())
       if (!isValid(pane)) {
-        pane = this._createPane(IndicatorPane, { ...options?.pane, id: indicator.paneId })
+        pane = this._createPane(IndicatorPane, { ...defaultPaneOptions, ...options?.pane, id: indicator.paneId })
         shouldSort = true
       } else if (isValid(options?.pane)) {
         pane.setOptions({ ...options.pane, id: indicator.paneId })
         shouldSort = isNumber(options.pane.order)
       }
-      pane.createYAxis({ ...options?.yAxis, id: indicator.yAxisId, paneId: indicator.paneId })
+      pane.createYAxis({ ...defaultYAxis, ...options?.yAxis, id: indicator.yAxisId, paneId: indicator.paneId })
       this._syncYAxesByData()
       this.layout({
         sort: shouldSort,

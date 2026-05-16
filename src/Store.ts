@@ -36,7 +36,7 @@ import { logWarn } from './common/utils/logger'
 import { UpdateLevel } from './common/Updater'
 import type { DataLoader, DataLoaderGetBarsParams, DataLoadMore, DataLoadType } from './common/DataLoader'
 
-import type { Options, Formatter, ThousandsSeparator, DecimalFold, FormatDateType, FormatDateParams, FormatBigNumber, FormatExtendText, FormatExtendTextParams, ZoomAnchor, ZoomAnchorType } from './Options'
+import type { Options, Formatter, ThousandsSeparator, DecimalFold, FormatDateType, FormatDateParams, FormatBigNumber, FormatExtendText, FormatExtendTextParams, ZoomAnchor, ZoomAnchorType, LayoutBasicParams } from './Options'
 
 import type { IndicatorOverride, IndicatorCreate, IndicatorFilter, Indicator } from './component/Indicator'
 import type IndicatorImp from './component/Indicator'
@@ -48,7 +48,7 @@ import { getOverlayInnerClass } from './extension/overlay/index'
 
 import { getStyles as getExtensionStyles } from './extension/styles/index'
 
-import { PaneIdConstants } from './pane/types'
+import { PaneIdConstants, PANE_DEFAULT_HEIGHT, PANE_MIN_HEIGHT } from './pane/types'
 
 import type Chart from './Chart'
 import type ExcludePickPartial from './common/ExcludePickPartial'
@@ -56,6 +56,15 @@ import type ExcludePickPartial from './common/ExcludePickPartial'
 const BarSpaceLimitConstants = {
   MIN: 1,
   MAX: 50
+}
+
+const DEFAULT_LAYOUT_BASIC_PARAMS: Required<LayoutBasicParams> = {
+  barSpaceLimitMin: BarSpaceLimitConstants.MIN,
+  barSpaceLimitMax: BarSpaceLimitConstants.MAX,
+  yAxisPosition: 'right',
+  yAxisInside: false,
+  paneMinHeight: PANE_MIN_HEIGHT,
+  paneHeight: PANE_DEFAULT_HEIGHT
 }
 
 type ScrollLimitRole = 'bar_count' | 'distance'
@@ -252,6 +261,8 @@ export default class StoreImp implements Store {
    */
   private _gapBarSpace: number
 
+  private readonly _layoutBasicParams = { ...DEFAULT_LAYOUT_BASIC_PARAMS }
+
   /**
    * Distance from the last data to the right of the drawing area
    */
@@ -367,6 +378,10 @@ export default class StoreImp implements Store {
 
   constructor (chart: Chart, options?: Options) {
     this._chart = chart
+    const { layout } = options ?? {}
+    if (isValid(layout) && !isArray(layout)) {
+      merge(this._layoutBasicParams, layout.basicParams)
+    }
     this._calcOptimalBarSpace()
     this._lastBarRightSideDiffBarCount = this._offsetRightDistance / this._barSpace
     const { styles, locale, timezone, formatter, thousandsSeparator, decimalFold, zoomAnchor } = options ?? {}
@@ -777,7 +792,11 @@ export default class StoreImp implements Store {
   }
 
   setBarSpace (barSpace: number, adjustBeforeFunc?: () => void): void {
-    if (barSpace < BarSpaceLimitConstants.MIN || barSpace > BarSpaceLimitConstants.MAX || this._barSpace === barSpace) {
+    if (
+      barSpace < this._layoutBasicParams.barSpaceLimitMin ||
+      barSpace > this._layoutBasicParams.barSpaceLimitMax ||
+      this._barSpace === barSpace
+    ) {
       return
     }
     this._barSpace = barSpace
@@ -791,6 +810,10 @@ export default class StoreImp implements Store {
       buildYAxisTick: true,
       cacheYAxisWidth: true
     })
+  }
+
+  getLayoutBasicParams (): Required<LayoutBasicParams> {
+    return this._layoutBasicParams
   }
 
   setTotalBarSpace (totalSpace: number): void {
