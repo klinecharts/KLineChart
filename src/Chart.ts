@@ -61,6 +61,12 @@ import { getIndicatorClass } from './extension/indicator/index'
 
 import Event from './Event'
 
+export interface CreateIndicatorOptions {
+  isStack?: boolean
+  pane?: Omit<PaneOptions, 'id'>
+  yAxis?: Omit<AxisOverride, 'id' | 'paneId'>
+}
+
 export type DomPosition = 'root' | 'main' | 'yAxis'
 
 export interface ConvertFilter {
@@ -78,7 +84,7 @@ export interface Chart extends Store {
   id: string
   getDom: (paneId?: string, position?: DomPosition) => Nullable<HTMLElement>
   getSize: (paneId?: string, position?: DomPosition) => Nullable<Bounding>
-  createIndicator: (value: string | IndicatorCreate, options?: { isStack?: boolean }) => Nullable<string>
+  createIndicator: (value: string | IndicatorCreate, options?: CreateIndicatorOptions) => Nullable<string>
   getIndicators: (filter?: IndicatorFilter) => Indicator[]
   createOverlay: (value: string | OverlayCreate | Array<string | OverlayCreate>) => Nullable<string> | Array<Nullable<string>>
   getOverlays: (filter?: OverlayFilter) => Overlay[]
@@ -722,7 +728,7 @@ export default class ChartImp implements Chart {
     this._chartStore.setDataLoader(dataLoader)
   }
 
-  createIndicator (value: string | IndicatorCreate, options?: { isStack?: boolean }): Nullable<string> {
+  createIndicator (value: string | IndicatorCreate, options?: CreateIndicatorOptions): Nullable<string> {
     const indicator: IndicatorCreate = isString(value) ? { name: value } : value
     if (getIndicatorClass(indicator.name) === null) {
       logWarn('createIndicator', 'value', 'indicator not supported, you may need to use registerIndicator to add one!!!')
@@ -741,10 +747,13 @@ export default class ChartImp implements Chart {
       let shouldSort = false
       let pane = this.getDrawPaneById(indicator.paneId)
       if (!isValid(pane)) {
-        pane = this._createPane(IndicatorPane, { id: indicator.paneId })
+        pane = this._createPane(IndicatorPane, { ...options?.pane, id: indicator.paneId })
         shouldSort = true
+      } else if (isValid(options?.pane)) {
+        pane.setOptions({ ...options.pane, id: indicator.paneId })
+        shouldSort = isNumber(options.pane.order)
       }
-      pane.createYAxis({ id: indicator.yAxisId })
+      pane.createYAxis({ ...options?.yAxis, id: indicator.yAxisId, paneId: indicator.paneId })
       this._syncYAxesByData()
       this.layout({
         sort: shouldSort,

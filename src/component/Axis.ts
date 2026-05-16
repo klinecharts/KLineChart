@@ -87,6 +87,8 @@ export interface AxisTemplate {
   createTicks?: AxisCreateTicksCallback
 }
 
+export type AxisOverride = Partial<AxisTemplate>
+
 export interface Axis {
   override: (axis: AxisOverride) => void
   getTicks: () => AxisTick[]
@@ -95,8 +97,6 @@ export interface Axis {
   convertToPixel: (value: number) => number
   convertFromPixel: (px: number) => number
 }
-
-export type AxisOverride = Partial<AxisTemplate>
 
 function getDefaultAxisRange (): AxisRange {
   return {
