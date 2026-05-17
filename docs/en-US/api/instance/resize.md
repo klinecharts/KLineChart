@@ -13,7 +13,7 @@ import Tip from '../../../@components/Tip.vue'
 <Tip
   type="warn"
   title="Note"
-  :tip="['The container size will always be filled. This method will recalculate the size of each module of the entire chart. Frequent calls may affect performance, so please call with caution.']"/>
+  :tip="['The chart listens to container size changes and updates the layout automatically by default. This method recalculates the size of each module of the entire chart, so it is usually only needed for special cases. Frequent calls may affect performance.']"/>
 
 
 ## Reference {#reference}

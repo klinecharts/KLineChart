@@ -31,6 +31,7 @@ import { createId } from './common/utils/id'
 import { createDom } from './common/utils/dom'
 import { getPixelRatio } from './common/utils/canvas'
 import { isString, isArray, isValid, isNumber } from './common/utils/typeChecks'
+import { requestAnimationFrame, cancelAnimationFrame, DEFAULT_REQUEST_ID } from './common/utils/compatible'
 import { logWarn } from './common/utils/logger'
 import { binarySearchNearest } from './common/utils/number'
 import type { Styles } from './common/Styles'
@@ -121,7 +122,7 @@ export default class ChartImp implements Chart {
   private readonly _xAxisPane: XAxisPane
   private readonly _separatorPanes = new Map<DrawPane, SeparatorPane>()
 
-  private _layoutOptions = {
+  private _layoutUpdateOptions = {
     sort: true,
     measureHeight: true,
     measureWidth: true,
@@ -132,6 +133,14 @@ export default class ChartImp implements Chart {
   }
 
   private _layoutPending = false
+
+  private _resizeObserver: Nullable<ResizeObserver> = null
+
+  private _resizeRequestAnimationId = DEFAULT_REQUEST_ID
+
+  private readonly _boundWindowResize = (): void => {
+    this._scheduleResize()
+  }
 
   private readonly _cacheYAxisWidth = { left: 0, right: 0 }
 
@@ -146,6 +155,7 @@ export default class ChartImp implements Chart {
     this._xAxisPane = this._createPane<XAxisPane>(XAxisPane, { ...defaultPaneOptions, id: PaneIdConstants.X_AXIS, order: Number.MAX_SAFE_INTEGER })
     this._applyLayout(options?.layout)
     this._layout()
+    this._initResizeListener()
   }
 
   private _initContainer (container: HTMLElement): void {
@@ -175,6 +185,35 @@ export default class ChartImp implements Chart {
   private _cacheChartBounding (): void {
     this._chartBounding.width = Math.floor(this._chartContainer.clientWidth)
     this._chartBounding.height = Math.floor(this._chartContainer.clientHeight)
+  }
+
+  private _isChartBoundingChanged (): boolean {
+    return (
+      this._chartBounding.width !== Math.floor(this._chartContainer.clientWidth) ||
+      this._chartBounding.height !== Math.floor(this._chartContainer.clientHeight)
+    )
+  }
+
+  private _initResizeListener (): void {
+    if (typeof ResizeObserver !== 'undefined') {
+      this._resizeObserver = new ResizeObserver(() => {
+        this._scheduleResize()
+      })
+      this._resizeObserver.observe(this._chartContainer)
+    } else {
+      window.addEventListener('resize', this._boundWindowResize)
+    }
+  }
+
+  private _scheduleResize (): void {
+    if (this._resizeRequestAnimationId === DEFAULT_REQUEST_ID) {
+      this._resizeRequestAnimationId = requestAnimationFrame(() => {
+        this._resizeRequestAnimationId = DEFAULT_REQUEST_ID
+        if (this._isChartBoundingChanged()) {
+          this.resize()
+        }
+      })
+    }
   }
 
   private _createPane<P extends DrawPane> (
@@ -326,25 +365,25 @@ export default class ChartImp implements Chart {
     forceBuildYAxisTick?: boolean
   }): void {
     if (options.sort ?? false) {
-      this._layoutOptions.sort = options.sort!
+      this._layoutUpdateOptions.sort = options.sort!
     }
     if (options.measureHeight ?? false) {
-      this._layoutOptions.measureHeight = options.measureHeight!
+      this._layoutUpdateOptions.measureHeight = options.measureHeight!
     }
     if (options.measureWidth ?? false) {
-      this._layoutOptions.measureWidth = options.measureWidth!
+      this._layoutUpdateOptions.measureWidth = options.measureWidth!
     }
     if (options.update ?? false) {
-      this._layoutOptions.update = options.update!
+      this._layoutUpdateOptions.update = options.update!
     }
     if (options.buildYAxisTick ?? false) {
-      this._layoutOptions.buildYAxisTick = options.buildYAxisTick!
+      this._layoutUpdateOptions.buildYAxisTick = options.buildYAxisTick!
     }
     if (options.cacheYAxisWidth ?? false) {
-      this._layoutOptions.cacheYAxisWidth = options.cacheYAxisWidth!
+      this._layoutUpdateOptions.cacheYAxisWidth = options.cacheYAxisWidth!
     }
     if (options.forceBuildYAxisTick ?? false) {
-      this._layoutOptions.forceBuildYAxisTick = options.forceBuildYAxisTick!
+      this._layoutUpdateOptions.forceBuildYAxisTick = options.forceBuildYAxisTick!
     }
     if (!this._layoutPending) {
       this._layoutPending = true
@@ -358,7 +397,7 @@ export default class ChartImp implements Chart {
   }
 
   private _layout (): void {
-    const { sort, measureHeight, measureWidth, update, buildYAxisTick, cacheYAxisWidth, forceBuildYAxisTick } = this._layoutOptions
+    const { sort, measureHeight, measureWidth, update, buildYAxisTick, cacheYAxisWidth, forceBuildYAxisTick } = this._layoutUpdateOptions
     if (sort) {
       while (isValid(this._chartContainer.firstChild)) {
         this._chartContainer.removeChild(this._chartContainer.firstChild)
@@ -579,7 +618,7 @@ export default class ChartImp implements Chart {
       (this._xAxisPane.getXAxisComponent() as unknown as AxisImp).buildTicks(true)
       this.updatePane(UpdateLevel.All)
     }
-    this._layoutOptions = {
+    this._layoutUpdateOptions = {
       sort: false,
       measureHeight: false,
       measureWidth: false,
@@ -1307,6 +1346,16 @@ export default class ChartImp implements Chart {
   }
 
   destroy (): void {
+    if (this._resizeRequestAnimationId !== DEFAULT_REQUEST_ID) {
+      cancelAnimationFrame(this._resizeRequestAnimationId)
+      this._resizeRequestAnimationId = DEFAULT_REQUEST_ID
+    }
+    if (isValid(this._resizeObserver)) {
+      this._resizeObserver.disconnect()
+      this._resizeObserver = null
+    } else {
+      window.removeEventListener('resize', this._boundWindowResize)
+    }
     this._chartEvent.destroy()
     this._drawPanes.forEach(pane => {
       pane.destroy()
