@@ -19,7 +19,7 @@ import type Nullable from '../common/Nullable'
 import type { UpdateLevel } from '../common/Updater'
 import type Bounding from '../common/Bounding'
 
-import { isBoolean, isValid, merge } from '../common/utils/typeChecks'
+import { isBoolean, isNumber, isValid, merge } from '../common/utils/typeChecks'
 
 import { DEFAULT_AXIS_ID, type Axis, type AxisOverride } from '../component/Axis'
 
@@ -47,8 +47,8 @@ export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
     minHeight: PANE_MIN_HEIGHT,
     dragEnabled: true,
     order: 0,
-    height: PANE_DEFAULT_HEIGHT
-    // state: 'normal',
+    height: PANE_DEFAULT_HEIGHT,
+    state: 'normal'
   }
 
   constructor (chart: Chart, options: PickRequired<PaneOptions, 'id'>) {
@@ -60,7 +60,9 @@ export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
 
   setOptions (options: PaneOptions): this {
     merge(this._options, options)
-    this.setBounding({ height: this._options.height })
+    if (isNumber(options.height) && options.height > 0) {
+      this.setBounding({ height: this._options.height })
+    }
     return this
   }
 

@@ -47,7 +47,7 @@ import XAxisPane from './pane/XAxisPane'
 import type DrawPane from './pane/DrawPane'
 import SeparatorPane from './pane/SeparatorPane'
 
-import { type PaneOptions, PaneIdConstants } from './pane/types'
+import { type PaneOptions, PANE_MIN_HEIGHT, PaneIdConstants } from './pane/types'
 
 import type AxisImp from './component/Axis'
 import type { YAxis } from './component/YAxis'
@@ -382,36 +382,55 @@ export default class ChartImp implements Chart {
       const totalHeight = this._chartBounding.height
       const separatorSize = this.getStyles().separator.size
       const xAxisHeight = this._xAxisPane.getXAxisComponent().getAutoSize()
-      let remainingHeight = totalHeight - xAxisHeight
-      if (remainingHeight < 0) {
-        remainingHeight = 0
+      const contentPanes = this._drawPanes.filter(pane => pane.getId() !== PaneIdConstants.X_AXIS)
+      const maximizedPane = contentPanes.find(pane => pane.getOptions().state === 'maximize')
+      let remainingHeight = Math.max(totalHeight - xAxisHeight, 0)
+      const paneHeights = new Map<DrawPane, number>()
+      let actualSeparatorSize = separatorSize
+      if (isValid(maximizedPane)) {
+        actualSeparatorSize = 0
+        contentPanes.forEach(pane => {
+          paneHeights.set(pane, pane === maximizedPane ? remainingHeight : 0)
+        })
+      } else {
+        remainingHeight = Math.max(remainingHeight - this._separatorPanes.size * separatorSize, 0)
+        const flexiblePane =
+          contentPanes.find(pane => pane.getId() === PaneIdConstants.CANDLE && pane.getOptions().state === 'normal') ??
+          contentPanes.find(pane => pane.getOptions().state === 'normal')
+        contentPanes.forEach(pane => {
+          if (pane === flexiblePane) {
+            return
+          }
+          const options = pane.getOptions()
+          let paneHeight = PANE_MIN_HEIGHT
+          if (options.state === 'normal') {
+            paneHeight = Math.max(options.minHeight, options.height)
+            const availableHeight = Math.max(remainingHeight, 0)
+            if (paneHeight > availableHeight) {
+              paneHeight = availableHeight
+            }
+          }
+          remainingHeight -= paneHeight
+          paneHeights.set(pane, paneHeight)
+        })
+        if (isValid(flexiblePane)) {
+          paneHeights.set(flexiblePane, Math.max(remainingHeight, 0))
+        }
       }
       this._drawPanes.forEach(pane => {
-        const paneId = pane.getId()
-        if (isValid(this._separatorPanes.get(pane))) {
-          remainingHeight -= separatorSize
-        }
-        if (paneId !== PaneIdConstants.X_AXIS && paneId !== PaneIdConstants.CANDLE) {
-          let paneHeight = pane.getBounding().height
-          if (paneHeight > remainingHeight) {
-            paneHeight = remainingHeight
-            remainingHeight = 0
-          } else {
-            remainingHeight -= paneHeight
-          }
-          pane.setBounding({ height: paneHeight })
+        if (pane.getId() !== PaneIdConstants.X_AXIS) {
+          pane.setBounding({ height: paneHeights.get(pane) ?? 0 })
         }
       })
 
-      this._candlePane.setBounding({ height: Math.max(remainingHeight, 0) })
       this._xAxisPane.setBounding({ height: xAxisHeight })
 
       let top = 0
       this._drawPanes.forEach(pane => {
         const separatorPane = this._separatorPanes.get(pane)
         if (isValid(separatorPane)) {
-          separatorPane.setBounding({ height: separatorSize, top })
-          top += separatorSize
+          separatorPane.setBounding({ height: actualSeparatorSize, top })
+          top += actualSeparatorSize
         }
         pane.setBounding({ top })
         top += pane.getBounding().height
@@ -983,12 +1002,25 @@ export default class ChartImp implements Chart {
       const currentPaneId = currentPane.getId()
       if ((validId && options.id === currentPaneId) || !validId) {
         if (currentPaneId !== PaneIdConstants.X_AXIS) {
+          const currentPaneOptions = currentPane.getOptions()
+          const currentState = currentPaneOptions.state
           if (isNumber(options.height) && options.height > 0) {
-            const minHeight = Math.max(options.minHeight ?? currentPane.getOptions().minHeight, 0)
+            const minHeight = Math.max(options.minHeight ?? currentPaneOptions.minHeight, 0)
             const height = Math.max(minHeight, options.height)
             shouldLayout = true
             shouldMeasureHeight = true
             currentPane.setBounding({ height })
+          }
+          if (isValid(options.state)) {
+            shouldLayout = true
+            shouldMeasureHeight = true
+            if (currentState === 'normal' && options.state !== 'normal') {
+              currentPane.setOptions({ height: currentPane.getBounding().height })
+            } else if (currentState !== 'normal' && options.state === 'normal' && !isNumber(options.height)) {
+              currentPane.setBounding({
+                height: Math.max(currentPaneOptions.minHeight, currentPaneOptions.height)
+              })
+            }
           }
         }
         if (isNumber(options.order)) {

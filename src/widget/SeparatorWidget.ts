@@ -25,6 +25,7 @@ import { WidgetNameConstants, REAL_SEPARATOR_HEIGHT } from './types'
 
 import type SeparatorPane from '../pane/SeparatorPane'
 import type DrawPane from '../pane/DrawPane'
+import { PaneIdConstants } from '../pane/types'
 
 export default class SeparatorWidget extends Widget<SeparatorPane> {
   private _dragFlag = false
@@ -60,12 +61,50 @@ export default class SeparatorWidget extends Widget<SeparatorPane> {
     return WidgetNameConstants.SEPARATOR
   }
 
+  private _dragEnabled (topPane: DrawPane, bottomPane: DrawPane): boolean {
+    return topPane.getOptions().state === 'normal' &&
+      bottomPane.getOptions().state === 'normal' &&
+      bottomPane.getOptions().dragEnabled
+  }
+
+  private _findAdjustablePane (startIndex: number, step: number): Nullable<DrawPane> {
+    const drawPanes = this.getPane().getChart().getDrawPanes()
+    for (let i = startIndex; i >= 0 && i < drawPanes.length; i += step) {
+      const pane = drawPanes[i]
+      if (pane.getId() !== PaneIdConstants.X_AXIS && pane.getOptions().state === 'normal') {
+        return pane
+      }
+    }
+    return null
+  }
+
+  private _findDragPanes (): Nullable<{ topPane: DrawPane, bottomPane: DrawPane }> {
+    const currentPane = this.getPane()
+    const drawPanes = currentPane.getChart().getDrawPanes()
+    const topPaneIndex = drawPanes.indexOf(currentPane.getTopPane())
+    const bottomPaneIndex = drawPanes.indexOf(currentPane.getBottomPane())
+    if (topPaneIndex === -1 || bottomPaneIndex === -1) {
+      return null
+    }
+    const topPane = this._findAdjustablePane(topPaneIndex, -1)
+    const bottomPane = this._findAdjustablePane(bottomPaneIndex, 1)
+    if (isValid(topPane) && isValid(bottomPane) && this._dragEnabled(topPane, bottomPane)) {
+      return { topPane, bottomPane }
+    }
+    return null
+  }
+
   private _mouseDownEvent (event: MouseTouchEvent): boolean {
+    const dragPanes = this._findDragPanes()
+    if (!isValid(dragPanes)) {
+      this._topPane = null
+      this._bottomPane = null
+      return false
+    }
+    this._topPane = dragPanes.topPane
+    this._bottomPane = dragPanes.bottomPane
     this._dragFlag = true
     this._dragStartY = event.pageY
-    const pane = this.getPane()
-    this._topPane = pane.getTopPane()
-    this._bottomPane = pane.getBottomPane()
     this._topPaneHeight = this._topPane.getBounding().height
     this._bottomPaneHeight = this._bottomPane.getBounding().height
     return true
@@ -88,9 +127,8 @@ export default class SeparatorWidget extends Widget<SeparatorPane> {
 
     const isUpDrag = dragDistance < 0
     if (isValid(this._topPane) && isValid(this._bottomPane)) {
-      const bottomPaneOptions = this._bottomPane.getOptions()
       if (
-        bottomPaneOptions.dragEnabled
+        this._dragEnabled(this._topPane, this._bottomPane)
       ) {
         let reducedPane: Nullable<DrawPane> = null
         let increasedPane: Nullable<DrawPane> = null
@@ -112,7 +150,10 @@ export default class SeparatorWidget extends Widget<SeparatorPane> {
           const reducedPaneHeight = Math.max(startDragReducedPaneHeight - Math.abs(dragDistance), reducedPaneMinHeight)
           const diffHeight = startDragReducedPaneHeight - reducedPaneHeight
           reducedPane.setBounding({ height: reducedPaneHeight })
-          increasedPane.setBounding({ height: startDragIncreasedPaneHeight + diffHeight })
+          const increasedPaneHeight = startDragIncreasedPaneHeight + diffHeight
+          increasedPane.setBounding({ height: increasedPaneHeight })
+          reducedPane.setOptions({ height: reducedPaneHeight })
+          increasedPane.setOptions({ height: increasedPaneHeight })
           const currentPane = this.getPane()
           const chart = currentPane.getChart()
           chart.getChartStore().executeAction('onPaneDrag', { paneId: currentPane.getId() })
@@ -131,10 +172,9 @@ export default class SeparatorWidget extends Widget<SeparatorPane> {
   }
 
   private _mouseEnterEvent (): boolean {
-    const pane = this.getPane()
-    const bottomPane = pane.getBottomPane()
-    if (bottomPane.getOptions().dragEnabled) {
-      const chart = pane.getChart()
+    const dragPanes = this._findDragPanes()
+    if (isValid(dragPanes)) {
+      const chart = this.getPane().getChart()
       const styles = chart.getStyles().separator
       this.getContainer().style.background = styles.activeBackgroundColor
       return true

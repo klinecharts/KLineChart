@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-// export type PaneState = 'normal' | 'maximize' | 'minimize'
+export type PaneState = 'normal' | 'maximize' | 'minimize'
 
 export interface PaneOptions {
   id?: string
@@ -20,6 +20,7 @@ export interface PaneOptions {
   minHeight?: number
   dragEnabled?: boolean
   order?: number
+  state?: PaneState
 }
 
 export const PANE_MIN_HEIGHT = 30
