@@ -195,7 +195,7 @@ export default class ChartImp implements Chart {
   }
 
   private _initResizeListener (): void {
-    if (typeof ResizeObserver !== 'undefined') {
+    if (isValid(ResizeObserver)) {
       this._resizeObserver = new ResizeObserver(() => {
         this._scheduleResize()
       })
