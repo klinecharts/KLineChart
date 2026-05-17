@@ -464,7 +464,7 @@ export default class ChartImp implements Chart {
         const rightInsideAxes: YAxis[] = []
         const rightOutsideAxes: YAxis[] = []
         if (pane.getId() !== PaneIdConstants.X_AXIS) {
-          pane.getYAxisComponents().forEach(axis => {
+          pane.getWidgetYAxisComponents().forEach(axis => {
             const yAxis = axis
             if (yAxis.position === 'left') {
               if (yAxis.inside) {
@@ -533,7 +533,7 @@ export default class ChartImp implements Chart {
         const rightInsideAxes: YAxis[] = []
         const rightOutsideAxes: YAxis[] = []
         if (pane.getId() !== PaneIdConstants.X_AXIS) {
-          pane.getYAxisComponents().forEach(axis => {
+          pane.getWidgetYAxisComponents().forEach(axis => {
             const yAxis = axis
             if (yAxis.position === 'left') {
               if (yAxis.inside) {

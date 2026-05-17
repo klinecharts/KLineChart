@@ -76,6 +76,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
     if (isValid(yAxis.id) && this.id === DEFAULT_AXIS_ID) {
       this.id = yAxis.id
     }
+    delete others.needWidget
     merge(this.gap, gap)
     merge(this, others)
   }
@@ -266,7 +267,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
     }
 
     const pane = this.getParent()
-    const height = pane.getYAxisWidget()?.getBounding().height ?? 0
+    const height = this.getBounding().height
     const chartStore = pane.getChart().getChartStore()
     const optimalTicks: AxisTick[] = []
     const indicators = chartStore.getIndicatorsByPaneId(pane.getId()).filter(indicator => indicator.yAxisId === this.id)
@@ -414,7 +415,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
   }
 
   protected override getBounding (): Bounding {
-    return this.getParent().getYAxisWidget()!.getBounding()
+    return this.getParent().getYAxisWidgetById(this.id)?.getBounding() ?? this.getParent().getMainWidget().getBounding()
   }
 
   convertFromPixel (pixel: number): number {
@@ -429,14 +430,14 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
   convertToPixel (value: number): number {
     const range = this.getRange()
     const realValue = this.valueToRealValue(value, { range })
-    const height = this.getParent().getYAxisWidget()?.getBounding().height ?? 0
+    const height = this.getBounding().height
     const { realFrom, realRange } = range
     const rate = (realValue - realFrom) / realRange
     return this.reverse ? Math.round(rate * height) : Math.round((1 - rate) * height)
   }
 
   convertToNicePixel (value: number): number {
-    const height = this.getParent().getYAxisWidget()?.getBounding().height ?? 0
+    const height = this.getBounding().height
     const pixel = this.convertToPixel(value)
     return Math.round(Math.max(height * 0.05, Math.min(pixel, height * 0.98)))
   }

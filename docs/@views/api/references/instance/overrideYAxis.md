@@ -6,6 +6,7 @@
     name?: string
     reverse?: boolean
     inside?: boolean
+    needWidget?: boolean
     position?: 'left' | 'right'
     scrollZoomEnabled?: boolean
     gap?: {

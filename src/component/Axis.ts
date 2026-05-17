@@ -87,7 +87,7 @@ export interface AxisTemplate {
   createTicks?: AxisCreateTicksCallback
 }
 
-export type AxisOverride = Partial<AxisTemplate>
+export type AxisOverride = Partial<AxisTemplate> & { needWidget?: boolean }
 
 export interface Axis {
   override: (axis: AxisOverride) => void
@@ -166,7 +166,7 @@ export default abstract class AxisImp implements Axis {
 
   protected abstract getBounding (): Bounding
 
-  abstract override (axis: AxisTemplate): void
+  abstract override (axis: AxisOverride): void
 
   abstract getAutoSize (): number
 

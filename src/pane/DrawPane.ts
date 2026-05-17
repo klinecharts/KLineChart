@@ -89,17 +89,21 @@ export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
   createYAxis (axis: AxisOverride): YAxis {
     const yAxisId = axis.id ?? DEFAULT_AXIS_ID
     const yAxisName = axis.name ?? 'normal'
+    const needWidget = axis.needWidget ?? true
     let yAxis = this._yAxisComponents.get(yAxisId)
     const shouldCreateYAxis = !isValid(yAxis) || (isValid(axis.name) && yAxis.name !== axis.name)
     if (shouldCreateYAxis) {
       this._yAxisWidgets.get(yAxisId)?.destroy()
+      this._yAxisWidgets.delete(yAxisId)
       yAxis = this.createYAxisComponent(yAxisName)
       yAxis.id = yAxisId
       yAxis.paneId = this.getId()
       this._yAxisComponents.set(yAxisId, yAxis)
-      const yAxisWidget = this.createYAxisWidget(this.getContainer(), yAxis)
-      if (isValid(yAxisWidget)) {
-        this._yAxisWidgets.set(yAxisId, yAxisWidget)
+      if (needWidget) {
+        const yAxisWidget = this.createYAxisWidget(this.getContainer(), yAxis)
+        if (isValid(yAxisWidget)) {
+          this._yAxisWidgets.set(yAxisId, yAxisWidget)
+        }
       }
     }
     if (!isValid(yAxis)) {
@@ -118,6 +122,10 @@ export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
 
   getYAxisComponents (): YAxis[] {
     return Array.from(this._yAxisComponents.values())
+  }
+
+  getWidgetYAxisComponents (): YAxis[] {
+    return Array.from(this._yAxisWidgets.keys()).map(id => this._yAxisComponents.get(id)!)
   }
 
   hasYAxisComponent (yAxisId: string): boolean {
