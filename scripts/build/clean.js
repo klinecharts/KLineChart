@@ -32,10 +32,12 @@ function deleteFiles (dir) {
       } else {
         fs.unlinkSync(path)
         deletedFileCount++
-        process.stdout.clearLine(process.stdout)
-        process.stdout.cursorTo(0)
-        const percent = `${Math.round(deletedFileCount / totalFileCount * 100)}%`
-        process.stdout.write(`${styleText('blue', `${percent}(${deletedFileCount}/${totalFileCount}): ${file}`)}`, 'utf-8')
+        if (process.stdout.isTTY) {
+          process.stdout.clearLine(process.stdout)
+          process.stdout.cursorTo(0)
+          const percent = `${Math.round(deletedFileCount / totalFileCount * 100)}%`
+          process.stdout.write(`${styleText('blue', `${percent}(${deletedFileCount}/${totalFileCount}): ${file}`)}`, 'utf-8')
+        }
       }
     })
     fs.rmdirSync(dir)

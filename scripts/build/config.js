@@ -1,11 +1,5 @@
-// import child_process from 'child_process'
-
-import { nodeResolve } from '@rollup/plugin-node-resolve'
-import replace from '@rollup/plugin-replace'
-import typescript from '@rollup/plugin-typescript'
-import terser from '@rollup/plugin-terser'
-import fileSize from 'rollup-plugin-filesize'
-import eslint from '@rollup/plugin-eslint'
+import { parse } from '@babel/parser'
+import generator from '@babel/generator'
 
 import { resolvePath, getVersion } from '../utils.js'
 
@@ -25,61 +19,119 @@ const isProd = env === 'production'
 
 const buildDir = resolvePath('dist')
 
-function createInputConfig ({ input, replaceValues }) {
-  return {
-    input,
-    plugins: [
-      typescript(),
-      eslint({
-        throwOnError: true
-      }),
-      nodeResolve(),
-      replace({
-        preventAssignment: true,
-        values: {
-          // '__VERSION__': `v${version}(${commitId.length > 0 ? `${commitId}, ` : ''}${new Date().toISOString()})`,
-          __VERSION__: version,
-          ...replaceValues
-        }
-      }),
-      fileSize(),
-      isProd && terser()
-    ].filter(p => !!p)
-  }
-}
+const generate = generator.default
 
-function createOutputConfig ({
-  fileName, format, name, parentDir
-}) {
-  let file
-  if (parentDir) {
-    file = resolvePath(fileName, resolvePath(parentDir, buildDir))
-  } else {
-    file = resolvePath(fileName, buildDir)
-  }
-  const config = {
-    file,
-    format,
-    sourcemap: isDev,
-    indent: false,
-    banner: `
+const banner = `
     /**
      * @license
      * KLineChart v${version}
      * Copyright (c) 2019 lihu.
      * Licensed under Apache License 2.0 https://www.apache.org/licenses/LICENSE-2.0
      */`.trim()
+
+function createReplacePlugin (replaceValues = {}) {
+  const values = {
+    // '__VERSION__': `v${version}(${commitId.length > 0 ? `${commitId}, ` : ''}${new Date().toISOString()})`,
+    __VERSION__: version,
+    ...replaceValues
   }
 
-  if (name) {
-    config.name = name
+  return {
+    name: 'klinecharts-replace',
+    enforce: 'pre',
+    transform (code) {
+      let result = code
+      Object.keys(values).forEach(key => {
+        result = result.replaceAll(key, values[key])
+      })
+      return result === code
+        ? null
+        : {
+            code: result,
+            map: { mappings: '' }
+          }
+    }
   }
-  return config
+}
+
+function createBannerPlugin () {
+  return {
+    name: 'klinecharts-banner',
+    generateBundle (_, bundle) {
+      Object.values(bundle).forEach(file => {
+        if (file.type === 'chunk') {
+          file.code = `${banner}\n${file.code}`
+        }
+      })
+    }
+  }
+}
+
+function createStripCommentsPlugin () {
+  return {
+    name: 'klinecharts-strip-comments',
+    renderChunk (code) {
+      const ast = parse(code, {
+        sourceType: 'unambiguous'
+      })
+      const result = generate(ast, {
+        comments: false,
+        compact: false,
+        minified: false
+      })
+      return {
+        code: result.code,
+        map: { mappings: '' }
+      }
+    }
+  }
+}
+
+function createBuildConfig ({
+  input,
+  replaceValues,
+  fileName, format, name, parentDir
+}) {
+  let outDir
+  if (parentDir) {
+    outDir = resolvePath(parentDir, buildDir)
+  } else {
+    outDir = buildDir
+  }
+
+  const rollupFormat = format === 'esm' ? 'es' : format
+
+  return {
+    configFile: false,
+    envFile: false,
+    keepProcessEnv: true,
+    plugins: [
+      createReplacePlugin(replaceValues),
+      createStripCommentsPlugin(),
+      createBannerPlugin()
+    ],
+    build: {
+      emptyOutDir: false,
+      minify: isProd ? 'terser' : false,
+      outDir,
+      sourcemap: isDev,
+      lib: {
+        entry: input,
+        formats: [rollupFormat],
+        fileName: () => fileName,
+        name
+      },
+      rollupOptions: {
+        external: format === 'cjs'
+          ? ['./umd/klinecharts.min.js', './umd/klinecharts.js']
+          : []
+      }
+    }
+  }
 }
 
 export {
-  createInputConfig,
-  createOutputConfig,
+  createBuildConfig,
   version,
   env,
   isDev,
