@@ -1232,7 +1232,7 @@ export default class StoreImp implements Store {
     return this._indicators.get(paneId) ?? []
   }
 
-  getIndicatorsByFilter (filter: IndicatorFilter, ignorePaneId?: boolean): IndicatorImp[] {
+  getIndicatorsByFilter (filter: IndicatorFilter): IndicatorImp[] {
     const { paneId, name, id } = filter
     const match: ((overlay: IndicatorImp) => boolean) = indicator => {
       if (isValid(id)) {
@@ -1241,7 +1241,7 @@ export default class StoreImp implements Store {
       return !isValid(name) || indicator.name === name
     }
     let indicators: IndicatorImp[] = []
-    if (isValid(paneId) && !(ignorePaneId ?? false)) {
+    if (isValid(paneId)) {
       indicators = indicators.concat(this.getIndicatorsByPaneId(paneId).filter(match))
     } else {
       this._indicators.forEach(paneIndicators => {
@@ -1307,7 +1307,7 @@ export default class StoreImp implements Store {
   overrideIndicator (override: IndicatorOverride): boolean {
     let updateFlag = false
     let sortFlag = false
-    const filterIndicators = this.getIndicatorsByFilter(override, true)
+    const filterIndicators = this.getIndicatorsByFilter(override)
     filterIndicators.forEach(indicator => {
       const prevPaneId = indicator.paneId
       indicator.override(override)

@@ -64,8 +64,8 @@ import Event from './Event'
 
 export interface CreateIndicatorOptions {
   isStack?: boolean
-  pane?: Omit<PaneOptions, 'id'>
-  yAxis?: Omit<AxisOverride, 'id' | 'paneId'>
+  pane?: PaneOptions
+  yAxis?: AxisOverride
 }
 
 export type DomPosition = 'root' | 'main' | 'yAxis'
@@ -275,7 +275,7 @@ export default class ChartImp implements Chart {
     yAxis: AxisOverride
   ): void {
     let indicator: string | IndicatorCreate = ''
-    let contentYAxis: Nullable<Omit<AxisOverride, 'paneId' | 'id'>> = null
+    let contentYAxis: Nullable<Omit<AxisOverride, 'paneId'>> = null
     if (isString(content)) {
       indicator = content
     } else if (isValid((content as LayoutPaneContentChildMultipleParams).indicator)) {
@@ -286,10 +286,10 @@ export default class ChartImp implements Chart {
       indicator = content as Omit<IndicatorCreate, 'paneId'>
     }
     this.createIndicator(
-      { ...(isString(indicator) ? { name: indicator } : indicator), paneId },
+      indicator,
       {
         isStack: true,
-        pane: paneOptions,
+        pane: { ...paneOptions, id: paneId },
         yAxis: { ...yAxis, ...contentYAxis }
       }
     )
@@ -901,14 +901,17 @@ export default class ChartImp implements Chart {
   }
 
   createIndicator (value: string | IndicatorCreate, options?: CreateIndicatorOptions): Nullable<string> {
-    const indicator: IndicatorCreate = isString(value) ? { name: value } : value
+    const indicator: ExcludePickPartial<Indicator, 'name'> = isString(value) ? { name: value } : value
     if (getIndicatorClass(indicator.name) === null) {
       logWarn('createIndicator', 'value', 'indicator not supported, you may need to use registerIndicator to add one!!!')
       return null
     }
 
-    indicator.paneId ??= createId(PaneIdConstants.INDICATOR)
-    indicator.yAxisId ??= DEFAULT_AXIS_ID
+    const paneId = options?.pane?.id ?? createId(PaneIdConstants.INDICATOR)
+    const yAxisId = options?.yAxis?.id ?? DEFAULT_AXIS_ID
+
+    indicator.paneId = paneId
+    indicator.yAxisId = yAxisId
 
     if (!isString(indicator.id)) {
       indicator.id = createId(indicator.name)
@@ -917,17 +920,17 @@ export default class ChartImp implements Chart {
     const result = this._chartStore.addIndicator(indicator as ExcludePickPartial<Indicator, 'id' | 'name' | 'paneId'>, options?.isStack ?? false)
     if (result) {
       let shouldSort = false
-      let pane = this.getDrawPaneById(indicator.paneId)
+      let pane = this.getDrawPaneById(paneId)
       const defaultPaneOptions = this._getLayoutDefaultPaneOptions(this._chartStore.getLayoutBasicParams())
       const defaultYAxis = this._getLayoutDefaultYAxis(this._chartStore.getLayoutBasicParams())
       if (!isValid(pane)) {
-        pane = this._createPane(IndicatorPane, { ...defaultPaneOptions, ...options?.pane, id: indicator.paneId })
+        pane = this._createPane(IndicatorPane, { ...defaultPaneOptions, ...options?.pane, id: paneId })
         shouldSort = true
       } else if (isValid(options?.pane)) {
-        pane.setOptions({ ...options.pane, id: indicator.paneId })
+        pane.setOptions({ ...options.pane, id: paneId })
         shouldSort = isNumber(options.pane.order)
       }
-      pane.createYAxis({ ...defaultYAxis, ...options?.yAxis, id: indicator.yAxisId, paneId: indicator.paneId })
+      pane.createYAxis({ ...defaultYAxis, ...options?.yAxis, id: yAxisId, paneId })
       this._syncYAxesByData()
       this.layout({
         sort: shouldSort,
@@ -943,17 +946,13 @@ export default class ChartImp implements Chart {
   }
 
   overrideIndicator (override: IndicatorOverride): boolean {
-    const indicators = this._chartStore.getIndicatorsByFilter(override, true)
+    const indicators = this._chartStore.getIndicatorsByFilter(override)
     if (indicators.length === 0) {
       return false
     }
     const updated = this._chartStore.overrideIndicator(override)
-    const panesChanged = this._syncIndicatorPanesByData()
-    const yAxesChanged = this._syncYAxesByData()
-    if (updated || panesChanged || yAxesChanged) {
+    if (updated) {
       this.layout({
-        sort: panesChanged,
-        measureHeight: yAxesChanged,
         measureWidth: true,
         update: true,
         buildYAxisTick: true,

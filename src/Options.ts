@@ -94,11 +94,11 @@ export interface LayoutBasicParams {
 }
 
 export interface LayoutPaneContentChildMultipleParams {
-  indicator: string | Omit<IndicatorCreate, 'paneId'>
-  yAxis?: Omit<AxisOverride, 'paneId' | 'id'>
+  indicator: string | IndicatorCreate
+  yAxis?: Omit<AxisOverride, 'paneId'>
 }
 
-export type LayoutPaneContentChild = LayoutPaneContentChildMultipleParams | string | Omit<IndicatorCreate, 'paneId'>
+export type LayoutPaneContentChild = LayoutPaneContentChildMultipleParams | string | IndicatorCreate
 
 export interface LayoutPane {
   type: 'candle' | 'indicator' | 'xAxis'
