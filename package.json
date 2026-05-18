@@ -64,7 +64,8 @@
     "docs:dev": "pnpm -F=docs dev",
     "docs:build": "pnpm build-umd:prod && pnpm -F=docs build",
     "docs:preview": "pnpm -F=docs preview",
-    "docs:deploy": "pnpm docs:build && gh-pages -d website"
+    "docs:deploy": "pnpm docs:build && gh-pages -d website",
+    "debug": "vite --host 0.0.0.0 debug"
   },
   "packageManager": "pnpm@10.4.1",
   "devDependencies": {
@@ -98,6 +99,7 @@
     "tslib": "^2.8.1",
     "typescript": "^5.8.3",
     "vite": "8.0.13",
-    "vitepress": "2.0.0-alpha.17"
+    "vitepress": "2.0.0-alpha.17",
+    "vue": "^3.5.34"
   }
 }
