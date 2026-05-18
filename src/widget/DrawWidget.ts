@@ -100,6 +100,7 @@ export default abstract class DrawWidget<P extends DrawPane = DrawPane> extends 
   destroy (): void {
     this._mainCanvas.destroy()
     this._overlayCanvas.destroy()
+    super.destroy()
   }
 
   getImage (includeOverlay: boolean): HTMLCanvasElement {

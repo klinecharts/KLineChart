@@ -296,20 +296,14 @@ export default class ChartImp implements Chart {
   }
 
   private _applyLayout (layout?: Layout): void {
+    if (!isValid(layout)) {
+      return
+    }
+
     const basicParams = this._chartStore.getLayoutBasicParams()
 
     const defaultPaneOptions = this._getLayoutDefaultPaneOptions(basicParams)
     const defaultYAxis = this._getLayoutDefaultYAxis(basicParams)
-    if (Object.keys(defaultPaneOptions).length > 0) {
-      this._candlePane.setOptions({ ...defaultPaneOptions, id: PaneIdConstants.CANDLE })
-    }
-    if (Object.keys(defaultYAxis).length > 0) {
-      this._candlePane.createYAxis({ ...defaultYAxis, id: DEFAULT_AXIS_ID, paneId: PaneIdConstants.CANDLE })
-    }
-
-    if (!isValid(layout)) {
-      return
-    }
 
     const panes = layout.panes ?? []
     panes.forEach((pane, index) => {

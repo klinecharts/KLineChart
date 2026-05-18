@@ -13,7 +13,7 @@
  */
 
 import type Bounding from '../common/Bounding'
-import { isFunction, isNumber, isValid, merge } from '../common/utils/typeChecks'
+import { isFunction, isNumber, isString, isValid, merge } from '../common/utils/typeChecks'
 import { index10, getPrecision, nice, round } from '../common/utils/number'
 import { calcTextWidth } from '../common/utils/canvas'
 import { formatPrecision } from '../common/utils/format'
@@ -75,6 +75,9 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
     } = yAxis
     if (isValid(yAxis.id) && this.id === DEFAULT_AXIS_ID) {
       this.id = yAxis.id
+    }
+    if (!isString(this.name) && isString(name)) {
+      this.name = name
     }
     delete others.needWidget
     merge(this.gap, gap)

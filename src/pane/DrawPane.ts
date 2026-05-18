@@ -142,7 +142,6 @@ export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
     if (isValid(yAxisWidget)) {
       yAxisWidget.destroy()
       this._yAxisWidgets.delete(yAxisId)
-      this.getContainer().removeChild(yAxisWidget.getContainer())
     }
     this._yAxesBounding = Object.keys(this._yAxesBounding).reduce<Record<string, Partial<Bounding>>>((bounding, id) => {
       if (id !== yAxisId) {
