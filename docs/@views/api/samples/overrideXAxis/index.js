@@ -6,7 +6,7 @@ chart.overrideXAxis({
   scrollZoomEnabled: false,
   createTicks: ({ defaultTicks }) => {
     return defaultTicks.map(
-      ({ coord, value, text }) => ({ coord, value, text: `${text}` })
+      ({ coord, value, text }) => ({ coord, value, text: `T ${text}` })
     )
   }
 })

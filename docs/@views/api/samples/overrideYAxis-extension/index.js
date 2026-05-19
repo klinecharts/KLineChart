@@ -1,12 +1,15 @@
 import { init } from 'klinecharts'
 
-const chart = init('setPaneOptions-axis-basic-chart')
+const chart = init('overrideYAxis-extension-chart')
 chart.createIndicator('MACD')
 
 chart.overrideYAxis({
   paneId: 'candle_pane',
-  name: 'logarithm',
-  reverse: true
+  createTicks: ({ defaultTicks }) => {
+    return defaultTicks.map(
+      ({ coord, value, text }) => ({ coord, value, text: `$${text}` })
+    )
+  }
 })
 
 chart.setSymbol({ ticker: 'TestSymbol' })

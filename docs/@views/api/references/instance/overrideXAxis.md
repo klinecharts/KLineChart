@@ -1,6 +1,6 @@
 ```typescript
 (
-  options?: {
+  xAxis?: {
     name?: string
     scrollZoomEnabled?: boolean
     createTicks?: (params: object) => Array<{

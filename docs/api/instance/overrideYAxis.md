@@ -29,8 +29,8 @@ outline: deep
 
 ## 用法 {#usage}
 <script setup>
-import OverrideYAxisBasic from '../../@views/api/samples/setPaneOptions-axis-basic/index.vue'
-import OverrideYAxisExtension from '../../@views/api/samples/setPaneOptions-axis-extension/index.vue'
+import OverrideYAxisBasic from '../../@views/api/samples/overrideYAxis-basic/index.vue'
+import OverrideYAxisExtension from '../../@views/api/samples/overrideYAxis-extension/index.vue'
 </script>
 
 ### 基础属性 {#basic}

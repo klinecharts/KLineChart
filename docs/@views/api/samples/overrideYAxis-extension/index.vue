@@ -5,7 +5,7 @@ import { data } from './index.data'
 
 <template>
   <ChartPreview
-    title="setPaneOptions-axis-basic"
-    chartId="setPaneOptions-axis-basic-chart"
+    title="overrideYAxis-extension"
+    chartId="overrideYAxis-extension-chart"
     :code="data.js"/>
 </template>

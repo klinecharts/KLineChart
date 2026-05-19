@@ -15,7 +15,7 @@
         type: 'candle' | 'indicator' | 'xAxis'
         content?: Array<string | IndicatorCreate | {
           indicator: string | IndicatorCreate
-          yAxis?: Omit<AxisOverride, 'paneId'>
+          yAxis?: Omit<YAxisOverride, 'paneId'>
         }>
         options?: {
           id?: string
