@@ -64,12 +64,10 @@ const relativeStrengthIndex: IndicatorTemplate<Rsi, number> = {
           avgLosses[index] = (avgLosses[index] * (p - 1) + loss) / p
         }
 
-        if (avgGains[index] === 0 && avgLosses[index] === 0) {
-          return
-        }
-
         if (avgLosses[index] === 0) {
           rsi[figures[index].key] = 100
+        } else if (avgGains[index] === 0) {
+          rsi[figures[index].key] = 0
         } else {
           rsi[figures[index].key] = 100 - (100 / (1 + avgGains[index] / avgLosses[index]))
         }
