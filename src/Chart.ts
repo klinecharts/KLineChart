@@ -51,21 +51,22 @@ import SeparatorPane from './pane/SeparatorPane'
 import { type PaneOptions, PANE_MIN_HEIGHT, PaneIdConstants } from './pane/types'
 
 import type AxisImp from './component/Axis'
-import type { YAxis } from './component/YAxis'
+import type { YAxis, YAxisOverride } from './component/YAxis'
 
 import type { IndicatorFilter, Indicator, IndicatorCreate, IndicatorOverride } from './component/Indicator'
 import type { OverlayFilter, Overlay, OverlayCreate, OverlayOverride } from './component/Overlay'
 import type ExcludePickPartial from './common/ExcludePickPartial'
-import { DEFAULT_AXIS_ID, type AxisOverride } from './component/Axis'
+import { DEFAULT_AXIS_ID } from './component/Axis'
 
 import { getIndicatorClass } from './extension/indicator/index'
 
 import Event from './Event'
+import type { XAxisOverride } from './component/XAxis'
 
 export interface CreateIndicatorOptions {
   isStack?: boolean
   pane?: PaneOptions
-  yAxis?: AxisOverride
+  yAxis?: YAxisOverride
 }
 
 export type DomPosition = 'root' | 'main' | 'yAxis'
@@ -90,8 +91,8 @@ export interface Chart extends Store {
   createOverlay: (value: string | OverlayCreate | Array<string | OverlayCreate>) => Nullable<string> | Array<Nullable<string>>
   getOverlays: (filter?: OverlayFilter) => Overlay[]
   setPaneOptions: (options: PaneOptions) => void
-  overrideYAxis: (xAxis: AxisOverride) => void
-  overrideXAxis: (yAxis: AxisOverride) => void
+  overrideYAxis: (xAxis: XAxisOverride) => void
+  overrideXAxis: (yAxis: YAxisOverride) => void
   getPaneOptions: (id?: string) => Nullable<PaneOptions> | PaneOptions[]
   scrollByDistance: (distance: number, animationDuration?: number) => void
   scrollToRealTime: (animationDuration?: number) => void
@@ -257,8 +258,8 @@ export default class ChartImp implements Chart {
     return options
   }
 
-  private _getLayoutDefaultYAxis (basicParams: LayoutBasicParams): AxisOverride {
-    const yAxis: AxisOverride = {}
+  private _getLayoutDefaultYAxis (basicParams: LayoutBasicParams): YAxisOverride {
+    const yAxis: YAxisOverride = {}
     if (isString(basicParams.yAxisPosition)) {
       yAxis.position = basicParams.yAxisPosition
     }
@@ -272,10 +273,10 @@ export default class ChartImp implements Chart {
     paneId: string,
     content: LayoutPaneContentChild,
     paneOptions: PaneOptions,
-    yAxis: AxisOverride
+    yAxis: YAxisOverride
   ): void {
     let indicator: string | IndicatorCreate = ''
-    let contentYAxis: Nullable<Omit<AxisOverride, 'paneId'>> = null
+    let contentYAxis: Nullable<Omit<YAxisOverride, 'paneId'>> = null
     if (isString(content)) {
       indicator = content
     } else if (isValid((content as LayoutPaneContentChildMultipleParams).indicator)) {
@@ -1080,7 +1081,7 @@ export default class ChartImp implements Chart {
     }
   }
 
-  overrideYAxis (yAxis: AxisOverride): void {
+  overrideYAxis (yAxis: YAxisOverride): void {
     const validPaneId = isValid(yAxis.paneId)
     let shouldLayout = false
     for (const currentPane of this._drawPanes) {
@@ -1103,7 +1104,7 @@ export default class ChartImp implements Chart {
     }
   }
 
-  overrideXAxis (xAxis: AxisOverride): void {
+  overrideXAxis (xAxis: XAxisOverride): void {
     this._xAxisPane.overrideXAxis(xAxis)
     this.layout({
       measureHeight: true,

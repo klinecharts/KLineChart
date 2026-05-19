@@ -20,13 +20,14 @@ import { formatPrecision } from '../common/utils/format'
 import { SymbolDefaultPrecisionConstants } from '../common/SymbolInfo'
 
 import AxisImp, {
-  type AxisTemplate, type Axis, type AxisRange,
+  type Axis, type AxisRange,
   type AxisTick, type AxisValueToValueCallback,
   type AxisMinSpanCallback, type AxisCreateRangeCallback,
   type AxisPosition,
-  type AxisOverride,
   TICK_COUNT,
-  DEFAULT_AXIS_ID
+  DEFAULT_AXIS_ID,
+  type AxisOverride,
+  type AxisTemplate
 } from './Axis'
 
 import type DrawPane from '../pane/DrawPane'
@@ -34,6 +35,8 @@ import type DrawPane from '../pane/DrawPane'
 import { PaneIdConstants } from '../pane/types'
 
 export type YAxisTemplate = AxisTemplate
+
+export type YAxisOverride = AxisOverride & { needWidget?: boolean }
 
 export interface YAxis extends Axis, Required<YAxisTemplate> {
   isFromZero: () => boolean
@@ -64,22 +67,51 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
 
   constructor (parent: DrawPane, yAxis: YAxisTemplate) {
     super(parent)
-    this.override(yAxis)
+    const {
+      minSpan,
+      valueToRealValue,
+      realValueToDisplayValue,
+      displayValueToRealValue,
+      realValueToValue,
+      displayValueToText,
+      ...others
+    } = yAxis
+
+    if (isFunction(minSpan)) {
+      this.minSpan = minSpan
+    }
+    if (isFunction(valueToRealValue)) {
+      this.valueToRealValue = valueToRealValue
+    }
+    if (isFunction(realValueToDisplayValue)) {
+      this.realValueToDisplayValue = realValueToDisplayValue
+    }
+    if (isFunction(displayValueToRealValue)) {
+      this.displayValueToRealValue = displayValueToRealValue
+    }
+    if (isFunction(realValueToValue)) {
+      this.realValueToValue = realValueToValue
+    }
+    if (isFunction(displayValueToText)) {
+      this.displayValueToText = displayValueToText
+    }
+
+    this.override(others)
   }
 
   override (yAxis: AxisOverride): void {
     const {
+      id,
       name,
       gap,
       ...others
     } = yAxis
-    if (isValid(yAxis.id) && this.id === DEFAULT_AXIS_ID) {
-      this.id = yAxis.id
+    if (isValid(id) && this.id === DEFAULT_AXIS_ID) {
+      this.id = id
     }
     if (!isString(this.name) && isString(name)) {
       this.name = name
     }
-    delete others.needWidget
     merge(this.gap, gap)
     merge(this, others)
   }

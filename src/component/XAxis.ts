@@ -16,13 +16,16 @@ import type Nullable from '../common/Nullable'
 import type Bounding from '../common/Bounding'
 import { isFunction, isNumber, isString } from '../common/utils/typeChecks'
 
-import AxisImp, { type AxisTemplate, type Axis, type AxisRange, type AxisTick, TICK_COUNT } from './Axis'
+import AxisImp, { type Axis, type AxisRange, type AxisTick, TICK_COUNT, type AxisOverride } from './Axis'
 
 import type DrawPane from '../pane/DrawPane'
 import { calcTextWidth } from '../common/utils/canvas'
 import { PeriodTypeXAxisFormat } from '../common/Period'
+import type PickRequired from '../common/PickRequired'
 
-export type XAxisTemplate = Pick<AxisTemplate, 'name' | 'scrollZoomEnabled' | 'createTicks'>
+export type XAxisOverride = Pick<AxisOverride, 'name' | 'scrollZoomEnabled' | 'createTicks'>
+
+export type XAxisTemplate = PickRequired<XAxisOverride, 'name'>
 
 export interface XAxis extends Axis, Required<XAxisTemplate> {
   convertTimestampFromPixel: (pixel: number) => Nullable<number>
@@ -37,13 +40,13 @@ export default abstract class XAxisImp extends AxisImp implements XAxis {
     this.override(xAxis)
   }
 
-  override (xAxis: XAxisTemplate): void {
+  override (xAxis: AxisOverride): void {
     const {
       name,
       scrollZoomEnabled,
       createTicks
     } = xAxis
-    if (!isString(this.name)) {
+    if (!isString(this.name) && isString(name)) {
       this.name = name
     }
     this.scrollZoomEnabled = scrollZoomEnabled ?? this.scrollZoomEnabled

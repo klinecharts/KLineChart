@@ -15,13 +15,18 @@
 import type DeepRequired from '../common/DeepRequired'
 import type PickRequired from '../common/PickRequired'
 
+import { createDom } from '../common/utils/dom'
+import { getPixelRatio } from '../common/utils/canvas'
+
 import type Nullable from '../common/Nullable'
 import type { UpdateLevel } from '../common/Updater'
 import type Bounding from '../common/Bounding'
 
 import { isBoolean, isNumber, isValid, merge } from '../common/utils/typeChecks'
 
-import { DEFAULT_AXIS_ID, type Axis, type AxisOverride } from '../component/Axis'
+import { DEFAULT_AXIS_ID, type Axis } from '../component/Axis'
+import type YAxisImp from '../component/YAxis'
+import type { YAxis, YAxisOverride } from '../component/YAxis'
 
 import type DrawWidget from '../widget/DrawWidget'
 import type YAxisWidget from '../widget/YAxisWidget'
@@ -30,11 +35,6 @@ import { type PaneOptions, PANE_DEFAULT_HEIGHT, PANE_MIN_HEIGHT, PaneIdConstants
 import Pane from './Pane'
 
 import type Chart from '../Chart'
-
-import { createDom } from '../common/utils/dom'
-import { getPixelRatio } from '../common/utils/canvas'
-import type YAxisImp from '../component/YAxis'
-import type { YAxis } from '../component/YAxis'
 
 export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
   private readonly _mainWidget: DrawWidget<DrawPane<C>>
@@ -86,7 +86,7 @@ export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
     }
   }
 
-  createYAxis (axis: AxisOverride): YAxis {
+  createYAxis (axis: YAxisOverride): YAxis {
     const yAxisId = axis.id ?? DEFAULT_AXIS_ID
     const yAxisName = axis.name ?? 'normal'
     const needWidget = axis.needWidget ?? true

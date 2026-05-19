@@ -15,8 +15,9 @@
 import type { KLineData } from './common/Data'
 import type DeepPartial from './common/DeepPartial'
 import type { Styles } from './common/Styles'
-import type { AxisOverride } from './component/Axis'
+import type { AxisPosition } from './component/Axis'
 import type { IndicatorCreate } from './component/Indicator'
+import type { YAxisOverride } from './component/YAxis'
 import type { PaneOptions } from './pane/types'
 
 export type FormatDateType = 'tooltip' | 'crosshair' | 'xAxis'
@@ -87,7 +88,7 @@ export interface ZoomAnchor {
 export interface LayoutBasicParams {
   barSpaceLimitMin?: number
   barSpaceLimitMax?: number
-  yAxisPosition?: 'left' | 'right'
+  yAxisPosition?: AxisPosition
   yAxisInside?: boolean
   paneMinHeight?: number
   paneHeight?: number
@@ -95,7 +96,7 @@ export interface LayoutBasicParams {
 
 export interface LayoutPaneContentChildMultipleParams {
   indicator: string | IndicatorCreate
-  yAxis?: Omit<AxisOverride, 'paneId'>
+  yAxis?: Omit<YAxisOverride, 'paneId'>
 }
 
 export type LayoutPaneContentChild = LayoutPaneContentChildMultipleParams | string | IndicatorCreate

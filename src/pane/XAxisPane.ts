@@ -18,7 +18,7 @@ import type PickRequired from '../common/PickRequired'
 import type DrawWidget from '../widget/DrawWidget'
 import XAxisWidget from '../widget/XAxisWidget'
 
-import type { XAxis } from '../component/XAxis'
+import type { XAxis, XAxisOverride } from '../component/XAxis'
 
 import DrawPane from './DrawPane'
 import type { PaneOptions } from './types'
@@ -26,7 +26,6 @@ import type { PaneOptions } from './types'
 import { getXAxisClass } from '../extension/x-axis'
 
 import type Chart from '../Chart'
-import type { AxisOverride } from '../component/Axis'
 
 export default class XAxisPane extends DrawPane<XAxis> {
   private _xAxis: XAxis
@@ -40,7 +39,7 @@ export default class XAxisPane extends DrawPane<XAxis> {
     return super.setOptions(options)
   }
 
-  overrideXAxis (xAxis: AxisOverride): this {
+  overrideXAxis (xAxis: XAxisOverride): this {
     const axisName = xAxis.name
     if (
       !isValid(this._xAxis) ||

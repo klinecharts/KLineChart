@@ -18,6 +18,7 @@ import type DrawPane from '../pane/DrawPane'
 
 import type Bounding from '../common/Bounding'
 import type { Chart } from '../Chart'
+import type PickRequired from '../common/PickRequired'
 
 export interface AxisTick {
   coord: number
@@ -68,8 +69,8 @@ export const TICK_COUNT = 8
 
 export const DEFAULT_AXIS_ID = 'default'
 
-export interface AxisTemplate {
-  name: string
+export interface AxisOverride {
+  name?: string
   id?: string
   paneId?: string
   reverse?: boolean
@@ -77,17 +78,18 @@ export interface AxisTemplate {
   position?: AxisPosition
   scrollZoomEnabled?: boolean
   gap?: AxisGap
+  createRange?: AxisCreateRangeCallback
+  createTicks?: AxisCreateTicksCallback
+}
+
+export interface AxisTemplate extends PickRequired<AxisOverride, 'name'> {
   valueToRealValue?: AxisValueToValueCallback
   realValueToDisplayValue?: AxisValueToValueCallback
   displayValueToRealValue?: AxisValueToValueCallback
   realValueToValue?: AxisValueToValueCallback
   displayValueToText?: (value: number, precision: number) => string
   minSpan?: AxisMinSpanCallback
-  createRange?: AxisCreateRangeCallback
-  createTicks?: AxisCreateTicksCallback
 }
-
-export type AxisOverride = Partial<AxisTemplate> & { needWidget?: boolean }
 
 export interface Axis {
   override: (axis: AxisOverride) => void
