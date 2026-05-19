@@ -584,11 +584,14 @@ export default class ChartImp implements Chart {
           })
         }
 
-        leftOutsideAxes.forEach((yAxis, index) => {
+        const paneLeftOutsideYAxisWidth = leftOutsideAxes.reduce((total, _yAxis, index) => total + (leftOutsideYAxisWidths[index] ?? 0), 0)
+        leftOutsideOffset = leftYAxisWidth - paneLeftOutsideYAxisWidth
+        for (let index = leftOutsideAxes.length - 1; index >= 0; index--) {
+          const yAxis = leftOutsideAxes[index]
           const width = leftOutsideYAxisWidths[index] ?? 0
           yAxisBounding[yAxis.id] = { width, left: leftOutsideOffset }
           leftOutsideOffset += width
-        })
+        }
         leftInsideAxes.forEach((yAxis, index) => {
           const width = leftInsideYAxisWidths[index] ?? 0
           yAxisBounding[yAxis.id] = { width, left: mainLeft + leftInsideOffset }

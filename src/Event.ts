@@ -60,7 +60,7 @@ export default class Event implements EventHandler {
 
   private _mouseDownWidget: Nullable<Widget> = null
 
-  private _prevYAxisRange: Nullable<AxisRange> = null
+  private readonly _prevYAxisRanges = new Map<YAxisImp, Nullable<AxisRange>>()
 
   private _xAxisStartScaleCoordinate: Nullable<Coordinate> = null
   private _xAxisStartScaleDistance = 0
@@ -164,10 +164,13 @@ export default class Event implements EventHandler {
           return widget.dispatchEvent('mouseDownEvent', event)
         }
         case WidgetNameConstants.MAIN: {
-          const yAxis = (pane as DrawPane<YAxisImp>).getYAxisComponentById() as unknown as YAxisImp
-          if (!yAxis.getAutoCalcTickFlag()) {
-            const range = yAxis.getRange()
-            this._prevYAxisRange = { ...range }
+          const yAxes = (pane as DrawPane<YAxisImp>).getYAxisComponents()
+          for (const item of yAxes) {
+            const yAxis = item as YAxisImp
+            if (!yAxis.getAutoCalcTickFlag()) {
+              const range = yAxis.getRange()
+              this._prevYAxisRanges.set(yAxis, { ...range })
+            }
           }
           this._startScrollCoordinate = { x: event.x, y: event.y }
           this._chart.getChartStore().startScroll()
@@ -282,7 +285,7 @@ export default class Event implements EventHandler {
     }
     this._mouseDownWidget = null
     this._startScrollCoordinate = null
-    this._prevYAxisRange = null
+    this._prevYAxisRanges.clear()
     this._xAxisStartScaleCoordinate = null
     this._xAxisStartScaleDistance = 0
     this._xAxisScale = 1
@@ -373,11 +376,17 @@ export default class Event implements EventHandler {
             this._flingScrollRequestId = null
           }
           this._flingStartTime = new Date().getTime()
-          const yAxis = (pane as DrawPane<YAxisImp>).getYAxisComponentById() as unknown as YAxisImp
-          if (!yAxis.getAutoCalcTickFlag()) {
-            const range = yAxis.getRange()
-            this._prevYAxisRange = { ...range }
+
+          const yAxes = (pane as DrawPane<YAxisImp>).getYAxisComponents()
+
+          for (const item of yAxes) {
+            const yAxis = item as YAxisImp
+            if (!yAxis.getAutoCalcTickFlag()) {
+              const range = yAxis.getRange()
+              this._prevYAxisRanges.set(yAxis, { ...range })
+            }
           }
+
           this._startScrollCoordinate = { x: event.x, y: event.y }
           chartStore.startScroll()
           this._touchZoomed = false
@@ -484,7 +493,7 @@ export default class Event implements EventHandler {
         }
       }
       this._startScrollCoordinate = null
-      this._prevYAxisRange = null
+      this._prevYAxisRanges.clear()
       this._xAxisStartScaleCoordinate = null
       this._xAxisStartScaleDistance = 0
       this._xAxisScale = 1
@@ -540,37 +549,42 @@ export default class Event implements EventHandler {
 
   private _processMainScrollingEvent (widget: Widget<DrawPane<YAxisImp>>, event: MouseTouchEvent): void {
     if (this._startScrollCoordinate !== null) {
-      const yAxis = this._getYAxisByWidget(widget)
-      if (this._prevYAxisRange !== null && !yAxis.getAutoCalcTickFlag() && yAxis.scrollZoomEnabled) {
-        event.preventDefault?.()
-        const { from, to, range } = this._prevYAxisRange
-        let distance = 0
-        if (yAxis.reverse) {
-          distance = this._startScrollCoordinate.y - event.y
-        } else {
-          distance = event.y - this._startScrollCoordinate.y
+      const yAxes = widget.getPane().getYAxisComponents()
+      for (const item of yAxes) {
+        const yAxis = item as YAxisImp
+        const prevRange = this._prevYAxisRanges.get(yAxis)
+        if (isValid(prevRange) && !yAxis.getAutoCalcTickFlag() && yAxis.scrollZoomEnabled) {
+          event.preventDefault?.()
+          const { from, to, range } = prevRange
+          let distance = 0
+          if (yAxis.reverse) {
+            distance = this._startScrollCoordinate.y - event.y
+          } else {
+            distance = event.y - this._startScrollCoordinate.y
+          }
+          const bounding = widget.getBounding()
+          const scale = distance / bounding.height
+          const difRange = range * scale
+          const newFrom = from + difRange
+          const newTo = to + difRange
+          const newRealFrom = yAxis.valueToRealValue(newFrom, { range: prevRange })
+          const newRealTo = yAxis.valueToRealValue(newTo, { range: prevRange })
+          const newDisplayFrom = yAxis.realValueToDisplayValue(newRealFrom, { range: prevRange })
+          const newDisplayTo = yAxis.realValueToDisplayValue(newRealTo, { range: prevRange })
+          yAxis.setRange({
+            from: newFrom,
+            to: newTo,
+            range: newTo - newFrom,
+            realFrom: newRealFrom,
+            realTo: newRealTo,
+            realRange: newRealTo - newRealFrom,
+            displayFrom: newDisplayFrom,
+            displayTo: newDisplayTo,
+            displayRange: newDisplayTo - newDisplayFrom
+          })
         }
-        const bounding = widget.getBounding()
-        const scale = distance / bounding.height
-        const difRange = range * scale
-        const newFrom = from + difRange
-        const newTo = to + difRange
-        const newRealFrom = yAxis.valueToRealValue(newFrom, { range: this._prevYAxisRange })
-        const newRealTo = yAxis.valueToRealValue(newTo, { range: this._prevYAxisRange })
-        const newDisplayFrom = yAxis.realValueToDisplayValue(newRealFrom, { range: this._prevYAxisRange })
-        const newDisplayTo = yAxis.realValueToDisplayValue(newRealTo, { range: this._prevYAxisRange })
-        yAxis.setRange({
-          from: newFrom,
-          to: newTo,
-          range: newTo - newFrom,
-          realFrom: newRealFrom,
-          realTo: newRealTo,
-          realRange: newRealTo - newRealFrom,
-          displayFrom: newDisplayFrom,
-          displayTo: newDisplayTo,
-          displayRange: newDisplayTo - newDisplayFrom
-        })
       }
+
       const distance = event.x - this._startScrollCoordinate.x
       this._chart.getChartStore().scroll(distance)
     }
@@ -609,8 +623,9 @@ export default class Event implements EventHandler {
     if (consumed) {
       this._chart.updatePane(UpdateLevel.Overlay)
     }
-    const range = this._getYAxisByWidget(widget).getRange()
-    this._prevYAxisRange = { ...range }
+    const yAxis = this._getYAxisByWidget(widget)
+    const range = yAxis.getRange()
+    this._prevYAxisRanges.set(yAxis, { ...range })
     this._yAxisStartScaleDistance = event.pageY
     return consumed
   }
@@ -619,18 +634,19 @@ export default class Event implements EventHandler {
     const consumed = widget.dispatchEvent('pressedMouseMoveEvent', event)
     if (!consumed) {
       const yAxis = this._getYAxisByWidget(widget)
-      if (this._prevYAxisRange !== null && yAxis.scrollZoomEnabled && this._yAxisStartScaleDistance !== 0) {
+      const prevYAxisRange = this._prevYAxisRanges.get(yAxis)
+      if (isValid(prevYAxisRange) && yAxis.scrollZoomEnabled && this._yAxisStartScaleDistance !== 0) {
         event.preventDefault?.()
-        const { from, to, range } = this._prevYAxisRange
+        const { from, to, range } = prevYAxisRange
         const scale = event.pageY / this._yAxisStartScaleDistance
         const newRange = range * scale
         const difRange = (newRange - range) / 2
         const newFrom = from - difRange
         const newTo = to + difRange
-        const newRealFrom = yAxis.valueToRealValue(newFrom, { range: this._prevYAxisRange })
-        const newRealTo = yAxis.valueToRealValue(newTo, { range: this._prevYAxisRange })
-        const newDisplayFrom = yAxis.realValueToDisplayValue(newRealFrom, { range: this._prevYAxisRange })
-        const newDisplayTo = yAxis.realValueToDisplayValue(newRealTo, { range: this._prevYAxisRange })
+        const newRealFrom = yAxis.valueToRealValue(newFrom, { range: prevYAxisRange })
+        const newRealTo = yAxis.valueToRealValue(newTo, { range: prevYAxisRange })
+        const newDisplayFrom = yAxis.realValueToDisplayValue(newRealFrom, { range: prevYAxisRange })
+        const newDisplayTo = yAxis.realValueToDisplayValue(newRealTo, { range: prevYAxisRange })
         yAxis.setRange({
           from: newFrom,
           to: newTo,
