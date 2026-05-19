@@ -20,19 +20,17 @@ registerXAxis({
 const chart = init(
   'custom-x-axis-chart',
   {
-    layout: [
-      {
-        type: 'xAxis',
-        options: {
-          order: 1000,
-          axis: {
-            name: 'customXAxis'
-          }
+    layout: {
+      panes: [
+        {
+          type: 'xAxis',
+          options: { order: 1000 }
         }
-      }
-    ]
+      ]
+    }
   }
 )
+chart.overrideXAxis({ name: 'customXAxis' })
 
 chart.setSymbol({ ticker: 'TestSymbol' })
 chart.setPeriod({ span: 1, type: 'day' })

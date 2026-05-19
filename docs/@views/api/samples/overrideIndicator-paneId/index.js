@@ -1,9 +1,10 @@
 import { init } from 'klinecharts'
 
 const chart = init('overrideIndicator-paneId-chart')
-chart.createIndicator({ name: 'MA', paneId: 'candle_pane' })
+chart.createIndicator('MA', { pane: { id: 'candle_pane' } })
 chart.createIndicator('MA')
 chart.overrideIndicator({
+  paneId: 'candle_pane',
   name: 'MA',
   shouldOhlc: false,
   precision: 1,
@@ -14,7 +15,7 @@ chart.overrideIndicator({
       { color: '#edafda' }
     ]
   }
-}, 'candle_pane')
+})
 
 chart.setSymbol({ ticker: 'TestSymbol' })
 chart.setPeriod({ span: 1, type: 'day' })

@@ -55,7 +55,7 @@ registerIndicator({
 
 const chart = init('custom-indicator-draw-chart')
 
-chart.createIndicator({ name: 'customIndicatorDraw', paneId: 'candle_pane' })
+chart.createIndicator('customIndicatorDraw', { pane: { id: 'candle_pane' } })
 
 chart.setSymbol({ ticker: 'TestSymbol' })
 chart.setPeriod({ span: 1, type: 'day' })

@@ -15,6 +15,7 @@ outline: deep
   - `name` 坐标轴名称。
   - `reverse` 是否反向。
   - `inside` 是否在内部。
+  - `needWidget` 是否需要创建轴组件。
   - `position` 位置，支持 `left` 和 `right` 。
   - `scrollZoomEnabled` 是否允许滚动缩放。
   - `gap` 上下边距配置。

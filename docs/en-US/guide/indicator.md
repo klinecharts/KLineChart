@@ -19,7 +19,7 @@ This document introduces built-in technical indicators and how to customize one.
 | KDJ | [9, 3, 3] | TRIX | [12, 9] | PVT | None |
 | RSI | [6, 12, 24] | OBV | [30] | AVP | None |
 
-<Tip title="Tip" :tip="['Some indicators can be overlaid on candles using <code>chart.createIndicator({ name: \'MA\', paneId: \'candle_pane\' }, { isStack: true })</code>, while some cannot. Built-in candle-compatible indicators are: BBI, BOLL, EMA, MA, SAR, SMA.']"/>
+<Tip title="Tip" :tip="['Some indicators can be overlaid on candles using <code>chart.createIndicator(\'MA\', { pane: { id: \'candle_pane\' }, isStack: true })</code>, while some cannot. Built-in candle-compatible indicators are: BBI, BOLL, EMA, MA, SAR, SMA.']"/>
 
 ### Quick usage
 
@@ -30,7 +30,7 @@ Most common usage:
 chart.createIndicator('VOL')
 
 // Overlay on candle pane
-chart.createIndicator({ name: 'MA', paneId: 'candle_pane' }, { isStack: true })
+chart.createIndicator('MA', { pane: { id: 'candle_pane' }, isStack: true })
 ```
 
 If you want to inspect all supported indicators in your current version:

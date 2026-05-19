@@ -32,40 +32,40 @@ import Tip from '../../../@components/Tip.vue'
 ### Parameters {#parameters}
 - `ds` Container, which can be a DOM element or an element id.
 - `options` Optional configuration item.
-  - `layout` Custom layout, an array.
-    - `type` Pane type, supports `candle` , `indicator` and `xAxis` .
-    - `content` Pane content, only supports indicators.
-    - `options` Pane configuration.
-      - `id` Pane id.
-      - `height` Height.
-      - `minHeight` Min height.
-      - `dragEnabled` Whether the height can be adjusted by dragging.
-      - `order` Order.
-      - `state` State, supports `normal` , `maximize` and `minimize` .
-      - `axis` Axis configuration.
-        - `name` The name of the axis.
-        - `reverse` Whether to reverse.
-        - `inside` Whether it is inside.
-        - `position` Position, supports `left` and `right`.
-        - `scrollZoomEnabled` Whether to allow scrolling and zooming.
-        - `gap` Top and bottom margin configuration.
-          - `top` Top margin.
-          - `bottom` Bottom margin.
-        - `createRange` Create an axis value range callback method.
-        - `createTicks` Create ticks information callback method.
+  - `layout` Custom layout configuration.
+    - `basicParams` Basic layout parameters.
+      - `barSpaceLimitMin` Minimum bar space.
+      - `barSpaceLimitMax` Maximum bar space.
+      - `yAxisPosition` Default y-axis position, supports `left` and `right`.
+      - `yAxisInside` Whether the default y-axis is inside the pane.
+      - `paneMinHeight` Default pane min height.
+      - `paneHeight` Default pane height.
+    - `panes` Custom pane list.
+      - `type` Pane type, supports `candle` , `indicator` and `xAxis` .
+      - `content` Pane content, only supports indicators. Each item can be an indicator name, an indicator config, or `{ indicator, yAxis }`.
+        - `indicator` Indicator name or indicator config.
+        - `yAxis` Y-axis configuration bound to this indicator. `paneId` is not required.
+      - `options` Pane configuration.
+        - `id` Pane id.
+        - `height` Height.
+        - `minHeight` Min height.
+        - `dragEnabled` Whether the height can be adjusted by dragging.
+        - `order` Order.
+        - `state` State, supports `normal` , `maximize` and `minimize` .
   - `locale` Locale, with built-in support for `zh-CN` and `en-US` .
   - `timezone` Timezone name, such as `Asia/Shanghai` . If not set, the local time zone will be automatically obtained. For a list of time zone names, please refer to the [Timezone List](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) .
   - `styles` It can be a style name registered by `klinecharts.registerStyles` or `Styles` . For details about `Styles` , see [Styles](/en-US/guide/styles). Incremental values ​​are supported.
   - `formatter` Some format APIs.
     - `formatDate` Formats a date.
     - `formatBigNumber` Format big numbers, such as 1000 is converted to 1k, 1000000 is converted to 1M, etc.
+    - `formatExtendText` Format extended text.
   - `thousandsSeparator` Thousand separator configuration.
     - `sign` Sign.
     - `format` Custom formatting method.
   - `decimalFold` Decimal 0 folds the configuration.
     - `threshold` Fold threshold.
     - `format` Custom formatting method.
-  - `zoomAnchor` Set the anchor position when zooming the chart to `last_bar` or `cursor`
+  - `zoomAnchor` Zoom anchor position. It can be `last_bar` , `cursor` , or an object `{ main, xAxis }` for main chart and x-axis separately.
 
 ### Returns {#returns}
 `init` returns an object `Chart`。
@@ -116,4 +116,3 @@ import Tip from '../../../@components/Tip.vue'
 
 ### Set the zoom anchor position when zooming the chart to 'last_bar' {#init-zoomAnchor}
 <InitZoomAnchor />
-

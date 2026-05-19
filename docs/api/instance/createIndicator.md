@@ -36,10 +36,28 @@ outline: deep
   - `createTooltipDataSource` 创建自定义的提示信息。
   - `draw` 自定义绘制方法，如果返回值是 `true` ，则会覆盖默认的绘制。
   - `onDataStateChange` 数据变化回调通知。
-  - `paneId` 窗口 id 。
-  - `yAxisId` y 轴 id 。
 - `options` 创建配置。
   - `isStack` 是否叠加。
+  - `pane` 指标所在窗口配置。
+    - `id` 窗口id。
+    - `height` 高度。
+    - `minHeight` 最小高度。
+    - `dragEnabled` 是否可以拖拽调整高度。
+    - `order` 顺序。
+    - `state` 状态，支持 `normal` ， `maximize` 和 `minimize` 。
+  - `yAxis` 指标绑定的 y 轴配置。
+    - `id` y 轴 id 。
+    - `name` 坐标轴名称。
+    - `reverse` 是否反向。
+    - `inside` 是否在内部。
+    - `needWidget` 是否需要创建轴组件。
+    - `position` 位置，支持 `left` 和 `right` 。
+    - `scrollZoomEnabled` 是否允许滚动缩放。
+    - `gap` 上下边距配置。
+      - `top` 上边距。
+      - `bottom` 下边距。
+    - `createRange` 创建轴上取值范围回调方法。
+    - `createTicks` 创建分割信息回调方法。
 
 ### 返回值 {#returns}
 `createIndicator` 返回指标id `string` 或者 `null`。
@@ -69,5 +87,5 @@ import CreateIndicatorPaneOptionsAxis from '../../@views/api/samples/createIndic
 ### 设置窗口基础属性 {#paneOptions-basic}
 <CreateIndicatorPaneOptionsBasic/>
 
-### 设置窗口坐标轴 {#paneOptions-axis}
+### 设置 y 轴 {#paneOptions-axis}
 <CreateIndicatorPaneOptionsAxis/>

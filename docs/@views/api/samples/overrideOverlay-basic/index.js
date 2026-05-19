@@ -1,10 +1,13 @@
 import { init } from 'klinecharts'
 
 const chart = init('overrideOverlay-basic-chart')
-const paneId = chart.createIndicator({
+const paneId = 'ma_pane'
+chart.createIndicator({
   name: 'MA',
   calcParams: [5],
   shouldOhlc: false
+}, {
+  pane: { id: paneId }
 })
 
 chart.setSymbol({ ticker: 'TestSymbol' })

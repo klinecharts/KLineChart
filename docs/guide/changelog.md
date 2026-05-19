@@ -1,5 +1,23 @@
 # 📠 更新日志
 
+## 10.0.0-beta2
+`2026-05-20`
++ 🆕 新特性
+  + 支持多 y 轴，同一窗口可以创建多个 y 轴，并通过指标的 `yAxisId` 绑定到指定 y 轴。
+  + 新增实例方法 `overrideXAxis(options)` 和 `overrideYAxis(options)` ，用于独立设置 x 轴和 y 轴配置。
+  + 图表支持容器尺寸自动监听和自动 `resize()` 。
+  + 指标图形新增 `text` 类型，指标 `figures` 可以直接绘制文本。
+
++ 👉 变更
+  + 图表方法 `init(ds, options)` 中的 `options.layout` 由数组结构调整为对象结构，新增 `basicParams` 和 `panes` ：
+    + `basicParams` 支持配置 `barSpaceLimitMin` ， `barSpaceLimitMax` ， `yAxisPosition` ， `yAxisInside` ， `paneMinHeight` 和 `paneHeight` 。
+    + `panes` 用于配置窗口布局，窗口内容支持通过 `{ indicator, yAxis }` 为指标指定 y 轴配置。
+  + 实例方法 `createIndicator(indicator, isStack?, paneOptions?)` 变更为 `createIndicator(indicator, options?)` ， `options` 支持 `isStack` ， `pane` 和 `yAxis` 。
+  + `setPaneOptions(options)` 不再包含坐标轴配置，坐标轴配置请使用 `overrideXAxis(options)` 或 `overrideYAxis(options)` 。
+  + `convertToPixel(value, filter?)` 和 `convertFromPixel(coordinate, filter?)` 的 `filter` 新增 `yAxisId` 。
++ 🐞 修复实例 API `setZoomAnchor` 参数类型错误。
++ 💄 优化构建流程，构建工具由 rollup 调整为 Vite，并新增 `type-check` 校验。
+
 ## 10.0.0-beta1
 `2025-11-21`
 + 🆕 新特性

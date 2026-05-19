@@ -1,6 +1,6 @@
 ```typescript
 (
-  options?: {
+  yAxis?: {
     paneId?: string
     id?: string
     name?: string

@@ -55,6 +55,7 @@ Instance‑level APIs configure a specific chart and drive interactions. All mar
   - `getSymbol.md`, `setSymbol.md`
 - **Layout, panes, styles**
   - `setPaneOptions.md`, `getPaneOptions.md`
+  - Axis configuration is handled separately by `overrideYAxis.md` and `overrideXAxis.md`.
   - `resize.md`, `getSize.md`
   - `setStyles.md`, `getStyles.md`
 - **Scroll / zoom / viewport**
@@ -67,6 +68,7 @@ Instance‑level APIs configure a specific chart and drive interactions. All mar
   - `setLeftMinVisibleBarCount.md`, `setRightMinVisibleBarCount.md`
 - **Indicators and overlays**
   - `createIndicator.md`, `overrideIndicator.md`, `removeIndicator.md`, `getIndicators.md`
+  - `createIndicator(indicator, options?)` uses `options.pane` and `options.yAxis` for pane/y-axis placement.
   - `createOverlay.md`, `overrideOverlay.md`, `removeOverlay.md`, `getOverlays.md`
 - **Locale / timezone / formatting**
   - `setLocale.md`, `getLocale.md`
@@ -167,7 +169,7 @@ import { init } from 'klinecharts'
 const chart = init('createIndicator-basic-chart')
 
 // Create MA on the candle pane (overlay)
-chart.createIndicator({ name: 'MA', paneId: 'candle_pane' })
+chart.createIndicator('MA', { pane: { id: 'candle_pane' } })
 
 // Create a volume indicator on a separate pane
 chart.createIndicator('VOL')

@@ -2,47 +2,33 @@
 (
   ds: string | HTMLElement,
   options?: {
-    layout?: Array<{
-      type: 'candle' | 'indicator' | 'xAxis'
-      content?: Array<Indicator | string>
-      options?: {
-        id?: string
-        height?: number
-        minHeight?: number
-        dragEnabled?: boolean
-        order?: number
-        state?: 'normal' | 'maximize' | 'minimize'
-        axis?: {
-          name?: string
-          reverse?: boolean
-          inside?: boolean
-          position?: 'left' | 'right'
-          scrollZoomEnabled?: boolean
-          gap?: {
-            top?: number
-            bottom?: number
-          }
-          createRange?: (params: object) => ({
-            from: number
-            to: number
-            range: number
-            realFrom: number
-            realTo: number
-            realRange: number
-            displayFrom: number
-            displayTo: number
-            displayRange: number
-          })
-          createTicks?: (params: object) => Array<{
-            coord: number
-            value: number | string
-            text: string
-          }>
-        }
+    layout?: {
+      basicParams?: {
+        barSpaceLimitMin?: number
+        barSpaceLimitMax?: number
+        yAxisPosition?: 'left' | 'right'
+        yAxisInside?: boolean
+        paneMinHeight?: number
+        paneHeight?: number
       }
-    }>
+      panes?: Array<{
+        type: 'candle' | 'indicator' | 'xAxis'
+        content?: Array<string | IndicatorCreate | {
+          indicator: string | IndicatorCreate
+          yAxis?: Omit<AxisOverride, 'paneId'>
+        }>
+        options?: {
+          id?: string
+          height?: number
+          minHeight?: number
+          dragEnabled?: boolean
+          order?: number
+          state?: 'normal' | 'maximize' | 'minimize'
+        }
+      }>
+    }
     locale?: string
-    styles?: string | Styles
+    styles?: string | DeepPartial<Styles>
     timezone?: string
     formatter?: {
       formatDate?: (params: {
@@ -52,6 +38,11 @@
         type: 'tooltip' | 'crosshair' | 'xAxis'
       }) => string
       formatBigNumber?: (value: string | number) => string
+      formatExtendText?: (params: {
+        type: 'last_price'
+        data: KLineData
+        index: number
+      }) => string
     }
     thousandsSeparator?: {
       sign?: string

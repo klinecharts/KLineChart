@@ -35,18 +35,12 @@ registerYAxis({
 const chart = init(
   'custom-y-axis-basic-chart',
   {
-    layout: [
-      {
-        type: 'candle',
-        options: {
-          axis: {
-            name: 'customYAxisBasic'
-          }
-        }
-      }
-    ]
+    layout: {
+      panes: [{ type: 'candle' }]
+    }
   }
 )
+chart.overrideYAxis({ name: 'customYAxisBasic' })
 
 chart.setSymbol({ ticker: 'TestSymbol' })
 chart.setPeriod({ span: 1, type: 'day' })

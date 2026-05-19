@@ -2,8 +2,17 @@
 outline: deep
 ---
 
+<script setup>
+import Tip from '../../../@components/Tip.vue'
+import SetPaneOptionsBasic from '../../../@views/api/samples/setPaneOptions-basic/index.vue'
+import SetPaneOptionsDragEnabled from '../../../@views/api/samples/setPaneOptions-dragEnabled/index.vue'
+import SetPaneOptionsState from '../../../@views/api/samples/setPaneOptions-state/index.vue'
+</script>
+
 # setPaneOptions(options)
 `setPaneOptions` set the pane configuration.
+
+<Tip title="Tip" :tip="['This method only sets pane options. Use overrideYAxis(options) or overrideXAxis(options) for axis configuration.']"/>
 
 ## Reference {#reference}
 <!-- @include: @/@views/api/references/instance/setPaneOptions.md -->
@@ -21,11 +30,6 @@ outline: deep
 `setPaneOptions` returns `undefined` .
 
 ## Usage {#usage}
-<script setup>
-import SetPaneOptionsBasic from '../../../@views/api/samples/setPaneOptions-basic/index.vue'
-import SetPaneOptionsDragEnabled from '../../../@views/api/samples/setPaneOptions-dragEnabled/index.vue'
-import SetPaneOptionsState from '../../../@views/api/samples/setPaneOptions-state/index.vue'
-</script>
 
 ### Basic usage {#basic}
 <SetPaneOptionsBasic/>
@@ -35,4 +39,3 @@ import SetPaneOptionsState from '../../../@views/api/samples/setPaneOptions-stat
 
 ### Minimize the window {#state}
 <SetPaneOptionsState/>
-

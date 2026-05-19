@@ -15,6 +15,7 @@ outline: deep
   - `name` The name of the axis.
   - `reverse` Whether to reverse.
   - `inside` Whether it is inside.
+  - `needWidget` Whether to create an axis widget.
   - `position` Position, supports `left` and `right`.
   - `scrollZoomEnabled` Whether to allow scrolling and zooming.
   - `gap` Top and bottom margin configuration.

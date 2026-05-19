@@ -19,7 +19,7 @@ import Tip from '../@components/Tip.vue'
 | KDJ | [9, 3, 3] | TRIX | [12, 9] | PVT | 无 |
 | RSI | [6, 12, 24] | OBV | [30] | AVP | 无 |
 
-<Tip title="提示" :tip="['一些指标可以使用 <code>chart.createIndicator({ name: \'MA\', paneId: \'candle_pane\' }, { isStack: true })</code> 叠加在蜡烛图上，而有些则不能。与蜡烛图兼容的内置指标有：BBI、BOLL、EMA、MA、SAR、SMA。']"/>
+<Tip title="提示" :tip="['一些指标可以使用 <code>chart.createIndicator(\'MA\', { pane: { id: \'candle_pane\' }, isStack: true })</code> 叠加在蜡烛图上，而有些则不能。与蜡烛图兼容的内置指标有：BBI、BOLL、EMA、MA、SAR、SMA。']"/>
 
 ### 快速使用
 
@@ -30,7 +30,7 @@ import Tip from '../@components/Tip.vue'
 chart.createIndicator('VOL')
 
 // 将指标叠加到蜡烛图窗口
-chart.createIndicator({ name: 'MA', paneId: 'candle_pane' }, { isStack: true })
+chart.createIndicator('MA', { pane: { id: 'candle_pane' }, isStack: true })
 ```
 
 如果你不确定当前版本支持哪些指标，可以直接调用：

@@ -32,40 +32,40 @@ import Tip from '../../@components/Tip.vue'
 ### 参数 {#parameters}
 - `ds` 容器，可以是dom元素或者元素id。
 - `options` 可选配置项。
-  - `layout` 自定义布局，是一个数组。
-    - `type` 窗口类型，支持 `candle` ，`indicator` 和 `xAxis` 。
-    - `content` 窗口内容，仅仅支持指标。
-    - `options` 窗口配置。
-      - `id` 窗口id。
-      - `height` 高度。
-      - `minHeight` 最小高度。
-      - `dragEnabled` 是否可以拖拽调整高度。
-      - `order` 顺序。
-      - `state` 状态，支持 `normal` ， `maximize` 和 `minimize` 。
-      - `axis` 坐标轴配置。
-        - `name` 坐标轴名称。
-        - `reverse` 是否反向。
-        - `inside` 是否在内部。
-        - `position` 位置，支持 `left` 和 `right` 。
-        - `scrollZoomEnabled` 是否允许滚动缩放。
-        - `gap` 上下边距配置。
-          - `top` 上边距。
-          - `bottom` 下边距。
-        - `createRange` 创建轴上取值范围回调方法。如果是x轴此方法无用。
-        - `createTicks` 创建分割信息回调方法。
+  - `layout` 自定义布局配置。
+    - `basicParams` 布局基础参数。
+      - `barSpaceLimitMin` 柱间距最小值。
+      - `barSpaceLimitMax` 柱间距最大值。
+      - `yAxisPosition` 默认 y 轴位置，支持 `left` 和 `right` 。
+      - `yAxisInside` 默认 y 轴是否在窗口内部。
+      - `paneMinHeight` 默认窗口最小高度。
+      - `paneHeight` 默认窗口高度。
+    - `panes` 自定义窗口列表。
+      - `type` 窗口类型，支持 `candle` ，`indicator` 和 `xAxis` 。
+      - `content` 窗口内容，仅支持指标。子项可以是指标名、指标配置，或 `{ indicator, yAxis }`。
+        - `indicator` 指标名或指标配置。
+        - `yAxis` 指标绑定的 y 轴配置，不需要传 `paneId` 。
+      - `options` 窗口配置。
+        - `id` 窗口id。
+        - `height` 高度。
+        - `minHeight` 最小高度。
+        - `dragEnabled` 是否可以拖拽调整高度。
+        - `order` 顺序。
+        - `state` 状态，支持 `normal` ， `maximize` 和 `minimize` 。
   - `locale` 语言，内置支持 `zh-CN` 和 `en-US` 。
   - `timezone` 时区名，如 `Asia/Shanghai` ，如果不设置会自动获取本机时区，时区对应名字列表请参阅 [时区列表](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) 。
   - `styles` 可以是通过 `klinecharts.registerStyles` 注册的样式名，也可以是 `Styles` ， `Styles` 详情参阅 [样式](/guide/styles) ，支持增量。
   - `formatter` 一些格式化api。
     - `formatDate` 格式化日期。
     - `formatBigNumber` 格式化大的数字，如1000转换成1k，1000000转换为1M等。
+    - `formatExtendText` 格式化扩展文案。
   - `thousandsSeparator` 千分符配置。
     - `sign` 标识符。
     - `format` 自定义格式化方法。
   - `decimalFold` 小数 0 折叠配置。
     - `threshold` 折叠阈值。
     - `format` 自定义格式化方法。
-  - `zoomAnchor` 将缩放图表时的锚点位置设置为 `last_bar` 或 `cursor_point`
+  - `zoomAnchor` 缩放锚点位置，可以是 `last_bar` 、 `cursor` ，或分别配置主图和 x 轴的对象 `{ main, xAxis }`。
 
 ### 返回值 {#returns}
 `init` 返回一个图表实例对象 `Chart`。
@@ -116,4 +116,3 @@ import Tip from '../../@components/Tip.vue'
 
 ### 缩放位置{#init-zoomAnchor}
 <InitZoomAnchor />
-

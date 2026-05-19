@@ -1,7 +1,7 @@
 import { init } from 'klinecharts'
 
 const chart = init('removeIndicator-chart')
-chart.createIndicator({ name: 'MA', paneId: 'candle_pane' })
+chart.createIndicator('MA', { pane: { id: 'candle_pane' } })
 chart.createIndicator('VOL')
 
 chart.setSymbol({ ticker: 'TestSymbol' })

@@ -36,10 +36,28 @@ outline: deep
   - `createTooltipDataSource` Create custom prompts.
   - `draw` Custom drawing method, if the return value is `true`, it will override the default drawing.
   - `onDataStateChange` Data change callback notification.
-  - `paneId` Pane id.
-  - `yAxisId` Y-axis id.
 - `options` Create options.
   - `isStack` Whether to stack.
+  - `pane` Pane configuration where the indicator is created.
+    - `id` Pane id.
+    - `height` Height.
+    - `minHeight` Min height.
+    - `dragEnabled` Whether the height can be adjusted by dragging.
+    - `order` Order.
+    - `state` State, supports `normal` , `maximize` and `minimize` .
+  - `yAxis` Y-axis configuration bound to the indicator.
+    - `id` Y-axis id.
+    - `name` Axis name.
+    - `reverse` Whether to reverse.
+    - `inside` Whether it is inside.
+    - `needWidget` Whether to create an axis widget.
+    - `position` Position, supports `left` and `right`.
+    - `scrollZoomEnabled` Whether to allow scrolling and zooming.
+    - `gap` Top and bottom margin configuration.
+      - `top` Top margin.
+      - `bottom` Bottom margin.
+    - `createRange` Create an axis value range callback method.
+    - `createTicks` Create ticks information callback method.
 
 ### Returns {#returns}
 `createIndicator` returns indicator id `string` or `null` .
@@ -69,5 +87,5 @@ import CreateIndicatorPaneOptionsAxis from '../../../@views/api/samples/createIn
 ### Setting pane basic options {#paneOptions-basic}
 <CreateIndicatorPaneOptionsBasic/>
 
-### Setting pane axis {#paneOptions-axis}
+### Setting y-axis {#paneOptions-axis}
 <CreateIndicatorPaneOptionsAxis/>

@@ -1,5 +1,23 @@
 # 📠 Change Log
 
+## 10.0.0-beta2
+`2026-05-20`
++ 🆕 New Features
+  + Support multiple y-axes. Multiple y-axes can be created in the same pane, and indicators can be bound to a specified y-axis through `yAxisId`.
+  + Add instance methods `overrideXAxis(options)` and `overrideYAxis(options)` for independently configuring the x-axis and y-axis.
+  + The chart now supports automatically listening to container size changes and calling `resize()`.
+  + Add the `text` type to indicator figures, allowing indicator `figures` to draw text directly.
+
++ 👉 Changes
+  + In the chart method `init(ds, options)`, `options.layout` has been changed from an array structure to an object structure, with `basicParams` and `panes` added:
+    + `basicParams` supports configuring `barSpaceLimitMin`, `barSpaceLimitMax`, `yAxisPosition`, `yAxisInside`, `paneMinHeight`, and `paneHeight`.
+    + `panes` is used to configure pane layout, and pane content supports specifying a y-axis configuration for an indicator through `{ indicator, yAxis }`.
+  + The instance method `createIndicator(indicator, isStack?, paneOptions?)` has been changed to `createIndicator(indicator, options?)`, and `options` supports `isStack`, `pane`, and `yAxis`.
+  + `setPaneOptions(options)` no longer includes axis configuration. Use `overrideXAxis(options)` or `overrideYAxis(options)` for axis configuration.
+  + Add `yAxisId` to the `filter` parameter of `convertToPixel(value, filter?)` and `convertFromPixel(coordinate, filter?)`.
++ 🐞 Fixed the parameter type error of the instance API `setZoomAnchor`.
++ 💄 Optimized the build process. The build tool has been changed from rollup to Vite, and `type-check` has been added.
+
 ## 10.0.0-beta1
 `2025-11-21`
 + 🆕 New Features
