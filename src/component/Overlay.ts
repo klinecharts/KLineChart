@@ -37,6 +37,13 @@ export interface OverlayPerformEventParams {
   performPoint: Partial<Point>
 }
 
+/**
+ * Drawing mode for overlays
+ * - 'step': Traditional click-based drawing (default)
+ * - 'continuous': Freehand drawing with mouse down, move, up
+ */
+export type OverlayDrawingMode = 'step' | 'continuous'
+
 export interface OverlayEventCollection<E> {
   onDrawStart: Nullable<OverlayEventCallback<E>>
   onDrawing: Nullable<OverlayEventCallback<E>>
@@ -125,6 +132,11 @@ export interface Overlay<E = unknown> extends OverlayEventCollection<E> {
   currentStep: number
 
   /**
+   * Drawing mode: 'step' for click-based, 'continuous' for freehand
+   */
+  drawingMode: OverlayDrawingMode
+
+  /**
    * Whether it is locked. When it is true, it will not respond to events
    */
   lock: boolean
@@ -207,8 +219,8 @@ export interface Overlay<E = unknown> extends OverlayEventCollection<E> {
 
 export type OverlayTemplate<E = unknown> = ExcludePickPartial<Omit<Overlay<E>, 'id' | 'groupId' | 'paneId' | 'points' | 'currentStep'>, 'name'>
 
-export type OverlayCreate<E = unknown> = ExcludePickPartial<Omit<Overlay<E>, 'currentStep' | 'totalStep' | 'createPointFigures' | 'createXAxisFigures' | 'createYAxisFigures' | 'performEventPressedMove' | 'performEventMoveForDrawing'>, 'name'>
-export type OverlayOverride<E = unknown> = Partial<Omit<Overlay<E>, 'currentStep' | 'totalStep' | 'createPointFigures' | 'createXAxisFigures' | 'createYAxisFigures' | 'performEventPressedMove' | 'performEventMoveForDrawing'>>
+export type OverlayCreate<E = unknown> = ExcludePickPartial<Omit<Overlay<E>, 'drawingMode' | 'currentStep' | 'totalStep' | 'createPointFigures' | 'createXAxisFigures' | 'createYAxisFigures' | 'performEventPressedMove' | 'performEventMoveForDrawing'>, 'name'>
+export type OverlayOverride<E = unknown> = Partial<Omit<Overlay<E>, 'drawingMode' | 'currentStep' | 'totalStep' | 'createPointFigures' | 'createXAxisFigures' | 'createYAxisFigures' | 'performEventPressedMove' | 'performEventMoveForDrawing'>>
 
 export type OverlayFilter<E = unknown> = Partial<Pick<Overlay<E>, 'id' | 'groupId' | 'name' | 'paneId'>>
 
@@ -229,6 +241,7 @@ export default class OverlayImp<E = unknown> implements Overlay<E> {
   name: string
   totalStep = 1
   currentStep = OVERLAY_DRAW_STEP_START
+  drawingMode: OverlayDrawingMode = 'step'
   lock = false
   visible = true
   zLevel = 0
@@ -237,7 +250,7 @@ export default class OverlayImp<E = unknown> implements Overlay<E> {
   needDefaultYAxisFigure = false
   mode: OverlayMode = 'normal'
   modeSensitivity = 8
-  points: Array<Partial<Omit<Point, 'dataIndex'>>> = []
+  points: Array<Partial<Point>> = []
   extendData: E
   styles: Nullable<DeepPartial<OverlayStyle>> = null
   createPointFigures: Nullable<OverlayCreateFiguresCallback<E>> = null
@@ -372,7 +385,38 @@ export default class OverlayImp<E = unknown> implements Overlay<E> {
     return this.currentStep === OVERLAY_DRAW_STEP_START
   }
 
-  eventMoveForDrawing (point: Partial<Point>): void {
+  isContinuousDrawingMode (): boolean {
+    return this.drawingMode === 'continuous'
+  }
+
+  /**
+   * Start continuous drawing - set first point
+   */
+  startContinuousDrawing (point: Partial<Point>): void {
+    this.points = []
+    this.continuousDrawingModeEventMoveForDrawing(point)
+    this.currentStep = 2 // Mark as actively drawing
+  }
+
+  /**
+   * Add a point during continuous drawing mode
+   */
+  continuousDrawingModeEventMoveForDrawing (point: Partial<Point>): boolean {
+    const newPoint: Partial<Point> = {}
+    if (isNumber(point.timestamp)) {
+      newPoint.timestamp = point.timestamp
+    }
+    if (isNumber(point.dataIndex)) {
+      newPoint.dataIndex = point.dataIndex
+    }
+    if (isNumber(point.value)) {
+      newPoint.value = point.value
+    }
+    this.points.push(newPoint)
+    return true
+  }
+
+  stepDrawingModeEventMoveForDrawing (point: Partial<Point>): void {
     const pointIndex = this.currentStep - 1
     const newPoint: Partial<Point> = {}
     if (isNumber(point.timestamp)) {
@@ -396,6 +440,9 @@ export default class OverlayImp<E = unknown> implements Overlay<E> {
 
   eventPressedPointMove (point: Partial<Point>, pointIndex: number): void {
     this.points[pointIndex].timestamp = point.timestamp
+    if (isNumber(point.dataIndex)) {
+      this.points[pointIndex].dataIndex = point.dataIndex
+    }
     if (isNumber(point.value)) {
       this.points[pointIndex].value = point.value
     }
@@ -424,13 +471,17 @@ export default class OverlayImp<E = unknown> implements Overlay<E> {
         difValue = point.value - this._prevPressedPoint.value
       }
       this.points = this._prevPressedPoints.map(p => {
-        if (isNumber(p.timestamp)) {
-          p.dataIndex = chartStore.timestampToDataIndex(p.timestamp)
-        }
         const newPoint = { ...p }
-        if (isNumber(difDataIndex) && isNumber(p.dataIndex)) {
-          newPoint.dataIndex = p.dataIndex + difDataIndex
-          newPoint.timestamp = chartStore.dataIndexToTimestamp(newPoint.dataIndex) ?? undefined
+        if (isNumber(difDataIndex) && (isNumber(p.dataIndex) || isNumber(p.timestamp))) {
+          const dataIndex = isNumber(p.timestamp)
+            ? this.isContinuousDrawingMode()
+              ? chartStore.timestampToFloatIndex(p.timestamp)
+              : chartStore.timestampToDataIndex(p.timestamp)
+            : p.dataIndex!
+          newPoint.dataIndex = dataIndex + difDataIndex
+          newPoint.timestamp = this.isContinuousDrawingMode()
+            ? chartStore.floatIndexToTimestamp(newPoint.dataIndex) ?? undefined
+            : chartStore.dataIndexToTimestamp(newPoint.dataIndex) ?? undefined
         }
         if (isNumber(difValue) && isNumber(p.value)) {
           newPoint.value = p.value + difValue

@@ -17,7 +17,7 @@ import type Coordinate from '../../common/Coordinate'
 import type { SmoothLineStyle } from '../../common/Styles'
 
 import { type FigureTemplate, DEVIATION } from '../../component/Figure'
-import { isNumber } from '../../common/utils/typeChecks'
+import { isNumber, isString } from '../../common/utils/typeChecks'
 
 export function checkCoordinateOnLine (coordinate: Coordinate, attrs: LineAttrs | LineAttrs[]): boolean {
   let lines: LineAttrs[] = []
@@ -138,12 +138,28 @@ export function lineTo (ctx: CanvasRenderingContext2D, coordinates: Coordinate[]
   }
 }
 
-export function drawLine (ctx: CanvasRenderingContext2D, attrs: LineAttrs | LineAttrs[], styles: Partial<SmoothLineStyle>): void {
+export function drawLine (ctx: CanvasRenderingContext2D, attrs: LineAttrs | LineAttrs[], styles: Partial<SmoothLineStyle> & { lineCap?: CanvasLineCap; lineJoin?: CanvasLineJoin }): void {
   let lines: LineAttrs[] = []
   lines = lines.concat(attrs)
-  const { style = 'solid', smooth = false, size = 1, color = 'currentColor', dashedValue = [2, 2] } = styles
+  const { style = 'solid', smooth = false, size = 1, color = 'currentColor', dashedValue = [2, 2], lineCap, lineJoin } = styles
+  const isSmooth = isNumber(smooth) ? smooth > 0 : smooth
   ctx.lineWidth = size
   ctx.strokeStyle = color
+  // Use explicit lineCap/lineJoin if provided, otherwise default based on smooth
+  if (isString(lineCap)) {
+    ctx.lineCap = lineCap
+  } else if (isSmooth) {
+    ctx.lineCap = 'round'
+  } else {
+    ctx.lineCap = 'butt'
+  }
+  if (isString(lineJoin)) {
+    ctx.lineJoin = lineJoin
+  } else if (isSmooth) {
+    ctx.lineJoin = 'round'
+  } else {
+    ctx.lineJoin = 'miter'
+  }
   if (style === 'dashed') {
     ctx.setLineDash(dashedValue)
   } else {

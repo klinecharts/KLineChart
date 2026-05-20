@@ -46,8 +46,7 @@ import {
 import { calcTextWidth } from './common/utils/canvas'
 import type { ActionType } from './common/Action'
 import type { IndicatorSeries } from './component/Indicator'
-import type { OverlayMode } from './component/Overlay'
-import type { PaneOptions } from './pane/types'
+import type { OverlayMode, OverlayDrawingMode } from './component/Overlay'
 
 import type { FormatDateType, Options, ZoomAnchor } from './Options'
 import ChartImp, { type Chart, type DomPosition } from './Chart'
@@ -176,5 +175,5 @@ export {
   utils,
   type LineType, type PolygonType, type TooltipShowRule, type TooltipShowType, type FeatureType, type TooltipFeaturePosition, type CandleTooltipRectPosition,
   type CandleType, type FormatDateType, type ZoomAnchor,
-  type DomPosition, type ActionType, type IndicatorSeries, type OverlayMode, type PaneOptions
+  type DomPosition, type ActionType, type IndicatorSeries, type OverlayMode, type OverlayDrawingMode
 }

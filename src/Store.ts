@@ -1050,6 +1050,140 @@ export default class StoreImp implements Store {
     return Math.ceil(this.coordinateToFloatIndex(x)) - 1
   }
 
+  /**
+   * Converts a float data index to an interpolated timestamp.
+   * This allows sub-bar precision for smooth freehand drawings.
+   * Supports extrapolation beyond the data range (drawing in the "future").
+   * @param floatIndex - A floating point index (e.g., 42.75)
+   * @returns An interpolated timestamp between two bars
+   */
+  floatIndexToTimestamp (floatIndex: number): Nullable<number> {
+    const length = this._dataList.length
+    if (length === 0) {
+      return null
+    }
+
+    const lastIndex = length - 1
+
+    // Handle float index beyond the last bar (extrapolate into the future)
+    if (floatIndex > lastIndex && length >= 2) {
+      const lastTimestamp = this._dataList[lastIndex].timestamp
+      const secondLastTimestamp = this._dataList[lastIndex - 1].timestamp
+      const barDuration = lastTimestamp - secondLastTimestamp
+      if (barDuration > 0) {
+        const barsBeyondLast = floatIndex - lastIndex
+        return Math.round(lastTimestamp + barsBeyondLast * barDuration)
+      }
+    }
+
+    // Handle float index before the first bar (extrapolate into the past)
+    if (floatIndex < 0 && length >= 2) {
+      const firstTimestamp = this._dataList[0].timestamp
+      const secondTimestamp = this._dataList[1].timestamp
+      const barDuration = secondTimestamp - firstTimestamp
+      if (barDuration > 0) {
+        return Math.round(firstTimestamp + floatIndex * barDuration)
+      }
+    }
+
+    // Normal case: interpolate between two bars within the data range
+    const intIndex = Math.floor(floatIndex)
+    const fraction = floatIndex - intIndex
+
+    // Get timestamp at the integer index
+    const timestampAtInt = this.dataIndexToTimestamp(intIndex)
+
+    // If no fractional part, return the integer timestamp
+    if (fraction === 0 || !isNumber(timestampAtInt)) {
+      return timestampAtInt
+    }
+
+    // Get timestamp at the next index for interpolation
+    const timestampAtNext = this.dataIndexToTimestamp(intIndex + 1)
+
+    if (isNumber(timestampAtNext)) {
+      // Linear interpolation between the two timestamps
+      return Math.round(timestampAtInt + (timestampAtNext - timestampAtInt) * fraction)
+    }
+
+    return timestampAtInt
+  }
+
+  /**
+   * Converts a precise timestamp to a float data index.
+   * This preserves sub-bar precision for smooth freehand drawings across timeframe changes.
+   * Supports extrapolation beyond the data range (drawing in the "future").
+   * @param timestamp - A precise timestamp (possibly between or beyond bars)
+   * @returns A floating point index representing the exact position
+   */
+  timestampToFloatIndex (timestamp: number): number {
+    const length = this._dataList.length
+    if (length === 0) {
+      return 0
+    }
+
+    const firstTimestamp = this._dataList[0].timestamp
+    const lastTimestamp = this._dataList[length - 1].timestamp
+
+    // Handle timestamp beyond the last bar (drawing in the "future")
+    if (timestamp > lastTimestamp && length >= 2) {
+      // Calculate average bar duration from the last two bars
+      const secondLastTimestamp = this._dataList[length - 2].timestamp
+      const barDuration = lastTimestamp - secondLastTimestamp
+      if (barDuration > 0) {
+        const timeBeyondLast = timestamp - lastTimestamp
+        const barsBeyond = timeBeyondLast / barDuration
+        return length - 1 + barsBeyond
+      }
+    }
+
+    // Handle timestamp before the first bar
+    if (timestamp < firstTimestamp && length >= 2) {
+      const secondTimestamp = this._dataList[1].timestamp
+      const barDuration = secondTimestamp - firstTimestamp
+      if (barDuration > 0) {
+        const timeBeforeFirst = firstTimestamp - timestamp
+        const barsBefore = timeBeforeFirst / barDuration
+        return -barsBefore
+      }
+    }
+
+    // Find the floor bar index using binary search
+    // We need the bar where barTimestamp <= timestamp < nextBarTimestamp
+    let left = 0
+    let right = length - 1
+    let floorIndex = 0
+
+    while (left <= right) {
+      const mid = Math.floor((left + right) / 2)
+      const midTimestamp = this._dataList[mid].timestamp
+
+      if (midTimestamp <= timestamp) {
+        floorIndex = mid
+        left = mid + 1
+      } else {
+        right = mid - 1
+      }
+    }
+
+    // Get the floor bar and the next bar for interpolation
+    const dataAtFloor = this._dataList[floorIndex]
+    const dataAtNext = floorIndex + 1 < length ? this._dataList[floorIndex + 1] : null
+
+    if (isValid(dataAtFloor) && isValid(dataAtNext)) {
+      const timestampAtFloor = dataAtFloor.timestamp
+      const timestampAtNext = dataAtNext.timestamp
+
+      // Calculate fractional position between the two bars
+      if (timestamp >= timestampAtFloor && timestampAtNext > timestampAtFloor) {
+        const fraction = (timestamp - timestampAtFloor) / (timestampAtNext - timestampAtFloor)
+        return floorIndex + Math.min(fraction, 1) // Clamp to max 1
+      }
+    }
+
+    return floorIndex
+  }
+
   zoom (scale: number, coordinate: Nullable<Partial<Coordinate>>, position: 'main' | 'xAxis'): void {
     if (!this._zoomEnabled) {
       return

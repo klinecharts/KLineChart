@@ -32,6 +32,7 @@ import verticalStraightLine from './verticalStraightLine'
 
 import simpleAnnotation from './simpleAnnotation'
 import simpleTag from './simpleTag'
+import brush from './brush'
 
 const overlays: Record<string, OverlayInnerConstructor> = {}
 
@@ -39,7 +40,7 @@ const extensions = [
   fibonacciLine, horizontalRayLine, horizontalSegment, horizontalStraightLine,
   parallelStraightLine, priceChannelLine, priceLine, rayLine, segment,
   straightLine, verticalRayLine, verticalSegment, verticalStraightLine,
-  simpleAnnotation, simpleTag
+  simpleAnnotation, simpleTag, brush
 ]
 
 extensions.forEach((template: OverlayTemplate) => {

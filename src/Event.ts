@@ -164,17 +164,22 @@ export default class Event implements EventHandler {
           return widget.dispatchEvent('mouseDownEvent', event)
         }
         case WidgetNameConstants.MAIN: {
-          const yAxes = (pane as DrawPane<YAxisImp>).getYAxisComponents()
-          for (const item of yAxes) {
-            const yAxis = item as YAxisImp
-            if (!yAxis.getAutoCalcTickFlag()) {
-              const range = yAxis.getRange()
-              this._prevYAxisRanges.set(yAxis, { ...range })
+          // Dispatch event first to allow overlays (e.g., continuous drawing) to consume it
+          const consumed = widget.dispatchEvent('mouseDownEvent', event)
+          // Only start scrolling if the event was not consumed by an overlay
+          if (!consumed) {
+            const yAxes = (pane as DrawPane<YAxisImp>).getYAxisComponents()
+            for (const item of yAxes) {
+              const yAxis = item as YAxisImp
+              if (!yAxis.getAutoCalcTickFlag()) {
+                const range = yAxis.getRange()
+                this._prevYAxisRanges.set(yAxis, { ...range })
+              }
             }
+            this._startScrollCoordinate = { x: event.x, y: event.y }
+            this._chart.getChartStore().startScroll()
           }
-          this._startScrollCoordinate = { x: event.x, y: event.y }
-          this._chart.getChartStore().startScroll()
-          return widget.dispatchEvent('mouseDownEvent', event)
+          return consumed
         }
         case WidgetNameConstants.X_AXIS: {
           return this._processXAxisScrollStartEvent(widget, event)
@@ -246,6 +251,9 @@ export default class Event implements EventHandler {
           const consumed = widget.dispatchEvent('pressedMouseMoveEvent', event)
           if (!consumed) {
             this._processMainScrollingEvent(widget as Widget<DrawPane<YAxisImp>>, event)
+          } else {
+            // Explicitly update overlay when event was consumed (e.g., continuous drawing)
+            this._chart.updatePane(UpdateLevel.Overlay)
           }
           if (!consumed || widget.getForceCursor() === 'pointer') {
             crosshair = { x: event.x, y: event.y, paneId: pane?.getId() }
