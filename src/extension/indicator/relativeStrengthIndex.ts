@@ -22,7 +22,7 @@ interface Rsi {
 
 /**
  * RSI
- * RSI = SUM(MAX(CLOSE - REF(CLOSE,1),0),N) / SUM(ABS(CLOSE - REF(CLOSE,1)),N) × 100
+ * RSI = 100 - 100 / (1 + RMA(MAX(CHANGE(CLOSE), 0), N) / RMA(MAX(-CHANGE(CLOSE), 0), N))
  */
 const relativeStrengthIndex: IndicatorTemplate<Rsi, number> = {
   name: 'RSI',
@@ -39,32 +39,37 @@ const relativeStrengthIndex: IndicatorTemplate<Rsi, number> = {
   }),
   calc: (dataList, indicator) => {
     const { calcParams: params, figures } = indicator
-    const sumCloseAs: number[] = []
-    const sumCloseBs: number[] = []
+    const gainSums: number[] = []
+    const lossSums: number[] = []
+    const avgGains: Array<number | undefined> = []
+    const avgLosses: Array<number | undefined> = []
     return dataList.map((kLineData, i) => {
-      const rsi = {}
-      const prevClose = (dataList[i - 1] ?? kLineData).close
-      const tmp = kLineData.close - prevClose
+      const rsi: Record<string, number> = {}
+      const change = i === 0 ? 0 : kLineData.close - dataList[i - 1].close
+      const gain = Math.max(change, 0)
+      const loss = Math.max(-change, 0)
       params.forEach((p, index) => {
-        if (tmp > 0) {
-          sumCloseAs[index] = (sumCloseAs[index] ?? 0) + tmp
-        } else {
-          sumCloseBs[index] = (sumCloseBs[index] ?? 0) + Math.abs(tmp)
+        gainSums[index] = (gainSums[index] ?? 0) + gain
+        lossSums[index] = (lossSums[index] ?? 0) + loss
+
+        if (i < p) {
+          return
         }
-        if (i >= p - 1) {
-          if (sumCloseBs[index] !== 0) {
-            rsi[figures[index].key] = 100 - (100.0 / (1 + sumCloseAs[index] / sumCloseBs[index]))
-          } else {
-            rsi[figures[index].key] = 0
-          }
-          const agoData = dataList[i - (p - 1)]
-          const agoPreData = dataList[i - p] ?? agoData
-          const agoTmp = agoData.close - agoPreData.close
-          if (agoTmp > 0) {
-            sumCloseAs[index] -= agoTmp
-          } else {
-            sumCloseBs[index] -= Math.abs(agoTmp)
-          }
+
+        if (avgGains[index] === undefined || avgLosses[index] === undefined) {
+          avgGains[index] = gainSums[index] / p
+          avgLosses[index] = lossSums[index] / p
+        } else {
+          avgGains[index] = (avgGains[index] * (p - 1) + gain) / p
+          avgLosses[index] = (avgLosses[index] * (p - 1) + loss) / p
+        }
+
+        if (avgLosses[index] === 0) {
+          rsi[figures[index].key] = 100
+        } else if (avgGains[index] === 0) {
+          rsi[figures[index].key] = 0
+        } else {
+          rsi[figures[index].key] = 100 - (100 / (1 + avgGains[index] / avgLosses[index]))
         }
       })
       return rsi
