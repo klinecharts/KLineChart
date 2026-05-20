@@ -8,6 +8,17 @@
   </head>
   <body>
     <div id="root">
+      <div id="toolbar">
+        <div id="period-switcher" aria-label="周期切换">
+          <button data-period="1m" type="button">1m</button>
+          <button data-period="5m" type="button">5m</button>
+          <button data-period="15m" type="button">15m</button>
+          <button data-period="1h" type="button">1h</button>
+          <button data-period="1d" type="button">1d</button>
+        </div>
+        <button id="load-forward" type="button">加载更早数据</button>
+        <span id="load-status">Ready</span>
+      </div>
       <div id="chart"></div>
     </div>
     <script type="module" src="./main.js"></script>
