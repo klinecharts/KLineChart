@@ -94,6 +94,8 @@ Vue（来自 `docs/@views/quick-start/create-chart/vue.md`，API 逻辑与 vanil
 
 - 自定义指标的流程：生成“指标信息”，然后通过图表 API 全局添加 `registerIndicator`
 - 注册成功后，就可以像使用内置指标一样调用 `chart.createIndicator(...)`
+- `createIndicator(indicator, options?)` 通过 `options.pane` 指定窗口，通过 `options.yAxis` 指定指标绑定的 y 轴。
+- `setPaneOptions(options)` 只设置窗口自身属性，坐标轴配置使用 `overrideYAxis(options)` 或 `overrideXAxis(options)`。
 - 示例位置（文档给出的目录）：`src/extension/indicator`
 
 5.2 自定义覆盖物（Overlay）
@@ -128,7 +130,7 @@ Vue（来自 `docs/@views/quick-start/create-chart/vue.md`，API 逻辑与 vanil
 
 源码对应的核心文件线索（LLM 定位用）：
 - `src/index.ts`：对外导出 `init/dispose` 以及各类 register/getSupported API
-- `src/Chart.ts`：Chart 实现、并包含 `createIndicator` / `createOverlay` / `setDataLoader` 等实例方法
+- `src/Chart.ts`：Chart 实现、并包含 `createIndicator` / `createOverlay` / `setDataLoader` / `overrideYAxis` / `overrideXAxis` 等实例方法
 
 ---
 
@@ -204,4 +206,3 @@ Vue（来自 `docs/@views/quick-start/create-chart/vue.md`，API 逻辑与 vanil
 - 若要回答“如何扩展指标/覆盖物/图形”，优先定位到对应 `src/extension/*` 目录，并关注 register/getSupported/create* 的调用链。
 - 若要回答“如何接入数据”，优先对齐 `src/common/DataLoader.ts` 的类型与 `callback` 回传约定。
 - 若要回答“如何启动/构建/文档服务”，优先使用根目录 `package.json` 和 `docs/.vitepress/config/*` 的真实脚本与配置。
-
