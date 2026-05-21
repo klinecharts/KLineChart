@@ -214,6 +214,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
           const point = this._coordinateToPoint(overlay, event)
           overlay.continuousDrawingModeEventMoveForDrawing(point)
           overlay.onDrawing?.({ chart, overlay, ...event })
+          this.getWidget().setForceCursor('pointer')
           return true
         }
       }
@@ -235,8 +236,8 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
             } else {
               this.getWidget().setForceCursor('pointer')
             }
+            return true
           }
-          return true
         }
       }
       this.getWidget().setForceCursor(null)
@@ -320,6 +321,9 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
 
   private _figureMouseDownEvent (overlay: OverlayImp, figureType: EventOverlayInfoFigureType, figureIndex: number, figure: OverlayFigure): MouseTouchEventCallback {
     return (event: MouseTouchEvent) => {
+      if (overlay.lock) {
+        return false
+      }
       const pane = this.getWidget().getPane()
       const paneId = pane.getId()
       overlay.startPressedMove(this._coordinateToPoint(overlay, event))
