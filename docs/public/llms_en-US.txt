@@ -40,6 +40,8 @@ Chart‑level APIs manage global registration and chart creation:
 - `registerStyles.md` – Register/override named styles.
 - `registerLocale.md` – Register new locales.
 - `registerXAxis.md` / `registerYAxis.md` – Register custom axes.
+- `registerHotkey.md` – Register custom hot keys globally.
+- `getHotkey.md` / `getSupportedHotkeys.md` – Query registered hot keys.
 - `getSupportedIndicators.md` / `getSupportedOverlays.md` / `getSupportedFigures.md` / `getSupportedLocales.md` – Query registered capabilities.
 - `utils.md` – Shared chart utilities.
 - `version.md` – Library version.
@@ -63,6 +65,7 @@ Instance‑level APIs configure a specific chart and drive interactions. All mar
   - `zoomAtDataIndex.md`, `zoomAtTimestamp.md`, `zoomAtCoordinate.md`
   - `setScrollEnabled.md`, `isScrollEnabled.md`
   - `setZoomEnabled.md`, `isZoomEnabled.md`
+  - `setHotkey.md`, `getHotkey.md`
   - `getVisibleRange.md`, `getBarSpace.md`, `setBarSpace.md`
   - `getOffsetRightDistance.md`, `setOffsetRightDistance.md`, `setMaxOffsetRightDistance.md`, `setMaxOffsetLeftDistance.md`
   - `setLeftMinVisibleBarCount.md`, `setRightMinVisibleBarCount.md`

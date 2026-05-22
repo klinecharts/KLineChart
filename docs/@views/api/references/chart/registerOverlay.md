@@ -3,6 +3,7 @@
   overlay: {
     name: string
     totalStep?: number
+    drawingMode?: 'step' | 'continuous'
     lock?: boolean
     visible?: boolean
     zLevel?: number

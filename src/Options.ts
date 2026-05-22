@@ -112,6 +112,11 @@ export interface Layout {
   panes?: LayoutPane[]
 }
 
+export interface Hotkey {
+  enabled: boolean
+  exclude: string[]
+}
+
 export interface Options {
   locale?: string
   timezone?: string
@@ -120,5 +125,6 @@ export interface Options {
   thousandsSeparator?: Partial<ThousandsSeparator>
   decimalFold?: Partial<DecimalFold>
   zoomAnchor?: ZoomAnchorType | Partial<ZoomAnchor>
+  hotkey?: Partial<Hotkey>
   layout?: Layout
 }

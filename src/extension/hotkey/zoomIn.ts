@@ -12,20 +12,14 @@
  * limitations under the License.
  */
 
-export function isFF (): boolean {
-  if (typeof window === 'undefined') {
-    return false
+import type { HotkeyTemplate } from '../../common/Hotkey'
+
+const zoomIn: HotkeyTemplate = {
+  name: 'zoomIn',
+  keys: ['Shift+Equal', 'Shift+NumpadAdd'],
+  action: ({ chart }) => {
+    chart.zoomAtCoordinate(1.05)
   }
-  return window.navigator.userAgent.toLowerCase().includes('firefox')
 }
 
-export function isIOS (): boolean {
-  if (typeof window === 'undefined') {
-    return false
-  }
-  return /iPhone|iPad|iPod|iOS/.test(window.navigator.userAgent)
-}
-
-export function isAppleOS (): boolean {
-  return /Mac|iPhone|iPad|iPod|iOS/.test(window.navigator.userAgent)
-}
+export default zoomIn

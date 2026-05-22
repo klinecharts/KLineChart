@@ -36,7 +36,7 @@ import { logWarn } from './common/utils/logger'
 import { UpdateLevel } from './common/Updater'
 import type { DataLoader, DataLoaderGetBarsParams, DataLoadMore, DataLoadType } from './common/DataLoader'
 
-import type { Options, Formatter, ThousandsSeparator, DecimalFold, FormatDateType, FormatDateParams, FormatBigNumber, FormatExtendText, FormatExtendTextParams, ZoomAnchor, ZoomAnchorType, LayoutBasicParams } from './Options'
+import type { Options, Formatter, ThousandsSeparator, DecimalFold, FormatDateType, FormatDateParams, FormatBigNumber, FormatExtendText, FormatExtendTextParams, ZoomAnchor, ZoomAnchorType, LayoutBasicParams, Hotkey } from './Options'
 
 import type { IndicatorOverride, IndicatorCreate, IndicatorFilter, Indicator } from './component/Indicator'
 import type IndicatorImp from './component/Indicator'
@@ -110,6 +110,9 @@ export interface Store {
   getThousandsSeparator: () => ThousandsSeparator
   setDecimalFold: (decimalFold: Partial<DecimalFold>) => void
   getDecimalFold: () => DecimalFold
+  setHotkey: (hotkey: Partial<Hotkey>) => void
+  getHotkey: () => Hotkey
+  getHotKey: () => Hotkey
   setSymbol: (symbol: PickPartial<SymbolInfo, 'pricePrecision' | 'volumePrecision'>) => void
   getSymbol: () => Nullable<SymbolInfo>
   setPeriod: (period: Period) => void
@@ -191,6 +194,14 @@ export default class StoreImp implements Store {
   private readonly _decimalFold = {
     threshold: 3,
     format: (value: string | number) => formatFoldDecimal(value, this._decimalFold.threshold)
+  }
+
+  /**
+   * Hotkey
+   */
+  private readonly _hotKey = {
+    enabled: true,
+    exclude: []
   }
 
   /**
@@ -378,13 +389,13 @@ export default class StoreImp implements Store {
 
   constructor (chart: Chart, options?: Options) {
     this._chart = chart
-    const { layout } = options ?? {}
+    const { styles, locale, timezone, formatter, thousandsSeparator, decimalFold, zoomAnchor, hotkey, layout } = options ?? {}
     if (isValid(layout) && !isArray(layout)) {
       merge(this._layoutBasicParams, layout.basicParams)
     }
     this._calcOptimalBarSpace()
     this._lastBarRightSideDiffBarCount = this._offsetRightDistance / this._barSpace
-    const { styles, locale, timezone, formatter, thousandsSeparator, decimalFold, zoomAnchor } = options ?? {}
+
     if (isValid(styles)) {
       this.setStyles(styles)
     }
@@ -404,6 +415,10 @@ export default class StoreImp implements Store {
 
     if (isValid(zoomAnchor)) {
       this.setZoomAnchor(zoomAnchor)
+    }
+
+    if (isValid(hotkey)) {
+      this.setHotkey(hotkey)
     }
 
     this._taskScheduler = new TaskScheduler(() => {
@@ -507,6 +522,12 @@ export default class StoreImp implements Store {
   setDecimalFold (decimalFold: Partial<DecimalFold>): void { merge(this._decimalFold, decimalFold) }
 
   getDecimalFold (): DecimalFold { return this._decimalFold }
+
+  setHotkey (hotkey: Partial<Hotkey>): void { merge(this._hotKey, hotkey) }
+
+  getHotkey (): Hotkey { return this._hotKey }
+
+  getHotKey (): Hotkey { return this._hotKey }
 
   setSymbol (symbol: PickPartial<SymbolInfo, 'pricePrecision' | 'volumePrecision'>): void {
     this.resetData(() => {

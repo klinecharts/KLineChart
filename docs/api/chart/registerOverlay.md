@@ -12,6 +12,7 @@ outline: deep
 - `overlay` 覆盖物配置。
   - `name` 名称，用于创建或者修改的唯一标识。
   - `totalStep` 总的实现步骤。
+  - `drawingMode` 绘制模式，支持 `step` 和 `continuous` 。`step` 表示按步骤点击绘制，`continuous` 表示连续绘制，默认 `step`。
   - `lock` 是否锁定不让拖动。
   - `visible` 是否可见。
   - `zLevel` 绘制层级，值越大，越靠前显示，只作用于覆盖物之间。

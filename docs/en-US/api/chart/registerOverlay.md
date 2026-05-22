@@ -12,6 +12,7 @@ outline: deep
 - `overlay` Overlay configuration.
   - `name` Name, a unique identifier used for creation or modification.
   - `totalStep` Total implementation steps.
+  - `drawingMode` Drawing mode, supports `step` and `continuous`. `step` means click-based step drawing, `continuous` means continuous drawing. Default is `step`.
   - `lock` Whether to lock and prevent dragging.
   - `visible` Whether it is visible.
   - `zLevel` Drawing level, the larger the value, the closer it is displayed to the front, and it only works between the overlays.

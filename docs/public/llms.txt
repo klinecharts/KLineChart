@@ -36,6 +36,7 @@ KLineChart - llms_zh.txt
 - `registerLocale` / `getSupportedLocales`（国际化 Locale）
 - `registerStyles`（样式注册）
 - `registerXAxis` / `registerYAxis`（坐标轴扩展）
+- `registerHotkey` / `getHotkey` / `getSupportedHotkeys`（快捷键）
 
 2.3 常用工具函数
 

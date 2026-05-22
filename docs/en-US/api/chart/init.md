@@ -66,6 +66,9 @@ import Tip from '../../../@components/Tip.vue'
     - `threshold` Fold threshold.
     - `format` Custom formatting method.
   - `zoomAnchor` Zoom anchor position. It can be `last_bar` , `cursor` , or an object `{ main, xAxis }` for main chart and x-axis separately.
+  - `hotkey` Hot key configuration.
+    - `enabled` Whether hot keys are enabled.
+    - `exclude` Global hot key names to exclude.
 
 ### Returns {#returns}
 `init` returns an object `Chart`。

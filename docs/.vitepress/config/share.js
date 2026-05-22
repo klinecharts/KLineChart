@@ -18,6 +18,9 @@ export function getChartApiMenus (lang = '') {
     { text: 'getSupportedIndicators', link: `${prefix}/getSupportedIndicators` },
     { text: 'registerOverlay', link: `${prefix}/registerOverlay` },
     { text: 'getSupportedOverlays', link: `${prefix}/getSupportedOverlays` },
+    { text: 'registerHotkey', link: `${prefix}/registerHotkey` },
+    { text: 'getHotkey', link: `${prefix}/getHotkey` },
+    { text: 'getSupportedHotkeys', link: `${prefix}/getSupportedHotkeys` },
     { text: 'registerXAxis', link: `${prefix}/registerXAxis` },
     { text: 'registerYAxis', link: `${prefix}/registerYAxis` },
     { text: 'utils', link: `${prefix}/utils` }
@@ -75,6 +78,8 @@ export function getInstanceApiMenus (lang = '') {
     { text: 'isZoomEnabled', link: `${prefix}/isZoomEnabled` },
     { text: 'setScrollEnabled', link: `${prefix}/setScrollEnabled` },
     { text: 'isScrollEnabled', link: `${prefix}/isScrollEnabled` },
+    { text: 'setHotkey', link: `${prefix}/setHotkey` },
+    { text: 'getHotkey', link: `${prefix}/getHotkey` },
     { text: 'scrollByDistance', link: `${prefix}/scrollByDistance` },
     { text: 'scrollToRealTime', link: `${prefix}/scrollToRealTime` },
     { text: 'scrollToDataIndex', link: `${prefix}/scrollToDataIndex` },

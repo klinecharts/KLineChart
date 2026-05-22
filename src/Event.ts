@@ -18,7 +18,10 @@ import type Coordinate from './common/Coordinate'
 import { UpdateLevel } from './common/Updater'
 import type Crosshair from './common/Crosshair'
 import { requestAnimationFrame, cancelAnimationFrame } from './common/utils/compatible'
-import { isValid } from './common/utils/typeChecks'
+import { isArray, isFunction, isValid } from './common/utils/typeChecks'
+import { isAppleOS } from './common/utils/platform'
+
+import { getHotkey, getSupportedHotkeys } from './extension/hotkey/index'
 
 import type { AxisRange } from './component/Axis'
 import type YAxisImp from './component/YAxis'
@@ -38,8 +41,33 @@ interface EventTriggerWidgetInfo {
   widget: Nullable<Widget>
 }
 
+const hotkeyModifierAlias: Record<string, string> = {
+  command: 'meta',
+  cmd: 'meta',
+  control: 'ctrl',
+  option: 'alt',
+  mod: isAppleOS() ? 'meta' : 'ctrl'
+}
+
+const hotkeyAlias: Record<string, string> = {
+  '+': 'equal',
+  plus: 'equal',
+  add: 'equal',
+  numpadadd: 'equal',
+  '-': 'minus',
+  subtract: 'minus',
+  numpadsubtract: 'minus',
+  esc: 'escape',
+  del: 'delete',
+  left: 'arrowleft',
+  right: 'arrowright',
+  up: 'arrowup',
+  down: 'arrowdown'
+}
+
+const hotKeyModifierOrder = ['ctrl', 'alt', 'shift', 'meta']
+
 export default class Event implements EventHandler {
-  private readonly _container: HTMLElement
   private readonly _chart: Chart
   private readonly _event: EventHandlerImp
 
@@ -70,51 +98,100 @@ export default class Event implements EventHandler {
 
   private _mouseMoveTriggerWidgetInfo: EventTriggerWidgetInfo = { pane: null, widget: null }
 
-  private _getYAxisByWidget (widget: Widget<DrawPane<YAxisImp>>): YAxisImp {
-    if (widget.getName() === WidgetNameConstants.Y_AXIS) {
-      return (widget as unknown as YAxisWidget).getAxisComponent() as unknown as YAxisImp
-    }
-    return widget.getPane().getYAxisComponentById() as unknown as YAxisImp
-  }
-
   private readonly _boundKeyBoardDownEvent: ((event: KeyboardEvent) => void) = (event: KeyboardEvent) => {
+    const target = event.target as Nullable<HTMLElement>
+    const tagName = target?.tagName.toLowerCase()
+    if (tagName === 'input' || tagName === 'textarea' || target?.isContentEditable === true) {
+      return
+    }
+    const { enabled, exclude } = this._chart.getHotKey()
+    if (!enabled) {
+      return
+    }
+    const eventKeys: string[] = []
+    if (event.ctrlKey) {
+      eventKeys.push('ctrl')
+    }
+    if (event.altKey) {
+      eventKeys.push('alt')
+    }
     if (event.shiftKey) {
-      switch (event.code) {
-        case 'Equal': {
-          this._chart.getChartStore().zoom(0.5, null, 'main')
-          break
-        }
-        case 'Minus': {
-          this._chart.getChartStore().zoom(-0.5, null, 'main')
-          break
-        }
-        case 'ArrowLeft': {
-          const store = this._chart.getChartStore()
-          store.startScroll()
-          store.scroll(-3 * store.getBarSpace().bar)
-          break
-        }
-        case 'ArrowRight': {
-          const store = this._chart.getChartStore()
-          store.startScroll()
-          store.scroll(3 * store.getBarSpace().bar)
-          break
-        }
-        default: {
-          break
+      eventKeys.push('shift')
+    }
+    if (event.metaKey) {
+      eventKeys.push('meta')
+    }
+    const eventCode = event.code.trim().toLowerCase()
+    if (/^key[a-z]$/.test(eventCode)) {
+      eventKeys.push(eventCode.slice(3))
+    } else if (/^digit[0-9]$/.test(eventCode)) {
+      eventKeys.push(eventCode.slice(5))
+    } else {
+      eventKeys.push(hotkeyAlias[eventCode] ?? eventCode)
+    }
+    const key = eventKeys.join('+')
+    const names = getSupportedHotkeys()
+    for (let i = names.length - 1; i >= 0; i--) {
+      const name = names[i]
+      const hotkey = getHotkey(name)
+      if (!exclude.includes(name) && isValid(hotkey)) {
+        const hotkeyKeys = isArray<string>(hotkey.keys) ? hotkey.keys : [hotkey.keys]
+        const match = hotkeyKeys.some(hotkeyKey => {
+          const modifiers: string[] = []
+          let normalKey = ''
+          hotkeyKey.replace(/\+\+$/, '+Plus').replace(/\+=$/, '+Equal').split('+').forEach(part => {
+            const hotkeyPart = hotkeyModifierAlias[part.trim().toLowerCase()] ?? part
+            const hotkeyPartValue = hotkeyPart.trim().toLowerCase()
+            let value = ''
+            if (/^key[a-z]$/.test(hotkeyPartValue)) {
+              value = hotkeyPartValue.slice(3)
+            } else if (/^digit[0-9]$/.test(hotkeyPartValue)) {
+              value = hotkeyPartValue.slice(5)
+            } else {
+              value = hotkeyAlias[hotkeyPartValue] ?? hotkeyPartValue
+            }
+            if (hotKeyModifierOrder.includes(value)) {
+              if (!modifiers.includes(value)) {
+                modifiers.push(value)
+              }
+            } else if (value.length > 0) {
+              normalKey = value
+            }
+          })
+          modifiers.sort((a, b) => hotKeyModifierOrder.indexOf(a) - hotKeyModifierOrder.indexOf(b))
+          return [...modifiers, normalKey].filter(key => key.length > 0).join('+') === key
+        })
+        if (match) {
+          const params = { chart: this._chart, event, key, hotkey }
+          if (!isFunction(hotkey.check) || hotkey.check(params)) {
+            if (hotkey.preventDefault ?? true) {
+              event.preventDefault()
+            }
+            if (hotkey.stopPropagation ?? false) {
+              event.stopPropagation()
+            }
+            hotkey.action(params)
+            return
+          }
         }
       }
     }
   }
 
   constructor (container: HTMLElement, chart: Chart) {
-    this._container = container
     this._chart = chart
     this._event = new EventHandlerImp(container, this, {
       treatVertDragAsPageScroll: () => false,
       treatHorzDragAsPageScroll: () => false
     })
-    container.addEventListener('keydown', this._boundKeyBoardDownEvent)
+    document.addEventListener('keydown', this._boundKeyBoardDownEvent)
+  }
+
+  private _getYAxisByWidget (widget: Widget<DrawPane<YAxisImp>>): YAxisImp {
+    if (widget.getName() === WidgetNameConstants.Y_AXIS) {
+      return (widget as unknown as YAxisWidget).getAxisComponent() as unknown as YAxisImp
+    }
+    return widget.getPane().getYAxisComponentById() as unknown as YAxisImp
   }
 
   pinchStartEvent (): boolean {
@@ -745,7 +822,7 @@ export default class Event implements EventHandler {
   }
 
   destroy (): void {
-    this._container.removeEventListener('keydown', this._boundKeyBoardDownEvent)
+    document.removeEventListener('keydown', this._boundKeyBoardDownEvent)
     this._event.destroy()
   }
 }

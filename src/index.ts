@@ -70,6 +70,7 @@ import { registerOverlay, getOverlayClass, getSupportedOverlays } from './extens
 import { registerStyles } from './extension/styles/index'
 import { registerXAxis } from './extension/x-axis'
 import { registerYAxis } from './extension/y-axis'
+import { registerHotkey, getHotkey, getSupportedHotkeys } from './extension/hotkey/index'
 
 const charts = new Map<string, ChartImp>()
 let chartBaseId = 1
@@ -168,6 +169,7 @@ export {
   version, init, dispose,
   registerFigure, getSupportedFigures, getFigureClass,
   registerIndicator, getSupportedIndicators,
+  registerHotkey, getHotkey, getSupportedHotkeys,
   registerOverlay, getSupportedOverlays, getOverlayClass,
   registerLocale, getSupportedLocales,
   registerStyles,

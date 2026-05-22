@@ -66,6 +66,9 @@ import Tip from '../../@components/Tip.vue'
     - `threshold` 折叠阈值。
     - `format` 自定义格式化方法。
   - `zoomAnchor` 缩放锚点位置，可以是 `last_bar` 、 `cursor` ，或分别配置主图和 x 轴的对象 `{ main, xAxis }`。
+  - `hotkey` 快捷键配置。
+    - `enabled` 是否启用快捷键。
+    - `exclude` 排除的全局快捷键名称列表。
 
 ### 返回值 {#returns}
 `init` 返回一个图表实例对象 `Chart`。

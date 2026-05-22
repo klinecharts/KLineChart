@@ -25,7 +25,7 @@ import type Crosshair from './common/Crosshair'
 import type { ActionType, ActionCallback } from './common/Action'
 import type { DataLoader } from './common/DataLoader'
 import type VisibleRange from './common/VisibleRange'
-import type { Formatter, DecimalFold, Options, ThousandsSeparator, ZoomAnchor, ZoomAnchorType, Layout, LayoutBasicParams, LayoutPaneContentChild, LayoutPaneContentChildMultipleParams } from './Options'
+import type { Formatter, DecimalFold, Options, ThousandsSeparator, ZoomAnchor, ZoomAnchorType, Layout, LayoutBasicParams, LayoutPaneContentChild, LayoutPaneContentChildMultipleParams, Hotkey } from './Options'
 import Animation from './common/Animation'
 import { createId } from './common/utils/id'
 import { createDom } from './common/utils/dom'
@@ -762,6 +762,14 @@ export default class ChartImp implements Chart {
   }
 
   getDecimalFold (): DecimalFold { return this._chartStore.getDecimalFold() }
+
+  setHotkey (hotkey: Partial<Hotkey>): void {
+    this._chartStore.setHotkey(hotkey)
+  }
+
+  getHotkey (): Hotkey { return this._chartStore.getHotkey() }
+
+  getHotKey (): Hotkey { return this._chartStore.getHotKey() }
 
   private _setOptions (fuc: () => void): void {
     fuc()
