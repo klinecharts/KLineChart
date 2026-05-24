@@ -24,7 +24,7 @@ const enUS: Locales = {
   turnover: 'Turnover: ',
   change: 'Change: ',
   second: 'S',
-  minute: '',
+  minute: 'm',
   hour: 'H',
   day: 'D',
   week: 'W',

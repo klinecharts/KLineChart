@@ -24,7 +24,7 @@ const zhCN: Locales = {
   turnover: '成交额：',
   change: '涨幅：',
   second: '秒',
-  minute: '',
+  minute: '分',
   hour: '小时',
   day: '天',
   week: '周',
