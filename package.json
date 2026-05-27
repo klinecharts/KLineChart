@@ -77,7 +77,12 @@
     "@commitlint/cli": "^19.6.1",
     "@commitlint/config-conventional": "^19.6.0",
     "@eslint/eslintrc": "^3.3.0",
-    "@rollup/plugin-replace": "^6.0.3",
+    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-eslint": "^9.0.5",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-replace": "^5.0.5",
+    "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-typescript": "^11.1.6",
     "@shikijs/vitepress-twoslash": "^3.2.2",
     "@stackblitz/sdk": "^1.9.0",
     "@types/node": "^20.19.0",
@@ -96,11 +101,18 @@
     "gh-pages": "^6.1.1",
     "husky": "^8.0.3",
     "resize-observer-polyfill": "^1.5.1",
+    "rollup": "^4.43.0",
+    "rollup-plugin-filesize": "^10.0.0",
     "shiki": "^2.4.2",
     "tslib": "^2.8.1",
     "typescript": "^5.8.3",
     "vite": "8.0.13",
     "vitepress": "2.0.0-alpha.17",
     "vue": "^3.5.34"
+  },
+  "pnpm": {
+    "overrides": {
+      "@rollup/plugin-eslint>eslint": "$eslint"
+    }
   }
 }
