@@ -7,5 +7,5 @@ const index = resolvePath('index.ts', resolvePath('src'))
 build({
   index,
   fileName,
-  format: 'esm'
+  format: 'es'
 })
