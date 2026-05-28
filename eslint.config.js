@@ -1,6 +1,5 @@
 import { FlatCompat } from '@eslint/eslintrc'
 import love from 'eslint-config-love'
-import progress from 'eslint-plugin-file-progress'
 
 export default [
   ...new FlatCompat().extends('eslint-config-standard'),
@@ -9,9 +8,6 @@ export default [
     files: ['src/**/*.js', 'src/**/*.ts']
   },
   {
-    plugins: {
-      'file-progress': progress
-    },
     ignores: [
       'eslint.config.js',
       'scripts/**/*',
@@ -20,7 +16,6 @@ export default [
       'index.js'
     ],
     rules: {
-      'file-progress/activate': 1,
       complexity: 'off',
       'promise/avoid-new': 'off',
       'no-use-before-define': 'off',

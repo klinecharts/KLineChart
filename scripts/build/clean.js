@@ -2,6 +2,7 @@ import fs from 'fs'
 import { styleText } from 'node:util'
 
 import { resolvePath } from '../utils.js'
+import { start, success } from './logger.js'
 
 const buildDir = resolvePath('dist')
 
@@ -45,10 +46,25 @@ function deleteFiles (dir) {
 }
 
 function clean () {
+  const startTime = Date.now()
+
+  start('Cleaning build output...', [
+    `target: ${buildDir}`
+  ])
+
+  if (!fs.existsSync(buildDir)) {
+    success('No build output to clean', startTime, [
+      'deleted: 0 files'
+    ])
+    return
+  }
+
   eachFiles(buildDir)
   deleteFiles(buildDir)
 
-  console.log(styleText('green', '\n\n✔ Clean successfully.\n'))
+  success('Cleaned build output', startTime, [
+    `deleted: ${deletedFileCount} files`
+  ])
 }
 
 clean()
