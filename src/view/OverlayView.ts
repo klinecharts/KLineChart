@@ -409,7 +409,8 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
           if (value > kLineData.high) {
             if (o.mode === 'weak_magnet') {
               const highY = yAxis.convertToPixel(kLineData.high)
-              const buffValue = yAxis.convertFromPixel(highY - modeSensitivity)
+              const buffValueY = yAxis.reverse ? highY + modeSensitivity : highY - modeSensitivity
+              const buffValue = yAxis.convertFromPixel(buffValueY)
               if (value < buffValue) {
                 value = kLineData.high
               }
@@ -419,7 +420,8 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
           } else if (value < kLineData.low) {
             if (o.mode === 'weak_magnet') {
               const lowY = yAxis.convertToPixel(kLineData.low)
-              const buffValue = yAxis.convertFromPixel(lowY - modeSensitivity)
+              const buffValueY = yAxis.reverse ? lowY - modeSensitivity : lowY + modeSensitivity
+              const buffValue = yAxis.convertFromPixel(buffValueY)
               if (value > buffValue) {
                 value = kLineData.low
               }
