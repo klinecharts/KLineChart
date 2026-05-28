@@ -20,7 +20,7 @@ import type Coordinate from '../common/Coordinate'
 import type Bounding from '../common/Bounding'
 import type { OverlayStyle } from '../common/Styles'
 import type { MouseTouchEvent } from '../common/EventHandler'
-import { clone, isArray, isBoolean, isFunction, isNumber, isString, isValid, merge } from '../common/utils/typeChecks'
+import { clone, isArray, isBoolean, isNumber, isString, isValid, merge } from '../common/utils/typeChecks'
 
 import type { XAxis } from './XAxis'
 import type { YAxis } from './YAxis'
@@ -316,35 +316,17 @@ export default class OverlayImp<E = unknown> implements Overlay<E> {
     }
 
     if (isArray(points) && points.length > 0) {
-      let repeatTotalStep = 0
       this.points = [...points]
-      if (points.length >= this.totalStep - 1) {
-        this.currentStep = OVERLAY_DRAW_STEP_FINISHED
-        repeatTotalStep = this.totalStep - 1
-      } else {
-        this.currentStep = points.length + 1
-        repeatTotalStep = points.length
-      }
-      // Prevent wrong drawing due to wrong points
-      if (isFunction(this.performEventMoveForDrawing)) {
-        for (let i = 0; i < repeatTotalStep; i++) {
-          this.performEventMoveForDrawing({
-            currentStep: i + 2,
-            mode: this.mode,
-            points: this.points,
-            performPointIndex: i,
-            performPoint: this.points[i]
-          })
-        }
-      }
-
-      if (this.currentStep === OVERLAY_DRAW_STEP_FINISHED) {
+      this.currentStep = OVERLAY_DRAW_STEP_FINISHED
+      const lastIndex = this.points.length - 1
+      const lastPoint = this.points[lastIndex]
+      if (lastIndex > 0 && isValid(lastPoint)) {
         this.performEventPressedMove?.({
           currentStep: this.currentStep,
           mode: this.mode,
           points: this.points,
-          performPointIndex: this.points.length - 1,
-          performPoint: this.points[this.points.length - 1]
+          performPointIndex: lastIndex,
+          performPoint: lastPoint
         })
       }
     }
