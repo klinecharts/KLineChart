@@ -576,7 +576,6 @@ export default class StoreImp implements Store {
   ): void {
     let success = false
     let adjustFlag = false
-    let dataLengthChange = 0
     if (isArray<KLineData>(data)) {
       const realMore = { backward: false, forward: false }
       if (isBoolean(more)) {
@@ -586,7 +585,6 @@ export default class StoreImp implements Store {
         realMore.backward = more?.backward ?? false
         realMore.forward = more?.forward ?? false
       }
-      dataLengthChange = data.length
       switch (type) {
         case 'init': {
           this._clearData()
@@ -600,14 +598,16 @@ export default class StoreImp implements Store {
         case 'backward': {
           this._dataList = this._dataList.concat(data)
           this._dataLoadMore.backward = realMore.backward
-          this._lastBarRightSideDiffBarCount -= dataLengthChange
-          adjustFlag = dataLengthChange > 0
+          this._lastBarRightSideDiffBarCount -= data.length
+          // scroll start LastBarRightSideDiffBarCount should sub data length
+          this._startLastBarRightSideDiffBarCount -= data.length
+          adjustFlag = data.length > 0
           break
         }
         case 'forward': {
           this._dataList = data.concat(this._dataList)
           this._dataLoadMore.forward = realMore.forward
-          adjustFlag = dataLengthChange > 0
+          adjustFlag = data.length > 0
           break
         }
         default: {
@@ -626,7 +626,6 @@ export default class StoreImp implements Store {
         if (lastBarRightSideDiffBarCount < 0) {
           this.setLastBarRightSideDiffBarCount(--lastBarRightSideDiffBarCount)
         }
-        dataLengthChange = 1
         success = true
         adjustFlag = true
       } else if (timestamp === lastDataTimestamp) {
@@ -695,7 +694,6 @@ export default class StoreImp implements Store {
     if (this._lastBarRightSideDiffBarCount < minRightOffsetBarCount) {
       this._lastBarRightSideDiffBarCount = minRightOffsetBarCount
     }
-
     let to = Math.round(this._lastBarRightSideDiffBarCount + totalBarCount + 0.5)
     const realTo = to
     if (to > totalBarCount) {
