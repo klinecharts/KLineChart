@@ -43,7 +43,8 @@ body {
 }
 
 #period-switcher button,
-#load-forward {
+#load-forward,
+#add-backward {
   height: 28px;
   padding: 0 12px;
   border: 1px solid #c9d0d8;
@@ -66,7 +67,8 @@ body {
 }
 
 #period-switcher button:hover,
-#load-forward:hover {
+#load-forward:hover,
+#add-backward:hover {
   background: #eef2f6;
 }
 
@@ -74,7 +76,8 @@ body {
   background: #0969da;
 }
 
-#load-forward:disabled {
+#load-forward:disabled,
+#add-backward:disabled {
   color: #8c959f;
   cursor: not-allowed;
 }
