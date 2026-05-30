@@ -139,8 +139,18 @@ export default class ChartImp implements Chart {
 
   private _resizeRequestAnimationId = DEFAULT_REQUEST_ID
 
-  private readonly _boundWindowResize = (): void => {
-    this._scheduleResize()
+  private readonly _scheduleResize = (): void => {
+    if (this._resizeRequestAnimationId === DEFAULT_REQUEST_ID) {
+      this._resizeRequestAnimationId = requestAnimationFrame(() => {
+        this._resizeRequestAnimationId = DEFAULT_REQUEST_ID
+        if (
+          this._chartBounding.width !== Math.floor(this._chartContainer.clientWidth) ||
+          this._chartBounding.height !== Math.floor(this._chartContainer.clientHeight)
+        ) {
+          this.resize()
+        }
+      })
+    }
   }
 
   private readonly _cacheYAxisWidth = { left: 0, right: 0 }
@@ -188,13 +198,6 @@ export default class ChartImp implements Chart {
     this._chartBounding.height = Math.floor(this._chartContainer.clientHeight)
   }
 
-  private _isChartBoundingChanged (): boolean {
-    return (
-      this._chartBounding.width !== Math.floor(this._chartContainer.clientWidth) ||
-      this._chartBounding.height !== Math.floor(this._chartContainer.clientHeight)
-    )
-  }
-
   private _initResizeListener (): void {
     if (isValid(ResizeObserver)) {
       this._resizeObserver = new ResizeObserver(() => {
@@ -202,18 +205,7 @@ export default class ChartImp implements Chart {
       })
       this._resizeObserver.observe(this._chartContainer)
     } else {
-      window.addEventListener('resize', this._boundWindowResize)
-    }
-  }
-
-  private _scheduleResize (): void {
-    if (this._resizeRequestAnimationId === DEFAULT_REQUEST_ID) {
-      this._resizeRequestAnimationId = requestAnimationFrame(() => {
-        this._resizeRequestAnimationId = DEFAULT_REQUEST_ID
-        if (this._isChartBoundingChanged()) {
-          this.resize()
-        }
-      })
+      window.addEventListener('resize', this._scheduleResize)
     }
   }
 
@@ -1346,7 +1338,6 @@ export default class ChartImp implements Chart {
       update: true,
       buildYAxisTick: true,
       forceBuildYAxisTick: true
-
     })
   }
 
@@ -1359,7 +1350,7 @@ export default class ChartImp implements Chart {
       this._resizeObserver.disconnect()
       this._resizeObserver = null
     } else {
-      window.removeEventListener('resize', this._boundWindowResize)
+      window.removeEventListener('resize', this._scheduleResize)
     }
     this._chartEvent.destroy()
     this._drawPanes.forEach(pane => {
