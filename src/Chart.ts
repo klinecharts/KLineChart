@@ -603,6 +603,14 @@ export default class ChartImp implements Chart {
         pane.setYAxesBounding(yAxisBounding)
         pane.setBounding(paneBounding, mainBounding, leftYAxisBounding, rightYAxisBounding)
       })
+
+      if (buildYAxisTick || forceBuildYAxisTick) {
+        this._drawPanes.forEach(pane => {
+          pane.getYAxisComponents().forEach(axis => {
+            (axis as unknown as AxisImp).buildTicks(false)
+          })
+        })
+      }
     }
     if (update) {
       (this._xAxisPane.getXAxisComponent() as unknown as AxisImp).buildTicks(true)
