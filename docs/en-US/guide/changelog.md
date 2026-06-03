@@ -1,5 +1,16 @@
 # 📠 Change Log
 
+## 10.0.0-beta3
+`2026-06-03`
++ 🆕 Support custom hot keys.
++ 🆕 A new continuous drawing mode is added to the cover, and a `brush` is added to the built-in cover.
++ 👉 Adjust the calculation logic of the built-in indicator `RSI`.
++ 🐞 Fix the problem that when the overlay is locked, the event falls on the overlay and the chart cannot be scrolled.
++ 🐞 Fix the problem that overlays that are forced to end drawing cannot be restored through `createOverlay`.
++ 🐞 Fix the issue of drawing response in overlay field weakening mode.
++ 🐞 Fix an issue where data request method callbacks may be triggered infinitely when loading data backwards.
++ 🐞 Fix the problem that `resize` may not take effect.
+
 ## 10.0.0-beta2
 `2026-05-20`
 + 🆕 New Features
