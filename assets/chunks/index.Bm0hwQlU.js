@@ -1,0 +1,1 @@
+import{C as e}from"./ChartPreview.Cbaf9ulm.js";import{a3 as r,n as t,ao as o}from"./framework.BEQTiVti.js";const s=JSON.parse(`{"js":"import { getSupportedFigures } from 'klinecharts'\\n\\nconst supports = getSupportedFigures()\\n"}`),i={__name:"index",setup(a){return(n,p)=>(r(),t(e,{title:"getSupportedFigures",hiddenChart:!0,code:o(s).js},null,8,["code"]))}};export{i as _};
