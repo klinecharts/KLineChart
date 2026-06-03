@@ -127,6 +127,7 @@ export default class ChartImp implements Chart {
     sort: true,
     measureHeight: true,
     measureWidth: true,
+    secondMeasureWidth: false,
     update: true,
     buildYAxisTick: false,
     cacheYAxisWidth: false,
@@ -346,6 +347,7 @@ export default class ChartImp implements Chart {
     sort?: boolean
     measureHeight?: boolean
     measureWidth?: boolean
+    secondMeasureWidth?: boolean
     update?: boolean
     buildYAxisTick?: boolean
     cacheYAxisWidth?: boolean
@@ -359,6 +361,9 @@ export default class ChartImp implements Chart {
     }
     if (options.measureWidth ?? false) {
       this._layoutUpdateOptions.measureWidth = options.measureWidth!
+    }
+    if (options.secondMeasureWidth ?? false) {
+      this._layoutUpdateOptions.secondMeasureWidth = options.secondMeasureWidth!
     }
     if (options.update ?? false) {
       this._layoutUpdateOptions.update = options.update!
@@ -384,7 +389,7 @@ export default class ChartImp implements Chart {
   }
 
   private _layout (): void {
-    const { sort, measureHeight, measureWidth, update, buildYAxisTick, cacheYAxisWidth, forceBuildYAxisTick } = this._layoutUpdateOptions
+    const { sort, measureHeight, measureWidth, secondMeasureWidth, update, buildYAxisTick, cacheYAxisWidth, forceBuildYAxisTick } = this._layoutUpdateOptions
     if (sort) {
       while (isValid(this._chartContainer.firstChild)) {
         this._chartContainer.removeChild(this._chartContainer.firstChild)
@@ -462,155 +467,154 @@ export default class ChartImp implements Chart {
         top += pane.getBounding().height
       })
     }
-    let forceMeasureWidth = measureWidth
-    if (buildYAxisTick || forceBuildYAxisTick) {
-      this._drawPanes.forEach(pane => {
-        pane.getYAxisComponents().forEach(axis => {
-          const success = (axis as unknown as AxisImp).buildTicks(forceBuildYAxisTick)
-          forceMeasureWidth ||= success
-        })
-      })
-    }
-    if (forceMeasureWidth) {
-      const totalWidth = this._chartBounding.width
-      const styles = this.getStyles()
 
-      const leftOutsideYAxisWidths: number[] = []
-      const leftInsideYAxisWidths: number[] = []
-      const rightInsideYAxisWidths: number[] = []
-      const rightOutsideYAxisWidths: number[] = []
-
-      const updateColumnWidth = (widths: number[], index: number, width: number): void => {
-        widths[index] = Math.max(widths[index] ?? 0, width)
-      }
-
-      this._drawPanes.forEach(pane => {
-        const leftOutsideAxes: YAxis[] = []
-        const leftInsideAxes: YAxis[] = []
-        const rightInsideAxes: YAxis[] = []
-        const rightOutsideAxes: YAxis[] = []
-        if (pane.getId() !== PaneIdConstants.X_AXIS) {
-          pane.getWidgetYAxisComponents().forEach(axis => {
-            const yAxis = axis
-            if (yAxis.position === 'left') {
-              if (yAxis.inside) {
-                leftInsideAxes.push(yAxis)
-              } else {
-                leftOutsideAxes.push(yAxis)
-              }
-            } else {
-              if (yAxis.inside) {
-                rightInsideAxes.push(yAxis)
-              } else {
-                rightOutsideAxes.push(yAxis)
-              }
-            }
-          })
-        }
-
-        leftOutsideAxes.forEach((yAxis, index) => { updateColumnWidth(leftOutsideYAxisWidths, index, yAxis.getAutoSize()) })
-        leftInsideAxes.forEach((yAxis, index) => { updateColumnWidth(leftInsideYAxisWidths, index, yAxis.getAutoSize()) })
-        rightInsideAxes.forEach((yAxis, index) => { updateColumnWidth(rightInsideYAxisWidths, index, yAxis.getAutoSize()) })
-        rightOutsideAxes.forEach((yAxis, index) => { updateColumnWidth(rightOutsideYAxisWidths, index, yAxis.getAutoSize()) })
-      })
-
-      let leftYAxisWidth = leftOutsideYAxisWidths.reduce((total, width) => total + width, 0)
-      let rightYAxisWidth = rightOutsideYAxisWidths.reduce((total, width) => total + width, 0)
-
-      if (cacheYAxisWidth) {
-        leftYAxisWidth = Math.max(this._cacheYAxisWidth.left, leftYAxisWidth)
-        rightYAxisWidth = Math.max(this._cacheYAxisWidth.right, rightYAxisWidth)
-      }
-
-      this._cacheYAxisWidth.left = leftYAxisWidth
-      this._cacheYAxisWidth.right = rightYAxisWidth
-
-      let mainWidth = totalWidth
-      let mainLeft = 0
-      let mainRight = 0
-      mainWidth -= leftYAxisWidth
-      mainLeft = leftYAxisWidth
-
-      mainWidth -= rightYAxisWidth
-      mainRight = rightYAxisWidth
-
-      this._chartStore.setTotalBarSpace(mainWidth)
-
-      const paneBounding = { width: totalWidth }
-      const mainBounding = { width: mainWidth, left: mainLeft, right: mainRight }
-      const leftYAxisBounding = { width: leftYAxisWidth }
-      const rightYAxisBounding = { width: rightYAxisWidth }
-      const separatorFill = styles.separator.fill
-      let separatorBounding: Partial<Bounding> = {}
-      if (!separatorFill) {
-        separatorBounding = mainBounding
-      } else {
-        separatorBounding = paneBounding
-      }
-      this._drawPanes.forEach((pane) => {
-        this._separatorPanes.get(pane)?.setBounding(separatorBounding)
-        const yAxisBounding: Record<string, Partial<Bounding>> = {}
-        let leftOutsideOffset = 0
-        let leftInsideOffset = 0
-        let rightInsideOffset = 0
-        let rightOutsideOffset = 0
-        const leftOutsideAxes: YAxis[] = []
-        const leftInsideAxes: YAxis[] = []
-        const rightInsideAxes: YAxis[] = []
-        const rightOutsideAxes: YAxis[] = []
-        if (pane.getId() !== PaneIdConstants.X_AXIS) {
-          pane.getWidgetYAxisComponents().forEach(axis => {
-            const yAxis = axis
-            if (yAxis.position === 'left') {
-              if (yAxis.inside) {
-                leftInsideAxes.push(yAxis)
-              } else {
-                leftOutsideAxes.push(yAxis)
-              }
-            } else {
-              if (yAxis.inside) {
-                rightInsideAxes.push(yAxis)
-              } else {
-                rightOutsideAxes.push(yAxis)
-              }
-            }
-          })
-        }
-
-        const paneLeftOutsideYAxisWidth = leftOutsideAxes.reduce((total, _yAxis, index) => total + (leftOutsideYAxisWidths[index] ?? 0), 0)
-        leftOutsideOffset = leftYAxisWidth - paneLeftOutsideYAxisWidth
-        for (let index = leftOutsideAxes.length - 1; index >= 0; index--) {
-          const yAxis = leftOutsideAxes[index]
-          const width = leftOutsideYAxisWidths[index] ?? 0
-          yAxisBounding[yAxis.id] = { width, left: leftOutsideOffset }
-          leftOutsideOffset += width
-        }
-        leftInsideAxes.forEach((yAxis, index) => {
-          const width = leftInsideYAxisWidths[index] ?? 0
-          yAxisBounding[yAxis.id] = { width, left: mainLeft + leftInsideOffset }
-          leftInsideOffset += width
-        })
-        rightInsideAxes.forEach((yAxis, index) => {
-          const width = rightInsideYAxisWidths[index] ?? 0
-          rightInsideOffset += width
-          yAxisBounding[yAxis.id] = { width, left: mainLeft + mainWidth - rightInsideOffset }
-        })
-        rightOutsideAxes.forEach((yAxis, index) => {
-          const width = rightOutsideYAxisWidths[index] ?? 0
-          yAxisBounding[yAxis.id] = { width, left: mainLeft + mainWidth + rightOutsideOffset }
-          rightOutsideOffset += width
-        })
-        pane.setYAxesBounding(yAxisBounding)
-        pane.setBounding(paneBounding, mainBounding, leftYAxisBounding, rightYAxisBounding)
-      })
-
+    const buildYAxisTickAndMeasureWidth = (): void => {
+      let forceMeasureWidth = measureWidth
       if (buildYAxisTick || forceBuildYAxisTick) {
         this._drawPanes.forEach(pane => {
           pane.getYAxisComponents().forEach(axis => {
-            (axis as unknown as AxisImp).buildTicks(false)
+            const success = (axis as unknown as AxisImp).buildTicks(forceBuildYAxisTick)
+            forceMeasureWidth ||= success
           })
         })
       }
+      if (forceMeasureWidth) {
+        const totalWidth = this._chartBounding.width
+        const styles = this.getStyles()
+
+        const leftOutsideYAxisWidths: number[] = []
+        const leftInsideYAxisWidths: number[] = []
+        const rightInsideYAxisWidths: number[] = []
+        const rightOutsideYAxisWidths: number[] = []
+
+        const updateColumnWidth = (widths: number[], index: number, width: number): void => {
+          widths[index] = Math.max(widths[index] ?? 0, width)
+        }
+
+        this._drawPanes.forEach(pane => {
+          const leftOutsideAxes: YAxis[] = []
+          const leftInsideAxes: YAxis[] = []
+          const rightInsideAxes: YAxis[] = []
+          const rightOutsideAxes: YAxis[] = []
+          if (pane.getId() !== PaneIdConstants.X_AXIS) {
+            pane.getWidgetYAxisComponents().forEach(axis => {
+              const yAxis = axis
+              if (yAxis.position === 'left') {
+                if (yAxis.inside) {
+                  leftInsideAxes.push(yAxis)
+                } else {
+                  leftOutsideAxes.push(yAxis)
+                }
+              } else {
+                if (yAxis.inside) {
+                  rightInsideAxes.push(yAxis)
+                } else {
+                  rightOutsideAxes.push(yAxis)
+                }
+              }
+            })
+          }
+
+          leftOutsideAxes.forEach((yAxis, index) => { updateColumnWidth(leftOutsideYAxisWidths, index, yAxis.getAutoSize()) })
+          leftInsideAxes.forEach((yAxis, index) => { updateColumnWidth(leftInsideYAxisWidths, index, yAxis.getAutoSize()) })
+          rightInsideAxes.forEach((yAxis, index) => { updateColumnWidth(rightInsideYAxisWidths, index, yAxis.getAutoSize()) })
+          rightOutsideAxes.forEach((yAxis, index) => { updateColumnWidth(rightOutsideYAxisWidths, index, yAxis.getAutoSize()) })
+        })
+
+        let leftYAxisWidth = leftOutsideYAxisWidths.reduce((total, width) => total + width, 0)
+        let rightYAxisWidth = rightOutsideYAxisWidths.reduce((total, width) => total + width, 0)
+
+        if (cacheYAxisWidth) {
+          leftYAxisWidth = Math.max(this._cacheYAxisWidth.left, leftYAxisWidth)
+          rightYAxisWidth = Math.max(this._cacheYAxisWidth.right, rightYAxisWidth)
+        }
+
+        this._cacheYAxisWidth.left = leftYAxisWidth
+        this._cacheYAxisWidth.right = rightYAxisWidth
+
+        let mainWidth = totalWidth
+        let mainLeft = 0
+        let mainRight = 0
+        mainWidth -= leftYAxisWidth
+        mainLeft = leftYAxisWidth
+
+        mainWidth -= rightYAxisWidth
+        mainRight = rightYAxisWidth
+
+        this._chartStore.setTotalBarSpace(mainWidth)
+
+        const paneBounding = { width: totalWidth }
+        const mainBounding = { width: mainWidth, left: mainLeft, right: mainRight }
+        const leftYAxisBounding = { width: leftYAxisWidth }
+        const rightYAxisBounding = { width: rightYAxisWidth }
+        const separatorFill = styles.separator.fill
+        let separatorBounding: Partial<Bounding> = {}
+        if (!separatorFill) {
+          separatorBounding = mainBounding
+        } else {
+          separatorBounding = paneBounding
+        }
+        this._drawPanes.forEach((pane) => {
+          this._separatorPanes.get(pane)?.setBounding(separatorBounding)
+          const yAxisBounding: Record<string, Partial<Bounding>> = {}
+          let leftOutsideOffset = 0
+          let leftInsideOffset = 0
+          let rightInsideOffset = 0
+          let rightOutsideOffset = 0
+          const leftOutsideAxes: YAxis[] = []
+          const leftInsideAxes: YAxis[] = []
+          const rightInsideAxes: YAxis[] = []
+          const rightOutsideAxes: YAxis[] = []
+          if (pane.getId() !== PaneIdConstants.X_AXIS) {
+            pane.getWidgetYAxisComponents().forEach(axis => {
+              const yAxis = axis
+              if (yAxis.position === 'left') {
+                if (yAxis.inside) {
+                  leftInsideAxes.push(yAxis)
+                } else {
+                  leftOutsideAxes.push(yAxis)
+                }
+              } else {
+                if (yAxis.inside) {
+                  rightInsideAxes.push(yAxis)
+                } else {
+                  rightOutsideAxes.push(yAxis)
+                }
+              }
+            })
+          }
+
+          const paneLeftOutsideYAxisWidth = leftOutsideAxes.reduce((total, _yAxis, index) => total + (leftOutsideYAxisWidths[index] ?? 0), 0)
+          leftOutsideOffset = leftYAxisWidth - paneLeftOutsideYAxisWidth
+          for (let index = leftOutsideAxes.length - 1; index >= 0; index--) {
+            const yAxis = leftOutsideAxes[index]
+            const width = leftOutsideYAxisWidths[index] ?? 0
+            yAxisBounding[yAxis.id] = { width, left: leftOutsideOffset }
+            leftOutsideOffset += width
+          }
+          leftInsideAxes.forEach((yAxis, index) => {
+            const width = leftInsideYAxisWidths[index] ?? 0
+            yAxisBounding[yAxis.id] = { width, left: mainLeft + leftInsideOffset }
+            leftInsideOffset += width
+          })
+          rightInsideAxes.forEach((yAxis, index) => {
+            const width = rightInsideYAxisWidths[index] ?? 0
+            rightInsideOffset += width
+            yAxisBounding[yAxis.id] = { width, left: mainLeft + mainWidth - rightInsideOffset }
+          })
+          rightOutsideAxes.forEach((yAxis, index) => {
+            const width = rightOutsideYAxisWidths[index] ?? 0
+            yAxisBounding[yAxis.id] = { width, left: mainLeft + mainWidth + rightOutsideOffset }
+            rightOutsideOffset += width
+          })
+          pane.setYAxesBounding(yAxisBounding)
+          pane.setBounding(paneBounding, mainBounding, leftYAxisBounding, rightYAxisBounding)
+        })
+      }
+    }
+    buildYAxisTickAndMeasureWidth()
+    if (secondMeasureWidth) {
+      buildYAxisTickAndMeasureWidth()
     }
     if (update) {
       (this._xAxisPane.getXAxisComponent() as unknown as AxisImp).buildTicks(true)
@@ -620,6 +624,7 @@ export default class ChartImp implements Chart {
       sort: false,
       measureHeight: false,
       measureWidth: false,
+      secondMeasureWidth: false,
       update: false,
       buildYAxisTick: false,
       cacheYAxisWidth: false,
@@ -1343,6 +1348,7 @@ export default class ChartImp implements Chart {
     this.layout({
       measureHeight: true,
       measureWidth: true,
+      secondMeasureWidth: true,
       update: true,
       buildYAxisTick: true,
       forceBuildYAxisTick: true
