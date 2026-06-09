@@ -52,7 +52,7 @@ outline: deep
     - `inside` Whether it is inside.
     - `needWidget` Whether to create an axis widget.
     - `position` Position, supports `left` and `right`.
-    - `scrollZoomEnabled` Whether to allow scrolling and zooming.
+    - `scrollZoomEnabled` Whether to allow scrolling and zooming on the Y-axis. When enabled, users can drag to scroll the axis or use the mouse wheel to zoom.
     - `gap` Top and bottom margin configuration.
       - `top` Top margin.
       - `bottom` Bottom margin.

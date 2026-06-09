@@ -14,7 +14,7 @@ outline: deep
   - `reverse` Whether it is inverted.
   - `inside` Whether it is inside.
   - `position` Position, supports `left` and `right` .
-  - `scrollZoomEnabled` Whether scrolling and zooming are possible on the axis.
+  - `scrollZoomEnabled` Whether scrolling and zooming are possible on the axis. When enabled, users can drag to scroll the axis or use the mouse wheel to zoom.
   - `gap` Top and bottom margin configuration.
     - `top` Top margin.
     - `bottom` Bottom margin.
