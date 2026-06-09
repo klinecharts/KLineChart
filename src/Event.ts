@@ -227,6 +227,14 @@ export default class Event implements EventHandler {
       this._chart.getChartStore().zoom(scale, { x: event.x, y: event.y }, 'main')
       return true
     }
+    if (name === WidgetNameConstants.Y_AXIS) {
+      const yAxis = this._getYAxisByWidget(widget as Widget<DrawPane<YAxisImp>>)
+      if (yAxis.scrollZoomEnabled) {
+        const scaleFactor = 1 + scale * 0.05
+        this._zoomYAxis(yAxis, scaleFactor)
+        return true
+      }
+    }
     return false
   }
 
@@ -722,37 +730,42 @@ export default class Event implements EventHandler {
       const prevYAxisRange = this._prevYAxisRanges.get(yAxis)
       if (isValid(prevYAxisRange) && yAxis.scrollZoomEnabled && this._yAxisStartScaleDistance !== 0) {
         event.preventDefault?.()
-        const { from, to, range } = prevYAxisRange
-        const scale = event.pageY / this._yAxisStartScaleDistance
-        const newRange = range * scale
-        const difRange = (newRange - range) / 2
-        const newFrom = from - difRange
-        const newTo = to + difRange
-        const newRealFrom = yAxis.valueToRealValue(newFrom, { range: prevYAxisRange })
-        const newRealTo = yAxis.valueToRealValue(newTo, { range: prevYAxisRange })
-        const newDisplayFrom = yAxis.realValueToDisplayValue(newRealFrom, { range: prevYAxisRange })
-        const newDisplayTo = yAxis.realValueToDisplayValue(newRealTo, { range: prevYAxisRange })
-        yAxis.setRange({
-          from: newFrom,
-          to: newTo,
-          range: newRange,
-          realFrom: newRealFrom,
-          realTo: newRealTo,
-          realRange: newRealTo - newRealFrom,
-          displayFrom: newDisplayFrom,
-          displayTo: newDisplayTo,
-          displayRange: newDisplayTo - newDisplayFrom
-        })
-        this._chart.layout({
-          measureWidth: true,
-          update: true,
-          buildYAxisTick: true
-        })
+        const scaleFactor = event.pageY / this._yAxisStartScaleDistance
+        this._zoomYAxis(yAxis, scaleFactor, prevYAxisRange)
       }
     } else {
       this._chart.updatePane(UpdateLevel.Overlay)
     }
     return consumed
+  }
+
+  private _zoomYAxis (yAxis: YAxisImp, scaleFactor: number, baseRange?: AxisRange): void {
+    const prevYAxisRange = baseRange ?? yAxis.getRange()
+    const { from, to, range } = prevYAxisRange
+    const newRange = range * scaleFactor
+    const difRange = (newRange - range) / 2
+    const newFrom = from - difRange
+    const newTo = to + difRange
+    const newRealFrom = yAxis.valueToRealValue(newFrom, { range: prevYAxisRange })
+    const newRealTo = yAxis.valueToRealValue(newTo, { range: prevYAxisRange })
+    const newDisplayFrom = yAxis.realValueToDisplayValue(newRealFrom, { range: prevYAxisRange })
+    const newDisplayTo = yAxis.realValueToDisplayValue(newRealTo, { range: prevYAxisRange })
+    yAxis.setRange({
+      from: newFrom,
+      to: newTo,
+      range: newRange,
+      realFrom: newRealFrom,
+      realTo: newRealTo,
+      realRange: newRealTo - newRealFrom,
+      displayFrom: newDisplayFrom,
+      displayTo: newDisplayTo,
+      displayRange: newDisplayTo - newDisplayFrom
+    })
+    this._chart.layout({
+      measureWidth: true,
+      update: true,
+      buildYAxisTick: true
+    })
   }
 
   private _findWidgetByEvent (event: MouseTouchEvent): EventTriggerWidgetInfo {
