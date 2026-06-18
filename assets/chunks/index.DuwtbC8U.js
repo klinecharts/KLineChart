@@ -1,0 +1,1 @@
+import{C as e}from"./ChartPreview.Dq6eL7io.js";import{a3 as t,n as o,ao as r}from"./framework.BEQTiVti.js";const s=JSON.parse(`{"js":"import { getSupportedHotkeys } from 'klinecharts'\\n\\nconst supports = getSupportedHotkeys()\\n"}`),d={__name:"index",setup(a){return(n,p)=>(t(),o(e,{title:"getSupportedHotkeys",hiddenChart:!0,code:r(s).js},null,8,["code"]))}};export{d as _};
