@@ -96,7 +96,7 @@
 .case-card {
   border-radius: var(--customize-surface-radius);
   border: 1px solid var(--home-brand-border);
-  background: var(--customize-surface-bg);
+  background: transparent;
 }
 
 .content-section {
@@ -113,7 +113,7 @@
 .faq-item,
 .compare-wrap {
   border: 1px solid var(--vp-c-divider);
-  background: var(--customize-inset-bg);
+  background: transparent;
 }
 
 /* -------------------------------------------------------------------------- */

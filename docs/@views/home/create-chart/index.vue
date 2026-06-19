@@ -57,6 +57,6 @@ import { data } from './index.data.js'
 }
 
 .demo-shell :deep(.chart-preview-code) {
-  background-color: var(--vp-c-bg-soft);
+  background-color: transparent;
 }
 </style>

@@ -16,9 +16,11 @@
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background:
-    linear-gradient(160deg, color-mix(in srgb, var(--vp-c-brand-1) 4%, transparent), transparent 48%),
-    color-mix(in srgb, var(--vp-c-bg-soft) 36%, var(--vp-c-bg));
+  background: linear-gradient(
+    to bottom right,
+    color-mix(in srgb, var(--vp-c-brand-1) 12%, transparent),
+    transparent 38%
+  );
   opacity: 0;
   transition: opacity .4s var(--home-ease-out);
   pointer-events: none;
@@ -31,24 +33,6 @@
 
 .home-card--interactive:hover {
   border-color: var(--home-brand-border-hover);
-}
-
-.home-card--interactive::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: linear-gradient(110deg, transparent 20%, color-mix(in srgb, #fff 10%, transparent) 48%, transparent 76%);
-  opacity: 0;
-  transform: translateX(-30%);
-  transition: opacity .35s ease, transform .5s ease;
-  pointer-events: none;
-  z-index: 1;
-}
-
-.home-card--interactive:hover::after {
-  opacity: 1;
-  transform: translateX(30%);
 }
 
 .home-card--interactive > * {
@@ -73,16 +57,11 @@
 
 @media (prefers-reduced-motion: reduce) {
   .home-card,
-  .home-card--interactive::before,
-  .home-card--interactive::after {
+  .home-card--interactive::before {
     transition: none;
   }
 
   .home-card--interactive:hover::before {
     opacity: 0;
-  }
-
-  .home-card--interactive::after {
-    display: none;
   }
 }
