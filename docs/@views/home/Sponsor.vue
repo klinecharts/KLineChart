@@ -71,7 +71,6 @@ function showParticle() {
           {{ i18n('view_home_sponsor_lead', lang) }}
         </p>
         <div class="signal">
-          <span class="signal-dot"></span>
           <span>
             {{ i18n('view_home_sponsor_signal', lang) }}
           </span>
@@ -192,21 +191,9 @@ function showParticle() {
 }
 
 .signal {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
   font-size: clamp(14px, 1.7vw, 16px);
   line-height: clamp(22px, 2.7vw, 25px);
   color: var(--vp-c-text-2);
-}
-
-.signal-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--vp-c-brand-1);
-  box-shadow: 0 0 0 8px color-mix(in srgb, var(--vp-c-brand-1) 12%, transparent);
-  animation: sponsorPulse 2.8s ease-in-out infinite;
 }
 
 .board {
@@ -378,7 +365,7 @@ function showParticle() {
   background: var(--home-brand-surface-soft);
   color: var(--vp-c-brand-1);
   text-decoration: none;
-  transition: transform .25s ease, border-color .25s ease, background-color .25s ease;
+  transition: border-color .25s ease, background-color .25s ease;
 }
 
 .sponsor-become a svg {
@@ -386,26 +373,12 @@ function showParticle() {
 }
 
 .sponsor-become a:hover {
-  transform: translateY(-2px);
   border-color: color-mix(in srgb, var(--vp-c-brand-1) 44%, var(--vp-c-divider));
   background: color-mix(in srgb, var(--vp-c-brand-1) 8%, var(--vp-c-bg));
 }
 
 .sponsor-become a:hover svg {
   transform: scale(1.08);
-}
-
-@keyframes sponsorPulse {
-  0%,
-  100% {
-    box-shadow: 0 0 0 0 color-mix(in srgb, var(--vp-c-brand-1) 18%, transparent);
-    transform: scale(1);
-  }
-
-  50% {
-    box-shadow: 0 0 0 10px color-mix(in srgb, var(--vp-c-brand-1) 8%, transparent);
-    transform: scale(1.08);
-  }
 }
 
 @media (min-width: 768px) {
@@ -441,17 +414,12 @@ function showParticle() {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .signal-dot {
-    animation: none;
-  }
-
   .tier,
   .sponsor-become a,
   .sponsor-become a svg {
     transition: none;
   }
 
-  .sponsor-become a:hover,
   .sponsor-become a:hover svg {
     transform: none;
   }

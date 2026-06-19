@@ -27,11 +27,7 @@ const { target, isVisible } = useInView()
   display: flex;
   flex-direction: row;
   justify-content: center;
-  padding: 80px 24px 0;
-}
-
-.section:first-child {
-  padding-top: 48px;
+  padding: var(--home-section-gap) 24px 0;
 }
 
 .section + .section {
@@ -80,11 +76,7 @@ const { target, isVisible } = useInView()
 
 @media (min-width: 640px) {
   .section {
-    padding: 108px 48px 0;
-  }
-
-  .section:first-child {
-    padding-top: 108px;
+    padding: var(--home-section-gap) 48px 0;
   }
 
   .content {
@@ -99,7 +91,7 @@ const { target, isVisible } = useInView()
 
 @media (min-width: 960px) {
   .section {
-    padding: 128px 64px 0;
+    padding: var(--home-section-gap) 64px 0;
   }
 
   .content {

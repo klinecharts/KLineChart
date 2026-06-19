@@ -1,12 +1,13 @@
 :root {
   --home-content-max: 1152px;
+  --home-section-gap: 80px;
   --home-card-padding: 22px 20px 24px;
   --home-grid-gap: 14px;
   --home-grid-gap-lg: 20px;
   --home-reveal-distance: 24px;
   --home-reveal-duration: .7s;
   --home-ease-out: cubic-bezier(.22, 1, .36, 1);
-  --home-brand-border: color-mix(in srgb, var(--vp-c-brand-1) 6%, var(--vp-c-divider));
+  --home-brand-border: var(--vp-c-gutter);
   --home-brand-border-hover: color-mix(in srgb, var(--vp-c-brand-1) 28%, var(--vp-c-divider));
   --home-brand-surface: color-mix(in srgb, var(--vp-c-brand-1) 6%, transparent);
   --home-brand-surface-soft: color-mix(in srgb, var(--vp-c-bg-soft) 42%, var(--vp-c-bg));
@@ -66,6 +67,18 @@
 .is-visible .home-section-enter {
   opacity: 1;
   transform: translateY(0);
+}
+
+@media (min-width: 640px) {
+  :root {
+    --home-section-gap: 108px;
+  }
+}
+
+@media (min-width: 960px) {
+  :root {
+    --home-section-gap: 128px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

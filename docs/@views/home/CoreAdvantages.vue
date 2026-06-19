@@ -125,7 +125,12 @@ const items = computed(() => icons.map((_, index) => buildItem(index)))
   padding: 10px 12px;
   border-radius: 12px;
   background: color-mix(in srgb, var(--vp-c-bg) 70%, transparent);
-  border: 1px solid color-mix(in srgb, var(--vp-c-brand-1) 8%, var(--vp-c-divider));
+  border: 1px solid var(--home-brand-border);
+  transition: border-color .4s var(--home-ease-out);
+}
+
+.tile:hover .metric {
+  border-color: var(--home-brand-border-hover);
 }
 
 .metric strong {
@@ -167,26 +172,29 @@ const items = computed(() => icons.map((_, index) => buildItem(index)))
   border-radius: 50%;
   background: var(--vp-c-brand-1);
   box-shadow: 0 0 0 0 color-mix(in srgb, var(--vp-c-brand-1) 24%, transparent);
+}
+
+.tile:hover .dot {
   animation: dotPulse 2.8s ease-in-out infinite;
 }
 
-.tile-2 .dot {
+.tile-2:hover .dot {
   animation-delay: .4s;
 }
 
-.tile-3 .dot {
+.tile-3:hover .dot {
   animation-delay: .8s;
 }
 
-.tile-4 .dot {
+.tile-4:hover .dot {
   animation-delay: 1.2s;
 }
 
-.tile-5 .dot {
+.tile-5:hover .dot {
   animation-delay: 1.6s;
 }
 
-.tile-6 .dot {
+.tile-6:hover .dot {
   animation-delay: 2s;
 }
 
@@ -225,7 +233,11 @@ const items = computed(() => icons.map((_, index) => buildItem(index)))
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .dot {
+  .metric {
+    transition: none;
+  }
+
+  .tile:hover .dot {
     animation: none;
   }
 }

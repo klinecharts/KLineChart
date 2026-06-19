@@ -42,7 +42,7 @@ const { lang } = useData()
   justify-content: center;
   overflow: hidden;
   margin-top: calc((var(--vp-nav-height) + var(--vp-layout-top-height, 0px)) * -1);
-  padding: calc(var(--vp-nav-height) + var(--vp-layout-top-height, 0px) + 60px) 24px 80px;
+  padding: calc(var(--vp-nav-height) + var(--vp-layout-top-height, 0px) + 60px) 24px var(--home-section-gap);
   background: transparent;
 }
 
@@ -94,7 +94,7 @@ const { lang } = useData()
 
 @media (min-width: 640px) {
   .hero {
-    padding: calc(var(--vp-nav-height) + var(--vp-layout-top-height, 0px) + 100px) 48px 110px;
+    padding: calc(var(--vp-nav-height) + var(--vp-layout-top-height, 0px) + 100px) 48px var(--home-section-gap);
   }
 
   .tagline {
@@ -110,7 +110,7 @@ const { lang } = useData()
 
 @media (min-width: 960px) {
   .hero {
-    padding: calc(var(--vp-nav-height) + var(--vp-layout-top-height, 0px) + 120px) 64px 120px;
+    padding: calc(var(--vp-nav-height) + var(--vp-layout-top-height, 0px) + 120px) 64px var(--home-section-gap);
   }
 
   .tagline {
