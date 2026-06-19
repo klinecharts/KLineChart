@@ -69,8 +69,8 @@ provide('toggle-appearance', async ({ clientX: x, clientY: y }) => {
     </template>
     <template #home-features-after>
       <HomeCreateChart/>
-      <HomeUseCases/>
       <HomeCoreAdvantages/>
+      <HomeUseCases/>
       <HomeUsers/>
       <HomeSponsor/>
     </template>

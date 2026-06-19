@@ -93,67 +93,9 @@ html {
   overflow-x: clip;
 }
 
-.VPFeatures .VPFeature {
-  background-color: transparent;
-  border: none;
-}
-
-.VPFeatures .VPFeature .box {
-  padding: 12px 8px;
-}
-
-.VPFeatures .VPFeature .VPImage {
-  margin-bottom: 0;
-  width: 40px;
-  height: 40px;
-}
-
-.VPFeatures .VPFeature .title {
-  padding: 8px 0;
-  font-size: 16px;
-  line-height: normal;
-}
-
-.VPFeatures .VPFeature .details {
-  padding: 0;
-  font-size: 14px;
-  line-height: 22px;
-  font-weight: normal;
-}
-
-@media (min-width: 640px) {
-  .VPFeatures .VPFeature .title {
-    font-size: 18px;
-    line-height: normal;
-    padding: 12px 0;
-  }
-
-  .VPFeatures .VPFeature .VPImage {
-    margin-bottom: 0;
-    width: 48px;
-    height: 48px;
-  }
-
-  .VPFeatures .VPFeature .box {
-    padding: 24px;
-  }
-}
-
 @media (min-width: 960px) {
   .VPSidebar .curtain {
     top: calc(var(--vp-nav-height)* -1);
-  }
-}
-
-@media (min-width: 960px) {
-  .VPFeatures .VPFeature .title {
-    font-size: 19px;
-    padding: 16px 0;
-  }
-
-  .VPFeatures .VPFeature .details {
-    font-size: 15px;
-    line-height: 23px;
   }
 }
 

@@ -1,88 +1,46 @@
 <script setup>
 import { computed } from 'vue'
-import { useData } from 'vitepress'
+import { useData, withBase } from 'vitepress'
 
 import i18n from '../../@i18n'
 import Section from './Section.vue'
 import { useInView } from './composables/useInView.js'
 
-const { lang } = useData()
+const { lang, isDark } = useData()
 const { target: bentoRef, isVisible } = useInView()
 
-const items = computed(() => [
-  {
-    title: i18n('view_home_advantage_1_title', lang.value),
-    description: i18n('view_home_advantage_1_desc', lang.value),
+const icons = [
+  { light: '/images/box_light.png', dark: '/images/box_dark.png' },
+  { light: '/images/rocket_light.png', dark: '/images/rocket_dark.png' },
+  { light: '/images/power_light.png', dark: '/images/power_dark.png' },
+  { light: '/images/expand_light.png', dark: '/images/expand_dark.png' },
+  { light: '/images/mobile_light.png', dark: '/images/mobile_dark.png' },
+  { light: '/images/typescript_light.png', dark: '/images/typescript_dark.png' }
+]
+
+function buildItem(index) {
+  return {
+    icon: icons[index],
+    title: i18n(`view_home_advantage_${index + 1}_title`, lang.value),
+    description: i18n(`view_home_advantage_${index + 1}_desc`, lang.value),
     metrics: [
       {
-        value: i18n('view_home_advantage_1_metric_1_value', lang.value),
-        label: i18n('view_home_advantage_1_metric_1_label', lang.value)
+        value: i18n(`view_home_advantage_${index + 1}_metric_1_value`, lang.value),
+        label: i18n(`view_home_advantage_${index + 1}_metric_1_label`, lang.value)
       },
       {
-        value: i18n('view_home_advantage_1_metric_2_value', lang.value),
-        label: i18n('view_home_advantage_1_metric_2_label', lang.value)
+        value: i18n(`view_home_advantage_${index + 1}_metric_2_value`, lang.value),
+        label: i18n(`view_home_advantage_${index + 1}_metric_2_label`, lang.value)
       }
     ],
     points: [
-      i18n('view_home_advantage_1_point_1', lang.value),
-      i18n('view_home_advantage_1_point_2', lang.value)
-    ]
-  },
-  {
-    title: i18n('view_home_advantage_2_title', lang.value),
-    description: i18n('view_home_advantage_2_desc', lang.value),
-    metrics: [
-      {
-        value: i18n('view_home_advantage_2_metric_1_value', lang.value),
-        label: i18n('view_home_advantage_2_metric_1_label', lang.value)
-      },
-      {
-        value: i18n('view_home_advantage_2_metric_2_value', lang.value),
-        label: i18n('view_home_advantage_2_metric_2_label', lang.value)
-      }
-    ],
-    points: [
-      i18n('view_home_advantage_2_point_1', lang.value),
-      i18n('view_home_advantage_2_point_2', lang.value)
-    ]
-  },
-  {
-    title: i18n('view_home_advantage_3_title', lang.value),
-    description: i18n('view_home_advantage_3_desc', lang.value),
-    metrics: [
-      {
-        value: i18n('view_home_advantage_3_metric_1_value', lang.value),
-        label: i18n('view_home_advantage_3_metric_1_label', lang.value)
-      },
-      {
-        value: i18n('view_home_advantage_3_metric_2_value', lang.value),
-        label: i18n('view_home_advantage_3_metric_2_label', lang.value)
-      }
-    ],
-    points: [
-      i18n('view_home_advantage_3_point_1', lang.value),
-      i18n('view_home_advantage_3_point_2', lang.value)
-    ]
-  },
-  {
-    title: i18n('view_home_advantage_4_title', lang.value),
-    description: i18n('view_home_advantage_4_desc', lang.value),
-    metrics: [
-      {
-        value: i18n('view_home_advantage_4_metric_1_value', lang.value),
-        label: i18n('view_home_advantage_4_metric_1_label', lang.value)
-      },
-      {
-        value: i18n('view_home_advantage_4_metric_2_value', lang.value),
-        label: i18n('view_home_advantage_4_metric_2_label', lang.value)
-      }
-    ],
-    points: [
-      i18n('view_home_advantage_4_point_1', lang.value),
-      i18n('view_home_advantage_4_point_2', lang.value)
+      i18n(`view_home_advantage_${index + 1}_point_1`, lang.value),
+      i18n(`view_home_advantage_${index + 1}_point_2`, lang.value)
     ]
   }
-])
+}
+
+const items = computed(() => icons.map((_, index) => buildItem(index)))
 </script>
 
 <template>
@@ -100,7 +58,14 @@ const items = computed(() => [
         :style="{ '--stagger-delay': `${index * 0.07}s` }"
       >
         <div class="tile-head">
-          <span class="index">{{ String(index + 1).padStart(2, '0') }}</span>
+          <img
+            class="icon"
+            :src="withBase(isDark ? item.icon.dark : item.icon.light)"
+            :alt="''"
+            width="28"
+            height="28"
+            loading="lazy"
+          >
           <h3>{{ item.title }}</h3>
         </div>
         <p class="summary">{{ item.description }}</p>
@@ -135,22 +100,15 @@ const items = computed(() => [
 .tile-head {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   min-width: 0;
 }
 
-.index {
+.icon {
   flex-shrink: 0;
-  font-family: var(--vp-font-family-mono);
-  font-size: 12px;
-  line-height: 1;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  color: var(--vp-c-brand-1);
-  padding: 6px 8px;
-  border-radius: 8px;
-  border: 1px solid color-mix(in srgb, var(--vp-c-brand-1) 18%, var(--vp-c-divider));
-  background: var(--home-brand-surface);
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
 }
 
 .metrics {
@@ -224,6 +182,14 @@ const items = computed(() => [
   animation-delay: 1.2s;
 }
 
+.tile-5 .dot {
+  animation-delay: 1.6s;
+}
+
+.tile-6 .dot {
+  animation-delay: 2s;
+}
+
 @keyframes dotPulse {
   0%,
   100% {
@@ -232,6 +198,13 @@ const items = computed(() => [
 
   50% {
     box-shadow: 0 0 0 5px color-mix(in srgb, var(--vp-c-brand-1) 6%, transparent);
+  }
+}
+
+@media (min-width: 640px) {
+  .icon {
+    width: 32px;
+    height: 32px;
   }
 }
 
@@ -244,7 +217,9 @@ const items = computed(() => [
   .tile-1,
   .tile-2,
   .tile-3,
-  .tile-4 {
+  .tile-4,
+  .tile-5,
+  .tile-6 {
     grid-column: span 6;
   }
 }
