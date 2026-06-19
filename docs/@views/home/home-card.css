@@ -1,0 +1,99 @@
+.home-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px;
+  border: 1px solid var(--home-brand-border);
+  background: transparent;
+  transition:
+    transform .32s var(--home-ease-out),
+    border-color .4s var(--home-ease-out);
+}
+
+.home-card--overflow-visible {
+  overflow: visible;
+}
+
+.home-card--interactive::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    linear-gradient(160deg, color-mix(in srgb, var(--vp-c-brand-1) 4%, transparent), transparent 48%),
+    color-mix(in srgb, var(--vp-c-bg-soft) 36%, var(--vp-c-bg));
+  opacity: 0;
+  transition: opacity .4s var(--home-ease-out);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.home-card--interactive:hover::before {
+  opacity: 1;
+}
+
+.home-card--interactive:hover {
+  transform: translateY(-4px);
+  border-color: var(--home-brand-border-hover);
+}
+
+.home-card--no-lift:hover {
+  transform: none;
+}
+
+.home-card--interactive::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(110deg, transparent 20%, color-mix(in srgb, #fff 10%, transparent) 48%, transparent 76%);
+  opacity: 0;
+  transform: translateX(-30%);
+  transition: opacity .35s ease, transform .5s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.home-card--interactive:hover::after {
+  opacity: 1;
+  transform: translateX(30%);
+}
+
+.home-card--interactive > * {
+  position: relative;
+  z-index: 2;
+}
+
+.home-card h3 {
+  font-size: clamp(18px, 2vw, 20px);
+  line-height: 1.35;
+  font-weight: 700;
+  color: var(--vp-c-text-1);
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+
+.home-card .summary {
+  font-size: 14px;
+  line-height: 22px;
+  color: var(--vp-c-text-2);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-card,
+  .home-card--interactive::before,
+  .home-card--interactive::after {
+    transition: none;
+  }
+
+  .home-card--interactive:hover {
+    transform: none;
+  }
+
+  .home-card--interactive:hover::before {
+    opacity: 0;
+  }
+
+  .home-card--interactive::after {
+    display: none;
+  }
+}

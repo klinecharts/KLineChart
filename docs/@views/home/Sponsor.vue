@@ -63,7 +63,7 @@ function showParticle() {
     :description="i18n('view_home_sponsor_desc', lang)"
   >
     <div class="sponsor-shell">
-      <div class="intro">
+      <div class="intro home-card">
         <span class="eyebrow">
           {{ i18n('view_home_sponsor_eyebrow', lang) }}
         </span>
@@ -92,7 +92,7 @@ function showParticle() {
         <div class="featured">
           <a
             v-if="featuredSponsors[0]"
-            class="featured-main"
+            class="featured-main home-card home-card--interactive home-card--no-lift"
             :href="featuredSponsors[0].website"
             target="_blank"
             rel="noreferrer"
@@ -111,7 +111,7 @@ function showParticle() {
             <a
               v-for="(item, supporterIndex) in featuredSponsors.slice(1)"
               :key="item.name"
-              class="featured-sub"
+              class="featured-sub home-card home-card--interactive home-card--no-lift"
               :href="item.website"
               target="_blank"
               rel="noreferrer"
@@ -136,7 +136,7 @@ function showParticle() {
             <a
               v-for="item in supportingSponsors"
               :key="item.name"
-              class="supporting-item"
+              class="supporting-item home-card home-card--interactive home-card--no-lift"
               :href="item.website"
               target="_blank"
               rel="noreferrer"
@@ -170,26 +170,6 @@ function showParticle() {
   flex-direction: column;
   gap: 16px;
   padding: 28px 24px;
-  overflow: hidden;
-  border-radius: 30px;
-  background:
-    radial-gradient(circle at top left, color-mix(in srgb, var(--vp-c-brand-1) 7%, transparent), transparent 38%),
-    linear-gradient(135deg, color-mix(in srgb, var(--vp-c-brand-1) 4%, transparent), transparent 60%),
-    color-mix(in srgb, var(--vp-c-bg-soft) 54%, var(--vp-c-bg));
-  border: 1px solid color-mix(in srgb, var(--vp-c-brand-1) 6%, var(--vp-c-divider));
-}
-
-.intro::before {
-  content: '';
-  position: absolute;
-  inset: -24% auto auto -12%;
-  width: 180px;
-  height: 180px;
-  border-radius: 50%;
-  background: radial-gradient(circle, color-mix(in srgb, var(--vp-c-brand-1) 18%, transparent) 0%, transparent 72%);
-  opacity: 0.65;
-  pointer-events: none;
-  animation: sponsorGlow 8s ease-in-out infinite;
 }
 
 .eyebrow {
@@ -242,42 +222,10 @@ function showParticle() {
 .featured-main,
 .featured-sub,
 .supporting-item {
-  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  overflow: hidden;
   text-decoration: none;
-  transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
-}
-
-.featured-main::after,
-.featured-sub::after,
-.supporting-item::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: linear-gradient(115deg, transparent 24%, color-mix(in srgb, #ffffff 8%, transparent) 50%, transparent 76%);
-  opacity: 0;
-  transform: translateX(-26%);
-  transition: opacity .25s ease, transform .45s ease;
-  pointer-events: none;
-}
-
-.featured-main:hover,
-.featured-sub:hover,
-.supporting-item:hover {
-  transform: translateY(-3px);
-  border-color: color-mix(in srgb, var(--vp-c-brand-1) 14%, var(--vp-c-divider));
-  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.07);
-}
-
-.featured-main:hover::after,
-.featured-sub:hover::after,
-.supporting-item:hover::after {
-  opacity: 1;
-  transform: translateX(18%);
 }
 
 .featured-main {
@@ -286,13 +234,6 @@ function showParticle() {
   align-items: flex-start;
   justify-content: flex-start;
   text-align: left;
-  border-radius: 32px;
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--vp-c-brand-1) 8%, transparent), transparent 34%),
-    linear-gradient(135deg, color-mix(in srgb, var(--vp-c-brand-1) 5%, transparent), transparent 54%),
-    color-mix(in srgb, var(--vp-c-bg-soft) 54%, var(--vp-c-bg));
-  border: 1px solid color-mix(in srgb, var(--vp-c-brand-1) 7%, var(--vp-c-divider));
-  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.05);
 }
 
 .featured-side {
@@ -303,11 +244,6 @@ function showParticle() {
 .featured-sub {
   min-height: 128px;
   padding: 22px 24px;
-  border-radius: 26px;
-  background:
-    linear-gradient(135deg, color-mix(in srgb, var(--vp-c-brand-1) 4.5%, transparent), transparent 58%),
-    color-mix(in srgb, var(--vp-code-block-bg) 72%, var(--vp-c-bg));
-  border: 1px solid color-mix(in srgb, var(--vp-c-brand-1) 6%, var(--vp-c-divider));
 }
 
 .tier {
@@ -317,7 +253,7 @@ function showParticle() {
   width: fit-content;
   margin-bottom: 16px;
   min-height: 32px;
-  padding: 4px 12px 4px 12px;
+  padding: 4px 12px;
   font-size: 12px;
   line-height: 1;
   font-weight: 700;
@@ -325,26 +261,14 @@ function showParticle() {
   text-transform: uppercase;
   border-radius: 999px;
   border: 1px solid color-mix(in srgb, var(--vp-c-brand-1) 12%, var(--vp-c-divider));
-  background: color-mix(in srgb, var(--vp-c-bg-soft) 42%, var(--vp-c-bg));
+  background: var(--home-brand-surface-soft);
   color: var(--vp-c-brand-1);
   transition: border-color .25s ease, background-color .25s ease, transform .25s ease;
-}
-
-.tier::before {
-  content: none;
-}
-
-.tier::after {
-  content: none;
 }
 
 .tier-featured {
   border-color: color-mix(in srgb, var(--vp-c-brand-1) 24%, var(--vp-c-divider));
   background: transparent;
-}
-
-.tier-featured::before {
-  content: none;
 }
 
 .tier-icon {
@@ -360,7 +284,6 @@ function showParticle() {
 
 .featured-main:hover .tier-featured,
 .featured-sub:hover .tier-supporter {
-  transform: translateY(-1px);
   border-color: color-mix(in srgb, var(--vp-c-brand-1) 28%, var(--vp-c-divider));
 }
 
@@ -424,9 +347,6 @@ function showParticle() {
   min-height: 72px;
   padding: 0 22px;
   align-items: center;
-  border-radius: 20px;
-  background: color-mix(in srgb, var(--vp-c-bg-soft) 44%, var(--vp-c-bg));
-  border: 1px solid color-mix(in srgb, var(--vp-c-brand-1) 8%, var(--vp-c-divider));
 }
 
 .supporting-logo {
@@ -455,7 +375,7 @@ function showParticle() {
   font-size: clamp(13px, 1.6vw, 15px);
   border-radius: 999px;
   border: 1px solid color-mix(in srgb, var(--vp-c-brand-1) 28%, var(--vp-c-divider));
-  background: color-mix(in srgb, var(--vp-c-bg-soft) 42%, var(--vp-c-bg));
+  background: var(--home-brand-surface-soft);
   color: var(--vp-c-brand-1);
   text-decoration: none;
   transition: transform .25s ease, border-color .25s ease, background-color .25s ease;
@@ -485,19 +405,6 @@ function showParticle() {
   50% {
     box-shadow: 0 0 0 10px color-mix(in srgb, var(--vp-c-brand-1) 8%, transparent);
     transform: scale(1.08);
-  }
-}
-
-@keyframes sponsorGlow {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0) scale(1);
-    opacity: 0.55;
-  }
-
-  50% {
-    transform: translate3d(18px, 8px, 0) scale(1.08);
-    opacity: 0.8;
   }
 }
 
@@ -534,51 +441,19 @@ function showParticle() {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .intro::before,
   .signal-dot {
     animation: none;
   }
 
-  .featured-main,
-  .featured-sub,
-  .supporting-item,
   .tier,
-  .featured-main::after,
-  .featured-sub::after,
-  .supporting-item::after,
   .sponsor-become a,
   .sponsor-become a svg {
     transition: none;
   }
 
-  .featured-main:hover,
-  .featured-sub:hover,
-  .supporting-item:hover,
   .sponsor-become a:hover,
   .sponsor-become a:hover svg {
     transform: none;
   }
-
-  .featured-main:hover::after,
-  .featured-sub:hover::after,
-  .supporting-item:hover::after {
-    opacity: 0;
-    transform: none;
-  }
-}
-
-:global(html:not(.dark)) .featured-main:hover,
-:global(html:not(.dark)) .featured-sub:hover,
-:global(html:not(.dark)) .supporting-item:hover {
-  box-shadow:
-    0 24px 46px color-mix(in srgb, var(--vp-c-brand-1) 20%, transparent),
-    0 14px 28px rgba(15, 23, 42, 0.14);
-  border-color: color-mix(in srgb, var(--vp-c-brand-1) 30%, var(--vp-c-divider));
-}
-
-:global(html:not(.dark)) .featured-main:hover::after,
-:global(html:not(.dark)) .featured-sub:hover::after,
-:global(html:not(.dark)) .supporting-item:hover::after {
-  opacity: 1;
 }
 </style>

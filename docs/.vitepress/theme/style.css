@@ -3,6 +3,9 @@
  * https://github.com/vuejs/vitepress/blob/main/src/client/theme-default/styles/vars.css
  */
 
+@import '../../@views/home/home-shared.css';
+@import '../../@views/home/home-card.css';
+
 /**
  * Colors
  * -------------------------------------------------------------------------- */
@@ -28,11 +31,7 @@
   --vp-c-indigo-1: #E6AC00;
   --vp-c-indigo-2: #ebbc33;
   --vp-c-indigo-3: #f0cd66;
-  --vp-home-hero-bg:
-    radial-gradient(circle at 50% 0%, rgba(230, 172, 0, 0.12) 0%, transparent 34%),
-    radial-gradient(circle at 18% 24%, rgba(230, 172, 0, 0.05) 0%, transparent 24%),
-    radial-gradient(circle at 82% 22%, rgba(230, 172, 0, 0.04) 0%, transparent 26%),
-    linear-gradient(180deg, rgba(230, 172, 0, 0.025) 0%, transparent 60%);
+  --vp-home-hero-bg: var(--vp-c-bg);
 
   --vp-c-text-1: var(--light-c-text-1);
   --vp-c-text-2: var(--light-c-text-2);
@@ -86,8 +85,12 @@ body {
   font-feature-settings: normal;
   font-variation-settings: normal;
   line-height: 1.6;
-  overflow-x: hidden;
+  overflow-x: clip;
   overflow-y: auto;
+}
+
+html {
+  overflow-x: clip;
 }
 
 .VPFeatures .VPFeature {
@@ -147,7 +150,7 @@ body {
     font-size: 19px;
     padding: 16px 0;
   }
-  
+
   .VPFeatures .VPFeature .details {
     font-size: 15px;
     line-height: 23px;

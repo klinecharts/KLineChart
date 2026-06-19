@@ -9,16 +9,16 @@ const { isDark, lang } = useData()
 <template>
   <div class="top-sponsor">
     <a
-      class="top-sponsor-link"
+      class="top-sponsor-link home-card home-card--interactive home-card--overflow-visible home-reveal-auto"
       href="https://www.tradingx.cloud/"
       target="_blank"
       rel="noopener noreferrer"
     >
+      <div class="eyebrow">
+        <span>{{ i18n('view_home_top_sponsor', lang) }}</span>
+        <em>TOP</em>
+      </div>
       <div class="copy">
-        <div class="eyebrow">
-          <span>{{ i18n('view_home_top_sponsor', lang) }}</span>
-          <em>TOP</em>
-        </div>
         <div class="headline">
           <strong>{{ lang === 'zh-CN' ? 'TradingX' : 'TradingX' }}</strong>
           <p>{{ i18n('view_home_top_sponsor_desc', lang) }}</p>
@@ -35,11 +35,11 @@ const { isDark, lang } = useData()
 .top-sponsor {
   display: flex;
   justify-content: center;
-  margin: 10px 24px 34px;
+  margin: 0 24px 34px;
+  padding-top: 18px;
 }
 
 .top-sponsor-link {
-  position: relative;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -47,38 +47,9 @@ const { isDark, lang } = useData()
   max-width: 1120px;
   gap: 12px;
   padding: 30px 16px 14px;
-  overflow: visible;
-  border-radius: 22px;
   text-decoration: none;
-  background:
-    linear-gradient(90deg, color-mix(in srgb, var(--vp-c-brand-1) 3%, transparent), transparent 28%),
-    color-mix(in srgb, var(--vp-c-bg-soft) 46%, var(--vp-c-bg));
-  border: 1px solid color-mix(in srgb, var(--vp-c-brand-1) 5%, var(--vp-c-divider));
-  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.05);
-  transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
-}
-
-.top-sponsor-link::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: linear-gradient(110deg, transparent 22%, color-mix(in srgb, #ffffff 10%, transparent) 48%, transparent 72%);
-  opacity: 0;
-  transform: translateX(-28%);
-  transition: opacity .25s ease, transform .45s ease;
-  pointer-events: none;
-}
-
-.top-sponsor-link:hover {
-  transform: translateY(-2px);
-  border-color: color-mix(in srgb, var(--vp-c-brand-1) 14%, var(--vp-c-divider));
-  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.07);
-}
-
-.top-sponsor-link:hover::after {
-  opacity: 1;
-  transform: translateX(20%);
+  --home-reveal-distance: 20px;
+  --home-reveal-delay: .75s;
 }
 
 .copy {
@@ -89,11 +60,12 @@ const { isDark, lang } = useData()
   min-width: 0;
 }
 
-.eyebrow {
+.top-sponsor-link .eyebrow {
   display: inline-flex;
   position: absolute;
   top: 0;
   left: 50%;
+  z-index: 3;
   transform: translate(-50%, -50%);
   align-items: center;
   gap: 10px;
@@ -102,10 +74,10 @@ const { isDark, lang } = useData()
   padding: 4px 4px 4px 12px;
   border-radius: 999px;
   border: 1px solid color-mix(in srgb, var(--vp-c-brand-1) 12%, var(--vp-c-divider));
-  background: color-mix(in srgb, var(--vp-c-bg-soft) 42%, var(--vp-c-bg));
+  background: var(--home-brand-surface-soft);
 }
 
-.eyebrow span {
+.top-sponsor-link .eyebrow span {
   font-size: 12px;
   line-height: 1;
   font-weight: 700;
@@ -114,7 +86,7 @@ const { isDark, lang } = useData()
   color: var(--vp-c-brand-1);
 }
 
-.eyebrow em {
+.top-sponsor-link .eyebrow em {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -181,7 +153,7 @@ const { isDark, lang } = useData()
 
 @media (min-width: 640px) {
   .top-sponsor {
-    margin: 12px 32px 40px;
+    margin: 0 32px 40px;
   }
 
   .top-sponsor-link {
@@ -213,14 +185,13 @@ const { isDark, lang } = useData()
 
 @media (min-width: 960px) {
   .top-sponsor {
-    margin: 14px 64px 56px;
+    margin: 0 64px 56px;
   }
 
   .top-sponsor-link {
     max-width: 760px;
     gap: 64px;
     padding: 34px 24px 18px;
-    border-radius: 24px;
   }
 
   .copy {
@@ -239,31 +210,12 @@ const { isDark, lang } = useData()
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .top-sponsor-link,
-  .top-sponsor-link::after,
   .brand img {
     transition: none;
   }
 
-  .top-sponsor-link:hover,
   .top-sponsor-link:hover .brand img {
     transform: none;
   }
-
-  .top-sponsor-link:hover::after {
-    opacity: 0;
-    transform: none;
-  }
-}
-
-:global(html:not(.dark)) .top-sponsor-link:hover {
-  box-shadow:
-    0 22px 44px color-mix(in srgb, var(--vp-c-brand-1) 18%, transparent),
-    0 14px 26px rgba(15, 23, 42, 0.12);
-  border-color: color-mix(in srgb, var(--vp-c-brand-1) 28%, var(--vp-c-divider));
-}
-
-:global(html:not(.dark)) .top-sponsor-link:hover::after {
-  opacity: 1;
 }
 </style>

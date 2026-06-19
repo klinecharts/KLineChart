@@ -8,6 +8,8 @@
   "view_home_quick_create_chart_title": "简单快速创建图表",
   "view_home_quick_create_chart_desc": "KLineChart 让你使用几行代码就可以创建一个金融图表，同时可以使用内置的多种常用技术指标，让图表看起来更专业。",
   "view_home_quick_create": "快速创建",
+  "view_home_advantage_title": "核心优势",
+  "view_home_advantage_desc": "轻量、专业、可扩展 — 为金融前端场景而生",
   "view_home_advantage_1_title": "快速接入",
   "view_home_advantage_1_desc": "更短的接入路径，适合尽快把图表放进真实页面。",
   "view_home_advantage_1_note": "真正好用的图表，不是功能表看起来很多，而是团队拿到之后能快速接进页面、看到结果、继续往后开发。这一块强调的是低门槛接入和稳定的首次落地体验。",

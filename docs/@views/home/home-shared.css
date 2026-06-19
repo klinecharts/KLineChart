@@ -1,0 +1,85 @@
+:root {
+  --home-content-max: 1152px;
+  --home-card-padding: 22px 20px 24px;
+  --home-grid-gap: 14px;
+  --home-grid-gap-lg: 20px;
+  --home-reveal-distance: 24px;
+  --home-reveal-duration: .7s;
+  --home-ease-out: cubic-bezier(.22, 1, .36, 1);
+  --home-brand-border: color-mix(in srgb, var(--vp-c-brand-1) 6%, var(--vp-c-divider));
+  --home-brand-border-hover: color-mix(in srgb, var(--vp-c-brand-1) 28%, var(--vp-c-divider));
+  --home-brand-surface: color-mix(in srgb, var(--vp-c-brand-1) 6%, transparent);
+  --home-brand-surface-soft: color-mix(in srgb, var(--vp-c-bg-soft) 42%, var(--vp-c-bg));
+}
+
+@keyframes home-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(var(--home-reveal-distance));
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.home-reveal {
+  opacity: 0;
+  transform: translateY(var(--home-reveal-distance));
+}
+
+.home-reveal.is-visible {
+  animation: home-fade-up var(--home-reveal-duration) ease forwards var(--home-reveal-delay, 0s);
+}
+
+.home-reveal-auto {
+  opacity: 0;
+  animation: home-fade-up var(--home-reveal-duration) ease forwards var(--home-reveal-delay, 0s);
+}
+
+.home-stagger-item {
+  opacity: 0;
+  transform: translateY(var(--home-reveal-distance));
+}
+
+.home-stagger.is-visible .home-stagger-item {
+  animation: home-fade-up var(--home-reveal-duration) ease forwards var(--stagger-delay, 0s);
+}
+
+.home-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+  padding: var(--home-card-padding);
+}
+
+.home-section-enter {
+  opacity: 0;
+  transform: translateY(var(--home-section-enter-distance, var(--home-reveal-distance)));
+  transition:
+    opacity var(--home-section-enter-duration, .65s) ease var(--home-section-enter-delay, 0s),
+    transform var(--home-section-enter-duration, .65s) ease var(--home-section-enter-delay, 0s);
+}
+
+.is-visible .home-section-enter {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-reveal,
+  .home-reveal-auto,
+  .home-stagger-item {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+
+  .home-section-enter {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
