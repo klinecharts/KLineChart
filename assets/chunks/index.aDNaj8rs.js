@@ -1,1 +1,0 @@
-import{C as e}from"./theme.D9tMYm7S.js";import{a3 as t,n as o,ao as r}from"./framework.BEQTiVti.js";const n=JSON.parse(`{"js":"import { getHotkey } from 'klinecharts'\\n\\nconst hotkey = getHotkey('zoomIn')\\n"}`),p={__name:"index",setup(a){return(s,c)=>(t(),o(e,{title:"getHotkey",hiddenChart:!0,code:r(n).js},null,8,["code"]))}};export{p as _};
