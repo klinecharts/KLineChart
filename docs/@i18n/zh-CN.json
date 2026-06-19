@@ -161,7 +161,7 @@
   "view_customize_compare_title": "套餐对比",
   "view_customize_compare_desc": "通过同一维度快速判断当前阶段更适合哪个方案。",
   "view_customize_compare_col_item": "对比项",
-  "view_customize_compare_rows": [{"label":"能力范围","free":"基础能力可用","sponsor":"基础能力 + 使用支持","custom":"按业务目标定制"},{"label":"交付内容","free":"文档与示例","sponsor":"文档 + 一对一答疑","custom":"源码 + 文档 + 联调"},{"label":"支持方式","free":"社区交流","sponsor":"周期内专属答疑","custom":"项目制持续协作"},{"label":"上线保障","free":"自行推进","sponsor":"问题咨询支持","custom":"联调与上线支持"},{"label":"报价方式","free":"免费","sponsor":"固定赞助价","custom":"评估后报价"}],
+  "view_customize_compare_rows": [{"label":"能力范围","free":"基础能力可用","sponsor":"基础能力 + 使用支持","custom":"按业务目标定制"},{"label":"交付内容","free":"文档与示例","sponsor":"文档 + 一对一答疑","custom":"源码 + 文档 + 联调"},{"label":"支持方式","free":"社区交流","sponsor":"5天内专属答疑","custom":"项目制持续协作"},{"label":"上线保障","free":"自行推进","sponsor":"问题咨询支持","custom":"联调与上线支持"},{"label":"报价方式","free":"免费","sponsor":"固定赞助价","custom":"评估后报价"}],
   "view_customize_cta_title": "开始沟通需求",
   "view_customize_cta_desc": "如果你已进入规划或开发阶段，可以先发需求背景，我们会给出建议路径。",
   "view_customize_cta_primary": "赞助支持",

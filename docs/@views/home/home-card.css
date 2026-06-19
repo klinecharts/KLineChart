@@ -4,9 +4,7 @@
   border-radius: 20px;
   border: 1px solid var(--home-brand-border);
   background: transparent;
-  transition:
-    transform .32s var(--home-ease-out),
-    border-color .4s var(--home-ease-out);
+  transition: border-color .4s var(--home-ease-out);
 }
 
 .home-card--overflow-visible {
@@ -32,12 +30,7 @@
 }
 
 .home-card--interactive:hover {
-  transform: translateY(-4px);
   border-color: var(--home-brand-border-hover);
-}
-
-.home-card--no-lift:hover {
-  transform: none;
 }
 
 .home-card--interactive::after {
@@ -83,10 +76,6 @@
   .home-card--interactive::before,
   .home-card--interactive::after {
     transition: none;
-  }
-
-  .home-card--interactive:hover {
-    transform: none;
   }
 
   .home-card--interactive:hover::before {

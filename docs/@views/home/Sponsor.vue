@@ -91,7 +91,7 @@ function showParticle() {
         <div class="featured">
           <a
             v-if="featuredSponsors[0]"
-            class="featured-main home-card home-card--interactive home-card--no-lift"
+            class="featured-main home-card home-card--interactive"
             :href="featuredSponsors[0].website"
             target="_blank"
             rel="noreferrer"
@@ -110,7 +110,7 @@ function showParticle() {
             <a
               v-for="(item, supporterIndex) in featuredSponsors.slice(1)"
               :key="item.name"
-              class="featured-sub home-card home-card--interactive home-card--no-lift"
+              class="featured-sub home-card home-card--interactive"
               :href="item.website"
               target="_blank"
               rel="noreferrer"
@@ -135,7 +135,7 @@ function showParticle() {
             <a
               v-for="item in supportingSponsors"
               :key="item.name"
-              class="supporting-item home-card home-card--interactive home-card--no-lift"
+              class="supporting-item home-card home-card--interactive"
               :href="item.website"
               target="_blank"
               rel="noreferrer"

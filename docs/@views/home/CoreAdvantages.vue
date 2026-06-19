@@ -171,42 +171,6 @@ const items = computed(() => icons.map((_, index) => buildItem(index)))
   margin-top: 7px;
   border-radius: 50%;
   background: var(--vp-c-brand-1);
-  box-shadow: 0 0 0 0 color-mix(in srgb, var(--vp-c-brand-1) 24%, transparent);
-}
-
-.tile:hover .dot {
-  animation: dotPulse 2.8s ease-in-out infinite;
-}
-
-.tile-2:hover .dot {
-  animation-delay: .4s;
-}
-
-.tile-3:hover .dot {
-  animation-delay: .8s;
-}
-
-.tile-4:hover .dot {
-  animation-delay: 1.2s;
-}
-
-.tile-5:hover .dot {
-  animation-delay: 1.6s;
-}
-
-.tile-6:hover .dot {
-  animation-delay: 2s;
-}
-
-@keyframes dotPulse {
-  0%,
-  100% {
-    box-shadow: 0 0 0 0 color-mix(in srgb, var(--vp-c-brand-1) 20%, transparent);
-  }
-
-  50% {
-    box-shadow: 0 0 0 5px color-mix(in srgb, var(--vp-c-brand-1) 6%, transparent);
-  }
 }
 
 @media (min-width: 640px) {
@@ -235,10 +199,6 @@ const items = computed(() => icons.map((_, index) => buildItem(index)))
 @media (prefers-reduced-motion: reduce) {
   .metric {
     transition: none;
-  }
-
-  .tile:hover .dot {
-    animation: none;
   }
 }
 </style>
