@@ -32,7 +32,15 @@ const sponsors = [
     text: '好主机',
     website: 'https://www.haozhuji.net/',
     amount: 88.8
-  }
+  },
+  {
+    name: 'flowlong',
+    text: 'FlowLong',
+    logo: '/images/sponsors/flowlong.svg',
+    logoStyle: 'max-height: 40px;max-width: 40px;',
+    website: 'https://flowlong.aizuda.com/',
+    amount: 500
+  },
 ].sort((a, b) => b.amount - a.amount)
 
 const featuredSponsors = computed(() => sponsors.slice(0, 3))
@@ -93,8 +101,10 @@ function showParticle() {
               <span class="tier-icon" aria-hidden="true">🥇</span>
               {{ i18n('view_home_sponsor_featured', lang) }}
             </span>
-            <img class="featured-logo featured-logo-main" :src="featuredSponsors[0].logo" :alt="featuredSponsors[0].name">
-            <span v-if="featuredSponsors[0].text" class="featured-text">{{ featuredSponsors[0].text }}</span>
+            <div class="featured-logo-text">
+              <img class="featured-logo featured-logo-main" :src="featuredSponsors[0].logo" :alt="featuredSponsors[0].name">
+              <span v-if="featuredSponsors[0].text" class="featured-text">{{ featuredSponsors[0].text }}</span>
+            </div>
           </a>
 
           <div class="featured-side">
@@ -110,8 +120,10 @@ function showParticle() {
                 <span class="tier-icon" aria-hidden="true">{{ supporterIndex === 0 ? '🥈' : '🥉' }}</span>
                 {{ i18n('view_home_sponsor_supporter', lang) }}
               </span>
-              <img v-if="item.logo" class="featured-logo" :src="item.logo" :alt="item.name">
-              <span v-if="item.text" class="featured-text">{{ item.text }}</span>
+              <div class="featured-logo-text">
+                <img v-if="item.logo" class="featured-logo" :style="item.logoStyle" :src="item.logo" :alt="item.name">
+                <span v-if="item.text" class="featured-text">{{ item.text }}</span>
+              </div>
             </a>
           </div>
         </div>
@@ -361,20 +373,28 @@ function showParticle() {
 .featured-logo-main {
   max-width: 210px;
   max-height: 62px;
-  margin-top: auto;
+}
+
+.featured-logo-text {
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+  gap: 10px;
+  align-items: center;
+  justify-content: flex-start;
 }
 
 .featured-text {
-  padding-top: 10px;
   font-size: clamp(18px, 2.3vw, 22px);
   line-height: 1.25;
   font-weight: 700;
   color: var(--vp-c-text-1);
 }
 
-.featured-main .featured-text {
-  margin-bottom: auto;
-  text-align: left;
+.featured-main .featured-logo-text {
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
 }
 
 .supporting {
