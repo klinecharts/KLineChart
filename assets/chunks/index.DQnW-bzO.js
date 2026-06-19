@@ -1,0 +1,1 @@
+import{C as t}from"./theme.MQ1B81U-.js";import{a3 as r,n as e,ao as o}from"./framework.BEQTiVti.js";const a=JSON.parse(`{"js":"import { getSupportedIndicators } from 'klinecharts'\\n\\nconst supports = getSupportedIndicators()\\n"}`),i={__name:"index",setup(n){return(s,p)=>(r(),e(t,{title:"getSupportedIndicators",hiddenChart:!0,code:o(a).js},null,8,["code"]))}};export{i as _};

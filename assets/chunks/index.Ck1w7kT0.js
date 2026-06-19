@@ -1,1 +1,0 @@
-import{C as e}from"./ChartPreview.Dq6eL7io.js";import{a3 as r,n as t,ao as o}from"./framework.BEQTiVti.js";const a=JSON.parse(`{"js":"import { getSupportedOverlays } from 'klinecharts'\\n\\nconst supports = getSupportedOverlays()\\n"}`),d={__name:"index",setup(s){return(n,p)=>(r(),t(e,{title:"getSupportedOverlays",hiddenChart:!0,code:o(a).js},null,8,["code"]))}};export{d as _};

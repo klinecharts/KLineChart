@@ -1,0 +1,1 @@
+import{C as e}from"./theme.MQ1B81U-.js";import{a3 as t,n as o,ao as r}from"./framework.BEQTiVti.js";const a=JSON.parse(`{"js":"import { getSupportedLocales } from 'klinecharts'\\n\\nconst supports = getSupportedLocales()\\n"}`),d={__name:"index",setup(s){return(n,p)=>(t(),o(e,{title:"getSupportedLocales",hiddenChart:!0,code:r(a).js},null,8,["code"]))}};export{d as _};
