@@ -83,14 +83,6 @@ const items = computed(() =>
   overflow: hidden;
 }
 
-.illustration-wrap :deep(.use-case-illustration) {
-  transition: transform .45s var(--home-ease-out);
-}
-
-.use-case:hover .illustration-wrap :deep(.use-case-illustration) {
-  transform: scale(1.04);
-}
-
 @media (min-width: 768px) {
   .use-cases {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -107,16 +99,6 @@ const items = computed(() =>
     min-width: 176px;
     min-height: 100%;
     padding: 20px 14px;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .illustration-wrap :deep(.use-case-illustration) {
-    transition: none;
-  }
-
-  .use-case:hover .illustration-wrap :deep(.use-case-illustration) {
-    transform: none;
   }
 }
 </style>
