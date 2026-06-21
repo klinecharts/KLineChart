@@ -99,6 +99,8 @@
   "view_home_sponsor_more": "More Supporters",
   "view_local_dev_dir_explain_dist": "Store compiled files",
   "view_local_dev_dir_explain_docs": "Docs directory",
+  "view_local_dev_dir_explain_llms": "LLM context files for AI assistants",
+  "view_local_dev_dir_explain_skills": "Cursor Agent Skills and prompt templates",
   "view_local_dev_dir_explain_scripts": "Built script directory",
   "view_local_dev_dir_explain_src": "Source code directory",
   "view_local_dev_dir_explain_common": "Store some public basic files",

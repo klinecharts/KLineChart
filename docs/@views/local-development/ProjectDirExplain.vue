@@ -10,6 +10,8 @@ const { lang } = useData()
 const dirs = ref([
   { name: 'dist', explain: 'view_local_dev_dir_explain_dist' },
   { name: 'docs', explain: 'view_local_dev_dir_explain_docs' },
+  { name: 'llms', explain: 'view_local_dev_dir_explain_llms' },
+  { name: 'skills', explain: 'view_local_dev_dir_explain_skills' },
   { name: 'scripts', explain: 'view_local_dev_dir_explain_scripts' },
   {
     name: 'src',

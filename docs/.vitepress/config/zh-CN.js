@@ -44,6 +44,14 @@ export default defineConfig({
           ]
         },
         {
+          text: 'AI',
+          collapsed: false,
+          items: [
+            { text: 'LLMs.txt', link: '/guide/llms' },
+            { text: 'Skills', link: '/guide/skills' }
+          ]
+        },
+        {
           text: '基础',
           collapsed: false,
           items: [

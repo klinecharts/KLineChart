@@ -99,6 +99,8 @@
   "view_home_sponsor_more": "更多支持者",
   "view_local_dev_dir_explain_dist": "存放编译生成的文件",
   "view_local_dev_dir_explain_docs": "文档目录",
+  "view_local_dev_dir_explain_llms": "面向 AI 助手的上下文文件",
+  "view_local_dev_dir_explain_skills": "Cursor Agent Skill 与提示词模板",
   "view_local_dev_dir_explain_scripts": "构建的脚本目录",
   "view_local_dev_dir_explain_src": "源码目录",
   "view_local_dev_dir_explain_common": "存放公共的基础的一些文件",
