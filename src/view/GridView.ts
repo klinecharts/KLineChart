@@ -13,8 +13,10 @@
  */
 
 import type { LineAttrs } from '../extension/figure/line'
+import type { GridStyle } from '../common/Styles'
 
 import View from './View'
+import { PaneIdConstants } from '../pane/types'
 
 export default class GridView extends View {
   override drawImp (ctx: CanvasRenderingContext2D): void {
@@ -23,7 +25,11 @@ export default class GridView extends View {
     const chart = pane.getChart()
     const bounding = widget.getBounding()
 
-    const styles = chart.getStyles().grid
+    // 判断是否为副图面板，如果是则使用indicator.grid配置，否则使用全局grid配置
+    const paneId = pane.getId()
+    const isIndicatorPane = paneId !== PaneIdConstants.CANDLE && paneId !== PaneIdConstants.X_AXIS // indicator指标的paneId可以自定义
+    const allStyles = chart.getStyles()
+    const styles: GridStyle = isIndicatorPane ? allStyles.indicator.grid : allStyles.grid
     const show = styles.show
 
     if (show) {
