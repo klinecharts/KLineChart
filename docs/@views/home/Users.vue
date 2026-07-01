@@ -30,12 +30,12 @@ const users = computed(() => [
   {
     name: 'DolphinDB',
     logo: userLogos.dolphindb,
-    website: 'https://dolphindb.cn/',
+    website: 'https://dolphindb.cn/'
   },
   {
     name: 'FMZ',
     logo: userLogos.fmz,
-    website: 'https://www.fmz.com/',
+    website: 'https://www.fmz.com/'
   },
   {
     name: 'Northstar',
@@ -44,7 +44,7 @@ const users = computed(() => [
   }
 ])
 
-const marqueeUsers = computed(() => [...users.value, ...users.value])
+const marqueeUsers = computed(() => [...users.value, ...users.value, ...users.value])
 </script>
 
 <template>
@@ -53,25 +53,26 @@ const marqueeUsers = computed(() => [...users.value, ...users.value])
     :title="i18n('view_home_users_title', lang)"
     :description="i18n('view_home_users_desc', lang)"
   >
-    <div class="marquee" role="presentation">
-      <div class="track">
-      <a
-        v-for="(item, index) in marqueeUsers"
-        :key="`${item.name}-${index}`"
-        class="user-item"
-        :href="item.website"
-        target="_blank"
-        rel="noreferrer"
-      >
-        <img
-          v-if="item.logo"
-          class="logo"
-          :src="item.logo"
-          :alt="item.name"
-          :style="{ '--logo-h': item.logoHeight }"
-        >
-        <span v-if="item.showName" class="name">{{ item.name }}</span>
-      </a>
+    <div class="marquee-shell">
+      <div class="marquee" role="presentation">
+        <div class="track">
+          <a
+            v-for="(item, index) in marqueeUsers"
+            :key="`${item.name}-${index}`"
+            class="user-item"
+            :href="item.website"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <img
+              v-if="item.logo"
+              class="logo"
+              :src="item.logo"
+              :alt="item.name"
+            >
+            <span v-if="item.showName" class="name">{{ item.name }}</span>
+          </a>
+        </div>
       </div>
     </div>
   </Section>
@@ -82,19 +83,45 @@ const marqueeUsers = computed(() => [...users.value, ...users.value])
   overflow: hidden;
 }
 
+.marquee-shell {
+  position: relative;
+  width: 100%;
+  padding: 8px 0 4px;
+}
+
+.marquee-shell::before,
+.marquee-shell::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 72px;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.marquee-shell::before {
+  left: 0;
+  background: linear-gradient(90deg, var(--vp-c-bg), transparent);
+}
+
+.marquee-shell::after {
+  right: 0;
+  background: linear-gradient(270deg, var(--vp-c-bg), transparent);
+}
+
 .marquee {
   width: 100%;
   overflow: hidden;
-  margin-top: 8px;
-  mask-image: linear-gradient(90deg, transparent 0, black 6%, black 94%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0, black 8%, black 92%, transparent 100%);
 }
 
 .track {
   display: flex;
   align-items: center;
   width: max-content;
-  gap: 28px;
-  animation: marquee 28s linear infinite;
+  gap: 32px;
+  animation: marquee 36s linear infinite;
 }
 
 .marquee:hover .track {
@@ -106,67 +133,79 @@ const marqueeUsers = computed(() => [...users.value, ...users.value])
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  min-width: 140px;
-  padding: 8px 4px;
+  gap: 10px;
+  min-width: 148px;
+  padding: 12px 16px;
   text-decoration: none;
-  transition: opacity .2s ease;
-}
-
-.user-item:hover {
-  opacity: 1;
 }
 
 .logo {
   height: 30px;
   object-fit: contain;
-  opacity: 0.9;
+  opacity: 0.82;
   filter: grayscale(1);
-  transition: filter .2s ease;
+  transition: filter .25s ease, opacity .25s ease;
 }
 
 .name {
-  font-size: 16px;
-  line-height: 20px;
-  font-weight: bold;
+  font-size: 15px;
+  line-height: 1.2;
+  font-weight: 700;
   color: var(--vp-c-text-2);
-  transition: color .2s ease;
+  transition: color .25s ease;
 }
 
 .user-item:hover .logo {
   filter: grayscale(0);
+  opacity: 1;
 }
 
 .user-item:hover .name {
   color: var(--vp-c-text-1);
 }
 
-@media (min-width: 640px) {
-  .track {
-    gap: 34px;
-  }
-
-  .user-item {
-    min-width: 180px;
-    padding: 10px 6px;
-  }
-
-  .logo {
-    height: 36px;
-  }
-
-  .name {
-    font-size: 19px;
-    line-height: 23px;
-  }
-}
-
 @keyframes marquee {
   from {
     transform: translateX(0);
   }
+
   to {
-    transform: translateX(calc(-50% - 17px));
+    transform: translateX(calc(-100% / 3));
   }
+}
+
+@media (min-width: 640px) {
+  .track {
+    gap: 40px;
+  }
+
+  .user-item {
+    min-width: 180px;
+    padding: 14px 20px;
+  }
+
+  .logo {
+    height: 34px;
+  }
+
+  .name {
+    font-size: 17px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .track {
+    animation: none;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    gap: 16px;
+  }
+
+  .logo,
+  .name {
+    transition: none;
+  }
+
 }
 </style>

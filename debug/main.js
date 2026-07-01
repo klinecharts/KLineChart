@@ -159,7 +159,7 @@ function createDataLoader () {
       }
       // callback(dataList, { forward: true, backward: true })
       setTimeout(() => {
-        callback(dataList, { forward: true, backward: true })
+        callback(dataList, { forward: false, backward: false })
       }, 1000)
     },
     subscribeBar: ({ period, callback }) => {
@@ -197,8 +197,9 @@ function mountChart () {
   chart.setSymbol({ ticker: 'DEBUG', pricePrecision: 2, volumePrecision: 0 })
   chart.setPeriod(getActivePeriodConfig().period)
   chart.setDataLoader(createDataLoader())
-  chart.createIndicator('EMA', { pane: { id: 'candle_pane' }, yAxis: { id: 'new' } })
-
+  chart.createIndicator('EMA', { isStack: true, pane: { id: 'candle_pane' } })
+  chart.createIndicator('SAR', { isStack: true, pane: { id: 'candle_pane' } })
+  // chart.overrideYAxis({ id: 'new1', position: 'left' })
   // chart.createOverlay('brush')
 }
 

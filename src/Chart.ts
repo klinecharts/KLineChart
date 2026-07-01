@@ -91,8 +91,8 @@ export interface Chart extends Store {
   createOverlay: (value: string | OverlayCreate | Array<string | OverlayCreate>) => Nullable<string> | Array<Nullable<string>>
   getOverlays: (filter?: OverlayFilter) => Overlay[]
   setPaneOptions: (options: PaneOptions) => void
-  overrideYAxis: (xAxis: XAxisOverride) => void
-  overrideXAxis: (yAxis: YAxisOverride) => void
+  overrideYAxis: (xAxis: YAxisOverride) => void
+  overrideXAxis: (yAxis: XAxisOverride) => void
   getPaneOptions: (id?: string) => Nullable<PaneOptions> | PaneOptions[]
   scrollByDistance: (distance: number, animationDuration?: number) => void
   scrollToRealTime: (animationDuration?: number) => void

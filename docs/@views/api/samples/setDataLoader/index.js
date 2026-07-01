@@ -14,6 +14,6 @@ chart.setDataLoader({
         callback(dataList)
       })
   },
-  subscribe: (params) => {},
-  unsubscribe: (params) => {}
+  subscribeBar: (params) => {},
+  unsubscribeBar: (params) => {}
 })

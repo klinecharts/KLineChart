@@ -1,14 +1,22 @@
 <script setup>
-const props = defineProps(['title', 'description', 'outClass'])
+import { useInView } from './composables/useInView.js'
 
+const props = defineProps(['title', 'description', 'outClass'])
+const { target, isVisible } = useInView()
 </script>
 
 <template>
-  <section class="section" :class="props.outClass">
+  <section
+    ref="target"
+    class="section"
+    :class="[props.outClass, { 'is-visible': isVisible }]"
+  >
     <div class="content">
-      <h2 class="title">{{ props.title }}</h2>
-      <p class="description">{{ props.description }}</p>
-      <slot></slot>
+      <h2 class="title home-section-enter">{{ props.title }}</h2>
+      <p v-if="props.description" class="description home-section-enter">{{ props.description }}</p>
+      <div class="body home-section-enter">
+        <slot />
+      </div>
     </div>
   </section>
 </template>
@@ -19,11 +27,11 @@ const props = defineProps(['title', 'description', 'outClass'])
   display: flex;
   flex-direction: row;
   justify-content: center;
-  padding: 92px 24px 0 24px;
+  padding: var(--home-section-gap) 24px 0;
 }
 
 .section + .section {
-  margin-top: 8px;
+  margin-top: 0;
 }
 
 .content {
@@ -31,58 +39,44 @@ const props = defineProps(['title', 'description', 'outClass'])
   flex-direction: column;
   align-items: center;
   width: 100%;
-  max-width: 1152px;
+  max-width: var(--home-content-max);
+  min-width: 0;
   padding: 0 6px;
 }
 
 .title {
-  font-size: clamp(25px, 3.2vw, 31px);
-  line-height: clamp(35px, 4vw, 40px);
+  font-size: clamp(24px, 3vw, 30px);
+  line-height: clamp(32px, 3.8vw, 38px);
   text-align: center;
   font-weight: 700;
-  letter-spacing: -0.01em;
-  opacity: 0;
-  transform: translateY(20px);
-  animation: sectionReveal .6s ease forwards;
+  letter-spacing: -0.02em;
+  overflow-wrap: anywhere;
+  min-width: 0;
 }
+
 .description {
-  padding-top: 14px;
-  font-size: clamp(15px, 1.7vw, 17px);
+  padding-top: 12px;
+  font-size: clamp(15px, 1.75vw, 18px);
   line-height: clamp(24px, 2.8vw, 28px);
   text-align: center;
   color: var(--vp-c-text-2);
-  max-width: 620px;
-  padding-bottom: 28px;
-  opacity: 0;
-  transform: translateY(20px);
-  animation: sectionReveal .6s ease forwards .12s;
+  max-width: 560px;
+  padding-bottom: 32px;
+  overflow-wrap: anywhere;
+  min-width: 0;
+  --home-section-enter-delay: .08s;
 }
 
-.content > :deep(*:last-child) {
-  opacity: 0;
-  transform: translateY(22px);
-  animation: sectionReveal .7s ease forwards .22s;
-}
-
-@keyframes sectionReveal {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.body {
+  width: 100%;
+  --home-section-enter-distance: 28px;
+  --home-section-enter-duration: .7s;
+  --home-section-enter-delay: .14s;
 }
 
 @media (min-width: 640px) {
   .section {
-    padding: 128px 48px 0 48px;
-  }
-
-  .section + .section {
-    margin-top: 10px;
+    padding: var(--home-section-gap) 48px 0;
   }
 
   .content {
@@ -90,19 +84,14 @@ const props = defineProps(['title', 'description', 'outClass'])
   }
 
   .description {
-    padding-top: 18px;
-    max-width: 640px;
-    padding-bottom: 44px;
+    padding-top: 16px;
+    padding-bottom: 40px;
   }
 }
 
 @media (min-width: 960px) {
   .section {
-    padding: 152px 64px 0 64px;
-  }
-
-  .section + .section {
-    margin-top: 12px;
+    padding: var(--home-section-gap) 64px 0;
   }
 
   .content {
@@ -110,13 +99,4 @@ const props = defineProps(['title', 'description', 'outClass'])
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .title,
-  .description,
-  .content > :deep(*:last-child) {
-    opacity: 1;
-    transform: none;
-    animation: none;
-  }
-}
 </style>

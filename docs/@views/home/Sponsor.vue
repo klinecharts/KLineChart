@@ -32,7 +32,15 @@ const sponsors = [
     text: '好主机',
     website: 'https://www.haozhuji.net/',
     amount: 88.8
-  }
+  },
+  {
+    name: 'flowlong',
+    text: 'FlowLong',
+    logo: '/images/sponsors/flowlong.svg',
+    logoStyle: 'max-height: 40px;max-width: 40px;',
+    website: 'https://flowlong.aizuda.com/',
+    amount: 500
+  },
 ].sort((a, b) => b.amount - a.amount)
 
 const featuredSponsors = computed(() => sponsors.slice(0, 3))
@@ -55,7 +63,7 @@ function showParticle() {
     :description="i18n('view_home_sponsor_desc', lang)"
   >
     <div class="sponsor-shell">
-      <div class="intro">
+      <div class="intro home-card">
         <span class="eyebrow">
           {{ i18n('view_home_sponsor_eyebrow', lang) }}
         </span>
@@ -63,7 +71,6 @@ function showParticle() {
           {{ i18n('view_home_sponsor_lead', lang) }}
         </p>
         <div class="signal">
-          <span class="signal-dot"></span>
           <span>
             {{ i18n('view_home_sponsor_signal', lang) }}
           </span>
@@ -84,7 +91,7 @@ function showParticle() {
         <div class="featured">
           <a
             v-if="featuredSponsors[0]"
-            class="featured-main"
+            class="featured-main home-card home-card--interactive"
             :href="featuredSponsors[0].website"
             target="_blank"
             rel="noreferrer"
@@ -93,15 +100,17 @@ function showParticle() {
               <span class="tier-icon" aria-hidden="true">🥇</span>
               {{ i18n('view_home_sponsor_featured', lang) }}
             </span>
-            <img class="featured-logo featured-logo-main" :src="featuredSponsors[0].logo" :alt="featuredSponsors[0].name">
-            <span v-if="featuredSponsors[0].text" class="featured-text">{{ featuredSponsors[0].text }}</span>
+            <div class="featured-logo-text">
+              <img class="featured-logo featured-logo-main" :src="featuredSponsors[0].logo" :alt="featuredSponsors[0].name">
+              <span v-if="featuredSponsors[0].text" class="featured-text">{{ featuredSponsors[0].text }}</span>
+            </div>
           </a>
 
           <div class="featured-side">
             <a
               v-for="(item, supporterIndex) in featuredSponsors.slice(1)"
               :key="item.name"
-              class="featured-sub"
+              class="featured-sub home-card home-card--interactive"
               :href="item.website"
               target="_blank"
               rel="noreferrer"
@@ -110,8 +119,10 @@ function showParticle() {
                 <span class="tier-icon" aria-hidden="true">{{ supporterIndex === 0 ? '🥈' : '🥉' }}</span>
                 {{ i18n('view_home_sponsor_supporter', lang) }}
               </span>
-              <img v-if="item.logo" class="featured-logo" :src="item.logo" :alt="item.name">
-              <span v-if="item.text" class="featured-text">{{ item.text }}</span>
+              <div class="featured-logo-text">
+                <img v-if="item.logo" class="featured-logo" :style="item.logoStyle" :src="item.logo" :alt="item.name">
+                <span v-if="item.text" class="featured-text">{{ item.text }}</span>
+              </div>
             </a>
           </div>
         </div>
@@ -124,7 +135,7 @@ function showParticle() {
             <a
               v-for="item in supportingSponsors"
               :key="item.name"
-              class="supporting-item"
+              class="supporting-item home-card home-card--interactive"
               :href="item.website"
               target="_blank"
               rel="noreferrer"
@@ -158,26 +169,6 @@ function showParticle() {
   flex-direction: column;
   gap: 16px;
   padding: 28px 24px;
-  overflow: hidden;
-  border-radius: 30px;
-  background:
-    radial-gradient(circle at top left, color-mix(in srgb, var(--vp-c-brand-1) 7%, transparent), transparent 38%),
-    linear-gradient(135deg, color-mix(in srgb, var(--vp-c-brand-1) 4%, transparent), transparent 60%),
-    color-mix(in srgb, var(--vp-c-bg-soft) 54%, var(--vp-c-bg));
-  border: 1px solid color-mix(in srgb, var(--vp-c-brand-1) 6%, var(--vp-c-divider));
-}
-
-.intro::before {
-  content: '';
-  position: absolute;
-  inset: -24% auto auto -12%;
-  width: 180px;
-  height: 180px;
-  border-radius: 50%;
-  background: radial-gradient(circle, color-mix(in srgb, var(--vp-c-brand-1) 18%, transparent) 0%, transparent 72%);
-  opacity: 0.65;
-  pointer-events: none;
-  animation: sponsorGlow 8s ease-in-out infinite;
 }
 
 .eyebrow {
@@ -200,21 +191,9 @@ function showParticle() {
 }
 
 .signal {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
   font-size: clamp(14px, 1.7vw, 16px);
   line-height: clamp(22px, 2.7vw, 25px);
   color: var(--vp-c-text-2);
-}
-
-.signal-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--vp-c-brand-1);
-  box-shadow: 0 0 0 8px color-mix(in srgb, var(--vp-c-brand-1) 12%, transparent);
-  animation: sponsorPulse 2.8s ease-in-out infinite;
 }
 
 .board {
@@ -230,42 +209,10 @@ function showParticle() {
 .featured-main,
 .featured-sub,
 .supporting-item {
-  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  overflow: hidden;
   text-decoration: none;
-  transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
-}
-
-.featured-main::after,
-.featured-sub::after,
-.supporting-item::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: linear-gradient(115deg, transparent 24%, color-mix(in srgb, #ffffff 8%, transparent) 50%, transparent 76%);
-  opacity: 0;
-  transform: translateX(-26%);
-  transition: opacity .25s ease, transform .45s ease;
-  pointer-events: none;
-}
-
-.featured-main:hover,
-.featured-sub:hover,
-.supporting-item:hover {
-  transform: translateY(-3px);
-  border-color: color-mix(in srgb, var(--vp-c-brand-1) 14%, var(--vp-c-divider));
-  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.07);
-}
-
-.featured-main:hover::after,
-.featured-sub:hover::after,
-.supporting-item:hover::after {
-  opacity: 1;
-  transform: translateX(18%);
 }
 
 .featured-main {
@@ -274,13 +221,6 @@ function showParticle() {
   align-items: flex-start;
   justify-content: flex-start;
   text-align: left;
-  border-radius: 32px;
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--vp-c-brand-1) 8%, transparent), transparent 34%),
-    linear-gradient(135deg, color-mix(in srgb, var(--vp-c-brand-1) 5%, transparent), transparent 54%),
-    color-mix(in srgb, var(--vp-c-bg-soft) 54%, var(--vp-c-bg));
-  border: 1px solid color-mix(in srgb, var(--vp-c-brand-1) 7%, var(--vp-c-divider));
-  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.05);
 }
 
 .featured-side {
@@ -291,11 +231,6 @@ function showParticle() {
 .featured-sub {
   min-height: 128px;
   padding: 22px 24px;
-  border-radius: 26px;
-  background:
-    linear-gradient(135deg, color-mix(in srgb, var(--vp-c-brand-1) 4.5%, transparent), transparent 58%),
-    color-mix(in srgb, var(--vp-code-block-bg) 72%, var(--vp-c-bg));
-  border: 1px solid color-mix(in srgb, var(--vp-c-brand-1) 6%, var(--vp-c-divider));
 }
 
 .tier {
@@ -305,7 +240,7 @@ function showParticle() {
   width: fit-content;
   margin-bottom: 16px;
   min-height: 32px;
-  padding: 4px 12px 4px 12px;
+  padding: 4px 12px;
   font-size: 12px;
   line-height: 1;
   font-weight: 700;
@@ -313,26 +248,14 @@ function showParticle() {
   text-transform: uppercase;
   border-radius: 999px;
   border: 1px solid color-mix(in srgb, var(--vp-c-brand-1) 12%, var(--vp-c-divider));
-  background: color-mix(in srgb, var(--vp-c-bg-soft) 42%, var(--vp-c-bg));
+  background: var(--home-brand-surface-soft);
   color: var(--vp-c-brand-1);
   transition: border-color .25s ease, background-color .25s ease, transform .25s ease;
-}
-
-.tier::before {
-  content: none;
-}
-
-.tier::after {
-  content: none;
 }
 
 .tier-featured {
   border-color: color-mix(in srgb, var(--vp-c-brand-1) 24%, var(--vp-c-divider));
   background: transparent;
-}
-
-.tier-featured::before {
-  content: none;
 }
 
 .tier-icon {
@@ -348,7 +271,6 @@ function showParticle() {
 
 .featured-main:hover .tier-featured,
 .featured-sub:hover .tier-supporter {
-  transform: translateY(-1px);
   border-color: color-mix(in srgb, var(--vp-c-brand-1) 28%, var(--vp-c-divider));
 }
 
@@ -361,20 +283,28 @@ function showParticle() {
 .featured-logo-main {
   max-width: 210px;
   max-height: 62px;
-  margin-top: auto;
+}
+
+.featured-logo-text {
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+  gap: 10px;
+  align-items: center;
+  justify-content: flex-start;
 }
 
 .featured-text {
-  padding-top: 10px;
   font-size: clamp(18px, 2.3vw, 22px);
   line-height: 1.25;
   font-weight: 700;
   color: var(--vp-c-text-1);
 }
 
-.featured-main .featured-text {
-  margin-bottom: auto;
-  text-align: left;
+.featured-main .featured-logo-text {
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
 }
 
 .supporting {
@@ -404,9 +334,6 @@ function showParticle() {
   min-height: 72px;
   padding: 0 22px;
   align-items: center;
-  border-radius: 20px;
-  background: color-mix(in srgb, var(--vp-c-bg-soft) 44%, var(--vp-c-bg));
-  border: 1px solid color-mix(in srgb, var(--vp-c-brand-1) 8%, var(--vp-c-divider));
 }
 
 .supporting-logo {
@@ -435,10 +362,10 @@ function showParticle() {
   font-size: clamp(13px, 1.6vw, 15px);
   border-radius: 999px;
   border: 1px solid color-mix(in srgb, var(--vp-c-brand-1) 28%, var(--vp-c-divider));
-  background: color-mix(in srgb, var(--vp-c-bg-soft) 42%, var(--vp-c-bg));
+  background: var(--home-brand-surface-soft);
   color: var(--vp-c-brand-1);
   text-decoration: none;
-  transition: transform .25s ease, border-color .25s ease, background-color .25s ease;
+  transition: border-color .25s ease, background-color .25s ease;
 }
 
 .sponsor-become a svg {
@@ -446,39 +373,12 @@ function showParticle() {
 }
 
 .sponsor-become a:hover {
-  transform: translateY(-2px);
   border-color: color-mix(in srgb, var(--vp-c-brand-1) 44%, var(--vp-c-divider));
   background: color-mix(in srgb, var(--vp-c-brand-1) 8%, var(--vp-c-bg));
 }
 
 .sponsor-become a:hover svg {
   transform: scale(1.08);
-}
-
-@keyframes sponsorPulse {
-  0%,
-  100% {
-    box-shadow: 0 0 0 0 color-mix(in srgb, var(--vp-c-brand-1) 18%, transparent);
-    transform: scale(1);
-  }
-
-  50% {
-    box-shadow: 0 0 0 10px color-mix(in srgb, var(--vp-c-brand-1) 8%, transparent);
-    transform: scale(1.08);
-  }
-}
-
-@keyframes sponsorGlow {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0) scale(1);
-    opacity: 0.55;
-  }
-
-  50% {
-    transform: translate3d(18px, 8px, 0) scale(1.08);
-    opacity: 0.8;
-  }
 }
 
 @media (min-width: 768px) {
@@ -514,51 +414,14 @@ function showParticle() {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .intro::before,
-  .signal-dot {
-    animation: none;
-  }
-
-  .featured-main,
-  .featured-sub,
-  .supporting-item,
   .tier,
-  .featured-main::after,
-  .featured-sub::after,
-  .supporting-item::after,
   .sponsor-become a,
   .sponsor-become a svg {
     transition: none;
   }
 
-  .featured-main:hover,
-  .featured-sub:hover,
-  .supporting-item:hover,
-  .sponsor-become a:hover,
   .sponsor-become a:hover svg {
     transform: none;
   }
-
-  .featured-main:hover::after,
-  .featured-sub:hover::after,
-  .supporting-item:hover::after {
-    opacity: 0;
-    transform: none;
-  }
-}
-
-:global(html:not(.dark)) .featured-main:hover,
-:global(html:not(.dark)) .featured-sub:hover,
-:global(html:not(.dark)) .supporting-item:hover {
-  box-shadow:
-    0 24px 46px color-mix(in srgb, var(--vp-c-brand-1) 20%, transparent),
-    0 14px 28px rgba(15, 23, 42, 0.14);
-  border-color: color-mix(in srgb, var(--vp-c-brand-1) 30%, var(--vp-c-divider));
-}
-
-:global(html:not(.dark)) .featured-main:hover::after,
-:global(html:not(.dark)) .featured-sub:hover::after,
-:global(html:not(.dark)) .supporting-item:hover::after {
-  opacity: 1;
 }
 </style>

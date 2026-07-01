@@ -36,6 +36,5 @@ const props = defineProps(['features'])
   margin-top: 7px;
   border-radius: 50%;
   background: var(--vp-c-brand-1);
-  box-shadow: 0 0 0 6px color-mix(in srgb, var(--vp-c-brand-1) 10%, transparent);
 }
 </style>

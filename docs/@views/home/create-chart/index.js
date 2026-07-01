@@ -4,8 +4,9 @@ const chart = init('k-line-chart')
 
 chart.createIndicator(
   'MA',
-  false,
-  { id: 'candle_pane' }
+  {
+    pane: { id: 'candle_pane' }
+  }
 )
 chart.createIndicator('VOL')
 chart.setSymbol({ ticker: 'TestSymbol' })

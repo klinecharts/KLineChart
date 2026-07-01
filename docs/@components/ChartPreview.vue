@@ -18,7 +18,7 @@ import { getParameters } from 'codesandbox/lib/api/define'
 import i18n from '../@i18n'
 
 import Tooltip from './Tooltip.vue'
-import Loading from './Loading.vue'
+import ChartSkeleton from './ChartSkeleton.vue'
 import SmoothExpand from './SmoothExpand.vue'
 
 const { isDark, lang } = useData()
@@ -258,8 +258,11 @@ onUnmounted(() => {
   <template v-if="!!props.chartId">
     <div
       ref="chartContainer"
-      class="content-item chart">
-      <Loading v-if="loading" className="loading"/>
+      class="content-item chart"
+      :class="{ 'is-loading': loading }">
+      <ChartSkeleton
+        v-if="loading"
+        className="chart-preview-loading"/>
     </div>
     <div
       class="code-action-container"
@@ -350,13 +353,21 @@ h3 + .chart-preview {
 
 .chart {
   position: relative;
+  z-index: 0;
   min-height: 350px;
+  overflow: hidden;
+  isolation: isolate;
 }
 
-.loading {
+.chart :deep(.chart-preview-loading) {
+  z-index: 10;
   background-color: var(--vp-code-block-bg);
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
+}
+
+.chart.is-loading :deep(> div[id]) {
+  visibility: hidden;
 }
 
 .code-action-container {
