@@ -17,7 +17,7 @@ outline: deep
   - `inside` 是否在内部。
   - `needWidget` 是否需要创建轴组件。
   - `position` 位置，支持 `left` 和 `right` 。
-  - `scrollZoomEnabled` 是否允许滚动缩放。
+  - `scrollZoomEnabled` 是否允许在 Y 轴上滚动和缩放。启用后，用户可以拖动滚动轴或使用鼠标滚轮缩放。
   - `gap` 上下边距配置。
     - `top` 上边距。
     - `bottom` 下边距。

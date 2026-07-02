@@ -14,7 +14,7 @@ outline: deep
   - `reverse` 是否是反置。
   - `inside` 是否在内部。
   - `position` 位置，支持 `left` 和 `right` 。
-  - `scrollZoomEnabled` 是否在轴上可以滚动缩放。
+  - `scrollZoomEnabled` 是否在轴上可以滚动缩放。启用后，用户可以拖动滚动轴或使用鼠标滚轮缩放。
   - `gap` 间隙。
     - `top` 顶部间隙，当值在 0 和 1 之间时，将作为百分比。
     - `bottom` 底部间隙，当值在 0 和 1 之间时，将作为百分比。

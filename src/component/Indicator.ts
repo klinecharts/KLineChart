@@ -380,7 +380,7 @@ export default class IndicatorImp<D = unknown, C = unknown, E = unknown> impleme
   }
 
   override (indicator: Partial<Indicator<D, C, E>>): void {
-    const { result, ...currentOthers } = this
+    const { result, _prevIndicator, ...currentOthers } = this
     this._prevIndicator = { ...clone(currentOthers), result }
     const {
       id,
