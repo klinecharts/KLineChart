@@ -1,0 +1,1 @@
+import{n as e}from"./theme.DpYuvrU1.js";import{Q as t,Ut as n,gt as r}from"./framework.qvtkvjpa.js";var i=JSON.parse(`{"js":"import { getSupportedOverlays } from 'klinecharts'\\n\\nconst supports = getSupportedOverlays()\\n"}`),a={__name:`index`,setup(a){return(a,o)=>(r(),t(e,{title:`getSupportedOverlays`,hiddenChart:!0,code:n(i).js},null,8,[`code`]))}};export{a as t};
