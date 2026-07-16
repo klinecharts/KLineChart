@@ -1,0 +1,1 @@
+var e=`/images/wechat.jpeg`,t=`/images/module.png`,n=`/images/style.jpg`,r=`/images/alipay_qr_code.png`,i=`/images/wechat_pay_qr_code.png`;export{e as a,t as i,r as n,n as r,i as t};
