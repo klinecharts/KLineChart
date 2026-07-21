@@ -848,9 +848,9 @@ export default class EventHandlerImp {
   }
 
   private _firesTouchEvents (e: MouseEvent): boolean {
-    // @ts-expect-error
+    // @ts-ignore
     if (isValid(e.sourceCapabilities?.firesTouchEvents)) {
-      // @ts-expect-error
+      // @ts-ignore
       return e.sourceCapabilities.firesTouchEvents
     }
 

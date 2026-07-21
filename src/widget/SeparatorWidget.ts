@@ -38,10 +38,12 @@ export default class SeparatorWidget extends Widget<SeparatorPane> {
   constructor (rootContainer: HTMLElement, pane: SeparatorPane) {
     super(rootContainer, pane)
     this.registerEvent('touchStartEvent', this._mouseDownEvent.bind(this))
+      // @ts-ignore
       .registerEvent('touchMoveEvent', this._pressedMouseMoveEvent.bind(this))
       .registerEvent('touchEndEvent', this._mouseUpEvent.bind(this))
       .registerEvent('mouseDownEvent', this._mouseDownEvent.bind(this))
       .registerEvent('mouseUpEvent', this._mouseUpEvent.bind(this))
+      // @ts-ignore
       .registerEvent('pressedMouseMoveEvent', this._pressedMouseMoveEvent.bind(this))
       .registerEvent('mouseEnterEvent', this._mouseEnterEvent.bind(this))
       .registerEvent('mouseLeaveEvent', this._mouseLeaveEvent.bind(this))

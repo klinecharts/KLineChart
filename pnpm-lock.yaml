@@ -54,7 +54,7 @@ importers:
         specifier: ^1.9.0
         version: 1.11.0
       '@types/node':
-        specifier: ^20.19.0
+        specifier: ^20.19.41
         version: 20.19.41
       '@vueuse/core':
         specifier: ^11.1.0

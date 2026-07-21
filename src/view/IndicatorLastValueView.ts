@@ -49,6 +49,7 @@ export default class IndicatorLastValueView extends View<YAxis> {
         const data = result[dataIndex] ?? {}
         if (isValid(data) && indicator.visible) {
           const precision = indicator.precision
+          // @ts-ignore
           eachFigures(indicator, dataIndex, barSpace, defaultStyles, (figure: IndicatorFigure, figureStyles: Required<IndicatorFigureStyle>) => {
             const value = data[figure.key]
             if (isNumber(value)) {

@@ -538,7 +538,7 @@ export default class StoreImp implements Store {
 
   setSymbol (symbol: PickPartial<SymbolInfo, 'pricePrecision' | 'volumePrecision'>): void {
     this.resetData(() => {
-      // @ts-expect-error
+      // @ts-ignore
       this._symbol = {
         pricePrecision: SymbolDefaultPrecisionConstants.PRICE,
         volumePrecision: SymbolDefaultPrecisionConstants.VOLUME,
@@ -1410,9 +1410,9 @@ export default class StoreImp implements Store {
     return indicators
   }
 
-  removeIndicator (filter: IndicatorFilter): boolean {
+  removeIndicator (filter?: IndicatorFilter): boolean {
     let removed = false
-    const filterIndicators = this.getIndicatorsByFilter(filter)
+    const filterIndicators = this.getIndicatorsByFilter(filter ?? {})
     filterIndicators.forEach(indicator => {
       const paneIndicators = this.getIndicatorsByPaneId(indicator.paneId)
       const index = paneIndicators.findIndex(ins => ins.id === indicator.id)
@@ -1668,9 +1668,9 @@ export default class StoreImp implements Store {
     return false
   }
 
-  removeOverlay (filter: OverlayFilter): boolean {
+  removeOverlay (filter?: OverlayFilter): boolean {
     const updatePaneIds: string[] = []
-    const filterOverlays = this.getOverlaysByFilter(filter)
+    const filterOverlays = this.getOverlaysByFilter(filter ?? {})
     filterOverlays.forEach(overlay => {
       const paneId = overlay.paneId
       const paneOverlays = this.getOverlaysByPaneId(overlay.paneId)

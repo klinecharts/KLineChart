@@ -253,7 +253,7 @@ export default class Event implements EventHandler {
     return true
   }
 
-  pinchEvent (e: MouseTouchEvent, scale: number): boolean {
+  pinchEvent (e: MouseTouchEvent, scale = 1): boolean {
     const { pane, widget } = this._findWidgetByEvent(e)
     if (pane?.getId() !== PaneIdConstants.X_AXIS && widget?.getName() === WidgetNameConstants.MAIN) {
       const event = this._makeWidgetEvent(e, widget)
@@ -265,14 +265,14 @@ export default class Event implements EventHandler {
     return false
   }
 
-  mouseWheelHortEvent (_: MouseTouchEvent, distance: number): boolean {
+  mouseWheelHortEvent (_: MouseTouchEvent, distance = 0): boolean {
     const store = this._chart.getChartStore()
     store.startScroll()
     store.scroll(distance)
     return true
   }
 
-  mouseWheelVertEvent (e: MouseTouchEvent, scale: number): boolean {
+  mouseWheelVertEvent (e: MouseTouchEvent, scale = 0): boolean {
     const { widget } = this._findWidgetByEvent(e)
     const event = this._makeWidgetEvent(e, widget)
     const name = widget?.getName()

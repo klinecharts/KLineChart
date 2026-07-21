@@ -12,11 +12,11 @@
  * limitations under the License.
  */
 
+import type Coordinate from '../common/Coordinate'
 import type Nullable from '../common/Nullable'
 import type { CandleColorCompareRule, SmoothLineStyle } from '../common/Styles'
 import { formatValue } from '../common/utils/format'
 import { isNumber, isValid } from '../common/utils/typeChecks'
-import type Coordinate from '../common/Coordinate'
 
 import { eachFigures, type IndicatorFigure, type IndicatorFigureAttrs, type IndicatorFigureStyle } from '../component/Indicator'
 

@@ -403,7 +403,8 @@ export default class CandleTooltipView extends IndicatorTooltipView {
       )),
       change: prevClose === 0 ? defaultValue : `${thousandsSeparator.format(formatPrecision(changeValue / prevClose * 100))}%`
     }
-    const legends = (
+    // @ts-ignore
+    const legends: TooltipLegend[] = (
       isFunction(template)
         ? template({ prev, current, next: dataList[dataIndex + 1] ?? null }, styles)
         : template

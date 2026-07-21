@@ -84,7 +84,7 @@
     "@rollup/plugin-typescript": "^12.3.0",
     "@shikijs/vitepress-twoslash": "^3.2.2",
     "@stackblitz/sdk": "^1.9.0",
-    "@types/node": "^20.19.0",
+    "@types/node": "^20.19.41",
     "@vueuse/core": "^11.1.0",
     "codesandbox": "^2.2.3",
     "cross-env": "^7.0.3",

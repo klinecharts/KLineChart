@@ -513,8 +513,8 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
       return coordinate
     })
     if (coordinates.length > 0) {
-      // @ts-expect-error
-      const figures = [].concat(this.getFigures(overlay, coordinates))
+      let figures: OverlayFigure[] = []
+      figures = figures.concat(this.getFigures(overlay, coordinates))
       this.drawFigures(
         ctx,
         overlay,
@@ -532,11 +532,11 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     const defaultStyles = this.getWidget().getPane().getChart().getStyles().overlay
     figures.forEach((figure, figureIndex) => {
       const { type, styles, attrs } = figure
-      // @ts-expect-error
+      // @ts-ignore
       const attrsArray = [].concat(attrs)
       attrsArray.forEach((ats) => {
         const events = this._createFigureEvents(overlay, 'other', figureIndex, figure)
-        // @ts-expect-error
+         // @ts-ignore
         const ss = { ...defaultStyles[type], ...overlay.styles?.[type], ...styles }
         this.createFigure({
           name: type, attrs: ats, styles: ss

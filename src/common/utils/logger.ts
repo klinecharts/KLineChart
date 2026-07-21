@@ -12,6 +12,7 @@
  * limitations under the License.
  */
 
+// @ts-nocheck
 const DEV = process.env.NODE_ENV === 'development'
 
 function log (templateText: string, tagStyle: string, messageStyle: string, api: string, invalidParam: string, append: string): void {

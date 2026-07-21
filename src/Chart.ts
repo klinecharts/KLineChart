@@ -26,7 +26,6 @@ import type ExcludePickPartial from './common/ExcludePickPartial'
 import type Nullable from './common/Nullable'
 import type { Period } from './common/Period'
 import type PickPartial from './common/PickPartial'
-import type PickRequired from './common/PickRequired'
 import type Point from './common/Point'
 import type { Styles } from './common/Styles'
 import type { SymbolInfo } from './common/SymbolInfo'
@@ -177,7 +176,7 @@ export default class ChartImp implements Chart {
       userSelect: 'none',
       webkitUserSelect: 'none',
       overflow: 'hidden',
-      // @ts-expect-error
+      // @ts-ignore
       msUserSelect: 'none',
       MozUserSelect: 'none',
       webkitTapHighlightColor: 'transparent'
@@ -204,7 +203,7 @@ export default class ChartImp implements Chart {
   }
 
   private _createPane<P extends DrawPane> (
-    DrawPaneClass: new (chart: Chart, options: PaneOptions) => P,
+    DrawPaneClass: new (chart: ChartImp, options: PaneOptions) => P,
     options: PaneOptions
   ): P {
     const pane = new DrawPaneClass(this, options)
@@ -1189,8 +1188,8 @@ export default class ChartImp implements Chart {
       const pane = this.getDrawPaneById(paneId)
       if (pane !== null) {
         const bounding = pane.getBounding()
-        // @ts-expect-error
-        const ps: Array<Partial<Point>> = [].concat(points)
+        let ps: Array<Partial<Point>> = []
+        ps = ps.concat(points)
         const xAxis = this._xAxisPane.getXAxisComponent()
         const yAxis = pane.getYAxisComponentById(yAxisId)
         coordinates = ps.map(point => {
@@ -1220,8 +1219,8 @@ export default class ChartImp implements Chart {
       const pane = this.getDrawPaneById(paneId)
       if (pane !== null) {
         const bounding = pane.getBounding()
-        // @ts-expect-error
-        const cs: Array<Partial<Coordinate>> = [].concat(coordinates)
+        let cs: Array<Partial<Coordinate>> = []
+        cs = cs.concat(coordinates)
         const xAxis = this._xAxisPane.getXAxisComponent()
         const yAxis = pane.getYAxisComponentById(yAxisId)
         points = cs.map(coordinate => {

@@ -32,7 +32,9 @@ export type FigureTemplate<A = unknown, S = unknown> = Pick<Figure<A, S>, 'name'
 export type FigureCreate<A = unknown, S = unknown> = Pick<Figure<A, S>, 'name' | 'attrs' | 'styles'>
 
 export type FigureConstructor<A = unknown, S = unknown> = new (figure: FigureCreate<A, S>) => ({ draw: (ctx: CanvasRenderingContext2D) => void })
+
 export type FigureInnerConstructor<A = unknown, S = unknown> = new (figure: FigureCreate<A, S>) => FigureImp<A, S>
+
 export default abstract class FigureImp<A = unknown, S = unknown> extends Eventful implements Omit<Figure<A, S>, 'name' | 'draw' | 'checkEventOn'> {
   attrs: A
   styles: S
@@ -65,7 +67,7 @@ export default abstract class FigureImp<A = unknown, S = unknown> extends Eventf
 
   abstract drawImp (ctx: CanvasRenderingContext2D, attrs: A, styles: S): void
 
-  static extend<A, S> (figure: FigureTemplate<A, S>): new (figure: FigureCreate) => FigureImp<A, S> {
+  static extend<A, S> (figure: FigureTemplate<A, S>): FigureInnerConstructor<A, S> {
     class Custom extends FigureImp<A, S> {
       checkEventOnImp (coordinate: Coordinate, attrs: A, styles: S): boolean {
         return figure.checkEventOn(coordinate, attrs, styles)

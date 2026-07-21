@@ -12,19 +12,17 @@
  * limitations under the License.
  */
 
-import type Crosshair from '../common/Crosshair'
-import type { TooltipStyle, TooltipTextStyle, TooltipLegend, TooltipLegendChild, TooltipFeatureStyle, FeatureIconFontStyle, FeaturePathStyle } from '../common/Styles'
-import { formatPrecision } from '../common/utils/format'
-import { isValid, isObject, isString, isNumber, isFunction } from '../common/utils/typeChecks'
-import { createFont } from '../common/utils/canvas'
-import type Coordinate from '../common/Coordinate'
-import type Nullable from '../common/Nullable'
 import type { ActionType } from '../common/Action'
-
-import type { YAxis } from '../component/YAxis'
-
+import type Coordinate from '../common/Coordinate'
+import type Crosshair from '../common/Crosshair'
+import type Nullable from '../common/Nullable'
+import type { FeatureIconFontStyle, FeaturePathStyle, TooltipFeatureStyle, TooltipLegend, TooltipLegendChild, TooltipStyle, TooltipTextStyle } from '../common/Styles'
+import { createFont } from '../common/utils/canvas'
+import { formatPrecision } from '../common/utils/format'
+import { isFunction, isNumber, isObject, isString, isValid } from '../common/utils/typeChecks'
 import type { Indicator, IndicatorFigure, IndicatorFigureStyle, IndicatorTooltipData } from '../component/Indicator'
 import { eachFigures } from '../component/Indicator'
+import type { YAxis } from '../component/YAxis'
 
 import type DrawPane from '../pane/DrawPane'
 import type DrawWidget from '../widget/DrawWidget'
@@ -344,6 +342,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
       const barSpace = chartStore.getBarSpace()
       const data = result[dataIndex] ?? {}
       const defaultValue = tooltipStyles.legend.defaultValue
+      // @ts-ignore
       eachFigures(indicator, dataIndex, barSpace, styles, (figure: IndicatorFigure, figureStyles: Required<IndicatorFigureStyle>) => {
         if (isString(figure.title)) {
           const color = figureStyles.color

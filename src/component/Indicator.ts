@@ -248,7 +248,7 @@ export type IndicatorConstructor<D = unknown, C = unknown, E = unknown> = new ()
 export type EachFigureCallback<D> = (figure: IndicatorFigure<D>, figureStyles: IndicatorFigureStyle, index: number) => void
 
 export function eachFigures<D = unknown> (
-  indicator: Indicator,
+  indicator: Indicator<D>,
   dataIndex: number,
   barSpace: BarSpace,
   defaultStyles: IndicatorStyle,
