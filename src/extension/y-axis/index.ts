@@ -12,11 +12,10 @@
  * limitations under the License.
  */
 
-import YAxisImp, { type YAxisTemplate, type YAxisConstructor } from '../../component/YAxis'
-
+import YAxisImp, { type YAxisConstructor, type YAxisTemplate } from '../../component/YAxis'
+import logarithm from './logarithm'
 import normal from './normal'
 import percentage from './percentage'
-import logarithm from './logarithm'
 
 const yAxises: Record<string, YAxisConstructor> = {
   normal: YAxisImp.extend(normal),
@@ -33,6 +32,6 @@ function getYAxisClass (name: string): YAxisConstructor {
 }
 
 export {
-  registerYAxis,
-  getYAxisClass
+  getYAxisClass, 
+  registerYAxis
 }

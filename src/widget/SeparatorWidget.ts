@@ -13,19 +13,17 @@
  */
 
 import type Bounding from '../common/Bounding'
-import { UpdateLevel } from '../common/Updater'
 import type { MouseTouchEvent } from '../common/EventHandler'
+import type Nullable from '../common/Nullable'
+import { UpdateLevel } from '../common/Updater'
 import { createDom } from '../common/utils/dom'
 import { throttle } from '../common/utils/performance'
-import type Nullable from '../common/Nullable'
 import { isValid } from '../common/utils/typeChecks'
-
-import Widget from './Widget'
-import { WidgetNameConstants, REAL_SEPARATOR_HEIGHT } from './types'
-
-import type SeparatorPane from '../pane/SeparatorPane'
 import type DrawPane from '../pane/DrawPane'
+import type SeparatorPane from '../pane/SeparatorPane'
 import { PaneIdConstants } from '../pane/types'
+import { REAL_SEPARATOR_HEIGHT, WidgetNameConstants } from './types'
+import Widget from './Widget'
 
 export default class SeparatorWidget extends Widget<SeparatorPane> {
   private _dragFlag = false
@@ -39,21 +37,13 @@ export default class SeparatorWidget extends Widget<SeparatorPane> {
 
   constructor (rootContainer: HTMLElement, pane: SeparatorPane) {
     super(rootContainer, pane)
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument -- ignore
     this.registerEvent('touchStartEvent', this._mouseDownEvent.bind(this))
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument -- ignore
       .registerEvent('touchMoveEvent', this._pressedMouseMoveEvent.bind(this))
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument -- ignore
       .registerEvent('touchEndEvent', this._mouseUpEvent.bind(this))
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument -- ignore
       .registerEvent('mouseDownEvent', this._mouseDownEvent.bind(this))
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument -- ignore
       .registerEvent('mouseUpEvent', this._mouseUpEvent.bind(this))
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument -- ignore
       .registerEvent('pressedMouseMoveEvent', this._pressedMouseMoveEvent.bind(this))
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument -- ignore
       .registerEvent('mouseEnterEvent', this._mouseEnterEvent.bind(this))
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument -- ignore
       .registerEvent('mouseLeaveEvent', this._mouseLeaveEvent.bind(this))
   }
 
@@ -119,7 +109,6 @@ export default class SeparatorWidget extends Widget<SeparatorPane> {
     return this._mouseLeaveEvent()
   }
 
-  // eslint-disable-next-line @typescript-eslint/unbound-method -- ignore
   private readonly _pressedMouseMoveEvent = throttle(this._pressedTouchMouseMoveEvent, 20)
 
   private _pressedTouchMouseMoveEvent (event: MouseTouchEvent): boolean {

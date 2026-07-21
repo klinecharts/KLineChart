@@ -12,9 +12,9 @@
  * limitations under the License.
  */
 
-import { getLinearYFromCoordinates } from '../figure/line'
 
 import type { OverlayTemplate } from '../../component/Overlay'
+import { getLinearYFromCoordinates } from '../figure/line'
 
 const straightLine: OverlayTemplate = {
   name: 'straightLine',

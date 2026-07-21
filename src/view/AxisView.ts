@@ -14,11 +14,9 @@
 
 import type Bounding from '../common/Bounding'
 import type { AxisStyle, Styles } from '../common/Styles'
-
+import type { Axis, AxisTick } from '../component/Axis'
 import type { LineAttrs } from '../extension/figure/line'
 import type { TextAttrs } from '../extension/figure/text'
-
-import type { AxisTick, Axis } from '../component/Axis'
 
 import View from './View'
 

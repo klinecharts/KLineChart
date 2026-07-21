@@ -12,18 +12,16 @@
  * limitations under the License.
  */
 
-import { UpdateLevel } from '../common/Updater'
-import type Bounding from '../common/Bounding'
-import { merge } from '../common/utils/typeChecks'
-import { createDom } from '../common/utils/dom'
-import { getPixelRatio } from '../common/utils/canvas'
 
 import type Chart from '../Chart'
-
+import type Bounding from '../common/Bounding'
+import { UpdateLevel } from '../common/Updater'
+import { getPixelRatio } from '../common/utils/canvas'
+import { createDom } from '../common/utils/dom'
+import { merge } from '../common/utils/typeChecks'
+import SeparatorWidget from '../widget/SeparatorWidget'
 import type DrawPane from './DrawPane'
 import Pane from './Pane'
-
-import SeparatorWidget from '../widget/SeparatorWidget'
 
 export default class SeparatorPane extends Pane {
   private _topPane: DrawPane

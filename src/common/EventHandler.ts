@@ -1,4 +1,3 @@
-/* eslint-disable eslint-comments/require-description -- ignore */
 
 /**
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -228,31 +227,22 @@ export default class EventHandlerImp {
     this._unsubscribeMouseWheel?.()
     this._unsubscribeContextMenu?.()
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const boundMouseMoveHandler = this._mouseMoveHandler.bind(this)
     this._unsubscribeMousemove = () => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       this._target.removeEventListener('mousemove', boundMouseMoveHandler)
     }
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     this._target.addEventListener('mousemove', boundMouseMoveHandler)
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const boundMouseWheel = this._mouseWheelHandler.bind(this)
     this._unsubscribeMouseWheel = () => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       this._target.removeEventListener('wheel', boundMouseWheel)
     }
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     this._target.addEventListener('wheel', boundMouseWheel, { passive: false })
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const boundContextMenu = this._contextMenuHandler.bind(this)
     this._unsubscribeContextMenu = () => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       this._target.removeEventListener('contextmenu', boundContextMenu)
     }
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     this._target.addEventListener('contextmenu', boundContextMenu, { passive: false })
 
     if (this._firesTouchEvents(enterEvent)) {
@@ -602,25 +592,18 @@ export default class EventHandlerImp {
     }
 
     {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const boundTouchMoveWithDownHandler = this._touchMoveHandler.bind(this)
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const boundTouchEndHandler = this._touchEndHandler.bind(this)
 
       this._unsubscribeRootTouchEvents = () => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         rootElement.removeEventListener('touchmove', boundTouchMoveWithDownHandler)
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         rootElement.removeEventListener('touchend', boundTouchEndHandler)
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       rootElement.addEventListener('touchmove', boundTouchMoveWithDownHandler, { passive: false })
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       rootElement.addEventListener('touchend', boundTouchEndHandler, { passive: false })
 
       this._clearLongTapTimeout()
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       this._longTapTimeoutId = setTimeout(this._longTapHandler.bind(this, downEvent), Delay.LongTap)
     }
 
@@ -628,7 +611,6 @@ export default class EventHandlerImp {
 
     if (this._tapTimeoutId === null) {
       this._tapCount = 0
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       this._tapTimeoutId = setTimeout(this._resetTapTimeout.bind(this), Delay.ResetClick)
       this._tapCoordinate = this._getCoordinate(touch)
     }
@@ -660,21 +642,15 @@ export default class EventHandlerImp {
     }
 
     {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const boundMouseMoveWithDownHandler = this._mouseMoveWithDownHandler.bind(this)
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const boundMouseUpHandler = this._mouseUpHandler.bind(this)
 
       this._unsubscribeRootMouseEvents = () => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         rootElement.removeEventListener('mousemove', boundMouseMoveWithDownHandler)
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         rootElement.removeEventListener('mouseup', boundMouseUpHandler)
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       rootElement.addEventListener('mousemove', boundMouseMoveWithDownHandler)
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       rootElement.addEventListener('mouseup', boundMouseUpHandler)
     }
 
@@ -688,18 +664,15 @@ export default class EventHandlerImp {
 
     if (this._clickTimeoutId === null) {
       this._clickCount = 0
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       this._clickTimeoutId = setTimeout(this._resetClickTimeout.bind(this), Delay.ResetClick)
       this._clickCoordinate = this._getCoordinate(downEvent)
     }
   }
 
   private _init (): void {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     this._target.addEventListener('mouseenter', this._mouseEnterHandler.bind(this))
 
     // Do not show context menu when something went wrong
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     this._target.addEventListener('touchcancel', this._clearLongTapTimeout.bind(this))
 
     {
@@ -740,10 +713,8 @@ export default class EventHandlerImp {
       this._target.addEventListener('dblclick', this._onMobileSafariDoubleClick)
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     this._target.addEventListener('mouseleave', this._mouseLeaveHandler.bind(this))
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     this._target.addEventListener('touchstart', this._touchStartHandler.bind(this), { passive: true })
 
     this._target.addEventListener('mousedown', (e: MouseEvent) => {
@@ -755,7 +726,6 @@ export default class EventHandlerImp {
       return undefined
     })
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     this._target.addEventListener('mousedown', this._mouseDownHandler.bind(this))
     this._initPinch()
 
@@ -764,7 +734,7 @@ export default class EventHandlerImp {
     // it treats a touchstart and the following touchmove events as cancelable=false,
     // so we can't prevent them (as soon we subscribe on touchmove inside touchstart's handler).
     // And we'll get scroll of the page along with chart's one instead of only chart's scroll.
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    // biome-ignore lint/suspicious/noEmptyBlockStatements: Safari requires an empty non-passive handler.
     this._target.addEventListener('touchmove', () => {}, { passive: false })
   }
 
@@ -878,13 +848,9 @@ export default class EventHandlerImp {
   }
 
   private _firesTouchEvents (e: MouseEvent): boolean {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     if (isValid(e.sourceCapabilities?.firesTouchEvents)) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-expect-error
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
       return e.sourceCapabilities.firesTouchEvents
     }
 
@@ -938,12 +904,11 @@ export default class EventHandlerImp {
 
   private _eventTimeStamp (e: TouchEvent | MouseEvent): number {
     // for some reason e.timestamp is always 0 on iPad with magic mouse, so we use performance.now() as a fallback
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     return e.timeStamp ?? performance.now()
   }
 
   private _touchWithId (touches: TouchList, id: Nullable<number>): Nullable<Touch> {
-    // eslint-disable-next-line @typescript-eslint/prefer-for-of
+    // biome-ignore lint/style/useForOf: TouchList does not implement the iterable protocol in every target browser.
     for (let i = 0; i < touches.length; ++i) {
       if (touches[i].identifier === id) {
         return touches[i]

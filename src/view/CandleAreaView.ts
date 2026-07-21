@@ -12,16 +12,15 @@
  * limitations under the License.
  */
 
-import type Coordinate from '../common/Coordinate'
-import type { GradientColor } from '../common/Styles'
 import Animation from '../common/Animation'
-import { isNumber, isArray, isValid } from '../common/utils/typeChecks'
+import type Coordinate from '../common/Coordinate'
+import type Nullable from '../common/Nullable'
+import type { GradientColor } from '../common/Styles'
 import { UpdateLevel } from '../common/Updater'
-
-import ChildrenView from './ChildrenView'
+import { isArray, isNumber, isValid } from '../common/utils/typeChecks'
 
 import { lineTo } from '../extension/figure/line'
-import type Nullable from '../common/Nullable'
+import ChildrenView from './ChildrenView'
 
 export default class CandleAreaView extends ChildrenView {
   private readonly _ripplePoint = this.createFigure({
@@ -95,7 +94,8 @@ export default class CandleAreaView extends ChildrenView {
           backgroundColor.forEach(({ offset, color }) => {
             gradient.addColorStop(offset, color)
           })
-        } catch (e) {
+        } catch {
+          // Ignore invalid gradient stops.
         }
         color = gradient
       } else {

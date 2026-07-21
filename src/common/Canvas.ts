@@ -13,9 +13,9 @@
  */
 
 import { getPixelRatio } from './utils/canvas'
+import { DEFAULT_REQUEST_ID, requestAnimationFrame } from './utils/compatible'
 import { createDom } from './utils/dom'
 import { isValid } from './utils/typeChecks'
-import { requestAnimationFrame, DEFAULT_REQUEST_ID } from './utils/compatible'
 
 type DrawListener = () => void
 
@@ -79,7 +79,6 @@ export default class Canvas {
         this._resizeObserver.observe(this._element, { box: 'device-pixel-content-box' })
       } else {
         this._mediaQueryList = window.matchMedia(`(resolution: ${getPixelRatio(this._element)}dppx)`)
-        // eslint-disable-next-line @typescript-eslint/no-deprecated -- ignore
         this._mediaQueryList.addListener(this._mediaQueryListener)
       }
     }).catch((_: unknown) => false)
@@ -140,7 +139,6 @@ export default class Canvas {
       this._resizeObserver.unobserve(this._element)
     }
     if (isValid(this._mediaQueryList)) {
-      // eslint-disable-next-line @typescript-eslint/no-deprecated -- ignore
       this._mediaQueryList.removeListener(this._mediaQueryListener)
     }
   }

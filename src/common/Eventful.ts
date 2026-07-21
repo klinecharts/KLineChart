@@ -12,9 +12,9 @@
  * limitations under the License.
  */
 
-import { isValid } from './utils/typeChecks'
 
 import type { EventName, MouseTouchEvent, MouseTouchEventCallback } from './EventHandler'
+import { isValid } from './utils/typeChecks'
 
 export interface EventDispatcher {
   dispatchEvent: (name: EventName, event: MouseTouchEvent) => boolean

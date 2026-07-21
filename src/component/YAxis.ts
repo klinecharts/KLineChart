@@ -13,25 +13,22 @@
  */
 
 import type Bounding from '../common/Bounding'
-import { isFunction, isNumber, isString, isValid, merge } from '../common/utils/typeChecks'
-import { index10, getPrecision, nice, round } from '../common/utils/number'
+import { SymbolDefaultPrecisionConstants } from '../common/SymbolInfo'
 import { calcTextWidth } from '../common/utils/canvas'
 import { formatPrecision } from '../common/utils/format'
-import { SymbolDefaultPrecisionConstants } from '../common/SymbolInfo'
-
-import AxisImp, {
-  type Axis, type AxisRange,
-  type AxisTick, type AxisValueToValueCallback,
-  type AxisMinSpanCallback, type AxisCreateRangeCallback,
-  type AxisPosition,
-  TICK_COUNT,
-  type AxisOverride,
-  type AxisTemplate
-} from './Axis'
-
+import { getPrecision, index10, nice, round } from '../common/utils/number'
+import { isFunction, isNumber, isString, isValid, merge } from '../common/utils/typeChecks'
 import type DrawPane from '../pane/DrawPane'
-
 import { PaneIdConstants } from '../pane/types'
+import AxisImp, {
+  type Axis, type AxisCreateRangeCallback,
+  type AxisMinSpanCallback, 
+  type AxisOverride,
+  type AxisPosition,type AxisRange,
+  type AxisTemplate, 
+  type AxisTick, type AxisValueToValueCallback,
+  TICK_COUNT
+} from './Axis'
 
 import type { Indicator } from './Indicator'
 
@@ -198,7 +195,6 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
       indicators.forEach(({ result, figures }) => {
         const data = result[dataIndex] ?? {}
         figures.forEach(figure => {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- ignore
           const value = data[figure.key]
           if (isNumber(value)) {
             min = Math.min(min, value)
@@ -448,7 +444,6 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
           precision = indicatorPrecision
         }
         let valueText = formatPrecision(max, precision)
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- ignore
         if (shouldFormatBigNumber) {
           valueText = chartStore.getInnerFormatter().formatBigNumber(valueText)
         }

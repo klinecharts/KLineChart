@@ -12,12 +12,11 @@
  * limitations under the License.
  */
 
-import type Nullable from '../../common/Nullable'
 import type DeepPartial from '../../common/DeepPartial'
+import type Nullable from '../../common/Nullable'
 import type { Styles } from '../../common/Styles'
-
-import light from './light'
 import dark from './dark'
+import light from './light'
 
 const styles: Record<string, DeepPartial<Styles>> = {
   light,
@@ -33,6 +32,6 @@ function getStyles (name: string): Nullable<DeepPartial<Styles>> {
 }
 
 export {
-  registerStyles,
-  getStyles
+  getStyles, 
+  registerStyles
 }

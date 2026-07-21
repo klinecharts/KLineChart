@@ -14,7 +14,7 @@
 
 import type Nullable from '../../common/Nullable'
 
-import IndicatorImp, { type IndicatorTemplate, type IndicatorConstructor } from '../../component/Indicator'
+import IndicatorImp, { type IndicatorConstructor, type IndicatorTemplate } from '../../component/Indicator'
 
 import averagePrice from './averagePrice'
 import awesomeOscillator from './awesomeOscillator'
@@ -71,4 +71,4 @@ function getSupportedIndicators (): string[] {
   return Object.keys(indicators)
 }
 
-export { registerIndicator, getIndicatorClass, getSupportedIndicators }
+export { getIndicatorClass, getSupportedIndicators, registerIndicator }

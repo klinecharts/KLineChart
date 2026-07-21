@@ -12,12 +12,12 @@
  * limitations under the License.
  */
 
-import type Coordinate from '../../common/Coordinate'
 import type Bounding from '../../common/Bounding'
+import type Coordinate from '../../common/Coordinate'
 
 import type { OverlayTemplate } from '../../component/Overlay'
 
-import { type LineAttrs, getLinearSlopeIntercept } from '../figure/line'
+import { getLinearSlopeIntercept, type LineAttrs } from '../figure/line'
 
 /**
  * 获取平行线

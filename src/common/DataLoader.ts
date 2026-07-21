@@ -12,10 +12,10 @@
  * limitations under the License.
  */
 
-import type Nullable from './Nullable'
 import type { KLineData } from './Data'
-import type { SymbolInfo } from './SymbolInfo'
+import type Nullable from './Nullable'
 import type { Period } from './Period'
+import type { SymbolInfo } from './SymbolInfo'
 
 export type DataLoadType = 'init' | 'forward' | 'backward' | 'update'
 

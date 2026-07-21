@@ -12,12 +12,12 @@
  * limitations under the License.
  */
 
-import type Nullable from '../common/Nullable'
 import type Crosshair from '../common/Crosshair'
+import type Nullable from '../common/Nullable'
 import type { FeatureIconFontStyle, FeaturePathStyle, FeatureStyle } from '../common/Styles'
-import { isString } from '../common/utils/typeChecks'
-import { calcTextWidth } from '../common/utils/canvas'
 import { SymbolDefaultPrecisionConstants } from '../common/SymbolInfo'
+import { calcTextWidth } from '../common/utils/canvas'
+import { isString } from '../common/utils/typeChecks'
 
 import type { YAxis } from '../component/YAxis'
 
@@ -111,9 +111,7 @@ export default class CrosshairFeatureView extends View<YAxis> {
           let finalColor = color
           let finalBackgroundColor = backgroundColor
           if (this._activeFeatureInfo?.feature.id === feature.id) {
-            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- ignore
             finalColor = activeColor ?? color
-            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- ignore
             finalBackgroundColor = activeBackgroundColor ?? backgroundColor
           }
           const eventHandler = {

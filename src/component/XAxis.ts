@@ -12,16 +12,14 @@
  * limitations under the License.
  */
 
-import type Nullable from '../common/Nullable'
 import type Bounding from '../common/Bounding'
-import { isFunction, isNumber, isString } from '../common/utils/typeChecks'
-
-import AxisImp, { type Axis, type AxisRange, type AxisTick, TICK_COUNT, type AxisOverride } from './Axis'
-
-import type DrawPane from '../pane/DrawPane'
-import { calcTextWidth } from '../common/utils/canvas'
+import type Nullable from '../common/Nullable'
 import { PeriodTypeXAxisFormat } from '../common/Period'
 import type PickRequired from '../common/PickRequired'
+import { calcTextWidth } from '../common/utils/canvas'
+import { isFunction, isNumber, isString } from '../common/utils/typeChecks'
+import type DrawPane from '../pane/DrawPane'
+import AxisImp, { type Axis, type AxisOverride, type AxisRange, type AxisTick, TICK_COUNT } from './Axis'
 
 export type XAxisOverride = Pick<AxisOverride, 'name' | 'scrollZoomEnabled' | 'createTicks'>
 

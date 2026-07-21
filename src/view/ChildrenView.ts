@@ -12,10 +12,10 @@
  * limitations under the License.
  */
 
-import View from './View'
-import type { VisibleRangeData } from '../common/Data'
 import type BarSpace from '../common/BarSpace'
+import type { VisibleRangeData } from '../common/Data'
 import type { YAxis } from '../component/YAxis'
+import View from './View'
 
 export type EachChildCallback = (
   data: VisibleRangeData,

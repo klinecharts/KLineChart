@@ -12,15 +12,14 @@
  * limitations under the License.
  */
 
-import type Nullable from '../common/Nullable'
 import type Coordinate from '../common/Coordinate'
+import type Nullable from '../common/Nullable'
 
 import { isNumber } from '../common/utils/typeChecks'
-
+import type OverlayImp from '../component/Overlay'
+import type { Overlay, OverlayFigure } from '../component/Overlay'
 import type { XAxis } from '../component/XAxis'
 import type { YAxis } from '../component/YAxis'
-import type { OverlayFigure, Overlay } from '../component/Overlay'
-import type OverlayImp from '../component/Overlay'
 
 import OverlayYAxisView from './OverlayYAxisView'
 

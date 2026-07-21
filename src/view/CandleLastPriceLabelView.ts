@@ -12,17 +12,15 @@
  * limitations under the License.
  */
 
-import { isValid } from '../common/utils/typeChecks'
-import { calcTextWidth } from '../common/utils/canvas'
 import type { TextStyle } from '../common/Styles'
 import { SymbolDefaultPrecisionConstants } from '../common/SymbolInfo'
-
-import View from './View'
-
+import { calcTextWidth } from '../common/utils/canvas'
+import { isValid } from '../common/utils/typeChecks'
 import type { FigureCreate } from '../component/Figure'
 import type YAxis from '../component/YAxis'
-import type YAxisWidget from '../widget/YAxisWidget'
 import type { TextAttrs } from '../extension/figure/text'
+import type YAxisWidget from '../widget/YAxisWidget'
+import View from './View'
 
 export default class CandleLastPriceLabelView extends View<YAxis> {
   override drawImp (ctx: CanvasRenderingContext2D): void {

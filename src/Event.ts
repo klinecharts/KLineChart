@@ -12,29 +12,28 @@
  * limitations under the License.
  */
 
-import type Nullable from './common/Nullable'
-import EventHandlerImp, { type EventHandler, type MouseTouchEvent, TOUCH_MIN_RADIUS } from './common/EventHandler'
-import type Coordinate from './common/Coordinate'
-import { UpdateLevel } from './common/Updater'
-import type Crosshair from './common/Crosshair'
-import { requestAnimationFrame, cancelAnimationFrame } from './common/utils/compatible'
-import { isArray, isFunction, isValid } from './common/utils/typeChecks'
-import { isAppleOS } from './common/utils/platform'
-
-import { getHotkey, getSupportedHotkeys } from './extension/hotkey/index'
-
-import type { AxisRange } from './component/Axis'
-import type YAxisImp from './component/YAxis'
-import type XAxis from './component/XAxis'
 
 import type Chart from './Chart'
-import type Pane from './pane/Pane'
+import type Coordinate from './common/Coordinate'
+import type Crosshair from './common/Crosshair'
+import EventHandlerImp, { type EventHandler, type MouseTouchEvent, TOUCH_MIN_RADIUS } from './common/EventHandler'
+import type Nullable from './common/Nullable'
+import { UpdateLevel } from './common/Updater'
+import { cancelAnimationFrame, requestAnimationFrame } from './common/utils/compatible'
+import { isAppleOS } from './common/utils/platform'
+import { isArray, isFunction, isValid } from './common/utils/typeChecks'
+
+import type { AxisRange } from './component/Axis'
+import type XAxis from './component/XAxis'
+import type YAxisImp from './component/YAxis'
+import { getHotkey, getSupportedHotkeys } from './extension/hotkey/index'
 import type DrawPane from './pane/DrawPane'
-import type XAxisPane from './pane/XAxisPane'
+import type Pane from './pane/Pane'
 import { PaneIdConstants } from './pane/types'
+import type XAxisPane from './pane/XAxisPane'
+import { REAL_SEPARATOR_HEIGHT, WidgetNameConstants } from './widget/types'
 import type Widget from './widget/Widget'
 import type YAxisWidget from './widget/YAxisWidget'
-import { WidgetNameConstants, REAL_SEPARATOR_HEIGHT } from './widget/types'
 
 interface EventTriggerWidgetInfo {
   pane: Nullable<Pane>
@@ -388,7 +387,6 @@ export default class Event implements EventHandler {
       const name = widget.getName()
       switch (name) {
         case WidgetNameConstants.MAIN: {
-          // eslint-disable-next-line @typescript-eslint/init-declarations -- ignore
           let crosshair: Crosshair | undefined
           const consumed = widget.dispatchEvent('pressedMouseMoveEvent', event)
           if (!consumed) {

@@ -103,7 +103,7 @@ The docs site uses port `8888` by default.
 | Command | Description |
 | --- | --- |
 | `pnpm run debug` | Start the built-in debug page, using `src` directly |
-| `pnpm run code-lint` | Run ESLint on `src/**/*.ts` |
+| `pnpm run code-lint` | Run Biome on `src/**/*.ts` |
 | `pnpm run type-check` | Run TypeScript type checking |
 | `pnpm run clean` | Clean `dist` |
 | `pnpm run build-esm` | Build the ESM output |

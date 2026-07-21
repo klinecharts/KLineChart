@@ -13,9 +13,8 @@
  */
 
 import type { KLineData } from '../../common/Data'
-import type { IndicatorTemplate } from '../../component/Indicator'
-
 import { getMaxMin } from '../../common/utils/number'
+import type { IndicatorTemplate } from '../../component/Indicator'
 
 interface Kdj {
   k?: number

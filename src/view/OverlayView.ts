@@ -12,24 +12,22 @@
  * limitations under the License.
  */
 
-import type Nullable from '../common/Nullable'
 import type Coordinate from '../common/Coordinate'
-import type Point from '../common/Point'
 import type { EventHandler, EventName, MouseTouchEvent, MouseTouchEventCallback } from '../common/EventHandler'
+import type Nullable from '../common/Nullable'
+import type Point from '../common/Point'
 import { isFunction, isNumber, isValid } from '../common/utils/typeChecks'
 
 import type { Axis } from '../component/Axis'
-import type { YAxis } from '../component/YAxis'
-import type { OverlayFigure, Overlay } from '../component/Overlay'
 import type OverlayImp from '../component/Overlay'
+import type { Overlay, OverlayFigure } from '../component/Overlay'
 import { checkOverlayFigureEvent, OVERLAY_FIGURE_KEY_PREFIX } from '../component/Overlay'
-
-import type { EventOverlayInfoFigureType } from '../Store'
+import type { YAxis } from '../component/YAxis'
+import type DrawPane from '../pane/DrawPane'
 
 import { PaneIdConstants } from '../pane/types'
-
+import type { EventOverlayInfoFigureType } from '../Store'
 import type DrawWidget from '../widget/DrawWidget'
-import type DrawPane from '../pane/DrawPane'
 
 import View from './View'
 
@@ -230,7 +228,6 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
             }
             let prevented = false
             overlay.onPressedMoving?.({ chart, overlay, figure: figure ?? undefined, ...event, preventDefault: () => { prevented = true } })
-            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- ignore
             if (prevented) {
               this.getWidget().setForceCursor(null)
             } else {
@@ -302,7 +299,6 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
       if (check) {
         let prevented = false
         overlay.onMouseMove?.({ chart: pane.getChart(), overlay, figure, ...event, preventDefault: () => { prevented = true } })
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- ignore
         if (prevented) {
           this.getWidget().setForceCursor(null)
         } else {
@@ -368,7 +364,6 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
       if (checkOverlayFigureEvent('onRightClick', figure)) {
         let prevented = false
         overlay.onRightClick?.({ chart: this.getWidget().getPane().getChart(), overlay, figure, ...event, preventDefault: () => { prevented = true } })
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- ignore
         if (!prevented) {
           this.getWidget().getPane().getChart().getChartStore().removeOverlay(overlay)
         }
@@ -518,7 +513,6 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
       return coordinate
     })
     if (coordinates.length > 0) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- ignore
       // @ts-expect-error
       const figures = [].concat(this.getFigures(overlay, coordinates))
       this.drawFigures(
@@ -538,14 +532,11 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     const defaultStyles = this.getWidget().getPane().getChart().getStyles().overlay
     figures.forEach((figure, figureIndex) => {
       const { type, styles, attrs } = figure
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- ignore
       // @ts-expect-error
       const attrsArray = [].concat(attrs)
       attrsArray.forEach((ats) => {
         const events = this._createFigureEvents(overlay, 'other', figureIndex, figure)
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- ignore
         // @ts-expect-error
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- ignore
         const ss = { ...defaultStyles[type], ...overlay.styles?.[type], ...styles }
         this.createFigure({
           name: type, attrs: ats, styles: ss

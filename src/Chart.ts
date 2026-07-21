@@ -12,55 +12,48 @@
  * limitations under the License.
  */
 
-import type Nullable from './common/Nullable'
-import type DeepPartial from './common/DeepPartial'
-import type PickPartial from './common/PickPartial'
+import type { ActionCallback, ActionType } from './common/Action'
+import Animation from './common/Animation'
+import type BarSpace from './common/BarSpace'
 import type Bounding from './common/Bounding'
 import { createDefaultBounding } from './common/Bounding'
-import type { KLineData } from './common/Data'
 import type Coordinate from './common/Coordinate'
-import type Point from './common/Point'
-import { UpdateLevel } from './common/Updater'
 import type Crosshair from './common/Crosshair'
-import type { ActionType, ActionCallback } from './common/Action'
+import type { KLineData } from './common/Data'
 import type { DataLoader } from './common/DataLoader'
-import type VisibleRange from './common/VisibleRange'
-import type { Formatter, DecimalFold, Options, ThousandsSeparator, ZoomAnchor, ZoomAnchorType, Hotkey } from './Options'
-import Animation from './common/Animation'
-import { createId } from './common/utils/id'
-import { createDom } from './common/utils/dom'
+import type DeepPartial from './common/DeepPartial'
+import type ExcludePickPartial from './common/ExcludePickPartial'
+import type Nullable from './common/Nullable'
+import type { Period } from './common/Period'
+import type PickPartial from './common/PickPartial'
+import type PickRequired from './common/PickRequired'
+import type Point from './common/Point'
+import type { Styles } from './common/Styles'
+import type { SymbolInfo } from './common/SymbolInfo'
+import { UpdateLevel } from './common/Updater'
 import { getPixelRatio } from './common/utils/canvas'
-import { isString, isArray, isValid, isNumber } from './common/utils/typeChecks'
-import { requestAnimationFrame, cancelAnimationFrame, DEFAULT_REQUEST_ID } from './common/utils/compatible'
+import { cancelAnimationFrame, DEFAULT_REQUEST_ID, requestAnimationFrame } from './common/utils/compatible'
+import { createDom } from './common/utils/dom'
+import { createId } from './common/utils/id'
 import { logWarn } from './common/utils/logger'
 import { binarySearchNearest } from './common/utils/number'
-import type { Styles } from './common/Styles'
-import type BarSpace from './common/BarSpace'
-import type PickRequired from './common/PickRequired'
-import type { SymbolInfo } from './common/SymbolInfo'
-import type { Period } from './common/Period'
-import type ExcludePickPartial from './common/ExcludePickPartial'
-
-import ChartStore, { SCALE_MULTIPLIER, type Store } from './Store'
-
-import CandlePane from './pane/CandlePane'
-import IndicatorPane from './pane/IndicatorPane'
-import XAxisPane from './pane/XAxisPane'
-import type DrawPane from './pane/DrawPane'
-import SeparatorPane from './pane/SeparatorPane'
-
-import { type PaneOptions, PaneIdConstants } from './pane/types'
-
+import { isArray, isNumber, isString, isValid } from './common/utils/typeChecks'
+import type VisibleRange from './common/VisibleRange'
 import type AxisImp from './component/Axis'
-import { Y_AXIS_ID_PREFIX, type YAxis, type YAxisOverride } from './component/YAxis'
+import type { Indicator, IndicatorCreate, IndicatorFilter, IndicatorOverride } from './component/Indicator'
+import type { Overlay, OverlayCreate, OverlayFilter, OverlayOverride } from './component/Overlay'
 import type { XAxisOverride } from './component/XAxis'
-
-import type { IndicatorFilter, Indicator, IndicatorCreate, IndicatorOverride } from './component/Indicator'
-import type { OverlayFilter, Overlay, OverlayCreate, OverlayOverride } from './component/Overlay'
-
-import { getIndicatorClass } from './extension/indicator/index'
-
+import { Y_AXIS_ID_PREFIX, type YAxis, type YAxisOverride } from './component/YAxis'
 import Event from './Event'
+import { getIndicatorClass } from './extension/indicator/index'
+import type { DecimalFold, Formatter, Hotkey, Options, ThousandsSeparator, ZoomAnchor, ZoomAnchorType } from './Options'
+import CandlePane from './pane/CandlePane'
+import type DrawPane from './pane/DrawPane'
+import IndicatorPane from './pane/IndicatorPane'
+import SeparatorPane from './pane/SeparatorPane'
+import { PaneIdConstants, type PaneOptions } from './pane/types'
+import XAxisPane from './pane/XAxisPane'
+import ChartStore, { SCALE_MULTIPLIER, type Store } from './Store'
 
 export type DomPosition = 'root' | 'main' | 'yAxis'
 
@@ -184,7 +177,6 @@ export default class ChartImp implements Chart {
       userSelect: 'none',
       webkitUserSelect: 'none',
       overflow: 'hidden',
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- ignore
       // @ts-expect-error
       msUserSelect: 'none',
       MozUserSelect: 'none',
@@ -212,8 +204,8 @@ export default class ChartImp implements Chart {
   }
 
   private _createPane<P extends DrawPane> (
-    DrawPaneClass: new (chart: Chart, options: PickRequired<PaneOptions, 'id'>) => P,
-    options: PickRequired<PaneOptions, 'id'>
+    DrawPaneClass: new (chart: Chart, options: PaneOptions) => P,
+    options: PaneOptions
   ): P {
     const pane = new DrawPaneClass(this, options)
     this._drawPanes.push(pane)
@@ -1197,7 +1189,6 @@ export default class ChartImp implements Chart {
       const pane = this.getDrawPaneById(paneId)
       if (pane !== null) {
         const bounding = pane.getBounding()
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- ignore
         // @ts-expect-error
         const ps: Array<Partial<Point>> = [].concat(points)
         const xAxis = this._xAxisPane.getXAxisComponent()
@@ -1229,7 +1220,6 @@ export default class ChartImp implements Chart {
       const pane = this.getDrawPaneById(paneId)
       if (pane !== null) {
         const bounding = pane.getBounding()
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- ignore
         // @ts-expect-error
         const cs: Array<Partial<Coordinate>> = [].concat(coordinates)
         const xAxis = this._xAxisPane.getXAxisComponent()

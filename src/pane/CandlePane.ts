@@ -12,12 +12,11 @@
  * limitations under the License.
  */
 
-import type DrawWidget from '../widget/DrawWidget'
+import type { YAxis } from '../component/YAxis'
 import CandleWidget from '../widget/CandleWidget'
-
+import type DrawWidget from '../widget/DrawWidget'
 import type DrawPane from './DrawPane'
 import IndicatorPane from './IndicatorPane'
-import type { YAxis } from '../component/YAxis'
 
 export default class CandlePane extends IndicatorPane {
   override createMainWidget (container: HTMLElement): DrawWidget<DrawPane<YAxis>> {

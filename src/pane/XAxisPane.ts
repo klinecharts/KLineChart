@@ -12,20 +12,16 @@
  * limitations under the License.
  */
 
-import { isValid } from '../common/utils/typeChecks'
-import type PickRequired from '../common/PickRequired'
-
-import type DrawWidget from '../widget/DrawWidget'
-import XAxisWidget from '../widget/XAxisWidget'
-
-import type { XAxis, XAxisOverride } from '../component/XAxis'
-
-import DrawPane from './DrawPane'
-import type { PaneOptions } from './types'
-
-import { getXAxisClass } from '../extension/x-axis'
 
 import type Chart from '../Chart'
+import type PickRequired from '../common/PickRequired'
+import { isValid } from '../common/utils/typeChecks'
+import type { XAxis, XAxisOverride } from '../component/XAxis'
+import { getXAxisClass } from '../extension/x-axis'
+import type DrawWidget from '../widget/DrawWidget'
+import XAxisWidget from '../widget/XAxisWidget'
+import DrawPane from './DrawPane'
+import type { PaneOptions } from './types'
 
 export default class XAxisPane extends DrawPane<XAxis> {
   private _xAxis: XAxis

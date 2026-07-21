@@ -5,7 +5,6 @@ import replace from '@rollup/plugin-replace'
 import typescript from '@rollup/plugin-typescript'
 import terser from '@rollup/plugin-terser'
 import fileSize from 'rollup-plugin-filesize'
-import eslint from '@rollup/plugin-eslint'
 
 import { resolvePath, getVersion } from '../utils.js'
 
@@ -30,9 +29,6 @@ function createInputConfig ({ input, replaceValues }) {
     input,
     plugins: [
       typescript(),
-      eslint({
-        throwOnError: true
-      }),
       nodeResolve(),
       replace({
         preventAssignment: true,

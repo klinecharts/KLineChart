@@ -13,14 +13,11 @@
  */
 
 import type Nullable from '../common/Nullable'
-
+import type { YAxis } from '../component/YAxis'
+import { getYAxisClass } from '../extension/y-axis'
 import type DrawWidget from '../widget/DrawWidget'
 import IndicatorWidget from '../widget/IndicatorWidget'
 import YAxisWidget from '../widget/YAxisWidget'
-
-import type { YAxis } from '../component/YAxis'
-
-import { getYAxisClass } from '../extension/y-axis'
 
 import DrawPane from './DrawPane'
 

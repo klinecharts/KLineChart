@@ -14,8 +14,8 @@
 
 import type Coordinate from '../../common/Coordinate'
 import type { PolygonStyle } from '../../common/Styles'
-import { isString } from '../../common/utils/typeChecks'
 import { isTransparent } from '../../common/utils/color'
+import { isString } from '../../common/utils/typeChecks'
 
 import type { FigureTemplate } from '../../component/Figure'
 

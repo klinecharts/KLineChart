@@ -12,20 +12,18 @@
  * limitations under the License.
  */
 
-import type Nullable from '../common/Nullable'
 import type Coordinate from '../common/Coordinate'
+import type Nullable from '../common/Nullable'
+import { SymbolDefaultPrecisionConstants } from '../common/SymbolInfo'
 import { formatPrecision } from '../common/utils/format'
 import { isNumber } from '../common/utils/typeChecks'
-import { SymbolDefaultPrecisionConstants } from '../common/SymbolInfo'
 
 import type { Axis } from '../component/Axis'
-import type { YAxis } from '../component/YAxis'
-import type { OverlayFigure, Overlay } from '../component/Overlay'
 import type OverlayImp from '../component/Overlay'
-
-import OverlayView from './OverlayView'
-
+import type { Overlay, OverlayFigure } from '../component/Overlay'
 import type YAxisImp from '../component/YAxis'
+import type { YAxis } from '../component/YAxis'
+import OverlayView from './OverlayView'
 
 export default class OverlayYAxisView<C extends Axis = YAxis> extends OverlayView<C> {
   override coordinateToPointTimestampDataIndexFlag (): boolean {

@@ -103,7 +103,7 @@ pnpm run docs:dev
 | 命令 | 说明 |
 | --- | --- |
 | `pnpm run debug` | 启动仓库内置调试页，直接使用 `src` 源码 |
-| `pnpm run code-lint` | 使用 ESLint 检查 `src/**/*.ts` |
+| `pnpm run code-lint` | 使用 Biome 检查 `src/**/*.ts` |
 | `pnpm run type-check` | 执行 TypeScript 类型检查 |
 | `pnpm run clean` | 清理 `dist` |
 | `pnpm run build-esm` | 构建 ESM 产物 |

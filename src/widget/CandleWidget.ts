@@ -12,20 +12,17 @@
  * limitations under the License.
  */
 
-import IndicatorWidget from './IndicatorWidget'
-
-import CandleBarView from '../view/CandleBarView'
-import CandleAreaView from '../view/CandleAreaView'
-import CandleHighLowPriceView from '../view/CandleHighLowPriceView'
-import CandleLastPriceLineView from '../view/CandleLastPriceLineView'
-
-import type IndicatorTooltipView from '../view/IndicatorTooltipView'
-import CandleTooltipView from '../view/CandleTooltipView'
-import CrosshairFeatureView from '../view/CrosshairFeatureView'
-
-import type AxisPane from '../pane/DrawPane'
 
 import type { YAxis } from '../component/YAxis'
+import type AxisPane from '../pane/DrawPane'
+import CandleAreaView from '../view/CandleAreaView'
+import CandleBarView from '../view/CandleBarView'
+import CandleHighLowPriceView from '../view/CandleHighLowPriceView'
+import CandleLastPriceLineView from '../view/CandleLastPriceLineView'
+import CandleTooltipView from '../view/CandleTooltipView'
+import CrosshairFeatureView from '../view/CrosshairFeatureView'
+import type IndicatorTooltipView from '../view/IndicatorTooltipView'
+import IndicatorWidget from './IndicatorWidget'
 
 export default class CandleWidget extends IndicatorWidget {
   private readonly _candleBarView = new CandleBarView(this)

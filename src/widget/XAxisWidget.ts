@@ -12,16 +12,15 @@
  * limitations under the License.
  */
 
-import { WidgetNameConstants } from './types'
-import DrawWidget from './DrawWidget'
-
-import type DrawPane from '../pane/DrawPane'
 
 import type { XAxis } from '../component/XAxis'
+import type DrawPane from '../pane/DrawPane'
+import CrosshairVerticalLabelView from '../view/CrosshairVerticalLabelView'
+import OverlayXAxisView from '../view/OverlayXAxisView'
 
 import XAxisView from '../view/XAxisView'
-import OverlayXAxisView from '../view/OverlayXAxisView'
-import CrosshairVerticalLabelView from '../view/CrosshairVerticalLabelView'
+import DrawWidget from './DrawWidget'
+import { WidgetNameConstants } from './types'
 
 export default class XAxisWidget extends DrawWidget<DrawPane<XAxis>> {
   private readonly _xAxisView = new XAxisView(this)

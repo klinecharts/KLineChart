@@ -21,7 +21,7 @@
 export function createDom<K extends keyof HTMLElementTagNameMap> (tagName: K, styles?: Partial<CSSStyleDeclaration>): HTMLElementTagNameMap[K] {
   const dom = document.createElement(tagName)
   const s = styles ?? {}
-  // eslint-disable-next-line guard-for-in -- ignore
+  // biome-ignore lint/suspicious/useGuardForIn: CSSStyleDeclaration keys are copied intentionally.
   for (const key in s) {
     (dom.style)[key] = s[key] ?? ''
   }

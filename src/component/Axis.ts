@@ -12,13 +12,11 @@
  * limitations under the License.
  */
 
-import type VisibleRange from '../common/VisibleRange'
-
-import type DrawPane from '../pane/DrawPane'
-
-import type Bounding from '../common/Bounding'
 import type { Chart } from '../Chart'
+import type Bounding from '../common/Bounding'
 import type PickRequired from '../common/PickRequired'
+import type VisibleRange from '../common/VisibleRange'
+import type DrawPane from '../pane/DrawPane'
 
 export interface AxisTick {
   coord: number

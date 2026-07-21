@@ -12,13 +12,13 @@
  * limitations under the License.
  */
 
-import type Updater from '../common/Updater'
-import { UpdateLevel } from '../common/Updater'
-import type Bounding from '../common/Bounding'
-import { createDefaultBounding } from '../common/Bounding'
-import { createDom } from '../common/utils/dom'
 
 import type Chart from '../Chart'
+import type Bounding from '../common/Bounding'
+import { createDefaultBounding } from '../common/Bounding'
+import type Updater from '../common/Updater'
+import { UpdateLevel } from '../common/Updater'
+import { createDom } from '../common/utils/dom'
 
 export default abstract class Pane implements Updater {
   private readonly _container: HTMLElement

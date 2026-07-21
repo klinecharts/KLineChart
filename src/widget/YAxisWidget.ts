@@ -12,18 +12,16 @@
  * limitations under the License.
  */
 
-import type DrawPane from '../pane/DrawPane'
-
-import { WidgetNameConstants } from './types'
-import DrawWidget from './DrawWidget'
 
 import type { YAxis } from '../component/YAxis'
-
-import YAxisView from '../view/YAxisView'
+import type DrawPane from '../pane/DrawPane'
 import CandleLastPriceLabelView from '../view/CandleLastPriceLabelView'
+import CrosshairHorizontalLabelView from '../view/CrosshairHorizontalLabelView'
 import IndicatorLastValueView from '../view/IndicatorLastValueView'
 import OverlayYAxisView from '../view/OverlayYAxisView'
-import CrosshairHorizontalLabelView from '../view/CrosshairHorizontalLabelView'
+import YAxisView from '../view/YAxisView'
+import DrawWidget from './DrawWidget'
+import { WidgetNameConstants } from './types'
 
 export default class YAxisWidget extends DrawWidget<DrawPane<YAxis>> {
   private readonly _yAxis: YAxis

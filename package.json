@@ -50,13 +50,13 @@
     "prepublishOnly": "node scripts/pre-publish.js",
     "branch-lint": "node scripts/branch-lint.js",
     "commit-lint": "commitlint --edit",
-    "code-lint": "eslint src/**/*.ts",
+    "code-lint": "biome lint src",
     "type-check": "tsc --noEmit",
     "clean": "node scripts/build/clean.js",
-    "build-esm": "node scripts/build/build-esm.js",
-    "build-cjs": "cross-env NODE_ENV=production node scripts/build/build-cjs.js",
-    "build-umd:dev": "cross-env NODE_ENV=development node scripts/build/build-umd.js",
-    "build-umd:prod": "cross-env NODE_ENV=production node scripts/build/build-umd.js",
+    "build-esm": "pnpm code-lint && node scripts/build/build-esm.js",
+    "build-cjs": "pnpm code-lint && cross-env NODE_ENV=production node scripts/build/build-cjs.js",
+    "build-umd:dev": "pnpm code-lint && cross-env NODE_ENV=development node scripts/build/build-umd.js",
+    "build-umd:prod": "pnpm code-lint && cross-env NODE_ENV=production node scripts/build/build-umd.js",
     "build-umd": "pnpm build-umd:dev && pnpm build-umd:prod",
     "build-core": "pnpm build-esm && pnpm build-cjs && pnpm build-umd",
     "build-dts": "node scripts/build/build-dts.js",
@@ -74,11 +74,10 @@
     "@babel/standalone": "^7.26.9",
     "@babel/traverse": "^7.26.9",
     "@babel/types": "^7.26.9",
+    "@biomejs/biome": "^2.5.4",
     "@commitlint/cli": "^19.6.1",
     "@commitlint/config-conventional": "^19.6.0",
-    "@eslint/eslintrc": "^3.3.0",
     "@rollup/plugin-commonjs": "^29.0.2",
-    "@rollup/plugin-eslint": "^9.2.0",
     "@rollup/plugin-node-resolve": "^16.0.3",
     "@rollup/plugin-replace": "^6.0.3",
     "@rollup/plugin-terser": "^1.0.0",
@@ -90,12 +89,6 @@
     "codesandbox": "^2.2.3",
     "cross-env": "^7.0.3",
     "dts-bundle-generator": "^9.5.1",
-    "eslint": "^9.20.0",
-    "eslint-config-love": "^112.0.0",
-    "eslint-config-standard": "^17.1.0",
-    "eslint-plugin-import": "^2.31.0",
-    "eslint-plugin-n": "^17.16.2",
-    "eslint-plugin-promise": "^7.2.1",
     "fs-extra": "^11.2.0",
     "gh-pages": "^6.1.1",
     "husky": "^8.0.3",
@@ -107,10 +100,5 @@
     "typescript": "^5.8.3",
     "vite": "^8.1.3",
     "vitepress": "2.0.0-alpha.18"
-  },
-  "pnpm": {
-    "overrides": {
-      "@rollup/plugin-eslint>eslint": "$eslint"
-    }
   }
 }

@@ -12,8 +12,8 @@
  * limitations under the License.
  */
 
-import { isNumber } from '../../common/utils/typeChecks'
 import { SymbolDefaultPrecisionConstants } from '../../common/SymbolInfo'
+import { isNumber } from '../../common/utils/typeChecks'
 
 import type { OverlayTemplate } from '../../component/Overlay'
 

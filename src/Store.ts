@@ -12,47 +12,41 @@
  * limitations under the License.
  */
 
-import type Nullable from './common/Nullable'
-import type PickPartial from './common/PickPartial'
-import type DeepPartial from './common/DeepPartial'
-import type { KLineData, VisibleRangeData } from './common/Data'
-import type VisibleRange from './common/VisibleRange'
-import type Coordinate from './common/Coordinate'
-import { getDefaultVisibleRange } from './common/VisibleRange'
-import TaskScheduler from './common/TaskScheduler'
-import type Crosshair from './common/Crosshair'
-import type BarSpace from './common/BarSpace'
-import type { Period } from './common/Period'
-import { SymbolDefaultPrecisionConstants, type SymbolInfo } from './common/SymbolInfo'
-
-import Action from './common/Action'
-import type { ActionType, ActionCallback } from './common/Action'
-import { formatValue, formatTimestampByTemplate, formatBigNumber, formatThousands, formatFoldDecimal } from './common/utils/format'
-import { getDefaultStyles, type Styles, type TooltipLegend } from './common/Styles'
-import { isArray, isString, isValid, isNumber, isBoolean, merge } from './common/utils/typeChecks'
-import { createId } from './common/utils/id'
-import { binarySearchNearest } from './common/utils/number'
-import { logWarn } from './common/utils/logger'
-import { UpdateLevel } from './common/Updater'
-import type { DataLoader, DataLoaderGetBarsParams, DataLoadMore, DataLoadType } from './common/DataLoader'
-
-import type { Options, Formatter, ThousandsSeparator, DecimalFold, FormatDateType, FormatDateParams, FormatBigNumber, FormatExtendText, FormatExtendTextParams, ZoomAnchor, ZoomAnchorType, Hotkey, Layout } from './Options'
-
-import type { IndicatorOverride, IndicatorCreate, IndicatorFilter } from './component/Indicator'
-import type IndicatorImp from './component/Indicator'
-import { getIndicatorClass } from './extension/indicator/index'
-
-import type OverlayImp from './component/Overlay'
-import { type OverlayCreate, OVERLAY_ID_PREFIX, type OverlayFilter, type OverlayFigure, type OverlayOverride } from './component/Overlay'
-import { getOverlayInnerClass } from './extension/overlay/index'
-
-import { getStyles as getExtensionStyles } from './extension/styles/index'
-
-import { PaneIdConstants } from './pane/types'
 
 import type Chart from './Chart'
-import type ExcludePickPartial from './common/ExcludePickPartial'
+import type { ActionCallback, ActionType } from './common/Action'
+import Action from './common/Action'
+import type BarSpace from './common/BarSpace'
+import type Coordinate from './common/Coordinate'
+import type Crosshair from './common/Crosshair'
+import type { KLineData, VisibleRangeData } from './common/Data'
+import type { DataLoader, DataLoaderGetBarsParams, DataLoadMore, DataLoadType } from './common/DataLoader'
+import type DeepPartial from './common/DeepPartial'
 import type DeepRequired from './common/DeepRequired'
+import type ExcludePickPartial from './common/ExcludePickPartial'
+import type Nullable from './common/Nullable'
+import type { Period } from './common/Period'
+import type PickPartial from './common/PickPartial'
+import { getDefaultStyles, type Styles, type TooltipLegend } from './common/Styles'
+import { SymbolDefaultPrecisionConstants, type SymbolInfo } from './common/SymbolInfo'
+import TaskScheduler from './common/TaskScheduler'
+import { UpdateLevel } from './common/Updater'
+import { formatBigNumber, formatFoldDecimal, formatThousands, formatTimestampByTemplate, formatValue } from './common/utils/format'
+import { createId } from './common/utils/id'
+import { logWarn } from './common/utils/logger'
+import { binarySearchNearest } from './common/utils/number'
+import { isArray, isBoolean, isNumber, isString, isValid, merge } from './common/utils/typeChecks'
+import type VisibleRange from './common/VisibleRange'
+import { getDefaultVisibleRange } from './common/VisibleRange'
+import type IndicatorImp from './component/Indicator'
+import type { IndicatorCreate, IndicatorFilter, IndicatorOverride } from './component/Indicator'
+import type OverlayImp from './component/Overlay'
+import { OVERLAY_ID_PREFIX, type OverlayCreate, type OverlayFigure, type OverlayFilter, type OverlayOverride } from './component/Overlay'
+import { getIndicatorClass } from './extension/indicator/index'
+import { getOverlayInnerClass } from './extension/overlay/index'
+import { getStyles as getExtensionStyles } from './extension/styles/index'
+import type { DecimalFold, FormatBigNumber, FormatDateParams, FormatDateType, FormatExtendText, FormatExtendTextParams, Formatter, Hotkey, Layout, Options, ThousandsSeparator, ZoomAnchor, ZoomAnchorType } from './Options'
+import { PaneIdConstants } from './pane/types'
 
 type ScrollLimitRole = 'bar_count' | 'distance'
 
@@ -511,7 +505,7 @@ export default class StoreImp implements Store {
       let dateTimeFormat: Nullable<Intl.DateTimeFormat> = null
       try {
         dateTimeFormat = new Intl.DateTimeFormat('en', options)
-      } catch (e) {
+      } catch {
         logWarn('', '', 'Timezone is error!!!')
       }
       if (dateTimeFormat !== null) {
@@ -544,7 +538,6 @@ export default class StoreImp implements Store {
 
   setSymbol (symbol: PickPartial<SymbolInfo, 'pricePrecision' | 'volumePrecision'>): void {
     this.resetData(() => {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- ignore
       // @ts-expect-error
       this._symbol = {
         pricePrecision: SymbolDefaultPrecisionConstants.PRICE,
@@ -1507,11 +1500,9 @@ export default class StoreImp implements Store {
       }
     })
 
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- ignore
     if (sortFlag) {
       this._sortIndicators()
     }
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- ignore
     return updateFlag || sortFlag
   }
 
@@ -1664,7 +1655,6 @@ export default class StoreImp implements Store {
       }
     })
 
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- ignore
     if (sortFlag) {
       this._sortOverlays()
     }

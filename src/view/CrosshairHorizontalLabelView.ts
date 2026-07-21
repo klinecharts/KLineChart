@@ -14,10 +14,10 @@
 
 import type Bounding from '../common/Bounding'
 import type Crosshair from '../common/Crosshair'
-import type { CrosshairStyle, CrosshairDirectionStyle, StateTextStyle } from '../common/Styles'
-import { isString } from '../common/utils/typeChecks'
-import { createFont } from '../common/utils/canvas'
+import type { CrosshairDirectionStyle, CrosshairStyle, StateTextStyle } from '../common/Styles'
 import { SymbolDefaultPrecisionConstants } from '../common/SymbolInfo'
+import { createFont } from '../common/utils/canvas'
+import { isString } from '../common/utils/typeChecks'
 
 import type { Axis } from '../component/Axis'
 import type YAxis from '../component/YAxis'
@@ -25,9 +25,8 @@ import type YAxis from '../component/YAxis'
 import type { TextAttrs } from '../extension/figure/text'
 
 import type ChartStore from '../Store'
-
-import View from './View'
 import type YAxisWidget from '../widget/YAxisWidget'
+import View from './View'
 
 export default class CrosshairHorizontalLabelView<C extends Axis = YAxis> extends View<C> {
   override drawImp (ctx: CanvasRenderingContext2D): void {
@@ -93,7 +92,6 @@ export default class CrosshairHorizontalLabelView<C extends Axis = YAxis> extend
       precision
     )
 
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- ignore
     if (shouldFormatBigNumber) {
       text = chartStore.getInnerFormatter().formatBigNumber(text)
     }

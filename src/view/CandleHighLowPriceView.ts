@@ -14,12 +14,10 @@
 
 import type Coordinate from '../common/Coordinate'
 import type { CandleHighLowPriceMarkStyle } from '../common/Styles'
-import { formatPrecision } from '../common/utils/format'
 import { SymbolDefaultPrecisionConstants } from '../common/SymbolInfo'
-
-import View from './View'
-
+import { formatPrecision } from '../common/utils/format'
 import type { YAxis } from '../component/YAxis'
+import View from './View'
 
 export default class CandleHighLowPriceView extends View<YAxis> {
   override drawImp (ctx: CanvasRenderingContext2D): void {

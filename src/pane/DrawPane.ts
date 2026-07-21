@@ -12,29 +12,24 @@
  * limitations under the License.
  */
 
+
+import type Chart from '../Chart'
+import type Bounding from '../common/Bounding'
 import type DeepRequired from '../common/DeepRequired'
 
-import { createDom } from '../common/utils/dom'
-import { getPixelRatio } from '../common/utils/canvas'
-
 import type Nullable from '../common/Nullable'
+import type PickRequired from '../common/PickRequired'
 import type { UpdateLevel } from '../common/Updater'
-import type Bounding from '../common/Bounding'
-
+import { getPixelRatio } from '../common/utils/canvas'
+import { createDom } from '../common/utils/dom'
 import { isBoolean, isNumber, isValid, merge } from '../common/utils/typeChecks'
-
 import type { Axis } from '../component/Axis'
 import type YAxisImp from '../component/YAxis'
 import type { YAxis, YAxisOverride } from '../component/YAxis'
-
 import type DrawWidget from '../widget/DrawWidget'
 import type YAxisWidget from '../widget/YAxisWidget'
-
-import { type PaneOptions, PaneIdConstants } from './types'
 import Pane from './Pane'
-
-import type Chart from '../Chart'
-import type PickRequired from '../common/PickRequired'
+import { PaneIdConstants, type PaneOptions } from './types'
 
 export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
   private readonly _mainWidget: DrawWidget<DrawPane<C>>
@@ -166,7 +161,6 @@ export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
     this._yAxisComponents.delete(yAxisId)
     this._manualYAxisIds.delete(yAxisId)
     if (this._defaultYAxisId === yAxisId) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- ignore
       this._defaultYAxisId = this._yAxisComponents.keys().next().value ?? null
     }
     const yAxisWidget = this._yAxisWidgets.get(yAxisId)

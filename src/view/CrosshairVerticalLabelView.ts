@@ -14,17 +14,14 @@
 
 import type Bounding from '../common/Bounding'
 import type Crosshair from '../common/Crosshair'
-import type { CrosshairStyle, CrosshairDirectionStyle, StateTextStyle } from '../common/Styles'
+import { PeriodTypeCrosshairTooltipFormat } from '../common/Period'
+import type { CrosshairDirectionStyle, CrosshairStyle, StateTextStyle } from '../common/Styles'
 import { isValid } from '../common/utils/typeChecks'
-
 import type { Axis } from '../component/Axis'
 import type { XAxis } from '../component/XAxis'
-
-import type ChartStore from '../Store'
-
-import CrosshairHorizontalLabelView from './CrosshairHorizontalLabelView'
 import type { TextAttrs } from '../extension/figure/text'
-import { PeriodTypeCrosshairTooltipFormat } from '../common/Period'
+import type ChartStore from '../Store'
+import CrosshairHorizontalLabelView from './CrosshairHorizontalLabelView'
 
 export default class CrosshairVerticalLabelView extends CrosshairHorizontalLabelView<XAxis> {
   override compare (crosshair: Crosshair): boolean {

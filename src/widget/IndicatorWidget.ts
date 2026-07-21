@@ -12,18 +12,16 @@
  * limitations under the License.
  */
 
-import type DrawPane from '../pane/DrawPane'
-
-import { WidgetNameConstants } from './types'
-import DrawWidget from './DrawWidget'
 
 import type { YAxis } from '../component/YAxis'
-
-import GridView from '../view/GridView'
-import IndicatorView from '../view/IndicatorView'
+import type DrawPane from '../pane/DrawPane'
 import CrosshairLineView from '../view/CrosshairLineView'
+import GridView from '../view/GridView'
 import IndicatorTooltipView from '../view/IndicatorTooltipView'
+import IndicatorView from '../view/IndicatorView'
 import OverlayView from '../view/OverlayView'
+import DrawWidget from './DrawWidget'
+import { WidgetNameConstants } from './types'
 
 export default class IndicatorWidget extends DrawWidget<DrawPane<YAxis>> {
   private readonly _gridView = new GridView(this)

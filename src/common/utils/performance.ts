@@ -35,11 +35,9 @@ export function throttle (func: (...args: unknown[]) => unknown, wait?: number):
 //       return cache.get(key)
 //     }
 //     const result = func.apply(this, args)
-//     // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 //     memoized.cache = cache.set(key, result) || cache
 //     return result
 //   }
-//   // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 //   memoized.cache = new (memoize.Cache || Map)()
 //   return memoized
 // }

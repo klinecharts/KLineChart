@@ -12,12 +12,11 @@
  * limitations under the License.
  */
 
-import type Nullable from '../../common/Nullable'
 import type Coordinate from '../../common/Coordinate'
+import type Nullable from '../../common/Nullable'
 import type { SmoothLineStyle } from '../../common/Styles'
-
-import { type FigureTemplate, DEVIATION } from '../../component/Figure'
 import { isNumber, isString } from '../../common/utils/typeChecks'
+import { DEVIATION, type FigureTemplate } from '../../component/Figure'
 
 export function checkCoordinateOnLine (coordinate: Coordinate, attrs: LineAttrs | LineAttrs[]): boolean {
   let lines: LineAttrs[] = []

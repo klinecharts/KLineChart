@@ -236,7 +236,7 @@ init(container, {
 9.2 安装与构建
 
 - 安装依赖：`pnpm install`
-- 代码校验：`pnpm run code-lint`（eslint，匹配 `src/**/*.ts`）
+- 代码校验：`pnpm run code-lint`（Biome，匹配 `src/**/*.ts`）
 - 类型检查：`pnpm run type-check`
 - 清理：`pnpm run clean`
 - 构建：

@@ -12,20 +12,19 @@
  * limitations under the License.
  */
 
-import type Nullable from '../common/Nullable'
-import type DeepPartial from '../common/DeepPartial'
-import type ExcludePickPartial from '../common/ExcludePickPartial'
-import type Point from '../common/Point'
-import type Coordinate from '../common/Coordinate'
+import type { Chart } from '../Chart'
 import type Bounding from '../common/Bounding'
-import type { OverlayStyle } from '../common/Styles'
+import type Coordinate from '../common/Coordinate'
+import type DeepPartial from '../common/DeepPartial'
 import type { MouseTouchEvent } from '../common/EventHandler'
+import type ExcludePickPartial from '../common/ExcludePickPartial'
+import type Nullable from '../common/Nullable'
+import type Point from '../common/Point'
+import type { OverlayStyle } from '../common/Styles'
 import { clone, isArray, isBoolean, isNumber, isString, isValid, merge } from '../common/utils/typeChecks'
-
+import type ChartStore from '../Store'
 import type { XAxis } from './XAxis'
 import type { YAxis } from './YAxis'
-import type ChartStore from '../Store'
-import type { Chart } from '../Chart'
 
 export type OverlayMode = 'normal' | 'weak_magnet' | 'strong_magnet'
 

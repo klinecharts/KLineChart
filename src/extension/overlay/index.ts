@@ -14,8 +14,8 @@
 
 import type Nullable from '../../common/Nullable'
 
-import OverlayImp, { type OverlayTemplate, type OverlayConstructor, type OverlayInnerConstructor } from '../../component/Overlay'
-
+import OverlayImp, { type OverlayConstructor, type OverlayInnerConstructor, type OverlayTemplate } from '../../component/Overlay'
+import brush from './brush'
 import fibonacciLine from './fibonacciLine'
 import horizontalRayLine from './horizontalRayLine'
 import horizontalSegment from './horizontalSegment'
@@ -25,14 +25,12 @@ import priceChannelLine from './priceChannelLine'
 import priceLine from './priceLine'
 import rayLine from './rayLine'
 import segment from './segment'
+import simpleAnnotation from './simpleAnnotation'
+import simpleTag from './simpleTag'
 import straightLine from './straightLine'
 import verticalRayLine from './verticalRayLine'
 import verticalSegment from './verticalSegment'
 import verticalStraightLine from './verticalStraightLine'
-
-import simpleAnnotation from './simpleAnnotation'
-import simpleTag from './simpleTag'
-import brush from './brush'
 
 const overlays: Record<string, OverlayInnerConstructor> = {}
 
@@ -63,4 +61,4 @@ function getSupportedOverlays (): string[] {
   return Object.keys(overlays)
 }
 
-export { registerOverlay, getOverlayClass, getOverlayInnerClass, getSupportedOverlays }
+export { getOverlayClass, getOverlayInnerClass, getSupportedOverlays, registerOverlay }

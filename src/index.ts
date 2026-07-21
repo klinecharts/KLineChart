@@ -24,54 +24,49 @@
  * limitations under the License.
  */
 
-import type {
-  LineType, PolygonType, TooltipShowRule, TooltipShowType, FeatureType, TooltipFeaturePosition,
-  CandleType, CandleTooltipRectPosition
-} from './common/Styles'
-import type Nullable from './common/Nullable'
-
-import { logError, logTag, logWarn } from './common/utils/logger'
-
-import {
-  clone, merge, isString, isNumber, isValid, isObject, isArray, isFunction, isBoolean
-} from './common/utils/typeChecks'
-import {
-  formatValue,
-  formatPrecision,
-  formatBigNumber,
-  formatThousands,
-  formatFoldDecimal,
-  formatTimestampByTemplate
-} from './common/utils/format'
-import { calcTextWidth } from './common/utils/canvas'
-import type { ActionType } from './common/Action'
-import type { IndicatorSeries } from './component/Indicator'
-import type { OverlayMode, OverlayDrawingMode } from './component/Overlay'
-import type { YAxisOverride } from './component/YAxis'
-
-import type { FormatDateType, Options, ZoomAnchor } from './Options'
 import ChartImp, { type Chart, type DomPosition, type YAxisFilter } from './Chart'
-
+import type { ActionType } from './common/Action'
+import type Nullable from './common/Nullable'
+import type {CandleTooltipRectPosition, 
+  CandleType, FeatureType, 
+  LineType, PolygonType, TooltipFeaturePosition,TooltipShowRule, TooltipShowType 
+} from './common/Styles'
+import { calcTextWidth } from './common/utils/canvas'
+import {
+  formatBigNumber,
+  formatFoldDecimal,
+  formatPrecision,
+  formatThousands,
+  formatTimestampByTemplate, 
+  formatValue
+} from './common/utils/format'
+import { logError, logTag, logWarn } from './common/utils/logger'
+import {
+  clone, isArray, isBoolean, isFunction, isNumber, isObject, isString, isValid, merge 
+} from './common/utils/typeChecks'
+import type { IndicatorSeries } from './component/Indicator'
+import type { OverlayDrawingMode, OverlayMode } from './component/Overlay'
+import type { YAxisOverride } from './component/YAxis'
 import { checkCoordinateOnArc } from './extension/figure/arc'
 import { checkCoordinateOnCircle } from './extension/figure/circle'
+import { getFigureClass, getSupportedFigures, registerFigure } from './extension/figure/index'
 import {
   checkCoordinateOnLine,
-  getLinearYFromSlopeIntercept,
   getLinearSlopeIntercept,
-  getLinearYFromCoordinates
+  getLinearYFromCoordinates, 
+  getLinearYFromSlopeIntercept
 } from './extension/figure/line'
 import { checkCoordinateOnPolygon } from './extension/figure/polygon'
 import { checkCoordinateOnRect } from './extension/figure/rect'
 import { checkCoordinateOnText } from './extension/figure/text'
-
-import { registerFigure, getSupportedFigures, getFigureClass } from './extension/figure/index'
-import { registerIndicator, getSupportedIndicators } from './extension/indicator/index'
-import { registerLocale, getSupportedLocales } from './extension/i18n/index'
-import { registerOverlay, getOverlayClass, getSupportedOverlays } from './extension/overlay/index'
+import { getHotkey, getSupportedHotkeys, registerHotkey } from './extension/hotkey/index'
+import { getSupportedLocales, registerLocale } from './extension/i18n/index'
+import { getSupportedIndicators, registerIndicator } from './extension/indicator/index'
+import { getOverlayClass, getSupportedOverlays, registerOverlay } from './extension/overlay/index'
 import { registerStyles } from './extension/styles/index'
 import { registerXAxis } from './extension/x-axis'
 import { registerYAxis } from './extension/y-axis'
-import { registerHotkey, getHotkey, getSupportedHotkeys } from './extension/hotkey/index'
+import type { FormatDateType, Options, ZoomAnchor } from './Options'
 
 const charts = new Map<string, ChartImp>()
 let chartBaseId = 1
@@ -167,17 +162,17 @@ const utils = {
 }
 
 export {
-  version, init, dispose,
-  registerFigure, getSupportedFigures, getFigureClass,
-  registerIndicator, getSupportedIndicators,
-  registerHotkey, getHotkey, getSupportedHotkeys,
-  registerOverlay, getSupportedOverlays, getOverlayClass,
-  registerLocale, getSupportedLocales,
+  type ActionType, type CandleTooltipRectPosition,
+  type CandleType, 
+  type Chart, type DomPosition, dispose,type FeatureType, type FormatDateType, getFigureClass,getHotkey, getOverlayClass,getSupportedFigures, getSupportedHotkeys,getSupportedIndicators,getSupportedLocales,getSupportedOverlays, type IndicatorSeries, init, 
+  type LineType, type OverlayDrawingMode, type OverlayMode, type PolygonType, 
+  registerFigure, 
+  registerHotkey, 
+  registerIndicator, 
+  registerLocale, 
+  registerOverlay, 
   registerStyles,
-  registerXAxis, registerYAxis,
+  registerXAxis, registerYAxis,type TooltipFeaturePosition, type TooltipShowRule, type TooltipShowType, 
   utils,
-  type LineType, type PolygonType, type TooltipShowRule, type TooltipShowType, type FeatureType, type TooltipFeaturePosition, type CandleTooltipRectPosition,
-  type CandleType, type FormatDateType, type ZoomAnchor,
-  type Chart, type DomPosition, type YAxisOverride, type YAxisFilter,
-  type ActionType, type IndicatorSeries, type OverlayMode, type OverlayDrawingMode
+  version, type YAxisFilter,type YAxisOverride, type ZoomAnchor
 }

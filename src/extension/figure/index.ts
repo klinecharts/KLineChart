@@ -14,15 +14,14 @@
 
 import type Nullable from '../../common/Nullable'
 
-import FigureImp, { type FigureTemplate, type FigureConstructor, type FigureInnerConstructor } from '../../component/Figure'
-
+import FigureImp, { type FigureConstructor, type FigureInnerConstructor, type FigureTemplate } from '../../component/Figure'
+import arc from './arc'
 import circle from './circle'
 import line from './line'
+import path from './path'
 import polygon from './polygon'
 import rect from './rect'
 import text from './text'
-import arc from './arc'
-import path from './path'
 
 const figures: Record<string, FigureInnerConstructor> = {}
 
@@ -47,4 +46,4 @@ function getFigureClass<A = unknown, S = unknown> (name: string): Nullable<Figur
   return figures[name] ?? null
 }
 
-export { getSupportedFigures, getFigureClass, getInnerFigureClass, registerFigure }
+export { getFigureClass, getInnerFigureClass, getSupportedFigures, registerFigure }

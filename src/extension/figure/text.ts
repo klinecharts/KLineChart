@@ -15,11 +15,11 @@
 import type Coordinate from '../../common/Coordinate'
 import type { TextStyle } from '../../common/Styles'
 
-import { createFont, calcTextWidth } from '../../common/utils/canvas'
+import { calcTextWidth, createFont } from '../../common/utils/canvas'
 
 import type { FigureTemplate } from '../../component/Figure'
 
-import { type RectAttrs, drawRect } from './rect'
+import { drawRect, type RectAttrs } from './rect'
 
 export function getTextRect (attrs: TextAttrs, styles: Partial<TextStyle>): RectAttrs {
   const { size = 12, paddingLeft = 0, paddingTop = 0, paddingRight = 0, paddingBottom = 0, weight = 'normal', family } = styles

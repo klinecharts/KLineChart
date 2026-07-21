@@ -12,19 +12,17 @@
  * limitations under the License.
  */
 
-import type Nullable from '../common/Nullable'
-import type { VisibleRangeData } from '../common/Data'
 import type BarSpace from '../common/BarSpace'
-import { isValid } from '../common/utils/typeChecks'
+import type { VisibleRangeData } from '../common/Data'
 import type { EventHandler } from '../common/EventHandler'
-import type { CandleType, CandleBarColor, RectStyle } from '../common/Styles'
+import type Nullable from '../common/Nullable'
+import type { CandleBarColor, CandleType, RectStyle } from '../common/Styles'
+import { isValid } from '../common/utils/typeChecks'
 
 import type { FigureCreate } from '../component/Figure'
 import type { RectAttrs } from '../extension/figure/rect'
-
-import ChildrenView from './ChildrenView'
-
 import { PaneIdConstants } from '../pane/types'
+import ChildrenView from './ChildrenView'
 
 export interface CandleBarOptions {
   yAxisId: string

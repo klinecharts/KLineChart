@@ -13,9 +13,8 @@
  */
 
 import type { Locales } from '../../Options'
-
-import zhCN from './zh-CN'
 import enUS from './en-US'
+import zhCN from './zh-CN'
 
 const locales: Record<string, Locales> = {
   'zh-CN': zhCN,
@@ -34,4 +33,4 @@ function i18n (key: string, locale: string): string {
   return locales[locale][key] ?? key
 }
 
-export { i18n, registerLocale, getSupportedLocales }
+export { getSupportedLocales, i18n, registerLocale }

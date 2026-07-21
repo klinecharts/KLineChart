@@ -12,8 +12,8 @@
  * limitations under the License.
  */
 
-import { formatPrecision } from '../../common/utils/format'
 import { SymbolDefaultPrecisionConstants } from '../../common/SymbolInfo'
+import { formatPrecision } from '../../common/utils/format'
 import { isFunction, isNumber, isValid } from '../../common/utils/typeChecks'
 
 import type { OverlayTemplate } from '../../component/Overlay'

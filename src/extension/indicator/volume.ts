@@ -15,7 +15,7 @@
 import { formatValue } from '../../common/utils/format'
 import { isValid } from '../../common/utils/typeChecks'
 
-import type { IndicatorTemplate, IndicatorFigure } from '../../component/Indicator'
+import type { IndicatorFigure, IndicatorTemplate } from '../../component/Indicator'
 
 interface Vol {
   open: number

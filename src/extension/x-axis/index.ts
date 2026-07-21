@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import XAxisImp, { type XAxisTemplate, type XAxisConstructor } from '../../component/XAxis'
+import XAxisImp, { type XAxisConstructor, type XAxisTemplate } from '../../component/XAxis'
 
 import normal from './normal'
 
@@ -29,6 +29,6 @@ function getXAxisClass (name: string): XAxisConstructor {
 }
 
 export {
-  registerXAxis,
-  getXAxisClass
+  getXAxisClass, 
+  registerXAxis
 }

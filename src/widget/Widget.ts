@@ -14,15 +14,13 @@
 
 import type Bounding from '../common/Bounding'
 import { createDefaultBounding } from '../common/Bounding'
-import type Updater from '../common/Updater'
-import { UpdateLevel } from '../common/Updater'
 import Eventful from '../common/Eventful'
-
-import type Pane from '../pane/Pane'
-
-import { isString, merge } from '../common/utils/typeChecks'
 import type { MouseTouchEvent } from '../common/EventHandler'
 import type Nullable from '../common/Nullable'
+import type Updater from '../common/Updater'
+import { UpdateLevel } from '../common/Updater'
+import { isString, merge } from '../common/utils/typeChecks'
+import type Pane from '../pane/Pane'
 
 export default abstract class Widget<P extends Pane = Pane> extends Eventful implements Updater {
   /**

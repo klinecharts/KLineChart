@@ -17,7 +17,7 @@ import type { RectStyle } from '../../common/Styles'
 import { isTransparent } from '../../common/utils/color'
 import { isString } from '../../common/utils/typeChecks'
 
-import { type FigureTemplate, DEVIATION } from '../../component/Figure'
+import { DEVIATION, type FigureTemplate } from '../../component/Figure'
 
 export function checkCoordinateOnRect (coordinate: Coordinate, attrs: RectAttrs | RectAttrs[]): boolean {
   let rects: RectAttrs[] = []
@@ -59,7 +59,6 @@ export function drawRect (ctx: CanvasRenderingContext2D, attrs: RectAttrs | Rect
     borderRadius: r = 0,
     borderDashedValue = [2, 2]
   } = styles
-  // eslint-disable-next-line @typescript-eslint/unbound-method, @typescript-eslint/no-unnecessary-condition -- ignore
   const draw = ctx.roundRect ?? ctx.rect
   const solid = (style === 'fill' || styles.style === 'stroke_fill') && (!isString(color) || !isTransparent(color))
   if (solid) {

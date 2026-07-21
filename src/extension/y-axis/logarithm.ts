@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import { log10, index10 } from '../../common/utils/number'
+import { index10, log10 } from '../../common/utils/number'
 import type { AxisTemplate } from '../../component/Axis'
 
 const logarithm: AxisTemplate = {

@@ -12,8 +12,8 @@
  * limitations under the License.
  */
 
-import type { OverlayTemplate } from '../../component/Overlay'
 import { isFunction, isValid } from '../../common/utils/typeChecks'
+import type { OverlayTemplate } from '../../component/Overlay'
 
 const simpleAnnotation: OverlayTemplate = {
   name: 'simpleAnnotation',

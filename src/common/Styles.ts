@@ -12,8 +12,8 @@
  * limitations under the License.
  */
 
-import type Nullable from './Nullable'
 import type { KLineData, NeighborData } from './Data'
+import type Nullable from './Nullable'
 import { hexToRgb } from './utils/color'
 
 export interface Margin {

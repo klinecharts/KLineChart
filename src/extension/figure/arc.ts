@@ -16,7 +16,7 @@ import type Coordinate from '../../common/Coordinate'
 import { getDistance } from '../../common/Coordinate'
 import type { LineStyle } from '../../common/Styles'
 
-import { type FigureTemplate, DEVIATION } from '../../component/Figure'
+import { DEVIATION, type FigureTemplate } from '../../component/Figure'
 
 import type { CircleAttrs } from './circle'
 

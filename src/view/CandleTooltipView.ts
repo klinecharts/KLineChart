@@ -12,20 +12,17 @@
  * limitations under the License.
  */
 
+import { PeriodTypeCrosshairTooltipFormat } from '../common/Period'
 import type {
   TooltipLegend, TooltipLegendChild
 } from '../common/Styles'
-import { formatPrecision, formatTemplateString } from '../common/utils/format'
-import { createFont } from '../common/utils/canvas'
-import { isFunction, isObject, isValid } from '../common/utils/typeChecks'
-import { PeriodTypeCrosshairTooltipFormat } from '../common/Period'
 import { SymbolDefaultPrecisionConstants } from '../common/SymbolInfo'
-
-import { PaneIdConstants } from '../pane/types'
-
-import IndicatorTooltipView from './IndicatorTooltipView'
-
+import { createFont } from '../common/utils/canvas'
+import { formatPrecision, formatTemplateString } from '../common/utils/format'
+import { isFunction, isObject, isValid } from '../common/utils/typeChecks'
 import { i18n } from '../extension/i18n/index'
+import { PaneIdConstants } from '../pane/types'
+import IndicatorTooltipView from './IndicatorTooltipView'
 
 export default class CandleTooltipView extends IndicatorTooltipView {
   override drawImp (ctx: CanvasRenderingContext2D): void {
@@ -389,7 +386,6 @@ export default class CandleTooltipView extends IndicatorTooltipView {
     const prev = dataList[dataIndex - 1] ?? null
     const current = dataList[dataIndex]
 
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- ignore
     const prevClose = prev?.close ?? current.close
     const changeValue = current.close - prevClose
     const mapping = {

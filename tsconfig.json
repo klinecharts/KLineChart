@@ -1,6 +1,8 @@
 {
   "compilerOptions": {
     "strictNullChecks": true,
+    "strictPropertyInitialization": false,
+    "noImplicitAny": false,
     "target": "ES5",
     "esModuleInterop": true,
     "downlevelIteration": true,
