@@ -21,15 +21,15 @@ const locales: Record<string, Locales> = {
   'en-US': enUS
 }
 
-function registerLocale (locale: string, ls: Locales): void {
+function registerLocale(locale: string, ls: Locales): void {
   locales[locale] = { ...locales[locale], ...ls }
 }
 
-function getSupportedLocales (): string[] {
+function getSupportedLocales(): string[] {
   return Object.keys(locales)
 }
 
-function i18n (key: string, locale: string): string {
+function i18n(key: string, locale: string): string {
   return locales[locale][key] ?? key
 }
 

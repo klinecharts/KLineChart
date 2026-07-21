@@ -19,10 +19,10 @@
  * @param targetValue
  * @return {number}
  */
-export function binarySearchNearest<T> (dataList: T[], valueKey: keyof T, targetValue: T[keyof T]): number {
+export function binarySearchNearest<T>(dataList: T[], valueKey: keyof T, targetValue: T[keyof T]): number {
   let left = 0
   let right = 0
-  for (right = dataList.length - 1; left !== right;) {
+  for (right = dataList.length - 1; left !== right; ) {
     const midIndex = Math.floor((right + left) / 2)
     const mid = right - left
     const midValue = dataList[midIndex][valueKey]
@@ -54,7 +54,7 @@ export function binarySearchNearest<T> (dataList: T[], valueKey: keyof T, target
  * @param value
  * @return {number|number}
  */
-export function nice (value: number): number {
+export function nice(value: number): number {
   const exponent = Math.floor(log10(value))
   const exp10 = index10(exponent)
   const f = value / exp10 // 1 <= f < 10
@@ -84,7 +84,7 @@ export function nice (value: number): number {
  * @param precision
  * @return {number}
  */
-export function round (value: number, precision?: number): number {
+export function round(value: number, precision?: number): number {
   precision = Math.max(0, precision ?? 0)
   const pow = Math.pow(10, precision)
   return Math.round(value * pow) / pow
@@ -95,7 +95,7 @@ export function round (value: number, precision?: number): number {
  * @param value
  * @return {number|number}
  */
-export function getPrecision (value: number): number {
+export function getPrecision(value: number): number {
   const str = value.toString()
   const eIndex = str.indexOf('e')
   if (eIndex > 0) {
@@ -106,7 +106,7 @@ export function getPrecision (value: number): number {
   return dotIndex < 0 ? 0 : str.length - 1 - dotIndex
 }
 
-export function getMaxMin<D> (dataList: D[], maxKey: keyof D, minKey: keyof D): number[] {
+export function getMaxMin<D>(dataList: D[], maxKey: keyof D, minKey: keyof D): number[] {
   const maxMin = [Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER]
   const dataLength = dataList.length
   let index = 0
@@ -124,7 +124,7 @@ export function getMaxMin<D> (dataList: D[], maxKey: keyof D, minKey: keyof D): 
  * @param value
  * @return {number}
  */
-export function log10 (value: number): number {
+export function log10(value: number): number {
   if (value === 0) {
     return 0
   }
@@ -136,6 +136,6 @@ export function log10 (value: number): number {
  * @param value
  * @return {number}
  */
-export function index10 (value: number): number {
+export function index10(value: number): number {
   return Math.pow(10, value)
 }

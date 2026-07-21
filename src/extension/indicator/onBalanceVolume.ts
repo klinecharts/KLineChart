@@ -39,15 +39,15 @@ const onBalanceVolume: IndicatorTemplate<Obv, number> = {
     dataList.forEach((kLineData, i) => {
       const prevKLineData = dataList[i - 1] ?? kLineData
       if (kLineData.close < prevKLineData.close) {
-        oldObv -= (kLineData.volume ?? 0)
+        oldObv -= kLineData.volume ?? 0
       } else if (kLineData.close > prevKLineData.close) {
-        oldObv += (kLineData.volume ?? 0)
+        oldObv += kLineData.volume ?? 0
       }
       const obv: Obv = { obv: oldObv }
       obvSum += oldObv
       if (i >= params[0] - 1) {
         obv.maObv = obvSum / params[0]
-        obvSum -= (result[i - (params[0] - 1)].obv ?? 0)
+        obvSum -= result[i - (params[0] - 1)].obv ?? 0
       }
       result.push(obv)
     })

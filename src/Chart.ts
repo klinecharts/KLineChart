@@ -138,10 +138,7 @@ export default class ChartImp implements Chart {
     if (this._resizeRequestAnimationId === DEFAULT_REQUEST_ID) {
       this._resizeRequestAnimationId = requestAnimationFrame(() => {
         this._resizeRequestAnimationId = DEFAULT_REQUEST_ID
-        if (
-          this._chartBounding.width !== Math.floor(this._chartContainer.clientWidth) ||
-          this._chartBounding.height !== Math.floor(this._chartContainer.clientHeight)
-        ) {
+        if (this._chartBounding.width !== Math.floor(this._chartContainer.clientWidth) || this._chartBounding.height !== Math.floor(this._chartContainer.clientHeight)) {
           this.resize()
         }
       })
@@ -150,7 +147,7 @@ export default class ChartImp implements Chart {
 
   private readonly _cacheYAxisWidth = { left: 0, right: 0 }
 
-  constructor (container: HTMLElement, options?: Options) {
+  constructor(container: HTMLElement, options?: Options) {
     this._initContainer(container)
     this._chartEvent = new Event(this._chartContainer, this)
     this._chartStore = new ChartStore(this, options)
@@ -163,7 +160,7 @@ export default class ChartImp implements Chart {
     this._initResizeListener()
   }
 
-  private _initContainer (container: HTMLElement): void {
+  private _initContainer(container: HTMLElement): void {
     this._container = container
     this._chartContainer = createDom('div', {
       position: 'relative',
@@ -186,12 +183,12 @@ export default class ChartImp implements Chart {
     this._cacheChartBounding()
   }
 
-  private _cacheChartBounding (): void {
+  private _cacheChartBounding(): void {
     this._chartBounding.width = Math.floor(this._chartContainer.clientWidth)
     this._chartBounding.height = Math.floor(this._chartContainer.clientHeight)
   }
 
-  private _initResizeListener (): void {
+  private _initResizeListener(): void {
     if (isValid(ResizeObserver)) {
       this._resizeObserver = new ResizeObserver(() => {
         this._scheduleResize()
@@ -202,46 +199,44 @@ export default class ChartImp implements Chart {
     }
   }
 
-  private _createPane<P extends DrawPane> (
-    DrawPaneClass: new (chart: ChartImp, options: PaneOptions) => P,
-    options: PaneOptions
-  ): P {
+  private _createPane<P extends DrawPane>(DrawPaneClass: new (chart: ChartImp, options: PaneOptions) => P, options: PaneOptions): P {
     const pane = new DrawPaneClass(this, options)
     this._drawPanes.push(pane)
     return pane
   }
 
-  getDrawPaneById (paneId: string): Nullable<DrawPane> {
+  getDrawPaneById(paneId: string): Nullable<DrawPane> {
     if (paneId === PaneIdConstants.CANDLE) {
       return this._candlePane
     }
     if (paneId === PaneIdConstants.X_AXIS) {
       return this._xAxisPane
     }
-    const pane = this._drawPanes.find(p => p.getId() === paneId)
+    const pane = this._drawPanes.find((p) => p.getId() === paneId)
     return pane ?? null
   }
 
-  getContainer (): HTMLElement { return this._container }
+  getContainer(): HTMLElement {
+    return this._container
+  }
 
-  getChartStore (): ChartStore { return this._chartStore }
+  getChartStore(): ChartStore {
+    return this._chartStore
+  }
 
-  getXAxisPane (): XAxisPane { return this._xAxisPane }
+  getXAxisPane(): XAxisPane {
+    return this._xAxisPane
+  }
 
-  getDrawPanes (): DrawPane[] { return this._drawPanes }
+  getDrawPanes(): DrawPane[] {
+    return this._drawPanes
+  }
 
-  getSeparatorPanes (): Map<DrawPane, SeparatorPane> { return this._separatorPanes }
+  getSeparatorPanes(): Map<DrawPane, SeparatorPane> {
+    return this._separatorPanes
+  }
 
-  layout (options: {
-    sort?: boolean
-    measureHeight?: boolean
-    measureWidth?: boolean
-    secondMeasureWidth?: boolean
-    update?: boolean
-    buildYAxisTick?: boolean
-    cacheYAxisWidth?: boolean
-    forceBuildYAxisTick?: boolean
-  }): void {
+  layout(options: { sort?: boolean; measureHeight?: boolean; measureWidth?: boolean; secondMeasureWidth?: boolean; update?: boolean; buildYAxisTick?: boolean; cacheYAxisWidth?: boolean; forceBuildYAxisTick?: boolean }): void {
     if (options.sort ?? false) {
       this._layoutUpdateOptions.sort = options.sort!
     }
@@ -268,16 +263,18 @@ export default class ChartImp implements Chart {
     }
     if (!this._layoutPending) {
       this._layoutPending = true
-      Promise.resolve().then(_ => {
-        this._layout()
-        this._layoutPending = false
-      }).catch((_: unknown) => {
-        // todo
-      })
+      Promise.resolve()
+        .then((_) => {
+          this._layout()
+          this._layoutPending = false
+        })
+        .catch((_: unknown) => {
+          // todo
+        })
     }
   }
 
-  private _layout (): void {
+  private _layout(): void {
     const { sort, measureHeight, measureWidth, secondMeasureWidth, update, buildYAxisTick, cacheYAxisWidth, forceBuildYAxisTick } = this._layoutUpdateOptions
     if (sort) {
       while (isValid(this._chartContainer.firstChild)) {
@@ -286,7 +283,7 @@ export default class ChartImp implements Chart {
       this._separatorPanes.clear()
       this._drawPanes.sort((a, b) => a.getOptions().order - b.getOptions().order)
       let prevPane: Nullable<DrawPane> = null
-      this._drawPanes.forEach(pane => {
+      this._drawPanes.forEach((pane) => {
         if (pane.getId() !== PaneIdConstants.X_AXIS) {
           if (isValid(prevPane)) {
             const separatorPane = new SeparatorPane(this, '', prevPane, pane)
@@ -302,22 +299,20 @@ export default class ChartImp implements Chart {
       const totalHeight = this._chartBounding.height
       const separatorSize = this.getStyles().separator.size
       const xAxisHeight = this._xAxisPane.getXAxisComponent().getAutoSize()
-      const contentPanes = this._drawPanes.filter(pane => pane.getId() !== PaneIdConstants.X_AXIS)
-      const maximizedPane = contentPanes.find(pane => pane.getOptions().state === 'maximize')
+      const contentPanes = this._drawPanes.filter((pane) => pane.getId() !== PaneIdConstants.X_AXIS)
+      const maximizedPane = contentPanes.find((pane) => pane.getOptions().state === 'maximize')
       let remainingHeight = Math.max(totalHeight - xAxisHeight, 0)
       const paneHeights = new Map<DrawPane, number>()
       let actualSeparatorSize = separatorSize
       if (isValid(maximizedPane)) {
         actualSeparatorSize = 0
-        contentPanes.forEach(pane => {
+        contentPanes.forEach((pane) => {
           paneHeights.set(pane, pane === maximizedPane ? remainingHeight : 0)
         })
       } else {
         remainingHeight = Math.max(remainingHeight - this._separatorPanes.size * separatorSize, 0)
-        const flexiblePane =
-          contentPanes.find(pane => pane.getId() === PaneIdConstants.CANDLE && pane.getOptions().state === 'normal') ??
-          contentPanes.find(pane => pane.getOptions().state === 'normal')
-        contentPanes.forEach(pane => {
+        const flexiblePane = contentPanes.find((pane) => pane.getId() === PaneIdConstants.CANDLE && pane.getOptions().state === 'normal') ?? contentPanes.find((pane) => pane.getOptions().state === 'normal')
+        contentPanes.forEach((pane) => {
           if (pane === flexiblePane) {
             return
           }
@@ -337,7 +332,7 @@ export default class ChartImp implements Chart {
           paneHeights.set(flexiblePane, Math.max(remainingHeight, 0))
         }
       }
-      this._drawPanes.forEach(pane => {
+      this._drawPanes.forEach((pane) => {
         if (pane.getId() !== PaneIdConstants.X_AXIS) {
           pane.setBounding({ height: paneHeights.get(pane) ?? 0 })
         }
@@ -346,7 +341,7 @@ export default class ChartImp implements Chart {
       this._xAxisPane.setBounding({ height: xAxisHeight })
 
       let top = 0
-      this._drawPanes.forEach(pane => {
+      this._drawPanes.forEach((pane) => {
         const separatorPane = this._separatorPanes.get(pane)
         if (isValid(separatorPane)) {
           separatorPane.setBounding({ height: actualSeparatorSize, top })
@@ -360,8 +355,8 @@ export default class ChartImp implements Chart {
     const buildYAxisTickAndMeasureWidth = (): void => {
       let forceMeasureWidth = measureWidth
       if (buildYAxisTick || forceBuildYAxisTick) {
-        this._drawPanes.forEach(pane => {
-          pane.getYAxisComponents().forEach(axis => {
+        this._drawPanes.forEach((pane) => {
+          pane.getYAxisComponents().forEach((axis) => {
             const success = (axis as unknown as AxisImp).buildTicks(forceBuildYAxisTick)
             forceMeasureWidth ||= success
           })
@@ -380,13 +375,13 @@ export default class ChartImp implements Chart {
           widths[index] = Math.max(widths[index] ?? 0, width)
         }
 
-        this._drawPanes.forEach(pane => {
+        this._drawPanes.forEach((pane) => {
           const leftOutsideAxes: YAxis[] = []
           const leftInsideAxes: YAxis[] = []
           const rightInsideAxes: YAxis[] = []
           const rightOutsideAxes: YAxis[] = []
           if (pane.getId() !== PaneIdConstants.X_AXIS) {
-            pane.getWidgetYAxisComponents().forEach(axis => {
+            pane.getWidgetYAxisComponents().forEach((axis) => {
               const yAxis = axis
               if (yAxis.position === 'left') {
                 if (yAxis.inside) {
@@ -404,10 +399,18 @@ export default class ChartImp implements Chart {
             })
           }
 
-          leftOutsideAxes.forEach((yAxis, index) => { updateColumnWidth(leftOutsideYAxisWidths, index, yAxis.getAutoSize()) })
-          leftInsideAxes.forEach((yAxis, index) => { updateColumnWidth(leftInsideYAxisWidths, index, yAxis.getAutoSize()) })
-          rightInsideAxes.forEach((yAxis, index) => { updateColumnWidth(rightInsideYAxisWidths, index, yAxis.getAutoSize()) })
-          rightOutsideAxes.forEach((yAxis, index) => { updateColumnWidth(rightOutsideYAxisWidths, index, yAxis.getAutoSize()) })
+          leftOutsideAxes.forEach((yAxis, index) => {
+            updateColumnWidth(leftOutsideYAxisWidths, index, yAxis.getAutoSize())
+          })
+          leftInsideAxes.forEach((yAxis, index) => {
+            updateColumnWidth(leftInsideYAxisWidths, index, yAxis.getAutoSize())
+          })
+          rightInsideAxes.forEach((yAxis, index) => {
+            updateColumnWidth(rightInsideYAxisWidths, index, yAxis.getAutoSize())
+          })
+          rightOutsideAxes.forEach((yAxis, index) => {
+            updateColumnWidth(rightOutsideYAxisWidths, index, yAxis.getAutoSize())
+          })
         })
 
         let leftYAxisWidth = leftOutsideYAxisWidths.reduce((total, width) => total + width, 0)
@@ -455,7 +458,7 @@ export default class ChartImp implements Chart {
           const rightInsideAxes: YAxis[] = []
           const rightOutsideAxes: YAxis[] = []
           if (pane.getId() !== PaneIdConstants.X_AXIS) {
-            pane.getWidgetYAxisComponents().forEach(axis => {
+            pane.getWidgetYAxisComponents().forEach((axis) => {
               const yAxis = axis
               if (yAxis.position === 'left') {
                 if (yAxis.inside) {
@@ -506,7 +509,7 @@ export default class ChartImp implements Chart {
       buildYAxisTickAndMeasureWidth()
     }
     if (update) {
-      (this._xAxisPane.getXAxisComponent() as unknown as AxisImp).buildTicks(true)
+      ;(this._xAxisPane.getXAxisComponent() as unknown as AxisImp).buildTicks(true)
       this.updatePane(UpdateLevel.All)
     }
     this._layoutUpdateOptions = {
@@ -521,19 +524,19 @@ export default class ChartImp implements Chart {
     }
   }
 
-  updatePane (level: UpdateLevel, paneId?: string): void {
+  updatePane(level: UpdateLevel, paneId?: string): void {
     if (isValid(paneId)) {
       const pane = this.getDrawPaneById(paneId)
       pane?.update(level)
     } else {
-      this._drawPanes.forEach(pane => {
+      this._drawPanes.forEach((pane) => {
         pane.update(level)
         this._separatorPanes.get(pane)?.update(level)
       })
     }
   }
 
-  getDom (paneId?: string, position?: DomPosition): Nullable<HTMLElement> {
+  getDom(paneId?: string, position?: DomPosition): Nullable<HTMLElement> {
     if (isValid(paneId)) {
       const pane = this.getDrawPaneById(paneId)
       if (isValid(pane)) {
@@ -556,7 +559,7 @@ export default class ChartImp implements Chart {
     return null
   }
 
-  getSize (paneId?: string, position?: DomPosition): Nullable<Bounding> {
+  getSize(paneId?: string, position?: DomPosition): Nullable<Bounding> {
     if (isValid(paneId)) {
       const pane = this.getDrawPaneById(paneId)
       if (isValid(pane)) {
@@ -579,93 +582,109 @@ export default class ChartImp implements Chart {
     return null
   }
 
-  private _resetYAxisAutoCalcTickFlag (): void {
-    this._drawPanes.forEach(pane => {
-      pane.getYAxisComponents().forEach(axis => {
-        (axis as unknown as AxisImp).setAutoCalcTickFlag(true)
+  private _resetYAxisAutoCalcTickFlag(): void {
+    this._drawPanes.forEach((pane) => {
+      pane.getYAxisComponents().forEach((axis) => {
+        ;(axis as unknown as AxisImp).setAutoCalcTickFlag(true)
       })
     })
   }
 
-  setSymbol (symbol: PickPartial<SymbolInfo, 'pricePrecision' | 'volumePrecision'>): void {
+  setSymbol(symbol: PickPartial<SymbolInfo, 'pricePrecision' | 'volumePrecision'>): void {
     if (symbol !== this.getSymbol()) {
       this._resetYAxisAutoCalcTickFlag()
       this._chartStore.setSymbol(symbol)
     }
   }
 
-  getSymbol (): Nullable<SymbolInfo> {
+  getSymbol(): Nullable<SymbolInfo> {
     return this._chartStore.getSymbol()
   }
 
-  setPeriod (period: Period): void {
+  setPeriod(period: Period): void {
     if (period !== this.getPeriod()) {
       this._resetYAxisAutoCalcTickFlag()
       this._chartStore.setPeriod(period)
     }
   }
 
-  getPeriod (): Nullable<Period> {
+  getPeriod(): Nullable<Period> {
     return this._chartStore.getPeriod()
   }
 
-  setStyles (value: string | DeepPartial<Styles>): void {
+  setStyles(value: string | DeepPartial<Styles>): void {
     this._setOptions(() => {
       this._chartStore.setStyles(value)
     })
   }
 
-  getStyles (): Styles { return this._chartStore.getStyles() }
+  getStyles(): Styles {
+    return this._chartStore.getStyles()
+  }
 
-  setFormatter (formatter: Partial<Formatter>): void {
+  setFormatter(formatter: Partial<Formatter>): void {
     this._setOptions(() => {
       this._chartStore.setFormatter(formatter)
     })
   }
 
-  getFormatter (): Formatter { return this._chartStore.getFormatter() }
+  getFormatter(): Formatter {
+    return this._chartStore.getFormatter()
+  }
 
-  setLocale (locale: string): void {
+  setLocale(locale: string): void {
     this._setOptions(() => {
       this._chartStore.setLocale(locale)
     })
   }
 
-  getLocale (): string { return this._chartStore.getLocale() }
+  getLocale(): string {
+    return this._chartStore.getLocale()
+  }
 
-  setTimezone (timezone: string): void {
+  setTimezone(timezone: string): void {
     this._setOptions(() => {
       this._chartStore.setTimezone(timezone)
     })
   }
 
-  getTimezone (): string { return this._chartStore.getTimezone() }
+  getTimezone(): string {
+    return this._chartStore.getTimezone()
+  }
 
-  setThousandsSeparator (thousandsSeparator: Partial<ThousandsSeparator>): void {
+  setThousandsSeparator(thousandsSeparator: Partial<ThousandsSeparator>): void {
     this._setOptions(() => {
       this._chartStore.setThousandsSeparator(thousandsSeparator)
     })
   }
 
-  getThousandsSeparator (): ThousandsSeparator { return this._chartStore.getThousandsSeparator() }
+  getThousandsSeparator(): ThousandsSeparator {
+    return this._chartStore.getThousandsSeparator()
+  }
 
-  setDecimalFold (decimalFold: Partial<DecimalFold>): void {
+  setDecimalFold(decimalFold: Partial<DecimalFold>): void {
     this._setOptions(() => {
       this._chartStore.setDecimalFold(decimalFold)
     })
   }
 
-  getDecimalFold (): DecimalFold { return this._chartStore.getDecimalFold() }
+  getDecimalFold(): DecimalFold {
+    return this._chartStore.getDecimalFold()
+  }
 
-  setHotkey (hotkey: Partial<Hotkey>): void {
+  setHotkey(hotkey: Partial<Hotkey>): void {
     this._chartStore.setHotkey(hotkey)
   }
 
-  getHotkey (): Hotkey { return this._chartStore.getHotkey() }
+  getHotkey(): Hotkey {
+    return this._chartStore.getHotkey()
+  }
 
-  getHotKey (): Hotkey { return this._chartStore.getHotKey() }
+  getHotKey(): Hotkey {
+    return this._chartStore.getHotKey()
+  }
 
-  private _setOptions (fuc: () => void): void {
+  private _setOptions(fuc: () => void): void {
     fuc()
     this.layout({
       measureHeight: true,
@@ -676,15 +695,15 @@ export default class ChartImp implements Chart {
     })
   }
 
-  setOffsetRightDistance (distance: number): void {
+  setOffsetRightDistance(distance: number): void {
     this._chartStore.setOffsetRightDistance(distance, true)
   }
 
-  getOffsetRightDistance (): number {
+  getOffsetRightDistance(): number {
     return this._chartStore.getOffsetRightDistance()
   }
 
-  setMaxOffsetLeftDistance (distance: number): void {
+  setMaxOffsetLeftDistance(distance: number): void {
     if (distance < 0) {
       logWarn('setMaxOffsetLeftDistance', 'distance', 'distance must greater than zero!!!')
       return
@@ -692,7 +711,7 @@ export default class ChartImp implements Chart {
     this._chartStore.setMaxOffsetLeftDistance(distance)
   }
 
-  setMaxOffsetRightDistance (distance: number): void {
+  setMaxOffsetRightDistance(distance: number): void {
     if (distance < 0) {
       logWarn('setMaxOffsetRightDistance', 'distance', 'distance must greater than zero!!!')
       return
@@ -700,7 +719,7 @@ export default class ChartImp implements Chart {
     this._chartStore.setMaxOffsetRightDistance(distance)
   }
 
-  setLeftMinVisibleBarCount (barCount: number): void {
+  setLeftMinVisibleBarCount(barCount: number): void {
     if (barCount < 0) {
       logWarn('setLeftMinVisibleBarCount', 'barCount', 'barCount must greater than zero!!!')
       return
@@ -708,7 +727,7 @@ export default class ChartImp implements Chart {
     this._chartStore.setLeftMinVisibleBarCount(Math.ceil(barCount))
   }
 
-  setRightMinVisibleBarCount (barCount: number): void {
+  setRightMinVisibleBarCount(barCount: number): void {
     if (barCount < 0) {
       logWarn('setRightMinVisibleBarCount', 'barCount', 'barCount must greater than zero!!!')
       return
@@ -716,21 +735,21 @@ export default class ChartImp implements Chart {
     this._chartStore.setRightMinVisibleBarCount(Math.ceil(barCount))
   }
 
-  setBarSpace (space: number): void {
+  setBarSpace(space: number): void {
     this._chartStore.setBarSpace(space)
   }
 
-  getBarSpace (): BarSpace {
+  getBarSpace(): BarSpace {
     return this._chartStore.getBarSpace()
   }
 
-  getVisibleRange (): VisibleRange {
+  getVisibleRange(): VisibleRange {
     return this._chartStore.getVisibleRange()
   }
 
-  private _removeOrphanYAxes (): boolean {
+  private _removeOrphanYAxes(): boolean {
     let changed = false
-    this._drawPanes.forEach(pane => {
+    this._drawPanes.forEach((pane) => {
       const paneId = pane.getId()
       if (paneId === PaneIdConstants.X_AXIS) {
         return
@@ -740,10 +759,10 @@ export default class ChartImp implements Chart {
       if (isValid(defaultYAxisId)) {
         usedYAxisIds.add(defaultYAxisId)
       }
-      this._chartStore.getIndicatorsByPaneId(paneId).forEach(indicator => {
+      this._chartStore.getIndicatorsByPaneId(paneId).forEach((indicator) => {
         usedYAxisIds.add(indicator.yAxisId)
       })
-      pane.getYAxisComponents().forEach(yAxis => {
+      pane.getYAxisComponents().forEach((yAxis) => {
         if (!usedYAxisIds.has(yAxis.id) && !pane.isManualYAxis(yAxis.id)) {
           changed = pane.removeYAxis(yAxis.id) || changed
         }
@@ -752,7 +771,7 @@ export default class ChartImp implements Chart {
     return changed
   }
 
-  private _createOrUseIndicatorYAxis (pane: DrawPane<YAxis>, yAxisId: string): boolean {
+  private _createOrUseIndicatorYAxis(pane: DrawPane<YAxis>, yAxisId: string): boolean {
     let changed = false
     if (!pane.hasYAxisComponent(yAxisId)) {
       pane.createOrOverrideYAxis({
@@ -768,20 +787,20 @@ export default class ChartImp implements Chart {
     return changed
   }
 
-  resetData (): void {
+  resetData(): void {
     this._chartStore.resetData()
   }
 
-  getDataList (): KLineData[] {
+  getDataList(): KLineData[] {
     return this._chartStore.getDataList()
   }
 
-  setDataLoader (dataLoader: DataLoader): void {
+  setDataLoader(dataLoader: DataLoader): void {
     this._resetYAxisAutoCalcTickFlag()
     this._chartStore.setDataLoader(dataLoader)
   }
 
-  createIndicator (value: string | IndicatorCreate, isStack?: boolean): Nullable<string> {
+  createIndicator(value: string | IndicatorCreate, isStack?: boolean): Nullable<string> {
     const indicator: IndicatorCreate = isString(value) ? { name: value } : value
     if (getIndicatorClass(indicator.name) === null) {
       logWarn('createIndicator', 'value', 'indicator not supported, you may need to use registerIndicator to add one!!!')
@@ -816,14 +835,14 @@ export default class ChartImp implements Chart {
     return null
   }
 
-  overrideIndicator (override: IndicatorOverride): boolean {
+  overrideIndicator(override: IndicatorOverride): boolean {
     const filterIndicators = this._chartStore.getIndicatorsByFilter(override)
     if (filterIndicators.length === 0) {
       return false
     }
     let updated = this._chartStore.overrideIndicator(override)
 
-    filterIndicators.forEach(indicator => {
+    filterIndicators.forEach((indicator) => {
       const pane = this.getDrawPaneById(indicator.paneId)
       if (isValid(pane)) {
         updated = this._createOrUseIndicatorYAxis(pane, indicator.yAxisId) || updated
@@ -842,17 +861,17 @@ export default class ChartImp implements Chart {
     return updated
   }
 
-  getIndicators (filter?: IndicatorFilter): Indicator[] {
+  getIndicators(filter?: IndicatorFilter): Indicator[] {
     return this._chartStore.getIndicatorsByFilter(filter ?? {})
   }
 
-  removeIndicator (filter?: IndicatorFilter): boolean {
+  removeIndicator(filter?: IndicatorFilter): boolean {
     const removed = this._chartStore.removeIndicator(filter ?? {})
     if (removed) {
       this._removeOrphanYAxes()
       let panesChanged = false
       const removePaneIds: string[] = []
-      this._drawPanes.forEach(pane => {
+      this._drawPanes.forEach((pane) => {
         const paneId = pane.getId()
         if (paneId !== PaneIdConstants.X_AXIS && paneId !== PaneIdConstants.CANDLE) {
           const paneIndicators = this._chartStore.getIndicatorsByPaneId(paneId)
@@ -861,8 +880,8 @@ export default class ChartImp implements Chart {
           }
         }
       })
-      removePaneIds.forEach(paneId => {
-        const index = this._drawPanes.findIndex(pane => pane.getId() === paneId)
+      removePaneIds.forEach((paneId) => {
+        const index = this._drawPanes.findIndex((pane) => pane.getId() === paneId)
         const pane = this._drawPanes[index]
         if (isValid(pane)) {
           this._drawPanes.splice(index, 1)
@@ -882,11 +901,11 @@ export default class ChartImp implements Chart {
     return removed
   }
 
-  createOverlay (value: string | OverlayCreate | Array<string | OverlayCreate>): Nullable<string> | Array<Nullable<string>> {
+  createOverlay(value: string | OverlayCreate | Array<string | OverlayCreate>): Nullable<string> | Array<Nullable<string>> {
     const overlays: OverlayCreate[] = []
     const appointPaneFlags: boolean[] = []
 
-    const build: ((overlay: OverlayCreate) => void) = overlay => {
+    const build: (overlay: OverlayCreate) => void = (overlay) => {
       if (!isValid(overlay.paneId) || this.getDrawPaneById(overlay.paneId) === null) {
         overlay.paneId = PaneIdConstants.CANDLE
         appointPaneFlags.push(false)
@@ -899,7 +918,7 @@ export default class ChartImp implements Chart {
     if (isString(value)) {
       build({ name: value })
     } else if (isArray<Array<string | OverlayCreate>>(value)) {
-      (value as Array<string | OverlayCreate>).forEach(v => {
+      ;(value as Array<string | OverlayCreate>).forEach((v) => {
         let overlay: Nullable<OverlayCreate> = null
         if (isString(v)) {
           overlay = { name: v }
@@ -918,19 +937,19 @@ export default class ChartImp implements Chart {
     return ids[0]
   }
 
-  getOverlays (filter?: OverlayFilter): Overlay[] {
+  getOverlays(filter?: OverlayFilter): Overlay[] {
     return this._chartStore.getOverlaysByFilter(filter ?? {})
   }
 
-  overrideOverlay (override: OverlayOverride): boolean {
+  overrideOverlay(override: OverlayOverride): boolean {
     return this._chartStore.overrideOverlay(override)
   }
 
-  removeOverlay (filter?: OverlayFilter): boolean {
+  removeOverlay(filter?: OverlayFilter): boolean {
     return this._chartStore.removeOverlay(filter ?? {})
   }
 
-  setPaneOptions (options: Partial<PaneOptions>): void {
+  setPaneOptions(options: Partial<PaneOptions>): void {
     let shouldMeasureHeight = false
     let shouldLayout = false
     let shouldSort = false
@@ -982,7 +1001,7 @@ export default class ChartImp implements Chart {
     }
   }
 
-  createYAxis (yAxis: YAxisOverride): Nullable<string> {
+  createYAxis(yAxis: YAxisOverride): Nullable<string> {
     const paneId = yAxis.paneId ?? PaneIdConstants.CANDLE
     const pane = this.getDrawPaneById(paneId)
     if (!isValid(pane) || paneId === PaneIdConstants.X_AXIS) {
@@ -1004,7 +1023,7 @@ export default class ChartImp implements Chart {
     return id
   }
 
-  removeYAxis (filter: YAxisFilter): boolean {
+  removeYAxis(filter: YAxisFilter): boolean {
     const { id, name } = filter
     if (!isValid(id) && !isValid(name)) {
       logWarn('removeYAxis', 'filter', 'id or name should not be empty!!!')
@@ -1020,7 +1039,7 @@ export default class ChartImp implements Chart {
         continue
       }
       const indicators = this._chartStore.getIndicatorsByPaneId(yAxis.paneId)
-      if (indicators.some(indicator => indicator.yAxisId === yAxis.id)) {
+      if (indicators.some((indicator) => indicator.yAxisId === yAxis.id)) {
         continue
       }
       removed = pane.removeYAxis(yAxis.id) || removed
@@ -1036,7 +1055,7 @@ export default class ChartImp implements Chart {
     return removed
   }
 
-  getYAxes (filter: YAxisFilter): YAxis[] {
+  getYAxes(filter: YAxisFilter): YAxis[] {
     const { paneId, id } = filter
     const name = filter.name
     const match = (yAxis: YAxis): boolean => {
@@ -1049,7 +1068,7 @@ export default class ChartImp implements Chart {
     if (isValid(paneId)) {
       yAxes = yAxes.concat(this.getDrawPaneById(paneId)?.getYAxisComponents().filter(match) ?? [])
     } else {
-      this._drawPanes.forEach(pane => {
+      this._drawPanes.forEach((pane) => {
         if (pane.getId() !== PaneIdConstants.X_AXIS) {
           yAxes = yAxes.concat(pane.getYAxisComponents().filter(match))
         }
@@ -1058,13 +1077,13 @@ export default class ChartImp implements Chart {
     return yAxes
   }
 
-  overrideYAxis (yAxis: YAxisOverride): void {
+  overrideYAxis(yAxis: YAxisOverride): void {
     const filterYAxes = this.getYAxes({ paneId: yAxis.paneId, id: yAxis.id })
     if (filterYAxes.length === 0) {
       return
     }
 
-    filterYAxes.forEach(axis => {
+    filterYAxes.forEach((axis) => {
       this.getDrawPaneById(axis.paneId)?.createOrOverrideYAxis({ ...yAxis, id: axis.id })
     })
     this.layout({
@@ -1075,7 +1094,7 @@ export default class ChartImp implements Chart {
     })
   }
 
-  overrideXAxis (xAxis: XAxisOverride): void {
+  overrideXAxis(xAxis: XAxisOverride): void {
     this._xAxisPane.overrideXAxis(xAxis)
     this.layout({
       measureHeight: true,
@@ -1085,44 +1104,44 @@ export default class ChartImp implements Chart {
     })
   }
 
-  getPaneOptions (id?: string): Nullable<PaneOptions> | PaneOptions[] {
+  getPaneOptions(id?: string): Nullable<PaneOptions> | PaneOptions[] {
     if (isValid(id)) {
       const pane = this.getDrawPaneById(id)
       return pane?.getOptions() ?? null
     }
-    return this._drawPanes.map(pane => pane.getOptions())
+    return this._drawPanes.map((pane) => pane.getOptions())
   }
 
-  setZoomEnabled (enabled: boolean): void {
+  setZoomEnabled(enabled: boolean): void {
     this._chartStore.setZoomEnabled(enabled)
   }
 
-  isZoomEnabled (): boolean {
+  isZoomEnabled(): boolean {
     return this._chartStore.isZoomEnabled()
   }
 
-  setZoomAnchor (anchor: ZoomAnchorType | Partial<ZoomAnchor>): void {
+  setZoomAnchor(anchor: ZoomAnchorType | Partial<ZoomAnchor>): void {
     this._chartStore.setZoomAnchor(anchor)
   }
 
-  getZoomAnchor (): ZoomAnchor {
+  getZoomAnchor(): ZoomAnchor {
     return this._chartStore.getZoomAnchor()
   }
 
-  setScrollEnabled (enabled: boolean): void {
+  setScrollEnabled(enabled: boolean): void {
     this._chartStore.setScrollEnabled(enabled)
   }
 
-  isScrollEnabled (): boolean {
+  isScrollEnabled(): boolean {
     return this._chartStore.isScrollEnabled()
   }
 
-  scrollByDistance (distance: number, animationDuration?: number): void {
+  scrollByDistance(distance: number, animationDuration?: number): void {
     const duration = isNumber(animationDuration) && animationDuration > 0 ? animationDuration : 0
     this._chartStore.startScroll()
     if (duration > 0) {
       const animation = new Animation({ duration })
-      animation.doFrame(frameTime => {
+      animation.doFrame((frameTime) => {
         const progressDistance = distance * (frameTime / duration)
         this._chartStore.scroll(progressDistance)
       })
@@ -1132,26 +1151,24 @@ export default class ChartImp implements Chart {
     }
   }
 
-  scrollToRealTime (animationDuration?: number): void {
+  scrollToRealTime(animationDuration?: number): void {
     const { bar: barSpace } = this._chartStore.getBarSpace()
     const difBarCount = this._chartStore.getLastBarRightSideDiffBarCount() - this._chartStore.getInitialOffsetRightDistance() / barSpace
     const distance = difBarCount * barSpace
     this.scrollByDistance(distance, animationDuration)
   }
 
-  scrollToDataIndex (dataIndex: number, animationDuration?: number): void {
-    const distance = (
-      this._chartStore.getLastBarRightSideDiffBarCount() + (this.getDataList().length - 1 - dataIndex)
-    ) * this._chartStore.getBarSpace().bar
+  scrollToDataIndex(dataIndex: number, animationDuration?: number): void {
+    const distance = (this._chartStore.getLastBarRightSideDiffBarCount() + (this.getDataList().length - 1 - dataIndex)) * this._chartStore.getBarSpace().bar
     this.scrollByDistance(distance, animationDuration)
   }
 
-  scrollToTimestamp (timestamp: number, animationDuration?: number): void {
+  scrollToTimestamp(timestamp: number, animationDuration?: number): void {
     const dataIndex = binarySearchNearest(this.getDataList(), 'timestamp', timestamp)
     this.scrollToDataIndex(dataIndex, animationDuration)
   }
 
-  zoomAtCoordinate (scale: number, coordinate?: Coordinate, animationDuration?: number): void {
+  zoomAtCoordinate(scale: number, coordinate?: Coordinate, animationDuration?: number): void {
     const duration = isNumber(animationDuration) && animationDuration > 0 ? animationDuration : 0
     const { bar: barSpace } = this._chartStore.getBarSpace()
     const scaleBarSpace = barSpace * scale
@@ -1159,29 +1176,29 @@ export default class ChartImp implements Chart {
     if (duration > 0) {
       let prevProgressBarSpace = 0
       const animation = new Animation({ duration })
-      animation.doFrame(frameTime => {
+      animation.doFrame((frameTime) => {
         const progressBarSpace = difSpace * (frameTime / duration)
-        const scale = (progressBarSpace - prevProgressBarSpace) / this._chartStore.getBarSpace().bar * SCALE_MULTIPLIER
+        const scale = ((progressBarSpace - prevProgressBarSpace) / this._chartStore.getBarSpace().bar) * SCALE_MULTIPLIER
         this._chartStore.zoom(scale, coordinate ?? null, 'main')
         prevProgressBarSpace = progressBarSpace
       })
       animation.start()
     } else {
-      this._chartStore.zoom(difSpace / barSpace * SCALE_MULTIPLIER, coordinate ?? null, 'main')
+      this._chartStore.zoom((difSpace / barSpace) * SCALE_MULTIPLIER, coordinate ?? null, 'main')
     }
   }
 
-  zoomAtDataIndex (scale: number, dataIndex: number, animationDuration?: number): void {
+  zoomAtDataIndex(scale: number, dataIndex: number, animationDuration?: number): void {
     const x = this._chartStore.dataIndexToCoordinate(dataIndex)
     this.zoomAtCoordinate(scale, { x, y: 0 }, animationDuration)
   }
 
-  zoomAtTimestamp (scale: number, timestamp: number, animationDuration?: number): void {
+  zoomAtTimestamp(scale: number, timestamp: number, animationDuration?: number): void {
     const dataIndex = binarySearchNearest(this.getDataList(), 'timestamp', timestamp)
     this.zoomAtDataIndex(scale, dataIndex, animationDuration)
   }
 
-  convertToPixel (points: Partial<Point> | Array<Partial<Point>>, filter?: ConvertFilter): Partial<Coordinate> | Array<Partial<Coordinate>> {
+  convertToPixel(points: Partial<Point> | Array<Partial<Point>>, filter?: ConvertFilter): Partial<Coordinate> | Array<Partial<Coordinate>> {
     const { paneId = PaneIdConstants.CANDLE, yAxisId, absolute = false } = filter ?? {}
     let coordinates: Array<Partial<Coordinate>> = []
     if (paneId !== PaneIdConstants.X_AXIS) {
@@ -1192,7 +1209,7 @@ export default class ChartImp implements Chart {
         ps = ps.concat(points)
         const xAxis = this._xAxisPane.getXAxisComponent()
         const yAxis = pane.getYAxisComponentById(yAxisId)
-        coordinates = ps.map(point => {
+        coordinates = ps.map((point) => {
           const coordinate: Partial<Coordinate> = {}
           let dataIndex = point.dataIndex
           if (isNumber(point.timestamp)) {
@@ -1212,7 +1229,7 @@ export default class ChartImp implements Chart {
     return isArray(points) ? coordinates : (coordinates[0] ?? {})
   }
 
-  convertFromPixel (coordinates: Array<Partial<Coordinate>>, filter?: ConvertFilter): Partial<Point> | Array<Partial<Point>> {
+  convertFromPixel(coordinates: Array<Partial<Coordinate>>, filter?: ConvertFilter): Partial<Point> | Array<Partial<Point>> {
     const { paneId = PaneIdConstants.CANDLE, yAxisId, absolute = false } = filter ?? {}
     let points: Array<Partial<Point>> = []
     if (paneId !== PaneIdConstants.X_AXIS) {
@@ -1223,7 +1240,7 @@ export default class ChartImp implements Chart {
         cs = cs.concat(coordinates)
         const xAxis = this._xAxisPane.getXAxisComponent()
         const yAxis = pane.getYAxisComponentById(yAxisId)
-        points = cs.map(coordinate => {
+        points = cs.map((coordinate) => {
           const point: Partial<Point> = {}
           if (isNumber(coordinate.x)) {
             const dataIndex = xAxis.convertFromPixel(coordinate.x)
@@ -1241,7 +1258,7 @@ export default class ChartImp implements Chart {
     return isArray(coordinates) ? points : (points[0] ?? {})
   }
 
-  executeAction (type: ActionType, data: Nullable<Crosshair>): void {
+  executeAction(type: ActionType, data: Nullable<Crosshair>): void {
     switch (type) {
       case 'onCrosshairChange': {
         let crosshair: Nullable<Crosshair> = null
@@ -1252,19 +1269,21 @@ export default class ChartImp implements Chart {
         this._chartStore.setCrosshair(crosshair, { notExecuteAction: true })
         break
       }
-      default: { break }
+      default: {
+        break
+      }
     }
   }
 
-  subscribeAction (type: ActionType, callback: ActionCallback): void {
+  subscribeAction(type: ActionType, callback: ActionCallback): void {
     this._chartStore.subscribeAction(type, callback)
   }
 
-  unsubscribeAction (type: ActionType, callback?: ActionCallback): void {
+  unsubscribeAction(type: ActionType, callback?: ActionCallback): void {
     this._chartStore.unsubscribeAction(type, callback)
   }
 
-  getConvertPictureUrl (includeOverlay?: boolean, type?: 'png' | 'jpeg' | 'bmp', backgroundColor?: string): string {
+  getConvertPictureUrl(includeOverlay?: boolean, type?: 'png' | 'jpeg' | 'bmp', backgroundColor?: string): string {
     const { width, height } = this._chartBounding
     const canvas = createDom('canvas', {
       width: `${width}px`,
@@ -1280,26 +1299,20 @@ export default class ChartImp implements Chart {
     ctx.fillStyle = backgroundColor ?? '#FFFFFF'
     ctx.fillRect(0, 0, width, height)
     const overlayFlag = includeOverlay ?? false
-    this._drawPanes.forEach(pane => {
+    this._drawPanes.forEach((pane) => {
       const separatorPane = this._separatorPanes.get(pane)
       if (isValid(separatorPane)) {
         const separatorBounding = separatorPane.getBounding()
-        ctx.drawImage(
-          separatorPane.getImage(overlayFlag),
-          separatorBounding.left, separatorBounding.top, separatorBounding.width, separatorBounding.height
-        )
+        ctx.drawImage(separatorPane.getImage(overlayFlag), separatorBounding.left, separatorBounding.top, separatorBounding.width, separatorBounding.height)
       }
 
       const bounding = pane.getBounding()
-      ctx.drawImage(
-        pane.getImage(overlayFlag),
-        0, bounding.top, width, bounding.height
-      )
+      ctx.drawImage(pane.getImage(overlayFlag), 0, bounding.top, width, bounding.height)
     })
     return canvas.toDataURL(`image/${type ?? 'jpeg'}`)
   }
 
-  resize (): void {
+  resize(): void {
     this._cacheChartBounding()
     this.layout({
       measureHeight: true,
@@ -1311,7 +1324,7 @@ export default class ChartImp implements Chart {
     })
   }
 
-  destroy (): void {
+  destroy(): void {
     if (this._resizeRequestAnimationId !== DEFAULT_REQUEST_ID) {
       cancelAnimationFrame(this._resizeRequestAnimationId)
       this._resizeRequestAnimationId = DEFAULT_REQUEST_ID
@@ -1323,7 +1336,7 @@ export default class ChartImp implements Chart {
       window.removeEventListener('resize', this._scheduleResize)
     }
     this._chartEvent.destroy()
-    this._drawPanes.forEach(pane => {
+    this._drawPanes.forEach((pane) => {
       pane.destroy()
     })
     this._drawPanes = []

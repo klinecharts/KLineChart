@@ -44,7 +44,7 @@ export default abstract class Widget<P extends Pane = Pane> extends Eventful imp
 
   private _forceCursor: Nullable<string> = null
 
-  constructor (rootContainer: HTMLElement, pane: P) {
+  constructor(rootContainer: HTMLElement, pane: P) {
     super()
     this._pane = pane
     this._rootContainer = rootContainer
@@ -52,26 +52,28 @@ export default abstract class Widget<P extends Pane = Pane> extends Eventful imp
     rootContainer.appendChild(this._container)
   }
 
-  setBounding (bounding: Partial<Bounding>): this {
+  setBounding(bounding: Partial<Bounding>): this {
     merge(this._bounding, bounding)
     return this
   }
 
-  getContainer (): HTMLElement { return this._container }
+  getContainer(): HTMLElement {
+    return this._container
+  }
 
-  getBounding (): Bounding {
+  getBounding(): Bounding {
     return this._bounding
   }
 
-  getPane (): P {
+  getPane(): P {
     return this._pane
   }
 
-  override checkEventOn (_: MouseTouchEvent): boolean {
+  override checkEventOn(_: MouseTouchEvent): boolean {
     return true
   }
 
-  setCursor (cursor: string): void {
+  setCursor(cursor: string): void {
     if (!isString(this._forceCursor)) {
       if (cursor !== this._cursor) {
         this._cursor = cursor
@@ -80,28 +82,28 @@ export default abstract class Widget<P extends Pane = Pane> extends Eventful imp
     }
   }
 
-  setForceCursor (cursor: Nullable<string>): void {
+  setForceCursor(cursor: Nullable<string>): void {
     if (cursor !== this._forceCursor) {
       this._forceCursor = cursor
       this._container.style.cursor = this._forceCursor ?? this._cursor
     }
   }
 
-  getForceCursor (): Nullable<string> {
+  getForceCursor(): Nullable<string> {
     return this._forceCursor
   }
 
-  update (level?: UpdateLevel): void {
+  update(level?: UpdateLevel): void {
     this.updateImp(this._container, this._bounding, level ?? UpdateLevel.Drawer)
   }
 
-  destroy (): void {
+  destroy(): void {
     this._rootContainer.removeChild(this._container)
   }
 
-  abstract getName (): string
+  abstract getName(): string
 
-  protected abstract createContainer (): HTMLElement
+  protected abstract createContainer(): HTMLElement
 
-  protected abstract updateImp (container: HTMLElement, bounding: Bounding, level: UpdateLevel): void
+  protected abstract updateImp(container: HTMLElement, bounding: Bounding, level: UpdateLevel): void
 }

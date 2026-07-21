@@ -48,7 +48,7 @@ const williamsR: IndicatorTemplate<Wr, number> = {
           const hn = hln[0]
           const ln = hln[1]
           const hnSubLn = hn - ln
-          wr[figures[index].key] = hnSubLn === 0 ? 0 : (close - hn) / hnSubLn * 100
+          wr[figures[index].key] = hnSubLn === 0 ? 0 : ((close - hn) / hnSubLn) * 100
         }
       })
       return wr

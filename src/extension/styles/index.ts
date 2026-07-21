@@ -23,15 +23,12 @@ const styles: Record<string, DeepPartial<Styles>> = {
   dark
 }
 
-function registerStyles (name: string, ss: DeepPartial<Styles>): void {
+function registerStyles(name: string, ss: DeepPartial<Styles>): void {
   styles[name] = ss
 }
 
-function getStyles (name: string): Nullable<DeepPartial<Styles>> {
+function getStyles(name: string): Nullable<DeepPartial<Styles>> {
   return styles[name] ?? null
 }
 
-export {
-  getStyles, 
-  registerStyles
-}
+export { getStyles, registerStyles }

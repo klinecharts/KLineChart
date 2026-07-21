@@ -20,15 +20,12 @@ const xAxises: Record<string, XAxisConstructor> = {
   normal: XAxisImp.extend(normal)
 }
 
-function registerXAxis (axis: XAxisTemplate): void {
+function registerXAxis(axis: XAxisTemplate): void {
   xAxises[axis.name] = XAxisImp.extend(axis)
 }
 
-function getXAxisClass (name: string): XAxisConstructor {
+function getXAxisClass(name: string): XAxisConstructor {
   return xAxises[name] ?? xAxises.normal
 }
 
-export {
-  getXAxisClass, 
-  registerXAxis
-}
+export { getXAxisClass, registerXAxis }

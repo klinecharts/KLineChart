@@ -24,16 +24,9 @@ export interface DateTime {
 }
 
 const reEscapeChar = /\\(\\)?/g
-const rePropName = RegExp(
-  '[^.[\\]]+' + '|' +
-  '\\[(?:' +
-    '([^"\'][^[]*)' + '|' +
-    '(["\'])((?:(?!\\2)[^\\\\]|\\\\.)*?)\\2' +
-  ')\\]' + '|' +
-  '(?=(?:\\.|\\[\\])(?:\\.|\\[\\]|$))'
-  , 'g')
+const rePropName = RegExp('[^.[\\]]+' + '|' + '\\[(?:' + '([^"\'][^[]*)' + '|' + '(["\'])((?:(?!\\2)[^\\\\]|\\\\.)*?)\\2' + ')\\]' + '|' + '(?=(?:\\.|\\[\\])(?:\\.|\\[\\]|$))', 'g')
 
-export function formatValue (data: unknown, key: string, defaultValue?: unknown): unknown {
+export function formatValue(data: unknown, key: string, defaultValue?: unknown): unknown {
   if (isValid(data)) {
     const path: string[] = []
     key.replace(rePropName, (subString: string, ...args: unknown[]) => {
@@ -57,7 +50,7 @@ export function formatValue (data: unknown, key: string, defaultValue?: unknown)
   return defaultValue ?? '--'
 }
 
-export function formatTimestampToDateTime (dateTimeFormat: Intl.DateTimeFormat, timestamp: number): DateTime {
+export function formatTimestampToDateTime(dateTimeFormat: Intl.DateTimeFormat, timestamp: number): DateTime {
   const date: Record<string, string> = {}
   dateTimeFormat.formatToParts(new Date(timestamp)).forEach(({ type, value }) => {
     switch (type) {
@@ -85,18 +78,20 @@ export function formatTimestampToDateTime (dateTimeFormat: Intl.DateTimeFormat, 
         date.ss = value
         break
       }
-      default: { break }
+      default: {
+        break
+      }
     }
   })
   return date as unknown as DateTime
 }
 
-export function formatTimestampByTemplate (dateTimeFormat: Intl.DateTimeFormat, timestamp: number, template: string): string {
+export function formatTimestampByTemplate(dateTimeFormat: Intl.DateTimeFormat, timestamp: number, template: string): string {
   const date = formatTimestampToDateTime(dateTimeFormat, timestamp)
-  return template.replace(/YYYY|MM|DD|HH|mm|ss/g, key => date[key])
+  return template.replace(/YYYY|MM|DD|HH|mm|ss/g, (key) => date[key])
 }
 
-export function formatPrecision (value: string | number, precision?: number): string {
+export function formatPrecision(value: string | number, precision?: number): string {
   const v = +value
   if (isNumber(v)) {
     return v.toFixed(precision ?? 2)
@@ -104,35 +99,35 @@ export function formatPrecision (value: string | number, precision?: number): st
   return `${value}`
 }
 
-export function formatBigNumber (value: string | number): string {
+export function formatBigNumber(value: string | number): string {
   const v = +value
   if (isNumber(v)) {
     if (v > 1000000000) {
-      return `${+((v / 1000000000).toFixed(3))}B`
+      return `${+(v / 1000000000).toFixed(3)}B`
     }
     if (v > 1000000) {
-      return `${+((v / 1000000).toFixed(3))}M`
+      return `${+(v / 1000000).toFixed(3)}M`
     }
     if (v > 1000) {
-      return `${+((v / 1000).toFixed(3))}K`
+      return `${+(v / 1000).toFixed(3)}K`
     }
   }
   return `${value}`
 }
 
-export function formatThousands (value: string | number, sign: string): string {
+export function formatThousands(value: string | number, sign: string): string {
   const vl = `${value}`
   if (sign.length === 0) {
     return vl
   }
   if (vl.includes('.')) {
     const arr = vl.split('.')
-    return `${arr[0].replace(/(\d)(?=(\d{3})+$)/g, $1 => `${$1}${sign}`)}.${arr[1]}`
+    return `${arr[0].replace(/(\d)(?=(\d{3})+$)/g, ($1) => `${$1}${sign}`)}.${arr[1]}`
   }
-  return vl.replace(/(\d)(?=(\d{3})+$)/g, $1 => `${$1}${sign}`)
+  return vl.replace(/(\d)(?=(\d{3})+$)/g, ($1) => `${$1}${sign}`)
 }
 
-export function formatFoldDecimal (value: string | number, threshold: number): string {
+export function formatFoldDecimal(value: string | number, threshold: number): string {
   const vl = `${value}`
   const reg = new RegExp('\\.0{' + threshold + ',}[1-9][0-9]*$')
   if (reg.test(vl)) {
@@ -149,7 +144,7 @@ export function formatFoldDecimal (value: string | number, threshold: number): s
   return vl
 }
 
-export function formatTemplateString (template: string, params: Record<string, unknown>): string {
+export function formatTemplateString(template: string, params: Record<string, unknown>): string {
   return template.replace(/\{(\w+)\}/g, (_, key) => {
     const value = params[key as string]
     if (isValid(value)) {

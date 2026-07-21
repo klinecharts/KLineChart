@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-export function throttle<A extends unknown[]> (func: (...args: A) => unknown, wait?: number): (...args: A) => void {
+export function throttle<A extends unknown[]>(func: (...args: A) => unknown, wait?: number): (...args: A) => void {
   let previous = 0
   return function (this: unknown, ...args: A): void {
     const now = Date.now()

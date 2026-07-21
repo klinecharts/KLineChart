@@ -43,7 +43,7 @@ export default class CandleAreaView extends ChildrenView {
     pane.getChart().updatePane(UpdateLevel.Main, pane.getId())
   })
 
-  override drawImp (ctx: CanvasRenderingContext2D): void {
+  override drawImp(ctx: CanvasRenderingContext2D): void {
     const widget = this.getWidget()
     const pane = widget.getPane()
     const chart = pane.getChart()
@@ -82,8 +82,7 @@ export default class CandleAreaView extends ChildrenView {
           size: styles.lineSize,
           smooth: styles.smooth
         }
-      }
-      )?.draw(ctx)
+      })?.draw(ctx)
 
       // render area
       const backgroundColor = styles.backgroundColor
@@ -127,7 +126,7 @@ export default class CandleAreaView extends ChildrenView {
       })?.draw(ctx)
       let rippleRadius = pointStyles.rippleRadius
       if (pointStyles.animation) {
-        rippleRadius = pointStyles.radius + this._animationFrameTime / pointStyles.animationDuration * (pointStyles.rippleRadius - pointStyles.radius)
+        rippleRadius = pointStyles.radius + (this._animationFrameTime / pointStyles.animationDuration) * (pointStyles.rippleRadius - pointStyles.radius)
         this._animation.setDuration(pointStyles.animationDuration).start()
       }
       this._ripplePoint
@@ -136,13 +135,14 @@ export default class CandleAreaView extends ChildrenView {
           y: ripplePointCoordinate!.y,
           r: rippleRadius
         })
-        .setStyles({ style: 'fill', color: pointStyles.rippleColor }).draw(ctx)
+        .setStyles({ style: 'fill', color: pointStyles.rippleColor })
+        .draw(ctx)
     } else {
       this.stopAnimation()
     }
   }
 
-  stopAnimation (): void {
+  stopAnimation(): void {
     this._animation.stop()
   }
 }

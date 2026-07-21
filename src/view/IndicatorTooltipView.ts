@@ -48,15 +48,15 @@ export default class IndicatorTooltipView extends View<YAxis> {
     return true
   }
 
-  constructor (widget: DrawWidget<DrawPane<YAxis>>) {
+  constructor(widget: DrawWidget<DrawPane<YAxis>>) {
     super(widget)
-    this.registerEvent('mouseMoveEvent', _ => {
+    this.registerEvent('mouseMoveEvent', (_) => {
       this._activeFeatureInfo = null
       return false
     })
   }
 
-  override drawImp (ctx: CanvasRenderingContext2D): void {
+  override drawImp(ctx: CanvasRenderingContext2D): void {
     const widget = this.getWidget()
     const pane = widget.getPane()
     const chartStore = pane.getChart().getChartStore()
@@ -64,19 +64,11 @@ export default class IndicatorTooltipView extends View<YAxis> {
     if (isValid(crosshair.kLineData)) {
       const bounding = widget.getBounding()
       const { offsetLeft, offsetTop, offsetRight } = chartStore.getStyles().indicator.tooltip
-      this.drawIndicatorTooltip(
-        ctx, offsetLeft, offsetTop,
-        bounding.width - offsetRight
-      )
+      this.drawIndicatorTooltip(ctx, offsetLeft, offsetTop, bounding.width - offsetRight)
     }
   }
 
-  protected drawIndicatorTooltip (
-    ctx: CanvasRenderingContext2D,
-    left: number,
-    top: number,
-    maxWidth: number
-  ): number {
+  protected drawIndicatorTooltip(ctx: CanvasRenderingContext2D, left: number, top: number, maxWidth: number): number {
     const pane = this.getWidget().getPane()
     const chartStore = pane.getChart().getChartStore()
     const styles = chartStore.getStyles().indicator
@@ -85,7 +77,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
       const indicators = chartStore.getIndicatorsByPaneId(pane.getId())
       const tooltipTitleStyles = tooltipStyles.title
       const tooltipLegendStyles = tooltipStyles.legend
-      indicators.forEach(indicator => {
+      indicators.forEach((indicator) => {
         let prevRowHeight = 0
         const coordinate = { x: left, y: top }
         const { name, calcParamsText, legends, features: featuresStyles } = this.getIndicatorTooltipData(indicator)
@@ -93,11 +85,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
         const legendValid = legends.length > 0
         if (nameValid || legendValid) {
           const features = this.classifyTooltipFeatures(featuresStyles)
-          prevRowHeight = this.drawStandardTooltipFeatures(
-            ctx, features[0],
-            coordinate, indicator,
-            left, prevRowHeight, maxWidth
-          )
+          prevRowHeight = this.drawStandardTooltipFeatures(ctx, features[0], coordinate, indicator, left, prevRowHeight, maxWidth)
 
           if (nameValid) {
             let text = name
@@ -113,29 +101,22 @@ export default class IndicatorTooltipView extends View<YAxis> {
                   value: { text, color }
                 }
               ],
-              coordinate, left, prevRowHeight, maxWidth, tooltipTitleStyles
+              coordinate,
+              left,
+              prevRowHeight,
+              maxWidth,
+              tooltipTitleStyles
             )
           }
 
-          prevRowHeight = this.drawStandardTooltipFeatures(
-            ctx, features[1],
-            coordinate, indicator,
-            left, prevRowHeight, maxWidth
-          )
+          prevRowHeight = this.drawStandardTooltipFeatures(ctx, features[1], coordinate, indicator, left, prevRowHeight, maxWidth)
 
           if (legendValid) {
-            prevRowHeight = this.drawStandardTooltipLegends(
-              ctx, legends, coordinate,
-              left, prevRowHeight, maxWidth, tooltipLegendStyles
-            )
+            prevRowHeight = this.drawStandardTooltipLegends(ctx, legends, coordinate, left, prevRowHeight, maxWidth, tooltipLegendStyles)
           }
 
           // draw right features
-          prevRowHeight = this.drawStandardTooltipFeatures(
-            ctx, features[2],
-            coordinate, indicator,
-            left, prevRowHeight, maxWidth
-          )
+          prevRowHeight = this.drawStandardTooltipFeatures(ctx, features[2], coordinate, indicator, left, prevRowHeight, maxWidth)
           top = coordinate.y + prevRowHeight
         }
       })
@@ -143,24 +124,12 @@ export default class IndicatorTooltipView extends View<YAxis> {
     return top
   }
 
-  protected drawStandardTooltipFeatures (
-    ctx: CanvasRenderingContext2D,
-    features: TooltipFeatureStyle[],
-    coordinate: Coordinate,
-    indicator: Nullable<Indicator>,
-    left: number,
-    prevRowHeight: number,
-    maxWidth: number
-  ): number {
+  protected drawStandardTooltipFeatures(ctx: CanvasRenderingContext2D, features: TooltipFeatureStyle[], coordinate: Coordinate, indicator: Nullable<Indicator>, left: number, prevRowHeight: number, maxWidth: number): number {
     if (features.length > 0) {
       let width = 0
       let height = 0
-      features.forEach(feature => {
-        const {
-          marginLeft = 0, marginTop = 0, marginRight = 0, marginBottom = 0,
-          paddingLeft = 0, paddingTop = 0, paddingRight = 0, paddingBottom = 0,
-          size = 0, type, content
-        } = feature
+      features.forEach((feature) => {
+        const { marginLeft = 0, marginTop = 0, marginRight = 0, marginBottom = 0, paddingLeft = 0, paddingTop = 0, paddingRight = 0, paddingBottom = 0, size = 0, type, content } = feature
         let contentWidth = 0
         if (type === 'icon_font') {
           const iconFont = content as FeatureIconFontStyle
@@ -169,7 +138,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
         } else {
           contentWidth = size
         }
-        width += (marginLeft + paddingLeft + contentWidth + paddingRight + marginRight)
+        width += marginLeft + paddingLeft + contentWidth + paddingRight + marginRight
         height = Math.max(height, marginTop + paddingTop + size + paddingBottom + marginBottom)
       })
       if (coordinate.x + width > maxWidth) {
@@ -182,27 +151,19 @@ export default class IndicatorTooltipView extends View<YAxis> {
       const pane = this.getWidget().getPane()
       const paneId = pane.getId()
 
-      features.forEach(feature => {
-        const {
-          marginLeft = 0, marginTop = 0, marginRight = 0,
-          paddingLeft = 0, paddingTop = 0, paddingRight = 0, paddingBottom = 0,
-          backgroundColor, activeBackgroundColor, borderRadius,
-          size = 0, color, activeColor, type, content
-        } = feature
+      features.forEach((feature) => {
+        const { marginLeft = 0, marginTop = 0, marginRight = 0, paddingLeft = 0, paddingTop = 0, paddingRight = 0, paddingBottom = 0, backgroundColor, activeBackgroundColor, borderRadius, size = 0, color, activeColor, type, content } = feature
 
         let finalColor = color
         let finalBackgroundColor = backgroundColor
-        if (
-          this._activeFeatureInfo?.paneId === paneId &&
-          this._activeFeatureInfo.indicator?.id === indicator?.id &&
-          this._activeFeatureInfo.feature.id === feature.id
-        ) {
+        if (this._activeFeatureInfo?.paneId === paneId && this._activeFeatureInfo.indicator?.id === indicator?.id && this._activeFeatureInfo.feature.id === feature.id) {
           finalColor = activeColor ?? color
           finalBackgroundColor = activeBackgroundColor ?? backgroundColor
         }
         let actionType: ActionType = 'onCandleTooltipFeatureClick'
         const featureInfo: TooltipFeatureInfo = {
-          paneId, feature
+          paneId,
+          feature
         }
         if (isValid(indicator)) {
           actionType = 'onIndicatorTooltipFeatureClick'
@@ -215,34 +176,40 @@ export default class IndicatorTooltipView extends View<YAxis> {
         let contentWidth = 0
         if (type === 'icon_font') {
           const iconFont = content as FeatureIconFontStyle
-          this.createFigure({
-            name: 'text',
-            attrs: { text: iconFont.code, x: coordinate.x + marginLeft, y: coordinate.y + marginTop },
-            styles: {
-              paddingLeft,
-              paddingTop,
-              paddingRight,
-              paddingBottom,
-              borderRadius,
-              size,
-              family: iconFont.family,
-              color: finalColor,
-              backgroundColor: finalBackgroundColor
-            }
-          }, eventHandler)?.draw(ctx)
+          this.createFigure(
+            {
+              name: 'text',
+              attrs: { text: iconFont.code, x: coordinate.x + marginLeft, y: coordinate.y + marginTop },
+              styles: {
+                paddingLeft,
+                paddingTop,
+                paddingRight,
+                paddingBottom,
+                borderRadius,
+                size,
+                family: iconFont.family,
+                color: finalColor,
+                backgroundColor: finalBackgroundColor
+              }
+            },
+            eventHandler
+          )?.draw(ctx)
           contentWidth = ctx.measureText(iconFont.code).width
         } else {
-          this.createFigure({
-            name: 'rect',
-            attrs: { x: coordinate.x + marginLeft, y: coordinate.y + marginTop, width: size, height: size },
-            styles: {
-              paddingLeft,
-              paddingTop,
-              paddingRight,
-              paddingBottom,
-              color: finalBackgroundColor
-            }
-          }, eventHandler)?.draw(ctx)
+          this.createFigure(
+            {
+              name: 'rect',
+              attrs: { x: coordinate.x + marginLeft, y: coordinate.y + marginTop, width: size, height: size },
+              styles: {
+                paddingLeft,
+                paddingTop,
+                paddingRight,
+                paddingBottom,
+                color: finalBackgroundColor
+              }
+            },
+            eventHandler
+          )?.draw(ctx)
           const path = content as FeaturePathStyle
           this.createFigure({
             name: 'path',
@@ -255,25 +222,17 @@ export default class IndicatorTooltipView extends View<YAxis> {
           })?.draw(ctx)
           contentWidth = size
         }
-        coordinate.x += (marginLeft + paddingLeft + contentWidth + paddingRight + marginRight)
+        coordinate.x += marginLeft + paddingLeft + contentWidth + paddingRight + marginRight
       })
     }
     return prevRowHeight
   }
 
-  protected drawStandardTooltipLegends (
-    ctx: CanvasRenderingContext2D,
-    legends: TooltipLegend[],
-    coordinate: Coordinate,
-    left: number,
-    prevRowHeight: number,
-    maxWidth: number,
-    styles: TooltipTextStyle
-  ): number {
+  protected drawStandardTooltipLegends(ctx: CanvasRenderingContext2D, legends: TooltipLegend[], coordinate: Coordinate, left: number, prevRowHeight: number, maxWidth: number, styles: TooltipTextStyle): number {
     if (legends.length > 0) {
       const { marginLeft, marginTop, marginRight, marginBottom, size, family, weight } = styles
       ctx.font = createFont(size, weight, family)
-      legends.forEach(data => {
+      legends.forEach((data) => {
         const title = data.title as TooltipLegendChild
         const value = data.value as TooltipLegendChild
         const titleTextWidth = ctx.measureText(title.text).width
@@ -299,19 +258,18 @@ export default class IndicatorTooltipView extends View<YAxis> {
           attrs: { x: coordinate.x + marginLeft + titleTextWidth, y: coordinate.y + marginTop, text: value.text },
           styles: { color: value.color, size, family, weight }
         })?.draw(ctx)
-        coordinate.x += (marginLeft + totalTextWidth + marginRight)
+        coordinate.x += marginLeft + totalTextWidth + marginRight
       })
     }
     return prevRowHeight
   }
 
-  protected isDrawTooltip (crosshair: Crosshair, styles: TooltipStyle): boolean {
+  protected isDrawTooltip(crosshair: Crosshair, styles: TooltipStyle): boolean {
     const showRule = styles.showRule
-    return showRule === 'always' ||
-      (showRule === 'follow_cross' && isString(crosshair.paneId))
+    return showRule === 'always' || (showRule === 'follow_cross' && isString(crosshair.paneId))
   }
 
-  protected getIndicatorTooltipData (indicator: Indicator): IndicatorTooltipData {
+  protected getIndicatorTooltipData(indicator: Indicator): IndicatorTooltipData {
     const chartStore = this.getWidget().getPane().getChart().getChartStore()
     const styles = chartStore.getStyles().indicator
     const tooltipStyles = styles.tooltip
@@ -364,7 +322,12 @@ export default class IndicatorTooltipView extends View<YAxis> {
       const widget = this.getWidget()
       const pane = widget.getPane()
       const chart = pane.getChart()
-      const { name: customName, calcParamsText: customCalcParamsText, legends: customLegends, features: customFeatures } = indicator.createTooltipDataSource({
+      const {
+        name: customName,
+        calcParamsText: customCalcParamsText,
+        legends: customLegends,
+        features: customFeatures
+      } = indicator.createTooltipDataSource({
         chart,
         indicator,
         crosshair: chartStore.getCrosshair(),
@@ -387,7 +350,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
       if (isValid(customLegends) && indicator.visible) {
         const optimizedLegends: TooltipLegend[] = []
         const color = styles.tooltip.legend.color
-        customLegends.forEach(data => {
+        customLegends.forEach((data) => {
           let title = { text: '', color }
           if (isObject(data.title)) {
             title = data.title
@@ -411,11 +374,11 @@ export default class IndicatorTooltipView extends View<YAxis> {
     return tooltipData
   }
 
-  protected classifyTooltipFeatures (features: TooltipFeatureStyle[]): TooltipFeatureStyle[][] {
+  protected classifyTooltipFeatures(features: TooltipFeatureStyle[]): TooltipFeatureStyle[][] {
     const leftFeatures: TooltipFeatureStyle[] = []
     const middleFeatures: TooltipFeatureStyle[] = []
     const rightFeatures: TooltipFeatureStyle[] = []
-    features.forEach(feature => {
+    features.forEach((feature) => {
       switch (feature.position) {
         case 'left': {
           leftFeatures.push(feature)

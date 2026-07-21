@@ -24,20 +24,20 @@ import type ChartStore from '../Store'
 import CrosshairHorizontalLabelView from './CrosshairHorizontalLabelView'
 
 export default class CrosshairVerticalLabelView extends CrosshairHorizontalLabelView<XAxis> {
-  override compare (crosshair: Crosshair): boolean {
+  override compare(crosshair: Crosshair): boolean {
     return isValid(crosshair.timestamp)
   }
 
-  override getDirectionStyles (styles: CrosshairStyle): CrosshairDirectionStyle {
+  override getDirectionStyles(styles: CrosshairStyle): CrosshairDirectionStyle {
     return styles.vertical
   }
 
-  override getText (crosshair: Crosshair, chartStore: ChartStore): string {
+  override getText(crosshair: Crosshair, chartStore: ChartStore): string {
     const timestamp = crosshair.timestamp!
     return chartStore.getInnerFormatter().formatDate(timestamp, PeriodTypeCrosshairTooltipFormat[chartStore.getPeriod()?.type ?? 'day'], 'crosshair')
   }
 
-  override getTextAttrs (text: string, textWidth: number, crosshair: Crosshair, bounding: Bounding, _axis: Axis, styles: StateTextStyle): TextAttrs {
+  override getTextAttrs(text: string, textWidth: number, crosshair: Crosshair, bounding: Bounding, _axis: Axis, styles: StateTextStyle): TextAttrs {
     const x = crosshair.realX!
     let optimalX = 0
     let align: CanvasTextAlign = 'center'

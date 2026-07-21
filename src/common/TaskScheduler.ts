@@ -24,11 +24,11 @@ export default class TaskScheduler {
 
   private readonly _callback: Nullable<TaskFinishedCallback>
 
-  constructor (callback: TaskFinishedCallback) {
+  constructor(callback: TaskFinishedCallback) {
     this._callback = callback
   }
 
-  add (tasks: Record<string, Promise<unknown>>): void {
+  add(tasks: Record<string, Promise<unknown>>): void {
     if (!this._running) {
       void this._runTask(tasks)
     } else {
@@ -43,7 +43,7 @@ export default class TaskScheduler {
     }
   }
 
-  private async _runTask (tasks: Record<string, Promise<unknown>>): Promise<void> {
+  private async _runTask(tasks: Record<string, Promise<unknown>>): Promise<void> {
     this._running = true
     try {
       await Promise.all(Object.values(tasks))
@@ -58,7 +58,7 @@ export default class TaskScheduler {
     }
   }
 
-  clear (): void {
+  clear(): void {
     this._holdingTasks = null
   }
 }

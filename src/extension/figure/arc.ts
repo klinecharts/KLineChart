@@ -20,7 +20,7 @@ import { DEVIATION, type FigureTemplate } from '../../component/Figure'
 
 import type { CircleAttrs } from './circle'
 
-export function checkCoordinateOnArc (coordinate: Coordinate, attrs: ArcAttrs | ArcAttrs[]): boolean {
+export function checkCoordinateOnArc(coordinate: Coordinate, attrs: ArcAttrs | ArcAttrs[]): boolean {
   let arcs: ArcAttrs[] = []
   arcs = arcs.concat(attrs)
   for (const arc of arcs) {
@@ -30,12 +30,7 @@ export function checkCoordinateOnArc (coordinate: Coordinate, attrs: ArcAttrs | 
       const startCoordinateY = r * Math.sin(startAngle) + arc.y
       const endCoordinateX = r * Math.cos(endAngle) + arc.x
       const endCoordinateY = r * Math.sin(endAngle) + arc.y
-      if (
-        coordinate.x <= Math.max(startCoordinateX, endCoordinateX) + DEVIATION &&
-        coordinate.x >= Math.min(startCoordinateX, endCoordinateX) - DEVIATION &&
-        coordinate.y <= Math.max(startCoordinateY, endCoordinateY) + DEVIATION &&
-        coordinate.y >= Math.min(startCoordinateY, endCoordinateY) - DEVIATION
-      ) {
+      if (coordinate.x <= Math.max(startCoordinateX, endCoordinateX) + DEVIATION && coordinate.x >= Math.min(startCoordinateX, endCoordinateX) - DEVIATION && coordinate.y <= Math.max(startCoordinateY, endCoordinateY) + DEVIATION && coordinate.y >= Math.min(startCoordinateY, endCoordinateY) - DEVIATION) {
         return true
       }
     }
@@ -44,7 +39,7 @@ export function checkCoordinateOnArc (coordinate: Coordinate, attrs: ArcAttrs | 
   return false
 }
 
-export function drawArc (ctx: CanvasRenderingContext2D, attrs: ArcAttrs | ArcAttrs[], styles: Partial<LineStyle>): void {
+export function drawArc(ctx: CanvasRenderingContext2D, attrs: ArcAttrs | ArcAttrs[], styles: Partial<LineStyle>): void {
   let arcs: ArcAttrs[] = []
   arcs = arcs.concat(attrs)
   const { style = 'solid', size = 1, color = 'currentColor', dashedValue = [2, 2] } = styles

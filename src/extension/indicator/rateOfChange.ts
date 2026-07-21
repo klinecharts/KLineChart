@@ -41,14 +41,14 @@ const rateOfChange: IndicatorTemplate<Roc, number> = {
         const close = kLineData.close
         const agoClose = (dataList[i - params[0]] ?? dataList[i - (params[0] - 1)]).close
         if (agoClose !== 0) {
-          roc.roc = (close - agoClose) / agoClose * 100
+          roc.roc = ((close - agoClose) / agoClose) * 100
         } else {
           roc.roc = 0
         }
         rocSum += roc.roc
         if (i >= params[0] - 1 + params[1] - 1) {
           roc.maRoc = rocSum / params[1]
-          rocSum -= (result[i - (params[1] - 1)].roc ?? 0)
+          rocSum -= result[i - (params[1] - 1)].roc ?? 0
         }
       }
       result.push(roc)

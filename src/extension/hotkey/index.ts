@@ -12,7 +12,6 @@
  * limitations under the License.
  */
 
-
 import type { HotkeyTemplate } from '../../common/Hotkey'
 import type Nullable from '../../common/Nullable'
 
@@ -28,15 +27,15 @@ const hotkeys: Record<string, HotkeyTemplate> = {
   [zoomOut.name]: zoomOut
 }
 
-function registerHotkey<E = unknown> (hotkey: HotkeyTemplate<E>): void {
+function registerHotkey<E = unknown>(hotkey: HotkeyTemplate<E>): void {
   hotkeys[hotkey.name] = hotkey as HotkeyTemplate
 }
 
-function getHotkey (name: string): Nullable<HotkeyTemplate> {
+function getHotkey(name: string): Nullable<HotkeyTemplate> {
   return hotkeys[name] ?? null
 }
 
-function getSupportedHotkeys (): string[] {
+function getSupportedHotkeys(): string[] {
   return Object.keys(hotkeys)
 }
 

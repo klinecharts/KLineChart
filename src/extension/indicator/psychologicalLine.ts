@@ -44,11 +44,11 @@ const psychologicalLine: IndicatorTemplate<Psy, number> = {
       upList.push(upFlag)
       upCount += upFlag
       if (i >= params[0] - 1) {
-        psy.psy = upCount / params[0] * 100
+        psy.psy = (upCount / params[0]) * 100
         psySum += psy.psy
         if (i >= params[0] + params[1] - 2) {
           psy.maPsy = psySum / params[1]
-          psySum -= (result[i - (params[1] - 1)].psy ?? 0)
+          psySum -= result[i - (params[1] - 1)].psy ?? 0
         }
         upCount -= upList[i - (params[0] - 1)]
       }

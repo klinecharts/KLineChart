@@ -24,32 +24,38 @@ export default abstract class DrawWidget<P extends DrawPane = DrawPane> extends 
   private readonly _mainCanvas: Canvas
   private readonly _overlayCanvas: Canvas
 
-  constructor (rootContainer: HTMLElement, pane: P) {
+  constructor(rootContainer: HTMLElement, pane: P) {
     super(rootContainer, pane)
-    this._mainCanvas = new Canvas({
-      position: 'absolute',
-      top: '0',
-      left: '0',
-      zIndex: '2',
-      boxSizing: 'border-box'
-    }, () => {
-      this.updateMain(this._mainCanvas.getContext())
-    })
-    this._overlayCanvas = new Canvas({
-      position: 'absolute',
-      top: '0',
-      left: '0',
-      zIndex: '2',
-      boxSizing: 'border-box'
-    }, () => {
-      this.updateOverlay(this._overlayCanvas.getContext())
-    })
+    this._mainCanvas = new Canvas(
+      {
+        position: 'absolute',
+        top: '0',
+        left: '0',
+        zIndex: '2',
+        boxSizing: 'border-box'
+      },
+      () => {
+        this.updateMain(this._mainCanvas.getContext())
+      }
+    )
+    this._overlayCanvas = new Canvas(
+      {
+        position: 'absolute',
+        top: '0',
+        left: '0',
+        zIndex: '2',
+        boxSizing: 'border-box'
+      },
+      () => {
+        this.updateOverlay(this._overlayCanvas.getContext())
+      }
+    )
     const container = this.getContainer()
     container.appendChild(this._mainCanvas.getElement())
     container.appendChild(this._overlayCanvas.getElement())
   }
 
-  override createContainer (): HTMLElement {
+  override createContainer(): HTMLElement {
     return createDom('div', {
       margin: '0',
       padding: '0',
@@ -61,7 +67,7 @@ export default abstract class DrawWidget<P extends DrawPane = DrawPane> extends 
     })
   }
 
-  override updateImp (container: HTMLElement, bounding: Bounding, level: UpdateLevel): void {
+  override updateImp(container: HTMLElement, bounding: Bounding, level: UpdateLevel): void {
     const { width, height, left } = bounding
     container.style.left = `${left}px`
 
@@ -94,13 +100,13 @@ export default abstract class DrawWidget<P extends DrawPane = DrawPane> extends 
     }
   }
 
-  destroy (): void {
+  destroy(): void {
     this._mainCanvas.destroy()
     this._overlayCanvas.destroy()
     super.destroy()
   }
 
-  getImage (includeOverlay: boolean): HTMLCanvasElement {
+  getImage(includeOverlay: boolean): HTMLCanvasElement {
     const { width, height } = this.getBounding()
     const canvas = createDom('canvas', {
       width: `${width}px`,
@@ -121,6 +127,6 @@ export default abstract class DrawWidget<P extends DrawPane = DrawPane> extends 
     return canvas
   }
 
-  protected abstract updateMain (ctx: CanvasRenderingContext2D): void
-  protected abstract updateOverlay (ctx: CanvasRenderingContext2D): void
+  protected abstract updateMain(ctx: CanvasRenderingContext2D): void
+  protected abstract updateOverlay(ctx: CanvasRenderingContext2D): void
 }

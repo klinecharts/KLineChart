@@ -48,18 +48,18 @@ const brar: IndicatorTemplate<Brar, number> = {
       const low = kLineData.low
       const open = kLineData.open
       const prevClose = (dataList[i - 1] ?? kLineData).close
-      ho += (high - open)
-      ol += (open - low)
-      hcy += (high - prevClose)
-      cyl += (prevClose - low)
+      ho += high - open
+      ol += open - low
+      hcy += high - prevClose
+      cyl += prevClose - low
       if (i >= params[0] - 1) {
         if (ol !== 0) {
-          brar.ar = ho / ol * 100
+          brar.ar = (ho / ol) * 100
         } else {
           brar.ar = 0
         }
         if (cyl !== 0) {
-          brar.br = hcy / cyl * 100
+          brar.br = (hcy / cyl) * 100
         } else {
           brar.br = 0
         }
@@ -68,10 +68,10 @@ const brar: IndicatorTemplate<Brar, number> = {
         const agoLow = agoKLineData.low
         const agoOpen = agoKLineData.open
         const agoPreClose = (dataList[i - params[0]] ?? dataList[i - (params[0] - 1)]).close
-        hcy -= (agoHigh - agoPreClose)
-        cyl -= (agoPreClose - agoLow)
-        ho -= (agoHigh - agoOpen)
-        ol -= (agoOpen - agoLow)
+        hcy -= agoHigh - agoPreClose
+        cyl -= agoPreClose - agoLow
+        ho -= agoHigh - agoOpen
+        ol -= agoOpen - agoLow
       }
       return brar
     })

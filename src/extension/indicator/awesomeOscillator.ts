@@ -24,25 +24,27 @@ const awesomeOscillator: IndicatorTemplate<Ao, number> = {
   name: 'AO',
   shortName: 'AO',
   calcParams: [5, 34],
-  figures: [{
-    key: 'ao',
-    title: 'AO: ',
-    type: 'bar',
-    baseValue: 0,
-    styles: ({ data, indicator, defaultStyles }) => {
-      const { prev, current } = data
-      const prevAo = prev?.ao ?? Number.MIN_SAFE_INTEGER
-      const currentAo = current?.ao ?? Number.MIN_SAFE_INTEGER
-      let color = ''
-      if (currentAo > prevAo) {
-        color = formatValue(indicator.styles, 'bars[0].upColor', (defaultStyles!.bars)[0].upColor) as string
-      } else {
-        color = formatValue(indicator.styles, 'bars[0].downColor', (defaultStyles!.bars)[0].downColor) as string
+  figures: [
+    {
+      key: 'ao',
+      title: 'AO: ',
+      type: 'bar',
+      baseValue: 0,
+      styles: ({ data, indicator, defaultStyles }) => {
+        const { prev, current } = data
+        const prevAo = prev?.ao ?? Number.MIN_SAFE_INTEGER
+        const currentAo = current?.ao ?? Number.MIN_SAFE_INTEGER
+        let color = ''
+        if (currentAo > prevAo) {
+          color = formatValue(indicator.styles, 'bars[0].upColor', defaultStyles!.bars[0].upColor) as string
+        } else {
+          color = formatValue(indicator.styles, 'bars[0].downColor', defaultStyles!.bars[0].downColor) as string
+        }
+        const style = currentAo > prevAo ? 'stroke' : 'fill'
+        return { color, style, borderColor: color }
       }
-      const style = currentAo > prevAo ? 'stroke' : 'fill'
-      return { color, style, borderColor: color }
     }
-  }],
+  ],
   calc: (dataList, indicator) => {
     const params = indicator.calcParams
     const maxPeriod = Math.max(params[0], params[1])
@@ -58,12 +60,12 @@ const awesomeOscillator: IndicatorTemplate<Ao, number> = {
       if (i >= params[0] - 1) {
         short = shortSum / params[0]
         const agoKLineData = dataList[i - (params[0] - 1)]
-        shortSum -= ((agoKLineData.low + agoKLineData.high) / 2)
+        shortSum -= (agoKLineData.low + agoKLineData.high) / 2
       }
       if (i >= params[1] - 1) {
         long = longSum / params[1]
         const agoKLineData = dataList[i - (params[1] - 1)]
-        longSum -= ((agoKLineData.low + agoKLineData.high) / 2)
+        longSum -= (agoKLineData.low + agoKLineData.high) / 2
       }
       if (i >= maxPeriod - 1) {
         ao.ao = short - long

@@ -19,17 +19,14 @@ import { isString } from '../../common/utils/typeChecks'
 
 import type { FigureTemplate } from '../../component/Figure'
 
-export function checkCoordinateOnPolygon (coordinate: Coordinate, attrs: PolygonAttrs | PolygonAttrs[]): boolean {
+export function checkCoordinateOnPolygon(coordinate: Coordinate, attrs: PolygonAttrs | PolygonAttrs[]): boolean {
   let polygons: PolygonAttrs[] = []
   polygons = polygons.concat(attrs)
   for (const polygon of polygons) {
     let on = false
     const { coordinates } = polygon
     for (let i = 0, j = coordinates.length - 1; i < coordinates.length; j = i++) {
-      if (
-        (coordinates[i].y > coordinate.y) !== (coordinates[j].y > coordinate.y) &&
-        (coordinate.x < (coordinates[j].x - coordinates[i].x) * (coordinate.y - coordinates[i].y) / (coordinates[j].y - coordinates[i].y) + coordinates[i].x)
-      ) {
+      if (coordinates[i].y > coordinate.y !== coordinates[j].y > coordinate.y && coordinate.x < ((coordinates[j].x - coordinates[i].x) * (coordinate.y - coordinates[i].y)) / (coordinates[j].y - coordinates[i].y) + coordinates[i].x) {
         on = !on
       }
     }
@@ -40,20 +37,11 @@ export function checkCoordinateOnPolygon (coordinate: Coordinate, attrs: Polygon
   return false
 }
 
-export function drawPolygon (ctx: CanvasRenderingContext2D, attrs: PolygonAttrs | PolygonAttrs[], styles: Partial<PolygonStyle>): void {
+export function drawPolygon(ctx: CanvasRenderingContext2D, attrs: PolygonAttrs | PolygonAttrs[], styles: Partial<PolygonStyle>): void {
   let polygons: PolygonAttrs[] = []
   polygons = polygons.concat(attrs)
-  const {
-    style = 'fill',
-    color = 'currentColor',
-    borderSize = 1,
-    borderColor = 'currentColor',
-    borderStyle = 'solid',
-    borderDashedValue = [2, 2]
-  } = styles
-  if (
-    (style === 'fill' || styles.style === 'stroke_fill') &&
-    (!isString(color) || !isTransparent(color))) {
+  const { style = 'fill', color = 'currentColor', borderSize = 1, borderColor = 'currentColor', borderStyle = 'solid', borderDashedValue = [2, 2] } = styles
+  if ((style === 'fill' || styles.style === 'stroke_fill') && (!isString(color) || !isTransparent(color))) {
     ctx.fillStyle = color
     polygons.forEach(({ coordinates }) => {
       ctx.beginPath()

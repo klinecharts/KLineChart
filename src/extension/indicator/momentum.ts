@@ -44,7 +44,7 @@ const momentum: IndicatorTemplate<Mtm, number> = {
         mtmSum += mtm.mtm
         if (i >= params[0] + params[1] - 1) {
           mtm.maMtm = mtmSum / params[1]
-          mtmSum -= (result[i - (params[1] - 1)].mtm ?? 0)
+          mtmSum -= result[i - (params[1] - 1)].mtm ?? 0
         }
       }
       result.push(mtm)

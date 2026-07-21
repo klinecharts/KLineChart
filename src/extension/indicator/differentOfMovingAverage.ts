@@ -60,7 +60,7 @@ const differentOfMovingAverage: IndicatorTemplate<Dma, number> = {
         dmaSum += dif
         if (i >= maxPeriod + params[2] - 2) {
           dma.ama = dmaSum / params[2]
-          dmaSum -= (result[i - (params[2] - 1)].dma ?? 0)
+          dmaSum -= result[i - (params[2] - 1)].dma ?? 0
         }
       }
       result.push(dma)

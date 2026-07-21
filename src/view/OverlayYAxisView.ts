@@ -26,36 +26,21 @@ import type { YAxis } from '../component/YAxis'
 import OverlayView from './OverlayView'
 
 export default class OverlayYAxisView<C extends Axis = YAxis> extends OverlayView<C> {
-  override coordinateToPointTimestampDataIndexFlag (): boolean {
+  override coordinateToPointTimestampDataIndexFlag(): boolean {
     return false
   }
 
-  override drawDefaultFigures (
-    ctx: CanvasRenderingContext2D,
-    overlay: OverlayImp,
-    coordinates: Coordinate[]
-  ): void {
-    this.drawFigures(
-      ctx,
-      overlay,
-      this.getDefaultFigures(overlay, coordinates)
-    )
+  override drawDefaultFigures(ctx: CanvasRenderingContext2D, overlay: OverlayImp, coordinates: Coordinate[]): void {
+    this.drawFigures(ctx, overlay, this.getDefaultFigures(overlay, coordinates))
   }
 
-  protected getDefaultFigures (
-    overlay: Overlay,
-    coordinates: Coordinate[]
-  ): OverlayFigure[] {
+  protected getDefaultFigures(overlay: Overlay, coordinates: Coordinate[]): OverlayFigure[] {
     const widget = this.getWidget()
     const pane = widget.getPane()
     const chartStore = pane.getChart().getChartStore()
     const clickOverlayInfo = chartStore.getClickOverlayInfo()
     const figures: OverlayFigure[] = []
-    if (
-      overlay.needDefaultYAxisFigure &&
-      overlay.id === clickOverlayInfo.overlay?.id &&
-      clickOverlayInfo.paneId === pane.getId()
-    ) {
+    if (overlay.needDefaultYAxisFigure && overlay.id === clickOverlayInfo.overlay?.id && clickOverlayInfo.paneId === pane.getId()) {
       const yAxis = pane.getYAxisComponentById() as unknown as YAxisImp
       const bounding = widget.getBounding()
       let topY = Number.MAX_SAFE_INTEGER
@@ -88,10 +73,7 @@ export default class OverlayYAxisView<C extends Axis = YAxis> extends OverlayVie
     return figures
   }
 
-  override getFigures (
-    overlay: Overlay,
-    coordinates: Coordinate[]
-  ): OverlayFigure | OverlayFigure[] {
+  override getFigures(overlay: Overlay, coordinates: Coordinate[]): OverlayFigure | OverlayFigure[] {
     const widget = this.getWidget()
     const pane = widget.getPane()
     const chart = pane.getChart()

@@ -35,7 +35,7 @@ const fibonacciLine: OverlayTemplate = {
         precision = chart.getSymbol()?.pricePrecision ?? SymbolDefaultPrecisionConstants.PRICE
       } else {
         const indicators = chart.getIndicators({ paneId: overlay.paneId })
-        indicators.forEach(indicator => {
+        indicators.forEach((indicator) => {
           precision = Math.max(precision, indicator.precision)
         })
       }
@@ -47,10 +47,15 @@ const fibonacciLine: OverlayTemplate = {
         const percents = [1, 0.786, 0.618, 0.5, 0.382, 0.236, 0]
         const yDif = coordinates[0].y - coordinates[1].y
         const valueDif = points[0].value - points[1].value
-        percents.forEach(percent => {
+        percents.forEach((percent) => {
           const y = coordinates[1].y + yDif * percent
           const value = chart.getDecimalFold().format(chart.getThousandsSeparator().format(((points[1].value ?? 0) + valueDif * percent).toFixed(precision)))
-          lines.push({ coordinates: [{ x: startX, y }, { x: endX, y }] })
+          lines.push({
+            coordinates: [
+              { x: startX, y },
+              { x: endX, y }
+            ]
+          })
           texts.push({
             x: startX,
             y,
@@ -63,7 +68,8 @@ const fibonacciLine: OverlayTemplate = {
         {
           type: 'line',
           attrs: lines
-        }, {
+        },
+        {
           type: 'text',
           isCheckEvent: false,
           attrs: texts

@@ -44,7 +44,7 @@ const bias: IndicatorTemplate<Bias, number> = {
         closeSums[index] = (closeSums[index] ?? 0) + close
         if (i >= p - 1) {
           const mean = closeSums[index] / params[index]
-          bias[figures[index].key] = (close - mean) / mean * 100
+          bias[figures[index].key] = ((close - mean) / mean) * 100
 
           closeSums[index] -= dataList[i - (p - 1)].close
         }

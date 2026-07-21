@@ -33,13 +33,13 @@ export default class Animation {
 
   private _time = 0
 
-  constructor (options?: Partial<AnimationOptions>) {
+  constructor(options?: Partial<AnimationOptions>) {
     merge(this._options, options)
   }
 
-  _loop (): void {
+  _loop(): void {
     this._running = true
-    const step: (() => void) = () => {
+    const step: () => void = () => {
       if (this._running) {
         const diffTime = new Date().getTime() - this._time
         if (diffTime < this._options.duration) {
@@ -57,29 +57,29 @@ export default class Animation {
     requestAnimationFrame(step)
   }
 
-  doFrame (callback: AnimationDoFrameCallback): this {
+  doFrame(callback: AnimationDoFrameCallback): this {
     this._doFrameCallback = callback
     return this
   }
 
-  setDuration (duration: number): this {
+  setDuration(duration: number): this {
     this._options.duration = duration
     return this
   }
 
-  setIterationCount (iterationCount: number): this {
+  setIterationCount(iterationCount: number): this {
     this._options.iterationCount = iterationCount
     return this
   }
 
-  start (): void {
+  start(): void {
     if (!this._running) {
       this._time = new Date().getTime()
       this._loop()
     }
   }
 
-  stop (): void {
+  stop(): void {
     if (this._running) {
       this._doFrameCallback?.(this._options.duration)
     }

@@ -12,7 +12,6 @@
  * limitations under the License.
  */
 
-
 import type { YAxis } from '../component/YAxis'
 import type AxisPane from '../pane/DrawPane'
 import CandleAreaView from '../view/CandleAreaView'
@@ -31,13 +30,13 @@ export default class CandleWidget extends IndicatorWidget {
   private readonly _candleLastPriceLineView = new CandleLastPriceLineView(this)
   private readonly _crosshairFeatureView = new CrosshairFeatureView(this)
 
-  constructor (rootContainer: HTMLElement, pane: AxisPane<YAxis>) {
+  constructor(rootContainer: HTMLElement, pane: AxisPane<YAxis>) {
     super(rootContainer, pane)
     this.addChild(this._candleBarView)
     this.addChild(this._crosshairFeatureView)
   }
 
-  override updateMainContent (ctx: CanvasRenderingContext2D): void {
+  override updateMainContent(ctx: CanvasRenderingContext2D): void {
     const candleStyles = this.getPane().getChart().getStyles().candle
     if (candleStyles.type !== 'area') {
       this._candleBarView.draw(ctx)
@@ -49,11 +48,11 @@ export default class CandleWidget extends IndicatorWidget {
     this._candleLastPriceLineView.draw(ctx)
   }
 
-  override updateOverlayContent (ctx: CanvasRenderingContext2D): void {
+  override updateOverlayContent(ctx: CanvasRenderingContext2D): void {
     this._crosshairFeatureView.draw(ctx)
   }
 
-  override createTooltipView (): IndicatorTooltipView {
+  override createTooltipView(): IndicatorTooltipView {
     return new CandleTooltipView(this)
   }
 }

@@ -12,7 +12,6 @@
  * limitations under the License.
  */
 
-
 import type { XAxis } from '../component/XAxis'
 import type DrawPane from '../pane/DrawPane'
 import CrosshairVerticalLabelView from '../view/CrosshairVerticalLabelView'
@@ -27,21 +26,21 @@ export default class XAxisWidget extends DrawWidget<DrawPane<XAxis>> {
   private readonly _overlayXAxisView = new OverlayXAxisView(this)
   private readonly _crosshairVerticalLabelView = new CrosshairVerticalLabelView(this)
 
-  constructor (rootContainer: HTMLElement, pane: DrawPane<XAxis>) {
+  constructor(rootContainer: HTMLElement, pane: DrawPane<XAxis>) {
     super(rootContainer, pane)
     this.setCursor('ew-resize')
     this.addChild(this._overlayXAxisView)
   }
 
-  override getName (): string {
+  override getName(): string {
     return WidgetNameConstants.X_AXIS
   }
 
-  override updateMain (ctx: CanvasRenderingContext2D): void {
+  override updateMain(ctx: CanvasRenderingContext2D): void {
     this._xAxisView.draw(ctx)
   }
 
-  override updateOverlay (ctx: CanvasRenderingContext2D): void {
+  override updateOverlay(ctx: CanvasRenderingContext2D): void {
     this._overlayXAxisView.draw(ctx)
     this._crosshairVerticalLabelView.draw(ctx)
   }

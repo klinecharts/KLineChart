@@ -22,16 +22,16 @@ import YAxisWidget from '../widget/YAxisWidget'
 import DrawPane from './DrawPane'
 
 export default class IndicatorPane extends DrawPane<YAxis> {
-  override createYAxisComponent (name?: string): YAxis {
+  override createYAxisComponent(name?: string): YAxis {
     const YAxisClass = getYAxisClass(name ?? 'default')
     return new YAxisClass(this)
   }
 
-  override createMainWidget (container: HTMLElement): DrawWidget<DrawPane<YAxis>> {
+  override createMainWidget(container: HTMLElement): DrawWidget<DrawPane<YAxis>> {
     return new IndicatorWidget(container, this)
   }
 
-  override createYAxisWidget (container: HTMLElement, yAxis: YAxis): Nullable<YAxisWidget> {
+  override createYAxisWidget(container: HTMLElement, yAxis: YAxis): Nullable<YAxisWidget> {
     return new YAxisWidget(container, this, yAxis)
   }
 }

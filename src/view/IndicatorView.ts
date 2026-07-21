@@ -23,7 +23,7 @@ import { eachFigures, type IndicatorFigure, type IndicatorFigureAttrs, type Indi
 import CandleBarView, { type CandleBarOptions } from './CandleBarView'
 
 export default class IndicatorView extends CandleBarView {
-  override getCandleBarOptions (): Nullable<CandleBarOptions> {
+  override getCandleBarOptions(): Nullable<CandleBarOptions> {
     const pane = this.getWidget().getPane()
     const chartStore = pane.getChart().getChartStore()
     const indicators = chartStore.getIndicatorsByPaneId(pane.getId())
@@ -57,7 +57,7 @@ export default class IndicatorView extends CandleBarView {
     return null
   }
 
-  override drawImp (ctx: CanvasRenderingContext2D): void {
+  override drawImp(ctx: CanvasRenderingContext2D): void {
     super.drawImp(ctx)
     const widget = this.getWidget()
     const pane = widget.getPane()
@@ -68,7 +68,7 @@ export default class IndicatorView extends CandleBarView {
     const indicators = chartStore.getIndicatorsByPaneId(pane.getId())
     const defaultStyles = chartStore.getStyles().indicator
     ctx.save()
-    indicators.forEach(indicator => {
+    indicators.forEach((indicator) => {
       const yAxis = pane.getYAxisComponentById(indicator.yAxisId)
       if (indicator.visible) {
         if (indicator.zLevel < 0) {
@@ -91,7 +91,7 @@ export default class IndicatorView extends CandleBarView {
         }
         if (!isCover) {
           const result = indicator.result
-          const lines: Array<Array<{ coordinates: Coordinate[], styles: Partial<SmoothLineStyle> }>> = []
+          const lines: Array<Array<{ coordinates: Coordinate[]; styles: Partial<SmoothLineStyle> }>> = []
 
           this.eachChildren((data, barSpace) => {
             const { halfGapBar } = barSpace
@@ -184,7 +184,9 @@ export default class IndicatorView extends CandleBarView {
                     }
                     break
                   }
-                  default: { break }
+                  default: {
+                    break
+                  }
                 }
                 const type = figure.type!
                 if (isValid<IndicatorFigureAttrs>(attrs) && type !== 'line') {
@@ -199,7 +201,7 @@ export default class IndicatorView extends CandleBarView {
           })
 
           // merge line and render
-          lines.forEach(items => {
+          lines.forEach((items) => {
             if (items.length > 1) {
               const mergeLines = [
                 {

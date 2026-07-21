@@ -35,7 +35,7 @@ export default class SeparatorWidget extends Widget<SeparatorPane> {
   private _topPane: Nullable<DrawPane> = null
   private _bottomPane: Nullable<DrawPane> = null
 
-  constructor (rootContainer: HTMLElement, pane: SeparatorPane) {
+  constructor(rootContainer: HTMLElement, pane: SeparatorPane) {
     super(rootContainer, pane)
     this.registerEvent('touchStartEvent', this._mouseDownEvent.bind(this))
       // @ts-ignore
@@ -49,17 +49,15 @@ export default class SeparatorWidget extends Widget<SeparatorPane> {
       .registerEvent('mouseLeaveEvent', this._mouseLeaveEvent.bind(this))
   }
 
-  override getName (): string {
+  override getName(): string {
     return WidgetNameConstants.SEPARATOR
   }
 
-  private _dragEnabled (topPane: DrawPane, bottomPane: DrawPane): boolean {
-    return topPane.getOptions().state === 'normal' &&
-      bottomPane.getOptions().state === 'normal' &&
-      bottomPane.getOptions().dragEnabled
+  private _dragEnabled(topPane: DrawPane, bottomPane: DrawPane): boolean {
+    return topPane.getOptions().state === 'normal' && bottomPane.getOptions().state === 'normal' && bottomPane.getOptions().dragEnabled
   }
 
-  private _findAdjustablePane (startIndex: number, step: number): Nullable<DrawPane> {
+  private _findAdjustablePane(startIndex: number, step: number): Nullable<DrawPane> {
     const drawPanes = this.getPane().getChart().getDrawPanes()
     for (let i = startIndex; i >= 0 && i < drawPanes.length; i += step) {
       const pane = drawPanes[i]
@@ -70,7 +68,7 @@ export default class SeparatorWidget extends Widget<SeparatorPane> {
     return null
   }
 
-  private _findDragPanes (): Nullable<{ topPane: DrawPane, bottomPane: DrawPane }> {
+  private _findDragPanes(): Nullable<{ topPane: DrawPane; bottomPane: DrawPane }> {
     const currentPane = this.getPane()
     const drawPanes = currentPane.getChart().getDrawPanes()
     const topPaneIndex = drawPanes.indexOf(currentPane.getTopPane())
@@ -86,7 +84,7 @@ export default class SeparatorWidget extends Widget<SeparatorPane> {
     return null
   }
 
-  private _mouseDownEvent (event: MouseTouchEvent): boolean {
+  private _mouseDownEvent(event: MouseTouchEvent): boolean {
     const dragPanes = this._findDragPanes()
     if (!isValid(dragPanes)) {
       this._topPane = null
@@ -102,7 +100,7 @@ export default class SeparatorWidget extends Widget<SeparatorPane> {
     return true
   }
 
-  private _mouseUpEvent (): boolean {
+  private _mouseUpEvent(): boolean {
     this._dragFlag = false
     this._topPane = null
     this._bottomPane = null
@@ -113,14 +111,12 @@ export default class SeparatorWidget extends Widget<SeparatorPane> {
 
   private readonly _pressedMouseMoveEvent = throttle(this._pressedTouchMouseMoveEvent, 20)
 
-  private _pressedTouchMouseMoveEvent (event: MouseTouchEvent): boolean {
+  private _pressedTouchMouseMoveEvent(event: MouseTouchEvent): boolean {
     const dragDistance = event.pageY - this._dragStartY
 
     const isUpDrag = dragDistance < 0
     if (isValid(this._topPane) && isValid(this._bottomPane)) {
-      if (
-        this._dragEnabled(this._topPane, this._bottomPane)
-      ) {
+      if (this._dragEnabled(this._topPane, this._bottomPane)) {
         let reducedPane: Nullable<DrawPane> = null
         let increasedPane: Nullable<DrawPane> = null
         let startDragReducedPaneHeight = 0
@@ -162,7 +158,7 @@ export default class SeparatorWidget extends Widget<SeparatorPane> {
     return true
   }
 
-  private _mouseEnterEvent (): boolean {
+  private _mouseEnterEvent(): boolean {
     const dragPanes = this._findDragPanes()
     if (isValid(dragPanes)) {
       const chart = this.getPane().getChart()
@@ -173,7 +169,7 @@ export default class SeparatorWidget extends Widget<SeparatorPane> {
     return false
   }
 
-  private _mouseLeaveEvent (): boolean {
+  private _mouseLeaveEvent(): boolean {
     if (!this._dragFlag) {
       this.getContainer().style.background = 'transparent'
       return true
@@ -181,7 +177,7 @@ export default class SeparatorWidget extends Widget<SeparatorPane> {
     return false
   }
 
-  override createContainer (): HTMLElement {
+  override createContainer(): HTMLElement {
     return createDom('div', {
       width: '100%',
       height: `${REAL_SEPARATOR_HEIGHT}px`,
@@ -195,7 +191,7 @@ export default class SeparatorWidget extends Widget<SeparatorPane> {
     })
   }
 
-  override updateImp (container: HTMLElement, _bounding: Bounding, level: UpdateLevel): void {
+  override updateImp(container: HTMLElement, _bounding: Bounding, level: UpdateLevel): void {
     if (level === UpdateLevel.All || level === UpdateLevel.Separator) {
       const styles = this.getPane().getChart().getStyles().separator
       container.style.top = `${-Math.floor((REAL_SEPARATOR_HEIGHT - styles.size) / 2)}px`

@@ -27,35 +27,18 @@
 import ChartImp, { type Chart, type DomPosition, type YAxisFilter } from './Chart'
 import type { ActionType } from './common/Action'
 import type Nullable from './common/Nullable'
-import type {CandleTooltipRectPosition, 
-  CandleType, FeatureType, 
-  LineType, PolygonType, TooltipFeaturePosition,TooltipShowRule, TooltipShowType 
-} from './common/Styles'
+import type { CandleTooltipRectPosition, CandleType, FeatureType, LineType, PolygonType, TooltipFeaturePosition, TooltipShowRule, TooltipShowType } from './common/Styles'
 import { calcTextWidth } from './common/utils/canvas'
-import {
-  formatBigNumber,
-  formatFoldDecimal,
-  formatPrecision,
-  formatThousands,
-  formatTimestampByTemplate, 
-  formatValue
-} from './common/utils/format'
+import { formatBigNumber, formatFoldDecimal, formatPrecision, formatThousands, formatTimestampByTemplate, formatValue } from './common/utils/format'
 import { logError, logTag, logWarn } from './common/utils/logger'
-import {
-  clone, isArray, isBoolean, isFunction, isNumber, isObject, isString, isValid, merge 
-} from './common/utils/typeChecks'
+import { clone, isArray, isBoolean, isFunction, isNumber, isObject, isString, isValid, merge } from './common/utils/typeChecks'
 import type { IndicatorSeries } from './component/Indicator'
 import type { OverlayDrawingMode, OverlayMode } from './component/Overlay'
 import type { YAxisOverride } from './component/YAxis'
 import { checkCoordinateOnArc } from './extension/figure/arc'
 import { checkCoordinateOnCircle } from './extension/figure/circle'
 import { getFigureClass, getSupportedFigures, registerFigure } from './extension/figure/index'
-import {
-  checkCoordinateOnLine,
-  getLinearSlopeIntercept,
-  getLinearYFromCoordinates, 
-  getLinearYFromSlopeIntercept
-} from './extension/figure/line'
+import { checkCoordinateOnLine, getLinearSlopeIntercept, getLinearYFromCoordinates, getLinearYFromSlopeIntercept } from './extension/figure/line'
 import { checkCoordinateOnPolygon } from './extension/figure/polygon'
 import { checkCoordinateOnRect } from './extension/figure/rect'
 import { checkCoordinateOnText } from './extension/figure/text'
@@ -75,7 +58,7 @@ let chartBaseId = 1
  * Chart version
  * @return {string}
  */
-function version (): string {
+function version(): string {
   return '__VERSION__'
 }
 
@@ -85,7 +68,7 @@ function version (): string {
  * @param options
  * @returns {Chart}
  */
-function init (ds: HTMLElement | string, options?: Options): Nullable<Chart> {
+function init(ds: HTMLElement | string, options?: Options): Nullable<Chart> {
   logTag()
   let dom: Nullable<HTMLElement> = null
   if (isString(ds)) {
@@ -114,7 +97,7 @@ function init (ds: HTMLElement | string, options?: Options): Nullable<Chart> {
  * Destroy chart instance
  * @param dcs
  */
-function dispose (dcs: HTMLElement | Chart | string): void {
+function dispose(dcs: HTMLElement | Chart | string): void {
   let id: Nullable<string> = null
   if (dcs instanceof ChartImp) {
     id = dcs.id
@@ -162,17 +145,42 @@ const utils = {
 }
 
 export {
-  type ActionType, type CandleTooltipRectPosition,
-  type CandleType, 
-  type Chart, type DomPosition, dispose,type FeatureType, type FormatDateType, getFigureClass,getHotkey, getOverlayClass,getSupportedFigures, getSupportedHotkeys,getSupportedIndicators,getSupportedLocales,getSupportedOverlays, type IndicatorSeries, init, 
-  type LineType, type OverlayDrawingMode, type OverlayMode, type PolygonType, 
-  registerFigure, 
-  registerHotkey, 
-  registerIndicator, 
-  registerLocale, 
-  registerOverlay, 
+  type ActionType,
+  type CandleTooltipRectPosition,
+  type CandleType,
+  type Chart,
+  type DomPosition,
+  dispose,
+  type FeatureType,
+  type FormatDateType,
+  getFigureClass,
+  getHotkey,
+  getOverlayClass,
+  getSupportedFigures,
+  getSupportedHotkeys,
+  getSupportedIndicators,
+  getSupportedLocales,
+  getSupportedOverlays,
+  type IndicatorSeries,
+  init,
+  type LineType,
+  type OverlayDrawingMode,
+  type OverlayMode,
+  type PolygonType,
+  registerFigure,
+  registerHotkey,
+  registerIndicator,
+  registerLocale,
+  registerOverlay,
   registerStyles,
-  registerXAxis, registerYAxis,type TooltipFeaturePosition, type TooltipShowRule, type TooltipShowType, 
+  registerXAxis,
+  registerYAxis,
+  type TooltipFeaturePosition,
+  type TooltipShowRule,
+  type TooltipShowType,
   utils,
-  version, type YAxisFilter,type YAxisOverride, type ZoomAnchor
+  version,
+  type YAxisFilter,
+  type YAxisOverride,
+  type ZoomAnchor
 }

@@ -50,7 +50,7 @@
     "prepublishOnly": "node scripts/pre-publish.js",
     "branch-lint": "node scripts/branch-lint.js",
     "commit-lint": "commitlint --edit",
-    "code-lint": "biome lint src",
+    "code-lint": "biome check src --assist-enabled=false",
     "type-check": "tsc --noEmit",
     "clean": "node scripts/build/clean.js",
     "build-esm": "pnpm code-lint && node scripts/build/build-esm.js",

@@ -29,9 +29,7 @@ const bullAndBearIndex: IndicatorTemplate<Bbi, number> = {
   precision: 2,
   calcParams: [3, 6, 12, 24],
   shouldOhlc: true,
-  figures: [
-    { key: 'bbi', title: 'BBI: ', type: 'line' }
-  ],
+  figures: [{ key: 'bbi', title: 'BBI: ', type: 'line' }],
   calc: (dataList, indicator) => {
     const params = indicator.calcParams
     const maxPeriod = Math.max(...params)
@@ -49,7 +47,7 @@ const bullAndBearIndex: IndicatorTemplate<Bbi, number> = {
       })
       if (i >= maxPeriod - 1) {
         let maSum = 0
-        mas.forEach(ma => {
+        mas.forEach((ma) => {
           maSum += ma
         })
         bbi.bbi = maSum / 4

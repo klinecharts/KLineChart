@@ -17,14 +17,10 @@ import type { VisibleRangeData } from '../common/Data'
 import type { YAxis } from '../component/YAxis'
 import View from './View'
 
-export type EachChildCallback = (
-  data: VisibleRangeData,
-  barSpace: BarSpace,
-  index: number
-) => void
+export type EachChildCallback = (data: VisibleRangeData, barSpace: BarSpace, index: number) => void
 
 export default abstract class ChildrenView extends View<YAxis> {
-  protected eachChildren (childCallback: EachChildCallback): void {
+  protected eachChildren(childCallback: EachChildCallback): void {
     const pane = this.getWidget().getPane()
     const chartStore = pane.getChart().getChartStore()
     const visibleRangeDataList = chartStore.getVisibleRangeDataList()

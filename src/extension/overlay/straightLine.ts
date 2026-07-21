@@ -12,7 +12,6 @@
  * limitations under the License.
  */
 
-
 import type { OverlayTemplate } from '../../component/Overlay'
 import { getLinearYFromCoordinates } from '../figure/line'
 
@@ -33,7 +32,8 @@ const straightLine: OverlayTemplate = {
                 {
                   x: coordinates[0].x,
                   y: 0
-                }, {
+                },
+                {
                   x: coordinates[0].x,
                   y: bounding.height
                 }
@@ -50,7 +50,8 @@ const straightLine: OverlayTemplate = {
               {
                 x: 0,
                 y: getLinearYFromCoordinates(coordinates[0], coordinates[1], { x: 0, y: coordinates[0].y })
-              }, {
+              },
+              {
                 x: bounding.width,
                 y: getLinearYFromCoordinates(coordinates[0], coordinates[1], { x: bounding.width, y: coordinates[0].y })
               }

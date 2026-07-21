@@ -19,7 +19,7 @@ import type DrawPane from './DrawPane'
 import IndicatorPane from './IndicatorPane'
 
 export default class CandlePane extends IndicatorPane {
-  override createMainWidget (container: HTMLElement): DrawWidget<DrawPane<YAxis>> {
+  override createMainWidget(container: HTMLElement): DrawWidget<DrawPane<YAxis>> {
     return new CandleWidget(container, this)
   }
 }

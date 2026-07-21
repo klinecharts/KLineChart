@@ -27,10 +27,10 @@ interface Boll {
  * @param ma
  * @return {number}
  */
-function getBollMd (dataList: KLineData[], ma: number): number {
+function getBollMd(dataList: KLineData[], ma: number): number {
   const dataSize = dataList.length
   let sum = 0
-  dataList.forEach(data => {
+  dataList.forEach((data) => {
     const closeMa = data.close - ma
     sum += closeMa * closeMa
   })

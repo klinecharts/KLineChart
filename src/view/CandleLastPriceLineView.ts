@@ -18,7 +18,7 @@ import type YAxis from '../component/YAxis'
 import View from './View'
 
 export default class CandleLastPriceView extends View {
-  override drawImp (ctx: CanvasRenderingContext2D): void {
+  override drawImp(ctx: CanvasRenderingContext2D): void {
     const widget = this.getWidget()
     const pane = widget.getPane()
     const bounding = widget.getBounding()

@@ -23,15 +23,12 @@ const yAxises: Record<string, YAxisConstructor> = {
   logarithm: YAxisImp.extend(logarithm)
 }
 
-function registerYAxis (axis: YAxisTemplate): void {
+function registerYAxis(axis: YAxisTemplate): void {
   yAxises[axis.name] = YAxisImp.extend(axis)
 }
 
-function getYAxisClass (name: string): YAxisConstructor {
+function getYAxisClass(name: string): YAxisConstructor {
   return yAxises[name] ?? yAxises.normal
 }
 
-export {
-  getYAxisClass, 
-  registerYAxis
-}
+export { getYAxisClass, registerYAxis }

@@ -59,12 +59,12 @@ const volumeRatio: IndicatorTemplate<Vr, number> = {
         if (dvs + halfPvs === 0) {
           vr.vr = 0
         } else {
-          vr.vr = (uvs + halfPvs) / (dvs + halfPvs) * 100
+          vr.vr = ((uvs + halfPvs) / (dvs + halfPvs)) * 100
         }
         vrSum += vr.vr
         if (i >= params[0] + params[1] - 2) {
           vr.maVr = vrSum / params[1]
-          vrSum -= (result[i - (params[1] - 1)].vr ?? 0)
+          vrSum -= result[i - (params[1] - 1)].vr ?? 0
         }
 
         const agoData = dataList[i - (params[0] - 1)]

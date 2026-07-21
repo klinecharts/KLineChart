@@ -79,8 +79,8 @@ const directionalMovementIndex: IndicatorTemplate<Dmi, number> = {
       const hhy = high - prevKLineData.high
       const lyl = prevKLineData.low - low
       const tr = Math.max(Math.max(hl, hcy), lcy)
-      const h = (hhy > 0 && hhy > lyl) ? hhy : 0
-      const l = (lyl > 0 && lyl > hhy) ? lyl : 0
+      const h = hhy > 0 && hhy > lyl ? hhy : 0
+      const l = lyl > 0 && lyl > hhy ? lyl : 0
       trSum += tr
       hSum += h
       lSum += l
@@ -97,14 +97,14 @@ const directionalMovementIndex: IndicatorTemplate<Dmi, number> = {
         let pdi = 0
         let mdi = 0
         if (mtr !== 0) {
-          pdi = dmp * 100 / mtr
-          mdi = dmm * 100 / mtr
+          pdi = (dmp * 100) / mtr
+          mdi = (dmm * 100) / mtr
         }
         dmi.pdi = pdi
         dmi.mdi = mdi
         let dx = 0
         if (mdi + pdi !== 0) {
-          dx = Math.abs((mdi - pdi)) / (mdi + pdi) * 100
+          dx = (Math.abs(mdi - pdi) / (mdi + pdi)) * 100
         }
         dxSum += dx
         if (i >= params[0] * 2 - 2) {

@@ -27,11 +27,11 @@ const priceLine: OverlayTemplate = {
       precision = chart.getSymbol()?.pricePrecision ?? SymbolDefaultPrecisionConstants.PRICE
     } else {
       const indicators = chart.getIndicators({ paneId: overlay.paneId })
-      indicators.forEach(indicator => {
+      indicators.forEach((indicator) => {
         precision = Math.max(precision, indicator.precision)
       })
     }
-    const { value = 0 } = (overlay.points)[0]
+    const { value = 0 } = overlay.points[0]
     return [
       {
         type: 'line',

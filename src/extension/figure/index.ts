@@ -31,20 +31,20 @@ extensions.forEach((figure: FigureTemplate) => {
   figures[figure.name] = FigureImp.extend(figure)
 })
 
-function getSupportedFigures (): string[] {
+function getSupportedFigures(): string[] {
   return Object.keys(figures)
 }
 
-function registerFigure<A = unknown, S = unknown> (figure: FigureTemplate<A, S>): void {
+function registerFigure<A = unknown, S = unknown>(figure: FigureTemplate<A, S>): void {
   // @ts-ignore
   figures[figure.name] = FigureImp.extend(figure)
 }
 
-function getInnerFigureClass (name: string): Nullable<FigureInnerConstructor> {
+function getInnerFigureClass(name: string): Nullable<FigureInnerConstructor> {
   return figures[name] ?? null
 }
 
-function getFigureClass<A = unknown, S = unknown> (name: string): Nullable<FigureConstructor<A, S>> {
+function getFigureClass<A = unknown, S = unknown>(name: string): Nullable<FigureConstructor<A, S>> {
   return figures[name] ?? null
 }
 

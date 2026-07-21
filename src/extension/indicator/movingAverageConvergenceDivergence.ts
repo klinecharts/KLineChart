@@ -48,11 +48,11 @@ const movingAverageConvergenceDivergence: IndicatorTemplate<Macd, number> = {
         const currentMacd = current?.macd ?? Number.MIN_SAFE_INTEGER
         let color = ''
         if (currentMacd > 0) {
-          color = formatValue(indicator.styles, 'bars[0].upColor', (defaultStyles!.bars)[0].upColor) as string
+          color = formatValue(indicator.styles, 'bars[0].upColor', defaultStyles!.bars[0].upColor) as string
         } else if (currentMacd < 0) {
-          color = formatValue(indicator.styles, 'bars[0].downColor', (defaultStyles!.bars)[0].downColor) as string
+          color = formatValue(indicator.styles, 'bars[0].downColor', defaultStyles!.bars[0].downColor) as string
         } else {
-          color = formatValue(indicator.styles, 'bars[0].noChangeColor', (defaultStyles!.bars)[0].noChangeColor) as string
+          color = formatValue(indicator.styles, 'bars[0].noChangeColor', defaultStyles!.bars[0].noChangeColor) as string
         }
         const style = prevMacd < currentMacd ? 'stroke' : 'fill'
         return { style, color, borderColor: color }

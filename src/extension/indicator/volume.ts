@@ -26,7 +26,7 @@ interface Vol {
   ma3?: number
 }
 
-function getVolumeFigure (): IndicatorFigure<Vol> {
+function getVolumeFigure(): IndicatorFigure<Vol> {
   return {
     key: 'volume',
     title: 'VOLUME: ',
@@ -34,12 +34,12 @@ function getVolumeFigure (): IndicatorFigure<Vol> {
     baseValue: 0,
     styles: ({ data, indicator, defaultStyles }) => {
       const current = data.current
-      let color = formatValue(indicator.styles, 'bars[0].noChangeColor', (defaultStyles!.bars)[0].noChangeColor)
+      let color = formatValue(indicator.styles, 'bars[0].noChangeColor', defaultStyles!.bars[0].noChangeColor)
       if (isValid(current)) {
         if (current.close > current.open) {
-          color = formatValue(indicator.styles, 'bars[0].upColor', (defaultStyles!.bars)[0].upColor)
+          color = formatValue(indicator.styles, 'bars[0].upColor', defaultStyles!.bars[0].upColor)
         } else if (current.close < current.open) {
-          color = formatValue(indicator.styles, 'bars[0].downColor', (defaultStyles!.bars)[0].downColor)
+          color = formatValue(indicator.styles, 'bars[0].downColor', defaultStyles!.bars[0].downColor)
         }
       }
       return { color: color as string }
@@ -55,12 +55,7 @@ const volume: IndicatorTemplate<Vol, number> = {
   shouldFormatBigNumber: true,
   precision: 0,
   minValue: 0,
-  figures: [
-    { key: 'ma1', title: 'MA5: ', type: 'line' },
-    { key: 'ma2', title: 'MA10: ', type: 'line' },
-    { key: 'ma3', title: 'MA20: ', type: 'line' },
-    getVolumeFigure()
-  ],
+  figures: [{ key: 'ma1', title: 'MA5: ', type: 'line' }, { key: 'ma2', title: 'MA10: ', type: 'line' }, { key: 'ma3', title: 'MA20: ', type: 'line' }, getVolumeFigure()],
   regenerateFigures: (params) => {
     const figures: Array<IndicatorFigure<Vol>> = params.map((p, i) => ({ key: `ma${i + 1}`, title: `MA${p}: `, type: 'line' }))
     figures.push(getVolumeFigure())
@@ -76,7 +71,7 @@ const volume: IndicatorTemplate<Vol, number> = {
         volSums[index] = (volSums[index] ?? 0) + volume
         if (i >= p - 1) {
           vol[figures[index].key] = volSums[index] / p
-          volSums[index] -= (dataList[i - (p - 1)].volume ?? 0)
+          volSums[index] -= dataList[i - (p - 1)].volume ?? 0
         }
       })
       return vol

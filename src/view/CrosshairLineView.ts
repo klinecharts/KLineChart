@@ -19,7 +19,7 @@ import { isString } from '../common/utils/typeChecks'
 import View from './View'
 
 export default class CrosshairLineView extends View {
-  override drawImp (ctx: CanvasRenderingContext2D): void {
+  override drawImp(ctx: CanvasRenderingContext2D): void {
     const widget = this.getWidget()
     const pane = widget.getPane()
     const bounding = widget.getBounding()
@@ -50,7 +50,7 @@ export default class CrosshairLineView extends View {
     }
   }
 
-  private _drawLine (ctx: CanvasRenderingContext2D, coordinates: Coordinate[], styles: CrosshairDirectionStyle): void {
+  private _drawLine(ctx: CanvasRenderingContext2D, coordinates: Coordinate[], styles: CrosshairDirectionStyle): void {
     if (styles.show) {
       const lineStyles = styles.line
       if (lineStyles.show) {

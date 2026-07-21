@@ -22,11 +22,11 @@ let measureCtx: Nullable<CanvasRenderingContext2D> = null
  * @param canvas
  * @returns {number}
  */
-export function getPixelRatio (canvas: HTMLCanvasElement): number {
+export function getPixelRatio(canvas: HTMLCanvasElement): number {
   return canvas.ownerDocument.defaultView?.devicePixelRatio ?? 1
 }
 
-export function createFont (size?: number, weight?: string | number, family?: string): string {
+export function createFont(size?: number, weight?: string | number, family?: string): string {
   return `${weight ?? 'normal'} ${size ?? 12}px ${family ?? 'Helvetica Neue'}`
 }
 
@@ -35,7 +35,7 @@ export function createFont (size?: number, weight?: string | number, family?: st
  * @param text
  * @returns {number}
  */
-export function calcTextWidth (text: string, size?: number, weight?: string | number, family?: string): number {
+export function calcTextWidth(text: string, size?: number, weight?: string | number, family?: string): number {
   if (!isValid(measureCtx)) {
     const canvas = document.createElement('canvas')
     const pixelRatio = getPixelRatio(canvas)

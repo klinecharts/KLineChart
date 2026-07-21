@@ -45,16 +45,16 @@ export default class CrosshairFeatureView extends View<YAxis> {
     return true
   }
 
-  constructor (widget: DrawWidget<DrawPane<YAxis>>) {
+  constructor(widget: DrawWidget<DrawPane<YAxis>>) {
     super(widget)
-    this.registerEvent('mouseMoveEvent', _ => {
+    this.registerEvent('mouseMoveEvent', (_) => {
       this._activeFeatureInfo = null
       this.getWidget().setForceCursor(null)
       return false
     })
   }
 
-  override drawImp (ctx: CanvasRenderingContext2D): void {
+  override drawImp(ctx: CanvasRenderingContext2D): void {
     const widget = this.getWidget()
     const pane = widget.getPane()
     const chartStore = widget.getPane().getChart().getChartStore()
@@ -73,17 +73,9 @@ export default class CrosshairFeatureView extends View<YAxis> {
         if (yAxis.inside && horizontalTextStyles.show) {
           const value = yAxis.convertFromPixel(crosshair.y!)
           const range = yAxis.getRange()
-          let text = yAxis.displayValueToText(
-            yAxis.realValueToDisplayValue(
-              yAxis.valueToRealValue(value, { range }),
-              { range }
-            ),
-            chartStore.getSymbol()?.pricePrecision ?? SymbolDefaultPrecisionConstants.PRICE
-          )
+          let text = yAxis.displayValueToText(yAxis.realValueToDisplayValue(yAxis.valueToRealValue(value, { range }), { range }), chartStore.getSymbol()?.pricePrecision ?? SymbolDefaultPrecisionConstants.PRICE)
           text = chartStore.getDecimalFold().format(chartStore.getThousandsSeparator().format(text))
-          yAxisTextWidth = horizontalTextStyles.paddingLeft +
-            calcTextWidth(text, horizontalTextStyles.size, horizontalTextStyles.weight, horizontalTextStyles.family) +
-            horizontalTextStyles.paddingRight
+          yAxisTextWidth = horizontalTextStyles.paddingLeft + calcTextWidth(text, horizontalTextStyles.size, horizontalTextStyles.weight, horizontalTextStyles.family) + horizontalTextStyles.paddingRight
         }
 
         let x = yAxisTextWidth
@@ -91,20 +83,15 @@ export default class CrosshairFeatureView extends View<YAxis> {
           x = bounding.width - yAxisTextWidth
         }
         const y = crosshair.y!
-        features.forEach(feature => {
-          const {
-            marginLeft = 0, marginTop = 0, marginRight = 0,
-            paddingLeft = 0, paddingTop = 0, paddingRight = 0, paddingBottom = 0,
-            color, activeColor, backgroundColor, activeBackgroundColor,
-            borderRadius, size = 0, type, content
-          } = feature
+        features.forEach((feature) => {
+          const { marginLeft = 0, marginTop = 0, marginRight = 0, paddingLeft = 0, paddingTop = 0, paddingRight = 0, paddingBottom = 0, color, activeColor, backgroundColor, activeBackgroundColor, borderRadius, size = 0, type, content } = feature
           let width = size
           if (type === 'icon_font') {
             const iconFont = content as FeatureIconFontStyle
             width = paddingLeft + calcTextWidth(iconFont.code, size, 'normal', iconFont.family) + paddingRight
           }
           if (isRight) {
-            x -= (width + marginRight)
+            x -= width + marginRight
           } else {
             x += marginLeft
           }
@@ -120,38 +107,44 @@ export default class CrosshairFeatureView extends View<YAxis> {
           }
           if (type === 'icon_font') {
             const iconFont = content as FeatureIconFontStyle
-            this.createFigure({
-              name: 'text',
-              attrs: {
-                text: iconFont.code,
-                x,
-                y: y + marginTop,
-                baseline: 'middle'
+            this.createFigure(
+              {
+                name: 'text',
+                attrs: {
+                  text: iconFont.code,
+                  x,
+                  y: y + marginTop,
+                  baseline: 'middle'
+                },
+                styles: {
+                  paddingLeft,
+                  paddingTop,
+                  paddingRight,
+                  paddingBottom,
+                  borderRadius,
+                  size,
+                  family: iconFont.family,
+                  color: finalColor,
+                  backgroundColor: finalBackgroundColor
+                }
               },
-              styles: {
-                paddingLeft,
-                paddingTop,
-                paddingRight,
-                paddingBottom,
-                borderRadius,
-                size,
-                family: iconFont.family,
-                color: finalColor,
-                backgroundColor: finalBackgroundColor
-              }
-            }, eventHandler)?.draw(ctx)
+              eventHandler
+            )?.draw(ctx)
           } else {
-            this.createFigure({
-              name: 'rect',
-              attrs: { x, y: y + marginTop - size / 2, width: size, height: size },
-              styles: {
-                paddingLeft,
-                paddingTop,
-                paddingRight,
-                paddingBottom,
-                color: finalBackgroundColor
-              }
-            }, eventHandler)?.draw(ctx)
+            this.createFigure(
+              {
+                name: 'rect',
+                attrs: { x, y: y + marginTop - size / 2, width: size, height: size },
+                styles: {
+                  paddingLeft,
+                  paddingTop,
+                  paddingRight,
+                  paddingBottom,
+                  color: finalBackgroundColor
+                }
+              },
+              eventHandler
+            )?.draw(ctx)
             const path = content as FeaturePathStyle
             this.createFigure({
               name: 'path',
@@ -166,7 +159,7 @@ export default class CrosshairFeatureView extends View<YAxis> {
           if (isRight) {
             x -= marginLeft
           } else {
-            x += (width + marginRight)
+            x += width + marginRight
           }
         })
       }

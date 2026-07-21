@@ -13,8 +13,8 @@
  */
 
 // biome-ignore lint/suspicious/noExplicitAny: This recursive utility accepts arbitrary object shapes.
-export function merge (target: any, source: any): void {
-  if ((!isObject(target) && !isObject(source))) {
+export function merge(target: any, source: any): void {
+  if (!isObject(target) && !isObject(source)) {
     return
   }
   for (const key in source) {
@@ -22,10 +22,7 @@ export function merge (target: any, source: any): void {
     if (Object.prototype.hasOwnProperty.call(source, key) as boolean) {
       const targetProp = target[key]
       const sourceProp = source[key]
-      if (
-        isObject(sourceProp) &&
-        isObject(targetProp)
-      ) {
+      if (isObject(sourceProp) && isObject(targetProp)) {
         merge(targetProp, sourceProp)
       } else {
         target[key] = clone(sourceProp)
@@ -34,7 +31,7 @@ export function merge (target: any, source: any): void {
   }
 }
 
-export function clone<T> (target: T): T {
+export function clone<T>(target: T): T {
   if (!isObject(target)) {
     return target
   }
@@ -60,30 +57,30 @@ export function clone<T> (target: T): T {
   return copy
 }
 
-export function isArray<T = unknown> (value: unknown): value is T[] {
+export function isArray<T = unknown>(value: unknown): value is T[] {
   return Object.prototype.toString.call(value) === '[object Array]'
 }
 
-export function isFunction<T = (...args: unknown[]) => unknown> (value: unknown): value is T {
+export function isFunction<T = (...args: unknown[]) => unknown>(value: unknown): value is T {
   return typeof value === 'function'
 }
 
-export function isObject (value: unknown): value is object {
-  return (typeof value === 'object') && isValid(value)
+export function isObject(value: unknown): value is object {
+  return typeof value === 'object' && isValid(value)
 }
 
-export function isNumber (value: unknown): value is number {
+export function isNumber(value: unknown): value is number {
   return typeof value === 'number' && Number.isFinite(value)
 }
 
-export function isValid<T> (value: T | null | undefined): value is T {
+export function isValid<T>(value: T | null | undefined): value is T {
   return value !== null && value !== undefined
 }
 
-export function isBoolean (value: unknown): value is boolean {
+export function isBoolean(value: unknown): value is boolean {
   return typeof value === 'boolean'
 }
 
-export function isString (value: unknown): value is string {
+export function isString(value: unknown): value is string {
   return typeof value === 'string'
 }

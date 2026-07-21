@@ -47,12 +47,33 @@ import williamsR from './williamsR'
 const indicators: Record<string, IndicatorConstructor> = {}
 
 const extensions = [
-  averagePrice, awesomeOscillator, bias, bollingerBands, brar,
-  bullAndBearIndex, commodityChannelIndex, currentRatio, differentOfMovingAverage,
-  directionalMovementIndex, easeOfMovementValue, exponentialMovingAverage, momentum,
-  movingAverage, movingAverageConvergenceDivergence, onBalanceVolume, priceAndVolumeTrend,
-  psychologicalLine, rateOfChange, relativeStrengthIndex, simpleMovingAverage,
-  stoch, stopAndReverse, tripleExponentiallySmoothedAverage, volume, volumeRatio, williamsR
+  averagePrice,
+  awesomeOscillator,
+  bias,
+  bollingerBands,
+  brar,
+  bullAndBearIndex,
+  commodityChannelIndex,
+  currentRatio,
+  differentOfMovingAverage,
+  directionalMovementIndex,
+  easeOfMovementValue,
+  exponentialMovingAverage,
+  momentum,
+  movingAverage,
+  movingAverageConvergenceDivergence,
+  onBalanceVolume,
+  priceAndVolumeTrend,
+  psychologicalLine,
+  rateOfChange,
+  relativeStrengthIndex,
+  simpleMovingAverage,
+  stoch,
+  stopAndReverse,
+  tripleExponentiallySmoothedAverage,
+  volume,
+  volumeRatio,
+  williamsR
 ]
 
 // @ts-ignore
@@ -60,16 +81,16 @@ extensions.forEach((indicator: IndicatorTemplate) => {
   indicators[indicator.name] = IndicatorImp.extend(indicator)
 })
 
-function registerIndicator<D = unknown, C = unknown, E = unknown> (indicator: IndicatorTemplate<D, C, E>): void {
+function registerIndicator<D = unknown, C = unknown, E = unknown>(indicator: IndicatorTemplate<D, C, E>): void {
   // @ts-ignore
   indicators[indicator.name] = IndicatorImp.extend(indicator)
 }
 
-function getIndicatorClass (name: string): Nullable<IndicatorConstructor> {
+function getIndicatorClass(name: string): Nullable<IndicatorConstructor> {
   return indicators[name] ?? null
 }
 
-function getSupportedIndicators (): string[] {
+function getSupportedIndicators(): string[] {
   return Object.keys(indicators)
 }
 

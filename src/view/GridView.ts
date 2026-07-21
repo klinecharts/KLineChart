@@ -17,7 +17,7 @@ import type { LineAttrs } from '../extension/figure/line'
 import View from './View'
 
 export default class GridView extends View {
-  override drawImp (ctx: CanvasRenderingContext2D): void {
+  override drawImp(ctx: CanvasRenderingContext2D): void {
     const widget = this.getWidget()
     const pane = this.getWidget().getPane()
     const chart = pane.getChart()
@@ -33,7 +33,7 @@ export default class GridView extends View {
       const horizontalShow = horizontalStyles.show
       if (horizontalShow) {
         const yAxis = pane.getYAxisComponentById()
-        const attrs: LineAttrs[] = yAxis.getTicks().map(tick => ({
+        const attrs: LineAttrs[] = yAxis.getTicks().map((tick) => ({
           coordinates: [
             { x: 0, y: tick.coord },
             { x: bounding.width, y: tick.coord }
@@ -49,7 +49,7 @@ export default class GridView extends View {
       const verticalShow = verticalStyles.show
       if (verticalShow) {
         const xAxis = chart.getXAxisPane().getXAxisComponent()
-        const attrs: LineAttrs[] = xAxis.getTicks().map(tick => ({
+        const attrs: LineAttrs[] = xAxis.getTicks().map((tick) => ({
           coordinates: [
             { x: tick.coord, y: 0 },
             { x: tick.coord, y: bounding.height }

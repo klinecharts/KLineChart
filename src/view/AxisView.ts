@@ -21,7 +21,7 @@ import type { TextAttrs } from '../extension/figure/text'
 import View from './View'
 
 export default abstract class AxisView<C extends Axis = Axis> extends View<C> {
-  override drawImp (ctx: CanvasRenderingContext2D): void {
+  override drawImp(ctx: CanvasRenderingContext2D): void {
     const widget = this.getWidget()
     const pane = widget.getPane()
     const bounding = widget.getBounding()
@@ -38,7 +38,7 @@ export default abstract class AxisView<C extends Axis = Axis> extends View<C> {
       const ticks = axis.getTicks()
       if (styles.tickLine.show) {
         const lines = this.createTickLines(ticks, bounding, styles)
-        lines.forEach(line => {
+        lines.forEach((line) => {
           this.createFigure({
             name: 'line',
             attrs: line,
@@ -57,11 +57,11 @@ export default abstract class AxisView<C extends Axis = Axis> extends View<C> {
     }
   }
 
-  protected abstract getAxisStyles (styles: Styles): AxisStyle
+  protected abstract getAxisStyles(styles: Styles): AxisStyle
 
-  protected abstract getAxis (): Axis
+  protected abstract getAxis(): Axis
 
-  protected abstract createAxisLine (bounding: Bounding, styles: AxisStyle): LineAttrs
-  protected abstract createTickLines (ticks: AxisTick[], bounding: Bounding, styles: AxisStyle): LineAttrs[]
-  protected abstract createTickTexts (tick: AxisTick[], bounding: Bounding, styles: AxisStyle): TextAttrs[]
+  protected abstract createAxisLine(bounding: Bounding, styles: AxisStyle): LineAttrs
+  protected abstract createTickLines(ticks: AxisTick[], bounding: Bounding, styles: AxisStyle): LineAttrs[]
+  protected abstract createTickTexts(tick: AxisTick[], bounding: Bounding, styles: AxisStyle): TextAttrs[]
 }

@@ -361,7 +361,7 @@ const Color = {
   BLUE: '#1677FF'
 }
 
-function getDefaultGridStyle (): GridStyle {
+function getDefaultGridStyle(): GridStyle {
   return {
     show: true,
     horizontal: {
@@ -385,7 +385,7 @@ function getDefaultGridStyle (): GridStyle {
  * Get default candle style
  * @type {{area: {backgroundColor: [{offset: number, color: string}, {offset: number, color: string}], lineColor: string, lineSize: number, value: string}, bar: {noChangeColor: string, upColor: string, downColor: string}, tooltip: {rect: {offsetTop: number, fillColor: string, borderColor: string, paddingBottom: number, borderRadius: number, paddingRight: number, borderSize: number, offsetLeft: number, paddingTop: number, paddingLeft: number, offsetRight: number}, showRule: string, values: null, showType: string, text: {marginRight: number, size: number, color: string, weight: string, marginBottom: number, family: string, marginTop: number, marginLeft: number}, labels: string[]}, type: string, priceMark: {high: {textMargin: number, textSize: number, color: string, textFamily: string, show: boolean, textWeight: string}, last: {noChangeColor: string, upColor: string, line: {dashValue: number[], size: number, show: boolean, style: string}, show: boolean, text: {paddingBottom: number, size: number, color: string, paddingRight: number, show: boolean, weight: string, paddingTop: number, family: string, paddingLeft: number}, downColor: string}, low: {textMargin: number, textSize: number, color: string, textFamily: string, show: boolean, textWeight: string}, show: boolean}}}
  */
-function getDefaultCandleStyle (): CandleStyle {
+function getDefaultCandleStyle(): CandleStyle {
   const highLow = {
     show: true,
     color: Color.GREY,
@@ -413,13 +413,16 @@ function getDefaultCandleStyle (): CandleStyle {
       lineColor: Color.BLUE,
       smooth: false,
       value: 'close',
-      backgroundColor: [{
-        offset: 0,
-        color: hexToRgb(Color.BLUE, 0.01)
-      }, {
-        offset: 1,
-        color: hexToRgb(Color.BLUE, 0.2)
-      }],
+      backgroundColor: [
+        {
+          offset: 0,
+          color: hexToRgb(Color.BLUE, 0.01)
+        },
+        {
+          offset: 1,
+          color: hexToRgb(Color.BLUE, 0.2)
+        }
+      ],
       point: {
         show: true,
         color: Color.BLUE,
@@ -527,7 +530,7 @@ function getDefaultCandleStyle (): CandleStyle {
 /**
  * Get default indicator style
  */
-function getDefaultIndicatorStyle (): IndicatorStyle {
+function getDefaultIndicatorStyle(): IndicatorStyle {
   const alphaGreen = hexToRgb(Color.GREEN, 0.7)
   const alphaRed = hexToRgb(Color.RED, 0.7)
   return {
@@ -537,48 +540,54 @@ function getDefaultIndicatorStyle (): IndicatorStyle {
       downColor: alphaRed,
       noChangeColor: Color.GREY
     },
-    bars: [{
-      style: 'fill',
-      borderStyle: 'solid',
-      borderSize: 1,
-      borderDashedValue: [2, 2],
-      upColor: alphaGreen,
-      downColor: alphaRed,
-      noChangeColor: Color.GREY
-    }],
-    lines: ['#FF9600', '#935EBD', Color.BLUE, '#E11D74', '#01C5C4'].map(color => ({
+    bars: [
+      {
+        style: 'fill',
+        borderStyle: 'solid',
+        borderSize: 1,
+        borderDashedValue: [2, 2],
+        upColor: alphaGreen,
+        downColor: alphaRed,
+        noChangeColor: Color.GREY
+      }
+    ],
+    lines: ['#FF9600', '#935EBD', Color.BLUE, '#E11D74', '#01C5C4'].map((color) => ({
       style: 'solid',
       smooth: false,
       size: 1,
       dashedValue: [2, 2],
       color
     })),
-    circles: [{
-      style: 'fill',
-      borderStyle: 'solid',
-      borderSize: 1,
-      borderDashedValue: [2, 2],
-      upColor: alphaGreen,
-      downColor: alphaRed,
-      noChangeColor: Color.GREY
-    }],
-    texts: [{
-      paddingLeft: 0,
-      paddingTop: 0,
-      paddingRight: 0,
-      paddingBottom: 0,
-      style: 'fill',
-      size: 12,
-      color: Color.BLUE,
-      family: 'Helvetica Neue',
-      weight: 'normal',
-      borderStyle: 'solid',
-      borderDashedValue: [2, 2],
-      borderSize: 0,
-      borderColor: 'transparent',
-      borderRadius: 0,
-      backgroundColor: 'transparent'
-    }],
+    circles: [
+      {
+        style: 'fill',
+        borderStyle: 'solid',
+        borderSize: 1,
+        borderDashedValue: [2, 2],
+        upColor: alphaGreen,
+        downColor: alphaRed,
+        noChangeColor: Color.GREY
+      }
+    ],
+    texts: [
+      {
+        paddingLeft: 0,
+        paddingTop: 0,
+        paddingRight: 0,
+        paddingBottom: 0,
+        style: 'fill',
+        size: 12,
+        color: Color.BLUE,
+        family: 'Helvetica Neue',
+        weight: 'normal',
+        borderStyle: 'solid',
+        borderDashedValue: [2, 2],
+        borderSize: 0,
+        borderColor: 'transparent',
+        borderRadius: 0,
+        backgroundColor: 'transparent'
+      }
+    ],
     lastValueMark: {
       show: false,
       text: {
@@ -635,7 +644,7 @@ function getDefaultIndicatorStyle (): IndicatorStyle {
   }
 }
 
-function getDefaultAxisStyle (): AxisStyle {
+function getDefaultAxisStyle(): AxisStyle {
   return {
     show: true,
     size: 'auto',
@@ -662,7 +671,7 @@ function getDefaultAxisStyle (): AxisStyle {
   }
 }
 
-function getDefaultCrosshairStyle (): CrosshairStyle {
+function getDefaultCrosshairStyle(): CrosshairStyle {
   return {
     show: true,
     horizontal: {
@@ -725,10 +734,10 @@ function getDefaultCrosshairStyle (): CrosshairStyle {
   }
 }
 
-function getDefaultOverlayStyle (): OverlayStyle {
+function getDefaultOverlayStyle(): OverlayStyle {
   const pointBorderColor = hexToRgb(Color.BLUE, 0.35)
   const alphaBg = hexToRgb(Color.BLUE, 0.25)
-  function text (): TextStyle {
+  function text(): TextStyle {
     return {
       style: 'fill',
       color: Color.WHITE,
@@ -800,7 +809,7 @@ function getDefaultOverlayStyle (): OverlayStyle {
   }
 }
 
-function getDefaultSeparatorStyle (): SeparatorStyle {
+function getDefaultSeparatorStyle(): SeparatorStyle {
   return {
     size: 1,
     color: '#DDDDDD',
@@ -809,7 +818,7 @@ function getDefaultSeparatorStyle (): SeparatorStyle {
   }
 }
 
-export function getDefaultStyles (): Styles {
+export function getDefaultStyles(): Styles {
   return {
     grid: getDefaultGridStyle(),
     candle: getDefaultCandleStyle(),

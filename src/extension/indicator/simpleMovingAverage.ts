@@ -27,9 +27,7 @@ const simpleMovingAverage: IndicatorTemplate<Sma, number> = {
   series: 'price',
   calcParams: [12, 2],
   precision: 2,
-  figures: [
-    { key: 'sma', title: 'SMA: ', type: 'line' }
-  ],
+  figures: [{ key: 'sma', title: 'SMA: ', type: 'line' }],
   shouldOhlc: true,
   calc: (dataList, indicator) => {
     const params = indicator.calcParams

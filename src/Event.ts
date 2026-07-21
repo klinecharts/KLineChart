@@ -12,7 +12,6 @@
  * limitations under the License.
  */
 
-
 import type Chart from './Chart'
 import type Coordinate from './common/Coordinate'
 import type Crosshair from './common/Crosshair'
@@ -97,7 +96,7 @@ export default class Event implements EventHandler {
 
   private _mouseMoveTriggerWidgetInfo: EventTriggerWidgetInfo = { pane: null, widget: null }
 
-  private readonly _boundKeyBoardDownEvent: ((event: KeyboardEvent) => void) = (event: KeyboardEvent) => {
+  private readonly _boundKeyBoardDownEvent: (event: KeyboardEvent) => void = (event: KeyboardEvent) => {
     const target = event.target as Nullable<HTMLElement>
     const tagName = target?.tagName.toLowerCase()
     if (tagName === 'input' || tagName === 'textarea' || target?.isContentEditable === true) {
@@ -135,30 +134,34 @@ export default class Event implements EventHandler {
       const hotkey = getHotkey(name)
       if (!exclude.includes(name) && isValid(hotkey)) {
         const hotkeyKeys = isArray<string>(hotkey.keys) ? hotkey.keys : [hotkey.keys]
-        const match = hotkeyKeys.some(hotkeyKey => {
+        const match = hotkeyKeys.some((hotkeyKey) => {
           const modifiers: string[] = []
           let normalKey = ''
-          hotkeyKey.replace(/\+\+$/, '+Plus').replace(/\+=$/, '+Equal').split('+').forEach(part => {
-            const hotkeyPart = hotkeyModifierAlias[part.trim().toLowerCase()] ?? part
-            const hotkeyPartValue = hotkeyPart.trim().toLowerCase()
-            let value = ''
-            if (/^key[a-z]$/.test(hotkeyPartValue)) {
-              value = hotkeyPartValue.slice(3)
-            } else if (/^digit[0-9]$/.test(hotkeyPartValue)) {
-              value = hotkeyPartValue.slice(5)
-            } else {
-              value = hotkeyAlias[hotkeyPartValue] ?? hotkeyPartValue
-            }
-            if (hotKeyModifierOrder.includes(value)) {
-              if (!modifiers.includes(value)) {
-                modifiers.push(value)
+          hotkeyKey
+            .replace(/\+\+$/, '+Plus')
+            .replace(/\+=$/, '+Equal')
+            .split('+')
+            .forEach((part) => {
+              const hotkeyPart = hotkeyModifierAlias[part.trim().toLowerCase()] ?? part
+              const hotkeyPartValue = hotkeyPart.trim().toLowerCase()
+              let value = ''
+              if (/^key[a-z]$/.test(hotkeyPartValue)) {
+                value = hotkeyPartValue.slice(3)
+              } else if (/^digit[0-9]$/.test(hotkeyPartValue)) {
+                value = hotkeyPartValue.slice(5)
+              } else {
+                value = hotkeyAlias[hotkeyPartValue] ?? hotkeyPartValue
               }
-            } else if (value.length > 0) {
-              normalKey = value
-            }
-          })
+              if (hotKeyModifierOrder.includes(value)) {
+                if (!modifiers.includes(value)) {
+                  modifiers.push(value)
+                }
+              } else if (value.length > 0) {
+                normalKey = value
+              }
+            })
           modifiers.sort((a, b) => hotKeyModifierOrder.indexOf(a) - hotKeyModifierOrder.indexOf(b))
-          return [...modifiers, normalKey].filter(key => key.length > 0).join('+') === key
+          return [...modifiers, normalKey].filter((key) => key.length > 0).join('+') === key
         })
         if (match) {
           const params = { chart: this._chart, event, key, hotkey }
@@ -177,7 +180,7 @@ export default class Event implements EventHandler {
     }
   }
 
-  constructor (container: HTMLElement, chart: Chart) {
+  constructor(container: HTMLElement, chart: Chart) {
     this._chart = chart
     this._event = new EventHandlerImp(container, this, {
       treatVertDragAsPageScroll: () => false,
@@ -186,14 +189,14 @@ export default class Event implements EventHandler {
     document.addEventListener('keydown', this._boundKeyBoardDownEvent)
   }
 
-  private _getYAxisByWidget (widget: Widget<DrawPane<YAxisImp>>): YAxisImp {
+  private _getYAxisByWidget(widget: Widget<DrawPane<YAxisImp>>): YAxisImp {
     if (widget.getName() === WidgetNameConstants.Y_AXIS) {
       return (widget as unknown as YAxisWidget).getAxisComponent() as unknown as YAxisImp
     }
     return widget.getPane().getYAxisComponentById() as unknown as YAxisImp
   }
 
-  private _getYAxisScaleTargetByWidget (widget: Widget<DrawPane<YAxisImp>>): YAxisImp {
+  private _getYAxisScaleTargetByWidget(widget: Widget<DrawPane<YAxisImp>>): YAxisImp {
     const yAxis = this._getYAxisByWidget(widget)
     const pane = widget.getPane()
     if (pane.isManualYAxis(yAxis.id)) {
@@ -202,7 +205,7 @@ export default class Event implements EventHandler {
     return yAxis
   }
 
-  private _syncYAxisValueRange (yAxis: YAxisImp, sourceRange: AxisRange): void {
+  private _syncYAxisValueRange(yAxis: YAxisImp, sourceRange: AxisRange): void {
     const baseRange = yAxis.getRange()
     const { from, to } = sourceRange
     const realFrom = yAxis.valueToRealValue(from, { range: baseRange })
@@ -222,24 +225,30 @@ export default class Event implements EventHandler {
     })
   }
 
-  private _syncManualYAxesValueRange (widget: Widget<DrawPane<YAxisImp>>, sourceYAxis: YAxisImp): void {
+  private _syncManualYAxesValueRange(widget: Widget<DrawPane<YAxisImp>>, sourceYAxis: YAxisImp): void {
     const sourceRange = sourceYAxis.getRange()
-    widget.getPane().getYAxisComponents().forEach(axis => {
-      const yAxis = axis as YAxisImp
-      if (yAxis !== sourceYAxis && widget.getPane().isManualYAxis(yAxis.id)) {
-        this._syncYAxisValueRange(yAxis, sourceRange)
-      }
-    })
+    widget
+      .getPane()
+      .getYAxisComponents()
+      .forEach((axis) => {
+        const yAxis = axis as YAxisImp
+        if (yAxis !== sourceYAxis && widget.getPane().isManualYAxis(yAxis.id)) {
+          this._syncYAxisValueRange(yAxis, sourceRange)
+        }
+      })
   }
 
-  private _resetYAxisAndManualYAxes (widget: Widget<DrawPane<YAxisImp>>, sourceYAxis: YAxisImp): void {
+  private _resetYAxisAndManualYAxes(widget: Widget<DrawPane<YAxisImp>>, sourceYAxis: YAxisImp): void {
     sourceYAxis.setAutoCalcTickFlag(true)
-    widget.getPane().getYAxisComponents().forEach(axis => {
-      const yAxis = axis as YAxisImp
-      if (widget.getPane().isManualYAxis(yAxis.id)) {
-        yAxis.setAutoCalcTickFlag(true)
-      }
-    })
+    widget
+      .getPane()
+      .getYAxisComponents()
+      .forEach((axis) => {
+        const yAxis = axis as YAxisImp
+        if (widget.getPane().isManualYAxis(yAxis.id)) {
+          yAxis.setAutoCalcTickFlag(true)
+        }
+      })
     this._chart.layout({
       measureWidth: true,
       update: true,
@@ -247,13 +256,13 @@ export default class Event implements EventHandler {
     })
   }
 
-  pinchStartEvent (): boolean {
+  pinchStartEvent(): boolean {
     this._touchZoomed = true
     this._pinchScale = 1
     return true
   }
 
-  pinchEvent (e: MouseTouchEvent, scale = 1): boolean {
+  pinchEvent(e: MouseTouchEvent, scale = 1): boolean {
     const { pane, widget } = this._findWidgetByEvent(e)
     if (pane?.getId() !== PaneIdConstants.X_AXIS && widget?.getName() === WidgetNameConstants.MAIN) {
       const event = this._makeWidgetEvent(e, widget)
@@ -265,14 +274,14 @@ export default class Event implements EventHandler {
     return false
   }
 
-  mouseWheelHortEvent (_: MouseTouchEvent, distance = 0): boolean {
+  mouseWheelHortEvent(_: MouseTouchEvent, distance = 0): boolean {
     const store = this._chart.getChartStore()
     store.startScroll()
     store.scroll(distance)
     return true
   }
 
-  mouseWheelVertEvent (e: MouseTouchEvent, scale = 0): boolean {
+  mouseWheelVertEvent(e: MouseTouchEvent, scale = 0): boolean {
     const { widget } = this._findWidgetByEvent(e)
     const event = this._makeWidgetEvent(e, widget)
     const name = widget?.getName()
@@ -294,7 +303,7 @@ export default class Event implements EventHandler {
     return false
   }
 
-  mouseDownEvent (e: MouseTouchEvent): boolean {
+  mouseDownEvent(e: MouseTouchEvent): boolean {
     const { pane, widget } = this._findWidgetByEvent(e)
     this._mouseDownWidget = widget
     if (widget !== null) {
@@ -333,13 +342,10 @@ export default class Event implements EventHandler {
     return false
   }
 
-  mouseMoveEvent (e: MouseTouchEvent): boolean {
+  mouseMoveEvent(e: MouseTouchEvent): boolean {
     const { pane, widget } = this._findWidgetByEvent(e)
     const event = this._makeWidgetEvent(e, widget)
-    if (
-      this._mouseMoveTriggerWidgetInfo.pane?.getId() !== pane?.getId() ||
-      this._mouseMoveTriggerWidgetInfo.widget?.getName() !== widget?.getName()
-    ) {
+    if (this._mouseMoveTriggerWidgetInfo.pane?.getId() !== pane?.getId() || this._mouseMoveTriggerWidgetInfo.widget?.getName() !== widget?.getName()) {
       widget?.dispatchEvent('mouseEnterEvent', event)
       this._mouseMoveTriggerWidgetInfo.widget?.dispatchEvent('mouseLeaveEvent', event)
       this._mouseMoveTriggerWidgetInfo = { pane, widget }
@@ -373,16 +379,12 @@ export default class Event implements EventHandler {
     return false
   }
 
-  pressedMouseMoveEvent (e: MouseTouchEvent): boolean {
+  pressedMouseMoveEvent(e: MouseTouchEvent): boolean {
     if (this._mouseDownWidget !== null && this._mouseDownWidget.getName() === WidgetNameConstants.SEPARATOR) {
       return this._mouseDownWidget.dispatchEvent('pressedMouseMoveEvent', e)
     }
     const { pane, widget } = this._findWidgetByEvent(e)
-    if (
-      widget !== null &&
-      this._mouseDownWidget?.getPane().getId() === pane?.getId() &&
-      this._mouseDownWidget?.getName() === widget.getName()
-    ) {
+    if (widget !== null && this._mouseDownWidget?.getPane().getId() === pane?.getId() && this._mouseDownWidget?.getName() === widget.getName()) {
       const event = this._makeWidgetEvent(e, widget)
       const name = widget.getName()
       switch (name) {
@@ -412,7 +414,7 @@ export default class Event implements EventHandler {
     return false
   }
 
-  mouseUpEvent (e: MouseTouchEvent): boolean {
+  mouseUpEvent(e: MouseTouchEvent): boolean {
     const { widget } = this._findWidgetByEvent(e)
     let consumed = false
     if (widget !== null) {
@@ -441,7 +443,7 @@ export default class Event implements EventHandler {
     return consumed
   }
 
-  mouseClickEvent (e: MouseTouchEvent): boolean {
+  mouseClickEvent(e: MouseTouchEvent): boolean {
     const { widget } = this._findWidgetByEvent(e)
     if (widget !== null) {
       const event = this._makeWidgetEvent(e, widget)
@@ -450,7 +452,7 @@ export default class Event implements EventHandler {
     return false
   }
 
-  mouseRightClickEvent (e: MouseTouchEvent): boolean {
+  mouseRightClickEvent(e: MouseTouchEvent): boolean {
     const { widget } = this._findWidgetByEvent(e)
     let consumed = false
     if (widget !== null) {
@@ -471,7 +473,7 @@ export default class Event implements EventHandler {
     return false
   }
 
-  mouseDoubleClickEvent (e: MouseTouchEvent): boolean {
+  mouseDoubleClickEvent(e: MouseTouchEvent): boolean {
     const { widget } = this._findWidgetByEvent(e)
     if (widget !== null) {
       const name = widget.getName()
@@ -495,12 +497,12 @@ export default class Event implements EventHandler {
     return false
   }
 
-  mouseLeaveEvent (): boolean {
+  mouseLeaveEvent(): boolean {
     this._chart.getChartStore().setCrosshair()
     return true
   }
 
-  touchStartEvent (e: MouseTouchEvent): boolean {
+  touchStartEvent(e: MouseTouchEvent): boolean {
     const { pane, widget } = this._findWidgetByEvent(e)
     if (widget !== null) {
       const event = this._makeWidgetEvent(e, widget)
@@ -561,7 +563,7 @@ export default class Event implements EventHandler {
     return false
   }
 
-  touchMoveEvent (e: MouseTouchEvent): boolean {
+  touchMoveEvent(e: MouseTouchEvent): boolean {
     const { pane, widget } = this._findWidgetByEvent(e)
     if (widget !== null) {
       const event = this._makeWidgetEvent(e, widget)
@@ -595,7 +597,7 @@ export default class Event implements EventHandler {
     return false
   }
 
-  touchEndEvent (e: MouseTouchEvent): boolean {
+  touchEndEvent(e: MouseTouchEvent): boolean {
     const { widget } = this._findWidgetByEvent(e)
     if (widget !== null) {
       const event = this._makeWidgetEvent(e, widget)
@@ -606,10 +608,10 @@ export default class Event implements EventHandler {
           if (this._startScrollCoordinate !== null) {
             const time = new Date().getTime() - this._flingStartTime
             const distance = event.x - this._startScrollCoordinate.x
-            let v = distance / (time > 0 ? time : 1) * 20
+            let v = (distance / (time > 0 ? time : 1)) * 20
             if (time < 200 && Math.abs(v) > 0) {
               const store = this._chart.getChartStore()
-              const flingScroll: (() => void) = () => {
+              const flingScroll: () => void = () => {
                 this._flingScrollRequestId = requestAnimationFrame(() => {
                   store.startScroll()
                   store.scroll(v)
@@ -647,7 +649,7 @@ export default class Event implements EventHandler {
     return false
   }
 
-  tapEvent (e: MouseTouchEvent): boolean {
+  tapEvent(e: MouseTouchEvent): boolean {
     const { pane, widget } = this._findWidgetByEvent(e)
     let consumed = false
     if (widget !== null) {
@@ -677,11 +679,11 @@ export default class Event implements EventHandler {
     return consumed
   }
 
-  doubleTapEvent (e: MouseTouchEvent): boolean {
+  doubleTapEvent(e: MouseTouchEvent): boolean {
     return this.mouseDoubleClickEvent(e)
   }
 
-  longTapEvent (e: MouseTouchEvent): boolean {
+  longTapEvent(e: MouseTouchEvent): boolean {
     const { pane, widget } = this._findWidgetByEvent(e)
     if (widget !== null && widget.getName() === WidgetNameConstants.MAIN) {
       const event = this._makeWidgetEvent(e, widget)
@@ -692,7 +694,7 @@ export default class Event implements EventHandler {
     return false
   }
 
-  private _processMainScrollingEvent (widget: Widget<DrawPane<YAxisImp>>, event: MouseTouchEvent): void {
+  private _processMainScrollingEvent(widget: Widget<DrawPane<YAxisImp>>, event: MouseTouchEvent): void {
     if (this._startScrollCoordinate !== null) {
       const yAxes = widget.getPane().getYAxisComponents()
       for (const item of yAxes) {
@@ -735,7 +737,7 @@ export default class Event implements EventHandler {
     }
   }
 
-  private _processXAxisScrollStartEvent (widget: Widget, event: MouseTouchEvent): boolean {
+  private _processXAxisScrollStartEvent(widget: Widget, event: MouseTouchEvent): boolean {
     const consumed = widget.dispatchEvent('mouseDownEvent', event)
     if (consumed) {
       this._chart.updatePane(UpdateLevel.Overlay)
@@ -745,7 +747,7 @@ export default class Event implements EventHandler {
     return consumed
   }
 
-  private _processXAxisScrollingEvent (widget: Widget<DrawPane<XAxis>>, event: MouseTouchEvent): boolean {
+  private _processXAxisScrollingEvent(widget: Widget<DrawPane<XAxis>>, event: MouseTouchEvent): boolean {
     const consumed = widget.dispatchEvent('pressedMouseMoveEvent', event)
     if (!consumed) {
       const xAxis = (widget.getPane() as unknown as XAxisPane).getXAxisComponent()
@@ -763,7 +765,7 @@ export default class Event implements EventHandler {
     return consumed
   }
 
-  private _processYAxisScaleStartEvent (widget: Widget<DrawPane<YAxisImp>>, event: MouseTouchEvent): boolean {
+  private _processYAxisScaleStartEvent(widget: Widget<DrawPane<YAxisImp>>, event: MouseTouchEvent): boolean {
     const consumed = widget.dispatchEvent('mouseDownEvent', event)
     if (consumed) {
       this._chart.updatePane(UpdateLevel.Overlay)
@@ -775,7 +777,7 @@ export default class Event implements EventHandler {
     return consumed
   }
 
-  private _processYAxisScalingEvent (widget: Widget<DrawPane<YAxisImp>>, event: MouseTouchEvent): boolean {
+  private _processYAxisScalingEvent(widget: Widget<DrawPane<YAxisImp>>, event: MouseTouchEvent): boolean {
     const consumed = widget.dispatchEvent('pressedMouseMoveEvent', event)
     if (!consumed) {
       const yAxis = this._getYAxisByWidget(widget)
@@ -793,7 +795,7 @@ export default class Event implements EventHandler {
     return consumed
   }
 
-  private _zoomYAxis (yAxis: YAxisImp, scaleFactor: number, baseRange?: AxisRange): void {
+  private _zoomYAxis(yAxis: YAxisImp, scaleFactor: number, baseRange?: AxisRange): void {
     const prevYAxisRange = baseRange ?? yAxis.getRange()
     const { from, to, range } = prevYAxisRange
     const newRange = range * scaleFactor
@@ -822,7 +824,7 @@ export default class Event implements EventHandler {
     })
   }
 
-  private _findWidgetByEvent (event: MouseTouchEvent): EventTriggerWidgetInfo {
+  private _findWidgetByEvent(event: MouseTouchEvent): EventTriggerWidgetInfo {
     const { x, y } = event
     const separatorPanes = this._chart.getSeparatorPanes()
     const separatorSize = this._chart.getStyles().separator.size
@@ -830,10 +832,7 @@ export default class Event implements EventHandler {
       const pane = items[1]
       const bounding = pane.getBounding()
       const top = bounding.top - Math.round((REAL_SEPARATOR_HEIGHT - separatorSize) / 2)
-      if (
-        x >= bounding.left && x <= bounding.left + bounding.width &&
-        y >= top && y <= top + REAL_SEPARATOR_HEIGHT
-      ) {
+      if (x >= bounding.left && x <= bounding.left + bounding.width && y >= top && y <= top + REAL_SEPARATOR_HEIGHT) {
         return { pane, widget: pane.getWidget() }
       }
     }
@@ -843,10 +842,7 @@ export default class Event implements EventHandler {
     let pane: Nullable<DrawPane> = null
     for (const p of drawPanes) {
       const bounding = p.getBounding()
-      if (
-        x >= bounding.left && x <= bounding.left + bounding.width &&
-        y >= bounding.top && y <= bounding.top + bounding.height
-      ) {
+      if (x >= bounding.left && x <= bounding.left + bounding.width && y >= bounding.top && y <= bounding.top + bounding.height) {
         pane = p
         break
       }
@@ -856,20 +852,14 @@ export default class Event implements EventHandler {
       if (!isValid(widget)) {
         const mainWidget = pane.getMainWidget()
         const mainBounding = mainWidget.getBounding()
-        if (
-          x >= mainBounding.left && x <= mainBounding.left + mainBounding.width &&
-          y >= mainBounding.top && y <= mainBounding.top + mainBounding.height
-        ) {
+        if (x >= mainBounding.left && x <= mainBounding.left + mainBounding.width && y >= mainBounding.top && y <= mainBounding.top + mainBounding.height) {
           widget = mainWidget
         }
       }
       if (!isValid(widget)) {
         for (const yAxisWidget of pane.getYAxisWidgets()) {
           const yAxisBounding = yAxisWidget.getBounding()
-          if (
-            x >= yAxisBounding.left && x <= yAxisBounding.left + yAxisBounding.width &&
-            y >= yAxisBounding.top && y <= yAxisBounding.top + yAxisBounding.height
-          ) {
+          if (x >= yAxisBounding.left && x <= yAxisBounding.left + yAxisBounding.width && y >= yAxisBounding.top && y <= yAxisBounding.top + yAxisBounding.height) {
             widget = yAxisWidget
             break
           }
@@ -879,7 +869,7 @@ export default class Event implements EventHandler {
     return { pane, widget }
   }
 
-  private _makeWidgetEvent (event: MouseTouchEvent, widget: Nullable<Widget>): MouseTouchEvent {
+  private _makeWidgetEvent(event: MouseTouchEvent, widget: Nullable<Widget>): MouseTouchEvent {
     const bounding = widget?.getBounding() ?? null
     return {
       ...event,
@@ -888,7 +878,7 @@ export default class Event implements EventHandler {
     }
   }
 
-  destroy (): void {
+  destroy(): void {
     document.removeEventListener('keydown', this._boundKeyBoardDownEvent)
     this._event.destroy()
   }

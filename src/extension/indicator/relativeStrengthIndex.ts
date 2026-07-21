@@ -33,10 +33,11 @@ const relativeStrengthIndex: IndicatorTemplate<Rsi, number> = {
     { key: 'rsi2', title: 'RSI2: ', type: 'line' },
     { key: 'rsi3', title: 'RSI3: ', type: 'line' }
   ],
-  regenerateFigures: (params) => params.map((_, index) => {
-    const num = index + 1
-    return { key: `rsi${num}`, title: `RSI${num}: `, type: 'line' }
-  }),
+  regenerateFigures: (params) =>
+    params.map((_, index) => {
+      const num = index + 1
+      return { key: `rsi${num}`, title: `RSI${num}: `, type: 'line' }
+    }),
   calc: (dataList, indicator) => {
     const { calcParams: params, figures } = indicator
     const gainSums: number[] = []
@@ -69,7 +70,7 @@ const relativeStrengthIndex: IndicatorTemplate<Rsi, number> = {
         } else if (avgGains[index] === 0) {
           rsi[figures[index].key] = 0
         } else {
-          rsi[figures[index].key] = 100 - (100 / (1 + avgGains[index] / avgLosses[index]))
+          rsi[figures[index].key] = 100 - 100 / (1 + avgGains[index] / avgLosses[index])
         }
       })
       return rsi

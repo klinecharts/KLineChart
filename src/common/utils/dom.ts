@@ -18,12 +18,12 @@
  * @param styles
  * @return {*}
  */
-export function createDom<K extends keyof HTMLElementTagNameMap> (tagName: K, styles?: Partial<CSSStyleDeclaration>): HTMLElementTagNameMap[K] {
+export function createDom<K extends keyof HTMLElementTagNameMap>(tagName: K, styles?: Partial<CSSStyleDeclaration>): HTMLElementTagNameMap[K] {
   const dom = document.createElement(tagName)
   const s = styles ?? {}
   // biome-ignore lint/suspicious/useGuardForIn: CSSStyleDeclaration keys are copied intentionally.
   for (const key in s) {
-    (dom.style)[key] = s[key] ?? ''
+    dom.style[key] = s[key] ?? ''
   }
   return dom
 }

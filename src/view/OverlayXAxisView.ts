@@ -24,26 +24,23 @@ import type { YAxis } from '../component/YAxis'
 import OverlayYAxisView from './OverlayYAxisView'
 
 export default class OverlayXAxisView extends OverlayYAxisView<XAxis> {
-  override coordinateToPointTimestampDataIndexFlag (): boolean {
+  override coordinateToPointTimestampDataIndexFlag(): boolean {
     return true
   }
 
-  override coordinateToPointValueFlag (): boolean {
+  override coordinateToPointValueFlag(): boolean {
     return false
   }
 
-  override getCompleteOverlays (): OverlayImp[] {
+  override getCompleteOverlays(): OverlayImp[] {
     return this.getWidget().getPane().getChart().getChartStore().getOverlaysByPaneId()
   }
 
-  override getProgressOverlay (): Nullable<OverlayImp> {
+  override getProgressOverlay(): Nullable<OverlayImp> {
     return this.getWidget().getPane().getChart().getChartStore().getProgressOverlayInfo()?.overlay ?? null
   }
 
-  override getDefaultFigures (
-    overlay: Overlay,
-    coordinates: Coordinate[]
-  ): OverlayFigure[] {
+  override getDefaultFigures(overlay: Overlay, coordinates: Coordinate[]): OverlayFigure[] {
     const figures: OverlayFigure[] = []
     const widget = this.getWidget()
     const pane = widget.getPane()
@@ -68,10 +65,7 @@ export default class OverlayXAxisView extends OverlayYAxisView<XAxis> {
     return figures
   }
 
-  override getFigures (
-    o: Overlay,
-    coordinates: Coordinate[]
-  ): OverlayFigure | OverlayFigure[] {
+  override getFigures(o: Overlay, coordinates: Coordinate[]): OverlayFigure | OverlayFigure[] {
     const widget = this.getWidget()
     const pane = widget.getPane()
     const chart = pane.getChart()

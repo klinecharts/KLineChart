@@ -20,7 +20,7 @@ import type YAxisWidget from '../widget/YAxisWidget'
 import View from './View'
 
 export default class IndicatorLastValueView extends View<YAxis> {
-  override drawImp (ctx: CanvasRenderingContext2D): void {
+  override drawImp(ctx: CanvasRenderingContext2D): void {
     const widget = this.getWidget()
     const pane = widget.getPane()
     const bounding = widget.getBounding()
@@ -40,11 +40,11 @@ export default class IndicatorLastValueView extends View<YAxis> {
       if (pane.isManualYAxis(yAxis.id) && isValid(defaultYAxisId)) {
         yAxisIds.add(defaultYAxisId)
       }
-      const indicators = chartStore.getIndicatorsByPaneId(pane.getId()).filter(indicator => yAxisIds.has(indicator.yAxisId))
+      const indicators = chartStore.getIndicatorsByPaneId(pane.getId()).filter((indicator) => yAxisIds.has(indicator.yAxisId))
       const formatter = chartStore.getInnerFormatter()
       const decimalFold = chartStore.getDecimalFold()
       const thousandsSeparator = chartStore.getThousandsSeparator()
-      indicators.forEach(indicator => {
+      indicators.forEach((indicator) => {
         const result = indicator.result
         const data = result[dataIndex] ?? {}
         if (isValid(data) && indicator.visible) {
@@ -54,13 +54,7 @@ export default class IndicatorLastValueView extends View<YAxis> {
             const value = data[figure.key]
             if (isNumber(value)) {
               const y = yAxis.convertToNicePixel(value)
-              let text = yAxis.displayValueToText(
-                yAxis.realValueToDisplayValue(
-                  yAxis.valueToRealValue(value, { range: yAxisRange }),
-                  { range: yAxisRange }
-                ),
-                precision
-              )
+              let text = yAxis.displayValueToText(yAxis.realValueToDisplayValue(yAxis.valueToRealValue(value, { range: yAxisRange }), { range: yAxisRange }), precision)
               if (indicator.shouldFormatBigNumber) {
                 text = formatter.formatBigNumber(text)
               }

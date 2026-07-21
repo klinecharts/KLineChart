@@ -30,14 +30,16 @@ export default abstract class View<C extends Axis = Axis> extends Eventful {
    */
   private readonly _widget: DrawWidget<DrawPane<C>>
 
-  constructor (widget: DrawWidget<DrawPane<C>>) {
+  constructor(widget: DrawWidget<DrawPane<C>>) {
     super()
     this._widget = widget
   }
 
-  getWidget (): DrawWidget<DrawPane<C>> { return this._widget }
+  getWidget(): DrawWidget<DrawPane<C>> {
+    return this._widget
+  }
 
-  protected createFigure (create: FigureCreate, eventHandler?: EventHandler): Nullable<Figure> {
+  protected createFigure(create: FigureCreate, eventHandler?: EventHandler): Nullable<Figure> {
     const FigureClazz = getInnerFigureClass(create.name)
     if (FigureClazz !== null) {
       const figure = new FigureClazz(create)
@@ -55,14 +57,14 @@ export default abstract class View<C extends Axis = Axis> extends Eventful {
     return null
   }
 
-  draw (ctx: CanvasRenderingContext2D): void {
+  draw(ctx: CanvasRenderingContext2D): void {
     this.clear()
     this.drawImp(ctx)
   }
 
-  checkEventOn (_: MouseTouchEvent): boolean {
+  checkEventOn(_: MouseTouchEvent): boolean {
     return true
   }
 
-  protected abstract drawImp (ctx: CanvasRenderingContext2D): void
+  protected abstract drawImp(ctx: CanvasRenderingContext2D): void
 }

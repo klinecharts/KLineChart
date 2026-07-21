@@ -34,31 +34,26 @@ import verticalStraightLine from './verticalStraightLine'
 
 const overlays: Record<string, OverlayInnerConstructor> = {}
 
-const extensions = [
-  fibonacciLine, horizontalRayLine, horizontalSegment, horizontalStraightLine,
-  parallelStraightLine, priceChannelLine, priceLine, rayLine, segment,
-  straightLine, verticalRayLine, verticalSegment, verticalStraightLine,
-  simpleAnnotation, simpleTag, brush
-]
+const extensions = [fibonacciLine, horizontalRayLine, horizontalSegment, horizontalStraightLine, parallelStraightLine, priceChannelLine, priceLine, rayLine, segment, straightLine, verticalRayLine, verticalSegment, verticalStraightLine, simpleAnnotation, simpleTag, brush]
 
 extensions.forEach((template: OverlayTemplate) => {
   overlays[template.name] = OverlayImp.extend(template)
 })
 
-function registerOverlay<E = unknown> (template: OverlayTemplate<E>): void {
+function registerOverlay<E = unknown>(template: OverlayTemplate<E>): void {
   // @ts-ignore
   overlays[template.name] = OverlayImp.extend(template)
 }
 
-function getOverlayInnerClass (name: string): Nullable<OverlayInnerConstructor> {
+function getOverlayInnerClass(name: string): Nullable<OverlayInnerConstructor> {
   return overlays[name] ?? null
 }
 
-function getOverlayClass (name: string): Nullable<OverlayConstructor> {
+function getOverlayClass(name: string): Nullable<OverlayConstructor> {
   return overlays[name] ?? null
 }
 
-function getSupportedOverlays (): string[] {
+function getSupportedOverlays(): string[] {
   return Object.keys(overlays)
 }
 

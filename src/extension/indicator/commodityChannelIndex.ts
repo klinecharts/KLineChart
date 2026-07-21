@@ -30,9 +30,7 @@ const commodityChannelIndex: IndicatorTemplate<Cci, number> = {
   name: 'CCI',
   shortName: 'CCI',
   calcParams: [20],
-  figures: [
-    { key: 'cci', title: 'CCI: ', type: 'line' }
-  ],
+  figures: [{ key: 'cci', title: 'CCI: ', type: 'line' }],
   calc: (dataList, indicator) => {
     const params = indicator.calcParams
     const p = params[0] - 1
@@ -47,7 +45,7 @@ const commodityChannelIndex: IndicatorTemplate<Cci, number> = {
         const maTp = tpSum / params[0]
         const sliceTpList = tpList.slice(i - p, i + 1)
         let sum = 0
-        sliceTpList.forEach(tp => {
+        sliceTpList.forEach((tp) => {
           sum += Math.abs(tp - maTp)
         })
         const md = sum / params[0]

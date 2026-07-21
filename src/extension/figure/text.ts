@@ -21,11 +21,11 @@ import type { FigureTemplate } from '../../component/Figure'
 
 import { drawRect, type RectAttrs } from './rect'
 
-export function getTextRect (attrs: TextAttrs, styles: Partial<TextStyle>): RectAttrs {
+export function getTextRect(attrs: TextAttrs, styles: Partial<TextStyle>): RectAttrs {
   const { size = 12, paddingLeft = 0, paddingTop = 0, paddingRight = 0, paddingBottom = 0, weight = 'normal', family } = styles
   const { x, y, text, align = 'left', baseline = 'top', width: w, height: h } = attrs
-  const width = w ?? (paddingLeft + calcTextWidth(text, size, weight, family) + paddingRight)
-  const height = h ?? (paddingTop + size + paddingBottom)
+  const width = w ?? paddingLeft + calcTextWidth(text, size, weight, family) + paddingRight
+  const height = h ?? paddingTop + size + paddingBottom
   let startX = 0
   switch (align) {
     case 'left':
@@ -64,36 +64,23 @@ export function getTextRect (attrs: TextAttrs, styles: Partial<TextStyle>): Rect
   return { x: startX, y: startY, width, height }
 }
 
-export function checkCoordinateOnText (coordinate: Coordinate, attrs: TextAttrs | TextAttrs[], styles: Partial<TextStyle>): boolean {
+export function checkCoordinateOnText(coordinate: Coordinate, attrs: TextAttrs | TextAttrs[], styles: Partial<TextStyle>): boolean {
   let texts: TextAttrs[] = []
   texts = texts.concat(attrs)
   for (const text of texts) {
     const { x, y, width, height } = getTextRect(text, styles)
-    if (
-      coordinate.x >= x &&
-      coordinate.x <= x + width &&
-      coordinate.y >= y &&
-      coordinate.y <= y + height
-    ) {
+    if (coordinate.x >= x && coordinate.x <= x + width && coordinate.y >= y && coordinate.y <= y + height) {
       return true
     }
   }
   return false
 }
 
-export function drawText (ctx: CanvasRenderingContext2D, attrs: TextAttrs | TextAttrs[], styles: Partial<TextStyle>): void {
+export function drawText(ctx: CanvasRenderingContext2D, attrs: TextAttrs | TextAttrs[], styles: Partial<TextStyle>): void {
   let texts: TextAttrs[] = []
   texts = texts.concat(attrs)
-  const {
-    color = 'currentColor',
-    size = 12,
-    family,
-    weight,
-    paddingLeft = 0,
-    paddingTop = 0,
-    paddingRight = 0
-  } = styles
-  const rects = texts.map(text => getTextRect(text, styles))
+  const { color = 'currentColor', size = 12, family, weight, paddingLeft = 0, paddingTop = 0, paddingRight = 0 } = styles
+  const rects = texts.map((text) => getTextRect(text, styles))
   drawRect(ctx, rects, { ...styles, color: styles.backgroundColor })
 
   ctx.textAlign = 'left'

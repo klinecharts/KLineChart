@@ -27,7 +27,7 @@ const simpleAnnotation: OverlayTemplate = {
       if (!isFunction(overlay.extendData)) {
         text = (overlay.extendData ?? '') as string
       } else {
-        text = (overlay.extendData(overlay)) as string
+        text = overlay.extendData(overlay) as string
       }
     }
     const startX = coordinates[0].x
@@ -37,12 +37,23 @@ const simpleAnnotation: OverlayTemplate = {
     return [
       {
         type: 'line',
-        attrs: { coordinates: [{ x: startX, y: startY }, { x: startX, y: lineEndY }] },
+        attrs: {
+          coordinates: [
+            { x: startX, y: startY },
+            { x: startX, y: lineEndY }
+          ]
+        },
         ignoreEvent: true
       },
       {
         type: 'polygon',
-        attrs: { coordinates: [{ x: startX, y: lineEndY }, { x: startX - 4, y: arrowEndY }, { x: startX + 4, y: arrowEndY }] },
+        attrs: {
+          coordinates: [
+            { x: startX, y: lineEndY },
+            { x: startX - 4, y: arrowEndY },
+            { x: startX + 4, y: arrowEndY }
+          ]
+        },
         ignoreEvent: true
       },
       {

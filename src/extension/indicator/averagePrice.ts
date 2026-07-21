@@ -26,9 +26,7 @@ const averagePrice: IndicatorTemplate<Avp> = {
   shortName: 'AVP',
   series: 'price',
   precision: 2,
-  figures: [
-    { key: 'avp', title: 'AVP: ', type: 'line' }
-  ],
+  figures: [{ key: 'avp', title: 'AVP: ', type: 'line' }],
   calc: (dataList) => {
     let totalTurnover = 0
     let totalVolume = 0

@@ -19,7 +19,7 @@ import { isString } from '../../common/utils/typeChecks'
 
 import type { FigureTemplate } from '../../component/Figure'
 
-export function checkCoordinateOnCircle (coordinate: Coordinate, attrs: CircleAttrs | CircleAttrs[]): boolean {
+export function checkCoordinateOnCircle(coordinate: Coordinate, attrs: CircleAttrs | CircleAttrs[]): boolean {
   let circles: CircleAttrs[] = []
   circles = circles.concat(attrs)
 
@@ -34,18 +34,11 @@ export function checkCoordinateOnCircle (coordinate: Coordinate, attrs: CircleAt
   return false
 }
 
-export function drawCircle (ctx: CanvasRenderingContext2D, attrs: CircleAttrs | CircleAttrs[], styles: Partial<PolygonStyle>): void {
+export function drawCircle(ctx: CanvasRenderingContext2D, attrs: CircleAttrs | CircleAttrs[], styles: Partial<PolygonStyle>): void {
   let circles: CircleAttrs[] = []
   circles = circles.concat(attrs)
 
-  const {
-    style = 'fill',
-    color = 'currentColor',
-    borderSize = 1,
-    borderColor = 'currentColor',
-    borderStyle = 'solid',
-    borderDashedValue = [2, 2]
-  } = styles
+  const { style = 'fill', color = 'currentColor', borderSize = 1, borderColor = 'currentColor', borderStyle = 'solid', borderDashedValue = [2, 2] } = styles
 
   const solid = (style === 'fill' || styles.style === 'stroke_fill') && (!isString(color) || !isTransparent(color))
   if (solid) {

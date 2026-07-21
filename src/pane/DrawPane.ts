@@ -12,7 +12,6 @@
  * limitations under the License.
  */
 
-
 import type Chart from '../Chart'
 import type Bounding from '../common/Bounding'
 import type DeepRequired from '../common/DeepRequired'
@@ -41,14 +40,14 @@ export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
 
   private readonly _options: PaneOptions
 
-  constructor (chart: Chart, options: PaneOptions) {
+  constructor(chart: Chart, options: PaneOptions) {
     super(chart, options.id)
     const container = this.getContainer()
     this._mainWidget = this.createMainWidget(container)
     this._options = options
   }
 
-  setOptions (options: Partial<PaneOptions>): this {
+  setOptions(options: Partial<PaneOptions>): this {
     merge(this._options, options)
     if (isNumber(options.height) && options.height > 0) {
       this.setBounding({ height: this._options.height })
@@ -56,7 +55,7 @@ export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
     return this
   }
 
-  protected setAxisCursor (scrollZoomEnabled?: boolean, yAxisId?: string): void {
+  protected setAxisCursor(scrollZoomEnabled?: boolean, yAxisId?: string): void {
     let container: Nullable<HTMLElement> = null
     let cursor = 'default'
     if (this.getId() === PaneIdConstants.X_AXIS) {
@@ -76,7 +75,7 @@ export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
     }
   }
 
-  createOrOverrideYAxis (override: PickRequired<YAxisOverride, 'id'>): YAxis {
+  createOrOverrideYAxis(override: PickRequired<YAxisOverride, 'id'>): YAxis {
     const axis = { ...override, paneId: this.getId() }
     const yAxisId = axis.id
     const yAxisName = axis.name ?? 'normal'
@@ -127,21 +126,23 @@ export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
     return yAxis
   }
 
-  getOptions (): DeepRequired<PaneOptions> { return this._options }
+  getOptions(): DeepRequired<PaneOptions> {
+    return this._options
+  }
 
-  getYAxisComponents (): YAxis[] {
+  getYAxisComponents(): YAxis[] {
     return Array.from(this._yAxisComponents.values())
   }
 
-  getWidgetYAxisComponents (): YAxis[] {
-    return Array.from(this._yAxisWidgets.keys()).map(id => this._yAxisComponents.get(id)!)
+  getWidgetYAxisComponents(): YAxis[] {
+    return Array.from(this._yAxisWidgets.keys()).map((id) => this._yAxisComponents.get(id)!)
   }
 
-  hasYAxisComponent (yAxisId: string): boolean {
+  hasYAxisComponent(yAxisId: string): boolean {
     return this._yAxisComponents.has(yAxisId)
   }
 
-  setManualYAxis (yAxisId: string, manual: boolean): void {
+  setManualYAxis(yAxisId: string, manual: boolean): void {
     if (manual) {
       this._manualYAxisIds.add(yAxisId)
     } else {
@@ -149,11 +150,11 @@ export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
     }
   }
 
-  isManualYAxis (yAxisId: string): boolean {
+  isManualYAxis(yAxisId: string): boolean {
     return this._manualYAxisIds.has(yAxisId)
   }
 
-  removeYAxis (yAxisId: string): boolean {
+  removeYAxis(yAxisId: string): boolean {
     const yAxis = this._yAxisComponents.get(yAxisId)
     if (!isValid(yAxis)) {
       return false
@@ -177,34 +178,29 @@ export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
     return true
   }
 
-  getDefaultYAxisId (): Nullable<string> {
+  getDefaultYAxisId(): Nullable<string> {
     return this._defaultYAxisId
   }
 
-  isDefaultYAxis (yAxisId: string): boolean {
+  isDefaultYAxis(yAxisId: string): boolean {
     return this._defaultYAxisId === yAxisId
   }
 
-  getYAxisComponentById (yAxisId?: string): YAxis {
+  getYAxisComponentById(yAxisId?: string): YAxis {
     const id = yAxisId ?? this.getDefaultYAxisId()
     return this._yAxisComponents.get(id!)!
   }
 
-  getYAxisWidgetById (yAxisId?: string): Nullable<YAxisWidget> {
+  getYAxisWidgetById(yAxisId?: string): Nullable<YAxisWidget> {
     const id = yAxisId ?? this.getDefaultYAxisId()
-    return isValid(id) ? this._yAxisWidgets.get(id) ?? null : null
+    return isValid(id) ? (this._yAxisWidgets.get(id) ?? null) : null
   }
 
-  setYAxesBounding (bounding: Record<string, Partial<Bounding>>): void {
+  setYAxesBounding(bounding: Record<string, Partial<Bounding>>): void {
     this._yAxesBounding = bounding
   }
 
-  override setBounding (
-    rootBounding: Partial<Bounding>,
-    mainBounding?: Partial<Bounding>,
-    leftYAxisBounding?: Partial<Bounding>,
-    rightYAxisBounding?: Partial<Bounding>
-  ): this {
+  override setBounding(rootBounding: Partial<Bounding>, mainBounding?: Partial<Bounding>, leftYAxisBounding?: Partial<Bounding>, rightYAxisBounding?: Partial<Bounding>): this {
     merge(this.getBounding(), rootBounding)
     const contentBounding: Partial<Bounding> = {}
     if (isValid(rootBounding.height)) {
@@ -235,10 +231,7 @@ export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
             yAxisWidget.setBounding(rightYAxisBounding)
             if (mainBoundingValid) {
               yAxisWidget.setBounding({
-                left: (mainBounding.left ?? 0) +
-                  (mainBounding.width ?? 0) +
-                  (mainBounding.right ?? 0) -
-                  (rightYAxisBounding.width ?? 0)
+                left: (mainBounding.left ?? 0) + (mainBounding.width ?? 0) + (mainBounding.right ?? 0) - (rightYAxisBounding.width ?? 0)
               })
             }
           }
@@ -248,23 +241,33 @@ export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
     return this
   }
 
-  getMainWidget (): DrawWidget<DrawPane<C>> { return this._mainWidget }
+  getMainWidget(): DrawWidget<DrawPane<C>> {
+    return this._mainWidget
+  }
 
-  getYAxisWidget (): Nullable<YAxisWidget> { return this.getYAxisWidgetById() }
+  getYAxisWidget(): Nullable<YAxisWidget> {
+    return this.getYAxisWidgetById()
+  }
 
-  getYAxisWidgets (): YAxisWidget[] { return Array.from(this._yAxisWidgets.values()) }
+  getYAxisWidgets(): YAxisWidget[] {
+    return Array.from(this._yAxisWidgets.values())
+  }
 
-  override updateImp (level: UpdateLevel): void {
+  override updateImp(level: UpdateLevel): void {
     this._mainWidget.update(level)
-    this._yAxisWidgets.forEach(widget => { widget.update(level) })
+    this._yAxisWidgets.forEach((widget) => {
+      widget.update(level)
+    })
   }
 
-  destroy (): void {
+  destroy(): void {
     this._mainWidget.destroy()
-    this._yAxisWidgets.forEach(widget => { widget.destroy() })
+    this._yAxisWidgets.forEach((widget) => {
+      widget.destroy()
+    })
   }
 
-  override getImage (includeOverlay: boolean): HTMLCanvasElement {
+  override getImage(includeOverlay: boolean): HTMLCanvasElement {
     const { width, height } = this.getBounding()
     const canvas = createDom('canvas', {
       width: `${width}px`,
@@ -278,27 +281,21 @@ export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
     ctx.scale(pixelRatio, pixelRatio)
 
     const mainBounding = this._mainWidget.getBounding()
-    ctx.drawImage(
-      this._mainWidget.getImage(includeOverlay),
-      mainBounding.left, 0,
-      mainBounding.width, mainBounding.height
-    )
-    this._yAxisWidgets.forEach(yAxisWidget => {
+    ctx.drawImage(this._mainWidget.getImage(includeOverlay), mainBounding.left, 0, mainBounding.width, mainBounding.height)
+    this._yAxisWidgets.forEach((yAxisWidget) => {
       const yAxisBounding = yAxisWidget.getBounding()
-      ctx.drawImage(
-        yAxisWidget.getImage(includeOverlay),
-        yAxisBounding.left, 0,
-        yAxisBounding.width, yAxisBounding.height
-      )
+      ctx.drawImage(yAxisWidget.getImage(includeOverlay), yAxisBounding.left, 0, yAxisBounding.width, yAxisBounding.height)
     })
     return canvas
   }
 
-  protected createYAxisComponent (_name: string): YAxis {
+  protected createYAxisComponent(_name: string): YAxis {
     throw new Error('createYAxisComponent is not implemented.')
   }
 
-  protected createYAxisWidget (_container: HTMLElement, _yAxis: YAxis): Nullable<YAxisWidget> { return null }
+  protected createYAxisWidget(_container: HTMLElement, _yAxis: YAxis): Nullable<YAxisWidget> {
+    return null
+  }
 
-  protected abstract createMainWidget (container: HTMLElement): DrawWidget<DrawPane<C>>
+  protected abstract createMainWidget(container: HTMLElement): DrawWidget<DrawPane<C>>
 }

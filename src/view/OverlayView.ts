@@ -32,18 +32,18 @@ import type DrawWidget from '../widget/DrawWidget'
 import View from './View'
 
 export default class OverlayView<C extends Axis = YAxis> extends View<C> {
-  constructor (widget: DrawWidget<DrawPane<C>>) {
+  constructor(widget: DrawWidget<DrawPane<C>>) {
     super(widget)
     this._initEvent()
   }
 
-  private _initEvent (): void {
+  private _initEvent(): void {
     const widget = this.getWidget()
     const pane = widget.getPane()
     const paneId = pane.getId()
     const chart = pane.getChart()
     const chartStore = chart.getChartStore()
-    this.registerEvent('mouseMoveEvent', event => {
+    this.registerEvent('mouseMoveEvent', (event) => {
       const progressOverlayInfo = chartStore.getProgressOverlayInfo()
       if (progressOverlayInfo !== null) {
         const overlay = progressOverlayInfo.overlay
@@ -57,12 +57,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
           overlay.stepDrawingModeEventMoveForDrawing(this._coordinateToPoint(overlay, event))
           overlay.onDrawing?.({ chart, overlay, ...event })
         }
-        return this._figureMouseMoveEvent(
-          overlay,
-          'point',
-          index,
-          { key: `${OVERLAY_FIGURE_KEY_PREFIX}point_${index}`, type: 'circle', attrs: {} }
-        )(event)
+        return this._figureMouseMoveEvent(overlay, 'point', index, { key: `${OVERLAY_FIGURE_KEY_PREFIX}point_${index}`, type: 'circle', attrs: {} })(event)
       }
       chartStore.setHoverOverlayInfo(
         {
@@ -77,177 +72,171 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
       )
       widget.setForceCursor(null)
       return false
-    }).registerEvent('mouseClickEvent', event => {
-      const progressOverlayInfo = chartStore.getProgressOverlayInfo()
-      if (progressOverlayInfo !== null) {
-        const overlay = progressOverlayInfo.overlay
-        let progressOverlayPaneId = progressOverlayInfo.paneId
-        if (overlay.isStart()) {
-          chartStore.updateProgressOverlayInfo(paneId, true)
-          progressOverlayPaneId = paneId
-        }
-        const index = overlay.points.length - 1
-        if (overlay.isDrawing() && progressOverlayPaneId === paneId) {
-          overlay.stepDrawingModeEventMoveForDrawing(this._coordinateToPoint(overlay, event))
-          overlay.onDrawing?.({ chart, overlay, ...event })
-          overlay.nextStep()
-          if (!overlay.isDrawing()) {
-            chartStore.progressOverlayComplete()
-            overlay.onDrawEnd?.({ chart, overlay, ...event })
+    })
+      .registerEvent('mouseClickEvent', (event) => {
+        const progressOverlayInfo = chartStore.getProgressOverlayInfo()
+        if (progressOverlayInfo !== null) {
+          const overlay = progressOverlayInfo.overlay
+          let progressOverlayPaneId = progressOverlayInfo.paneId
+          if (overlay.isStart()) {
+            chartStore.updateProgressOverlayInfo(paneId, true)
+            progressOverlayPaneId = paneId
           }
-        }
-        return this._figureMouseClickEvent(
-          overlay,
-          'point',
-          index,
-          {
+          const index = overlay.points.length - 1
+          if (overlay.isDrawing() && progressOverlayPaneId === paneId) {
+            overlay.stepDrawingModeEventMoveForDrawing(this._coordinateToPoint(overlay, event))
+            overlay.onDrawing?.({ chart, overlay, ...event })
+            overlay.nextStep()
+            if (!overlay.isDrawing()) {
+              chartStore.progressOverlayComplete()
+              overlay.onDrawEnd?.({ chart, overlay, ...event })
+            }
+          }
+          return this._figureMouseClickEvent(overlay, 'point', index, {
             key: `${OVERLAY_FIGURE_KEY_PREFIX}point_${index}`,
             type: 'circle',
             attrs: {}
+          })(event)
+        }
+        chartStore.setClickOverlayInfo(
+          {
+            paneId,
+            overlay: null,
+            figureType: 'none',
+            figureIndex: -1,
+            figure: null
+          },
+          (o, f) => this._processOverlaySelectedEvent(o, f, event),
+          (o, f) => this._processOverlayDeselectedEvent(o, f, event)
+        )
+        return false
+      })
+      .registerEvent('mouseDoubleClickEvent', (event) => {
+        const progressOverlayInfo = chartStore.getProgressOverlayInfo()
+        if (progressOverlayInfo !== null) {
+          const overlay = progressOverlayInfo.overlay
+          const progressOverlayPaneId = progressOverlayInfo.paneId
+          if (overlay.isDrawing() && progressOverlayPaneId === paneId) {
+            overlay.forceComplete()
+            if (!overlay.isDrawing()) {
+              chartStore.progressOverlayComplete()
+              overlay.onDrawEnd?.({ chart, overlay, ...event })
+            }
           }
-        )(event)
-      }
-      chartStore.setClickOverlayInfo(
-        {
+          const index = overlay.points.length - 1
+          return this._figureMouseClickEvent(overlay, 'point', index, {
+            key: `${OVERLAY_FIGURE_KEY_PREFIX}point_${index}`,
+            type: 'circle',
+            attrs: {}
+          })(event)
+        }
+        return false
+      })
+      .registerEvent('mouseRightClickEvent', (event) => {
+        const progressOverlayInfo = chartStore.getProgressOverlayInfo()
+        if (progressOverlayInfo !== null) {
+          const overlay = progressOverlayInfo.overlay
+          if (overlay.isDrawing()) {
+            const index = overlay.points.length - 1
+            return this._figureMouseRightClickEvent(overlay, 'point', index, {
+              key: `${OVERLAY_FIGURE_KEY_PREFIX}point_${index}`,
+              type: 'circle',
+              attrs: {}
+            })(event)
+          }
+        }
+        return false
+      })
+      .registerEvent('mouseDownEvent', (event) => {
+        // Handle continuous drawing mode - start drawing on mouse down
+        const progressOverlayInfo = chartStore.getProgressOverlayInfo()
+        if (progressOverlayInfo !== null) {
+          const overlay = progressOverlayInfo.overlay
+          if (overlay.isContinuousDrawingMode() && overlay.isStart()) {
+            chartStore.updateProgressOverlayInfo(paneId, true)
+            const point = this._coordinateToPoint(overlay, event)
+            overlay.startContinuousDrawing(point)
+            overlay.onDrawStart?.({ chart, overlay, ...event })
+            return true
+          }
+        }
+        return false
+      })
+      .registerEvent('mouseUpEvent', (event) => {
+        // Handle continuous drawing mode - complete on mouse up
+        const progressOverlayInfo = chartStore.getProgressOverlayInfo()
+        if (progressOverlayInfo !== null) {
+          const overlay = progressOverlayInfo.overlay
+          if (overlay.isContinuousDrawingMode() && overlay.isDrawing() && !overlay.isStart()) {
+            overlay.forceComplete()
+            chartStore.progressOverlayComplete()
+            overlay.onDrawEnd?.({ chart, overlay, ...event })
+            return true
+          }
+        }
+        const { overlay, figure } = chartStore.getPressedOverlayInfo()
+        if (overlay !== null) {
+          if (checkOverlayFigureEvent('onPressedMoveEnd', figure)) {
+            overlay.onPressedMoveEnd?.({ chart, overlay, figure: figure ?? undefined, ...event })
+          }
+        }
+        chartStore.setPressedOverlayInfo({
           paneId,
           overlay: null,
           figureType: 'none',
           figureIndex: -1,
           figure: null
-        },
-        (o, f) => this._processOverlaySelectedEvent(o, f, event),
-        (o, f) => this._processOverlayDeselectedEvent(o, f, event)
-      )
-      return false
-    }).registerEvent('mouseDoubleClickEvent', event => {
-      const progressOverlayInfo = chartStore.getProgressOverlayInfo()
-      if (progressOverlayInfo !== null) {
-        const overlay = progressOverlayInfo.overlay
-        const progressOverlayPaneId = progressOverlayInfo.paneId
-        if (overlay.isDrawing() && progressOverlayPaneId === paneId) {
-          overlay.forceComplete()
-          if (!overlay.isDrawing()) {
-            chartStore.progressOverlayComplete()
-            overlay.onDrawEnd?.({ chart, overlay, ...event })
-          }
-        }
-        const index = overlay.points.length - 1
-        return this._figureMouseClickEvent(
-          overlay,
-          'point',
-          index,
-          {
-            key: `${OVERLAY_FIGURE_KEY_PREFIX}point_${index}`,
-            type: 'circle',
-            attrs: {}
-          }
-        )(event)
-      }
-      return false
-    }).registerEvent('mouseRightClickEvent', event => {
-      const progressOverlayInfo = chartStore.getProgressOverlayInfo()
-      if (progressOverlayInfo !== null) {
-        const overlay = progressOverlayInfo.overlay
-        if (overlay.isDrawing()) {
-          const index = overlay.points.length - 1
-          return this._figureMouseRightClickEvent(
-            overlay,
-            'point',
-            index,
-            {
-              key: `${OVERLAY_FIGURE_KEY_PREFIX}point_${index}`,
-              type: 'circle',
-              attrs: {}
-            }
-          )(event)
-        }
-      }
-      return false
-    }).registerEvent('mouseDownEvent', event => {
-      // Handle continuous drawing mode - start drawing on mouse down
-      const progressOverlayInfo = chartStore.getProgressOverlayInfo()
-      if (progressOverlayInfo !== null) {
-        const overlay = progressOverlayInfo.overlay
-        if (overlay.isContinuousDrawingMode() && overlay.isStart()) {
-          chartStore.updateProgressOverlayInfo(paneId, true)
-          const point = this._coordinateToPoint(overlay, event)
-          overlay.startContinuousDrawing(point)
-          overlay.onDrawStart?.({ chart, overlay, ...event })
-          return true
-        }
-      }
-      return false
-    }).registerEvent('mouseUpEvent', event => {
-      // Handle continuous drawing mode - complete on mouse up
-      const progressOverlayInfo = chartStore.getProgressOverlayInfo()
-      if (progressOverlayInfo !== null) {
-        const overlay = progressOverlayInfo.overlay
-        if (overlay.isContinuousDrawingMode() && overlay.isDrawing() && !overlay.isStart()) {
-          overlay.forceComplete()
-          chartStore.progressOverlayComplete()
-          overlay.onDrawEnd?.({ chart, overlay, ...event })
-          return true
-        }
-      }
-      const { overlay, figure } = chartStore.getPressedOverlayInfo()
-      if (overlay !== null) {
-        if (checkOverlayFigureEvent('onPressedMoveEnd', figure)) {
-          overlay.onPressedMoveEnd?.({ chart, overlay, figure: figure ?? undefined, ...event })
-        }
-      }
-      chartStore.setPressedOverlayInfo({
-        paneId,
-        overlay: null,
-        figureType: 'none',
-        figureIndex: -1,
-        figure: null
+        })
+        return false
       })
-      return false
-    }).registerEvent('pressedMouseMoveEvent', event => {
-      // Handle continuous drawing mode - accumulate points while mouse is pressed
-      const progressOverlayInfo = chartStore.getProgressOverlayInfo()
-      if (progressOverlayInfo !== null) {
-        const overlay = progressOverlayInfo.overlay
-        if (overlay.isContinuousDrawingMode() && overlay.isDrawing() && !overlay.isStart()) {
-          const point = this._coordinateToPoint(overlay, event)
-          overlay.continuousDrawingModeEventMoveForDrawing(point)
-          overlay.onDrawing?.({ chart, overlay, ...event })
-          this.getWidget().setForceCursor('pointer')
-          return true
-        }
-      }
-      const { overlay, figureType, figureIndex, figure } = chartStore.getPressedOverlayInfo()
-      if (overlay !== null) {
-        if (checkOverlayFigureEvent('onPressedMoving', figure)) {
-          if (!overlay.lock) {
+      .registerEvent('pressedMouseMoveEvent', (event) => {
+        // Handle continuous drawing mode - accumulate points while mouse is pressed
+        const progressOverlayInfo = chartStore.getProgressOverlayInfo()
+        if (progressOverlayInfo !== null) {
+          const overlay = progressOverlayInfo.overlay
+          if (overlay.isContinuousDrawingMode() && overlay.isDrawing() && !overlay.isStart()) {
             const point = this._coordinateToPoint(overlay, event)
-            if (figureType === 'point') {
-              overlay.eventPressedPointMove(point, figureIndex)
-            } else {
-              overlay.eventPressedOtherMove(point, this.getWidget().getPane().getChart().getChartStore())
-            }
-            let prevented = false
-            overlay.onPressedMoving?.({ chart, overlay, figure: figure ?? undefined, ...event, preventDefault: () => { prevented = true } })
-            if (prevented) {
-              this.getWidget().setForceCursor(null)
-            } else {
-              this.getWidget().setForceCursor('pointer')
-            }
+            overlay.continuousDrawingModeEventMoveForDrawing(point)
+            overlay.onDrawing?.({ chart, overlay, ...event })
+            this.getWidget().setForceCursor('pointer')
             return true
           }
         }
-      }
-      this.getWidget().setForceCursor(null)
-      return false
-    })
+        const { overlay, figureType, figureIndex, figure } = chartStore.getPressedOverlayInfo()
+        if (overlay !== null) {
+          if (checkOverlayFigureEvent('onPressedMoving', figure)) {
+            if (!overlay.lock) {
+              const point = this._coordinateToPoint(overlay, event)
+              if (figureType === 'point') {
+                overlay.eventPressedPointMove(point, figureIndex)
+              } else {
+                overlay.eventPressedOtherMove(point, this.getWidget().getPane().getChart().getChartStore())
+              }
+              let prevented = false
+              overlay.onPressedMoving?.({
+                chart,
+                overlay,
+                figure: figure ?? undefined,
+                ...event,
+                preventDefault: () => {
+                  prevented = true
+                }
+              })
+              if (prevented) {
+                this.getWidget().setForceCursor(null)
+              } else {
+                this.getWidget().setForceCursor('pointer')
+              }
+              return true
+            }
+          }
+        }
+        this.getWidget().setForceCursor(null)
+        return false
+      })
   }
 
-  private _createFigureEvents (
-    overlay: OverlayImp,
-    figureType: EventOverlayInfoFigureType,
-    figureIndex: number,
-    figure: OverlayFigure
-  ): Nullable<EventHandler> {
+  private _createFigureEvents(overlay: OverlayImp, figureType: EventOverlayInfoFigureType, figureIndex: number, figure: OverlayFigure): Nullable<EventHandler> {
     if (overlay.isDrawing()) {
       return null
     }
@@ -260,7 +249,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     }
   }
 
-  private _processOverlayMouseEnterEvent (overlay: OverlayImp, figure: Nullable<OverlayFigure>, event: MouseTouchEvent): boolean {
+  private _processOverlayMouseEnterEvent(overlay: OverlayImp, figure: Nullable<OverlayFigure>, event: MouseTouchEvent): boolean {
     if (isFunction(overlay.onMouseEnter) && checkOverlayFigureEvent('onMouseEnter', figure)) {
       overlay.onMouseEnter({ chart: this.getWidget().getPane().getChart(), overlay, figure: figure ?? undefined, ...event })
       return true
@@ -268,7 +257,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     return false
   }
 
-  private _processOverlayMouseLeaveEvent (overlay: OverlayImp, figure: Nullable<OverlayFigure>, event: MouseTouchEvent): boolean {
+  private _processOverlayMouseLeaveEvent(overlay: OverlayImp, figure: Nullable<OverlayFigure>, event: MouseTouchEvent): boolean {
     if (isFunction(overlay.onMouseLeave) && checkOverlayFigureEvent('onMouseLeave', figure)) {
       overlay.onMouseLeave({ chart: this.getWidget().getPane().getChart(), overlay, figure: figure ?? undefined, ...event })
       return true
@@ -276,7 +265,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     return false
   }
 
-  private _processOverlaySelectedEvent (overlay: OverlayImp, figure: Nullable<OverlayFigure>, event: MouseTouchEvent): boolean {
+  private _processOverlaySelectedEvent(overlay: OverlayImp, figure: Nullable<OverlayFigure>, event: MouseTouchEvent): boolean {
     if (checkOverlayFigureEvent('onSelected', figure)) {
       overlay.onSelected?.({ chart: this.getWidget().getPane().getChart(), overlay, figure: figure ?? undefined, ...event })
       return true
@@ -284,7 +273,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     return false
   }
 
-  private _processOverlayDeselectedEvent (overlay: OverlayImp, figure: Nullable<OverlayFigure>, event: MouseTouchEvent): boolean {
+  private _processOverlayDeselectedEvent(overlay: OverlayImp, figure: Nullable<OverlayFigure>, event: MouseTouchEvent): boolean {
     if (checkOverlayFigureEvent('onDeselected', figure)) {
       overlay.onDeselected?.({ chart: this.getWidget().getPane().getChart(), overlay, figure: figure ?? undefined, ...event })
       return true
@@ -292,13 +281,21 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     return false
   }
 
-  private _figureMouseMoveEvent (overlay: OverlayImp, figureType: EventOverlayInfoFigureType, figureIndex: number, figure: OverlayFigure): MouseTouchEventCallback {
+  private _figureMouseMoveEvent(overlay: OverlayImp, figureType: EventOverlayInfoFigureType, figureIndex: number, figure: OverlayFigure): MouseTouchEventCallback {
     return (event: MouseTouchEvent) => {
       const pane = this.getWidget().getPane()
       const check = !overlay.isDrawing() && checkOverlayFigureEvent('onMouseMove', figure)
       if (check) {
         let prevented = false
-        overlay.onMouseMove?.({ chart: pane.getChart(), overlay, figure, ...event, preventDefault: () => { prevented = true } })
+        overlay.onMouseMove?.({
+          chart: pane.getChart(),
+          overlay,
+          figure,
+          ...event,
+          preventDefault: () => {
+            prevented = true
+          }
+        })
         if (prevented) {
           this.getWidget().setForceCursor(null)
         } else {
@@ -306,16 +303,19 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
         }
       }
 
-      pane.getChart().getChartStore().setHoverOverlayInfo(
-        { paneId: pane.getId(), overlay, figureType, figure, figureIndex },
-        (o, f) => this._processOverlayMouseEnterEvent(o, f, event),
-        (o, f) => this._processOverlayMouseLeaveEvent(o, f, event)
-      )
+      pane
+        .getChart()
+        .getChartStore()
+        .setHoverOverlayInfo(
+          { paneId: pane.getId(), overlay, figureType, figure, figureIndex },
+          (o, f) => this._processOverlayMouseEnterEvent(o, f, event),
+          (o, f) => this._processOverlayMouseLeaveEvent(o, f, event)
+        )
       return check
     }
   }
 
-  private _figureMouseDownEvent (overlay: OverlayImp, figureType: EventOverlayInfoFigureType, figureIndex: number, figure: OverlayFigure): MouseTouchEventCallback {
+  private _figureMouseDownEvent(overlay: OverlayImp, figureType: EventOverlayInfoFigureType, figureIndex: number, figure: OverlayFigure): MouseTouchEventCallback {
     return (event: MouseTouchEvent) => {
       if (overlay.lock) {
         return false
@@ -332,7 +332,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     }
   }
 
-  private _figureMouseClickEvent (overlay: OverlayImp, figureType: EventOverlayInfoFigureType, figureIndex: number, figure: OverlayFigure): MouseTouchEventCallback {
+  private _figureMouseClickEvent(overlay: OverlayImp, figureType: EventOverlayInfoFigureType, figureIndex: number, figure: OverlayFigure): MouseTouchEventCallback {
     return (event: MouseTouchEvent) => {
       const pane = this.getWidget().getPane()
       const paneId = pane.getId()
@@ -340,16 +340,19 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
       if (check) {
         overlay.onClick?.({ chart: this.getWidget().getPane().getChart(), overlay, figure, ...event })
       }
-      pane.getChart().getChartStore().setClickOverlayInfo(
-        { paneId, overlay, figureType, figureIndex, figure },
-        (o, f) => this._processOverlaySelectedEvent(o, f, event),
-        (o, f) => this._processOverlayDeselectedEvent(o, f, event)
-      )
+      pane
+        .getChart()
+        .getChartStore()
+        .setClickOverlayInfo(
+          { paneId, overlay, figureType, figureIndex, figure },
+          (o, f) => this._processOverlaySelectedEvent(o, f, event),
+          (o, f) => this._processOverlayDeselectedEvent(o, f, event)
+        )
       return check
     }
   }
 
-  private _figureMouseDoubleClickEvent (overlay: OverlayImp, _figureType: EventOverlayInfoFigureType, _figureIndex: number, figure: OverlayFigure): MouseTouchEventCallback {
+  private _figureMouseDoubleClickEvent(overlay: OverlayImp, _figureType: EventOverlayInfoFigureType, _figureIndex: number, figure: OverlayFigure): MouseTouchEventCallback {
     return (event: MouseTouchEvent) => {
       if (checkOverlayFigureEvent('onDoubleClick', figure)) {
         overlay.onDoubleClick?.({ ...event, chart: this.getWidget().getPane().getChart(), figure, overlay })
@@ -359,11 +362,19 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     }
   }
 
-  private _figureMouseRightClickEvent (overlay: OverlayImp, _figureType: EventOverlayInfoFigureType, _figureIndex: number, figure: OverlayFigure): MouseTouchEventCallback {
+  private _figureMouseRightClickEvent(overlay: OverlayImp, _figureType: EventOverlayInfoFigureType, _figureIndex: number, figure: OverlayFigure): MouseTouchEventCallback {
     return (event: MouseTouchEvent) => {
       if (checkOverlayFigureEvent('onRightClick', figure)) {
         let prevented = false
-        overlay.onRightClick?.({ chart: this.getWidget().getPane().getChart(), overlay, figure, ...event, preventDefault: () => { prevented = true } })
+        overlay.onRightClick?.({
+          chart: this.getWidget().getPane().getChart(),
+          overlay,
+          figure,
+          ...event,
+          preventDefault: () => {
+            prevented = true
+          }
+        })
         if (!prevented) {
           this.getWidget().getPane().getChart().getChartStore().removeOverlay(overlay)
         }
@@ -373,7 +384,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     }
   }
 
-  private _coordinateToPoint (o: Overlay, coordinate: Coordinate): Partial<Point> {
+  private _coordinateToPoint(o: Overlay, coordinate: Coordinate): Partial<Point> {
     const point: Partial<Point> = {}
     const pane = this.getWidget().getPane()
     const chart = pane.getChart()
@@ -451,15 +462,15 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     return point
   }
 
-  protected coordinateToPointValueFlag (): boolean {
+  protected coordinateToPointValueFlag(): boolean {
     return true
   }
 
-  protected coordinateToPointTimestampDataIndexFlag (): boolean {
+  protected coordinateToPointTimestampDataIndexFlag(): boolean {
     return true
   }
 
-  override dispatchEvent (name: EventName, event: MouseTouchEvent): boolean {
+  override dispatchEvent(name: EventName, event: MouseTouchEvent): boolean {
     const isDrawing = this.getWidget().getPane().getChart().getChartStore().isOverlayDrawing()
     if (isDrawing) {
       return this.onEvent(name, event)
@@ -467,9 +478,9 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     return super.dispatchEvent(name, event)
   }
 
-  override drawImp (ctx: CanvasRenderingContext2D): void {
+  override drawImp(ctx: CanvasRenderingContext2D): void {
     const overlays = this.getCompleteOverlays()
-    overlays.forEach(overlay => {
+    overlays.forEach((overlay) => {
       if (overlay.visible) {
         this._drawOverlay(ctx, overlay)
       }
@@ -480,10 +491,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     }
   }
 
-  private _drawOverlay (
-    ctx: CanvasRenderingContext2D,
-    overlay: OverlayImp
-  ): void {
+  private _drawOverlay(ctx: CanvasRenderingContext2D, overlay: OverlayImp): void {
     const { points } = overlay
     const pane = this.getWidget().getPane()
     const chart = pane.getChart()
@@ -491,7 +499,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     const yAxis = pane.getYAxisComponentById() as unknown as Nullable<YAxis>
     // For continuous drawing overlays, use float indices for smooth rendering
     const isContinuous = overlay.isContinuousDrawingMode()
-    const coordinates = points.map(point => {
+    const coordinates = points.map((point) => {
       let dataIndex: Nullable<number> = null
       if (isContinuous && isNumber(point.timestamp)) {
         // Use timestampToFloatIndex for sub-bar precision
@@ -515,20 +523,12 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     if (coordinates.length > 0) {
       let figures: OverlayFigure[] = []
       figures = figures.concat(this.getFigures(overlay, coordinates))
-      this.drawFigures(
-        ctx,
-        overlay,
-        figures
-      )
+      this.drawFigures(ctx, overlay, figures)
     }
-    this.drawDefaultFigures(
-      ctx,
-      overlay,
-      coordinates
-    )
+    this.drawDefaultFigures(ctx, overlay, coordinates)
   }
 
-  protected drawFigures (ctx: CanvasRenderingContext2D, overlay: OverlayImp, figures: OverlayFigure[]): void {
+  protected drawFigures(ctx: CanvasRenderingContext2D, overlay: OverlayImp, figures: OverlayFigure[]): void {
     const defaultStyles = this.getWidget().getPane().getChart().getStyles().overlay
     figures.forEach((figure, figureIndex) => {
       const { type, styles, attrs } = figure
@@ -536,21 +536,26 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
       const attrsArray = [].concat(attrs)
       attrsArray.forEach((ats) => {
         const events = this._createFigureEvents(overlay, 'other', figureIndex, figure)
-         // @ts-ignore
+        // @ts-ignore
         const ss = { ...defaultStyles[type], ...overlay.styles?.[type], ...styles }
-        this.createFigure({
-          name: type, attrs: ats, styles: ss
-        }, events ?? undefined)?.draw(ctx)
+        this.createFigure(
+          {
+            name: type,
+            attrs: ats,
+            styles: ss
+          },
+          events ?? undefined
+        )?.draw(ctx)
       })
     })
   }
 
-  protected getCompleteOverlays (): OverlayImp[] {
+  protected getCompleteOverlays(): OverlayImp[] {
     const pane = this.getWidget().getPane()
     return pane.getChart().getChartStore().getOverlaysByPaneId(pane.getId())
   }
 
-  protected getProgressOverlay (): Nullable<OverlayImp> {
+  protected getProgressOverlay(): Nullable<OverlayImp> {
     const pane = this.getWidget().getPane()
     const info = pane.getChart().getChartStore().getProgressOverlayInfo()
     if (isValid(info) && info.paneId === pane.getId()) {
@@ -559,10 +564,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     return null
   }
 
-  protected getFigures (
-    o: Overlay,
-    coordinates: Coordinate[]
-  ): OverlayFigure | OverlayFigure[] {
+  protected getFigures(o: Overlay, coordinates: Coordinate[]): OverlayFigure | OverlayFigure[] {
     const widget = this.getWidget()
     const pane = widget.getPane()
     const chart = pane.getChart()
@@ -572,19 +574,12 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     return o.createPointFigures?.({ chart, overlay: o, coordinates, bounding, xAxis, yAxis }) ?? []
   }
 
-  protected drawDefaultFigures (
-    ctx: CanvasRenderingContext2D,
-    overlay: OverlayImp,
-    coordinates: Coordinate[]
-  ): void {
+  protected drawDefaultFigures(ctx: CanvasRenderingContext2D, overlay: OverlayImp, coordinates: Coordinate[]): void {
     if (overlay.needDefaultPointFigure) {
       const chartStore = this.getWidget().getPane().getChart().getChartStore()
       const hoverOverlayInfo = chartStore.getHoverOverlayInfo()
       const clickOverlayInfo = chartStore.getClickOverlayInfo()
-      if (
-        (hoverOverlayInfo.overlay?.id === overlay.id && hoverOverlayInfo.figureType !== 'none') ||
-        (clickOverlayInfo.overlay?.id === overlay.id && clickOverlayInfo.figureType !== 'none')
-      ) {
+      if ((hoverOverlayInfo.overlay?.id === overlay.id && hoverOverlayInfo.figureType !== 'none') || (clickOverlayInfo.overlay?.id === overlay.id && clickOverlayInfo.figureType !== 'none')) {
         const defaultStyles = chartStore.getStyles().overlay
         const styles = overlay.styles
         const pointStyles = { ...defaultStyles.point, ...styles?.point }
@@ -593,11 +588,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
           let color = pointStyles.color
           let borderColor = pointStyles.borderColor
           let borderSize = pointStyles.borderSize
-          if (
-            hoverOverlayInfo.overlay?.id === overlay.id &&
-            hoverOverlayInfo.figureType === 'point' &&
-            hoverOverlayInfo.figure?.key === `${OVERLAY_FIGURE_KEY_PREFIX}point_${index}`
-          ) {
+          if (hoverOverlayInfo.overlay?.id === overlay.id && hoverOverlayInfo.figureType === 'point' && hoverOverlayInfo.figure?.key === `${OVERLAY_FIGURE_KEY_PREFIX}point_${index}`) {
             radius = pointStyles.activeRadius
             color = pointStyles.activeColor
             borderColor = pointStyles.activeBorderColor
@@ -610,17 +601,12 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
               attrs: { x, y, r: radius + borderSize },
               styles: { color: borderColor }
             },
-            this._createFigureEvents(
-              overlay,
-              'point',
-              index,
-              {
-                key: `${OVERLAY_FIGURE_KEY_PREFIX}point_${index}`,
-                type: 'circle',
-                attrs: { x, y, r: radius + borderSize },
-                styles: { color: borderColor }
-              }
-            ) ?? undefined
+            this._createFigureEvents(overlay, 'point', index, {
+              key: `${OVERLAY_FIGURE_KEY_PREFIX}point_${index}`,
+              type: 'circle',
+              attrs: { x, y, r: radius + borderSize },
+              styles: { color: borderColor }
+            }) ?? undefined
           )?.draw(ctx)
           this.createFigure({
             name: 'circle',

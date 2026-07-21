@@ -20,7 +20,7 @@ import type { YAxis } from '../component/YAxis'
 import View from './View'
 
 export default class CandleHighLowPriceView extends View<YAxis> {
-  override drawImp (ctx: CanvasRenderingContext2D): void {
+  override drawImp(ctx: CanvasRenderingContext2D): void {
     const widget = this.getWidget()
     const pane = widget.getPane()
     const chartStore = pane.getChart().getChartStore()
@@ -39,33 +39,15 @@ export default class CandleHighLowPriceView extends View<YAxis> {
       const decimalFold = chartStore.getDecimalFold()
       const thousandsSeparator = chartStore.getThousandsSeparator()
       if (highPriceMarkStyles.show && high !== Number.MIN_SAFE_INTEGER) {
-        this._drawMark(
-          ctx,
-          decimalFold.format(thousandsSeparator.format(formatPrecision(high, precision))),
-          { x: highX, y: highY },
-          highY < lowY ? [-2, -5] : [2, 5],
-          highPriceMarkStyles
-        )
+        this._drawMark(ctx, decimalFold.format(thousandsSeparator.format(formatPrecision(high, precision))), { x: highX, y: highY }, highY < lowY ? [-2, -5] : [2, 5], highPriceMarkStyles)
       }
       if (lowPriceMarkStyles.show && low !== Number.MAX_SAFE_INTEGER) {
-        this._drawMark(
-          ctx,
-          decimalFold.format(thousandsSeparator.format(formatPrecision(low, precision))),
-          { x: lowX, y: lowY },
-          highY < lowY ? [2, 5] : [-2, -5],
-          lowPriceMarkStyles
-        )
+        this._drawMark(ctx, decimalFold.format(thousandsSeparator.format(formatPrecision(low, precision))), { x: lowX, y: lowY }, highY < lowY ? [2, 5] : [-2, -5], lowPriceMarkStyles)
       }
     }
   }
 
-  private _drawMark (
-    ctx: CanvasRenderingContext2D,
-    text: string,
-    coordinate: Coordinate,
-    offsets: number[],
-    styles: CandleHighLowPriceMarkStyle
-  ): void {
+  private _drawMark(ctx: CanvasRenderingContext2D, text: string, coordinate: Coordinate, offsets: number[], styles: CandleHighLowPriceMarkStyle): void {
     const startX = coordinate.x
     const startY = coordinate.y + offsets[0]
     this.createFigure({

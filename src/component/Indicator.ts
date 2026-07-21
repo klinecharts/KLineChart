@@ -33,8 +33,7 @@ import type { YAxis } from './YAxis'
 
 export type IndicatorSeries = 'normal' | 'price' | 'volume'
 
-type IndicatorFigureStyleBase =
-  Omit<SmoothLineStyle, 'style'> &
+type IndicatorFigureStyleBase = Omit<SmoothLineStyle, 'style'> &
   Omit<RectStyle, 'style' | 'color'> &
   Omit<TextStyle, 'style'> & {
     style: SmoothLineStyle['style'] | RectStyle['style'] | TextStyle['style']
@@ -107,7 +106,7 @@ export type IndicatorDrawCallback<D, C, E> = (params: IndicatorDrawParams<D, C, 
 
 export type IndicatorCalcCallback<D, C, E> = (dataList: KLineData[], indicator: Indicator<D, C, E>) => Promise<D[]> | D[]
 
-export type IndicatorShouldUpdateCallback<D, C, E> = (prev: Indicator<D, C, E>, current: Indicator<D, C, E>) => (boolean | { calc: boolean, draw: boolean })
+export type IndicatorShouldUpdateCallback<D, C, E> = (prev: Indicator<D, C, E>, current: Indicator<D, C, E>) => boolean | { calc: boolean; draw: boolean }
 
 export type IndicatorDataState = 'loading' | 'error' | 'ready'
 
@@ -247,13 +246,7 @@ export type IndicatorConstructor<D = unknown, C = unknown, E = unknown> = new ()
 
 export type EachFigureCallback<D> = (figure: IndicatorFigure<D>, figureStyles: IndicatorFigureStyle, index: number) => void
 
-export function eachFigures<D = unknown> (
-  indicator: Indicator<D>,
-  dataIndex: number,
-  barSpace: BarSpace,
-  defaultStyles: IndicatorStyle,
-  eachFigureCallback: EachFigureCallback<D>
-): void {
+export function eachFigures<D = unknown>(indicator: Indicator<D>, dataIndex: number, barSpace: BarSpace, defaultStyles: IndicatorStyle, eachFigureCallback: EachFigureCallback<D>): void {
   const result = indicator.result
   const figures = indicator.figures
   const styles = indicator.styles
@@ -277,7 +270,7 @@ export function eachFigures<D = unknown> (
 
   let defaultFigureStyles: SmoothLineStyle | TextStyle | IndicatorFigureStyle
   let figureIndex = 0
-  figures.forEach(figure => {
+  figures.forEach((figure) => {
     switch (figure.type) {
       case 'text': {
         figureIndex = textCount
@@ -305,7 +298,9 @@ export function eachFigures<D = unknown> (
         lineCount++
         break
       }
-      default: { break }
+      default: {
+        break
+      }
     }
     if (isValid(figure.type)) {
       const ss = figure.styles?.({
@@ -342,10 +337,9 @@ export default class IndicatorImp<D = unknown, C = unknown, E = unknown> impleme
   maxValue: Nullable<number> = null
   styles: Nullable<Partial<IndicatorStyle>> = null
   shouldUpdate: IndicatorShouldUpdateCallback<D, C, E> = (prev, current) => {
-    const calc = JSON.stringify(prev.calcParams) !== JSON.stringify(current.calcParams) ||
-      prev.figures !== current.figures ||
-      prev.calc !== current.calc
-    const draw = calc ||
+    const calc = JSON.stringify(prev.calcParams) !== JSON.stringify(current.calcParams) || prev.figures !== current.figures || prev.calc !== current.calc
+    const draw =
+      calc ||
       prev.shortName !== current.shortName ||
       prev.paneId !== current.paneId ||
       prev.yAxisId !== current.yAxisId ||
@@ -375,24 +369,15 @@ export default class IndicatorImp<D = unknown, C = unknown, E = unknown> impleme
   private _prevIndicator: Indicator<D, C, E>
   private _lockSeriesPrecision = false
 
-  constructor (indicator: IndicatorTemplate<D, C, E>) {
+  constructor(indicator: IndicatorTemplate<D, C, E>) {
     this.override(indicator)
     this._lockSeriesPrecision = false
   }
 
-  override (indicator: Partial<Indicator<D, C, E>>): void {
+  override(indicator: Partial<Indicator<D, C, E>>): void {
     const { result, _prevIndicator, ...currentOthers } = this
     this._prevIndicator = { ...clone(currentOthers), result }
-    const {
-      id,
-      name,
-      shortName,
-      precision,
-      styles,
-      figures,
-      calcParams,
-      ...others
-    } = indicator
+    const { id, name, shortName, precision, styles, figures, calcParams, ...others } = indicator
     if (!isString(this.id) && isString(id)) {
       this.id = id
     }
@@ -419,13 +404,13 @@ export default class IndicatorImp<D = unknown, C = unknown, E = unknown> impleme
     this.figures = figures ?? this.figures
   }
 
-  setSeriesPrecision (precision: number): void {
+  setSeriesPrecision(precision: number): void {
     if (!this._lockSeriesPrecision) {
       this.precision = precision
     }
   }
 
-  shouldUpdateImp (): ({ calc: boolean, draw: boolean, sort: boolean }) {
+  shouldUpdateImp(): { calc: boolean; draw: boolean; sort: boolean } {
     const sort = this._prevIndicator.zLevel !== this.zLevel
     const result = this.shouldUpdate(this._prevIndicator, this)
     if (isBoolean(result)) {
@@ -434,7 +419,7 @@ export default class IndicatorImp<D = unknown, C = unknown, E = unknown> impleme
     return { ...result, sort }
   }
 
-  async calcImp (dataList: KLineData[]): Promise<boolean> {
+  async calcImp(dataList: KLineData[]): Promise<boolean> {
     try {
       const result = await this.calc(dataList, this)
       this.result = result
@@ -444,9 +429,9 @@ export default class IndicatorImp<D = unknown, C = unknown, E = unknown> impleme
     }
   }
 
-  static extend<D = unknown> (template: IndicatorTemplate<D>): IndicatorConstructor<D> {
+  static extend<D = unknown>(template: IndicatorTemplate<D>): IndicatorConstructor<D> {
     class Custom extends IndicatorImp<D> {
-      constructor () {
+      constructor() {
         super(template)
       }
     }

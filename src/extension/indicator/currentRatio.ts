@@ -75,7 +75,7 @@ const currentRatio: IndicatorTemplate<Cr, number> = {
 
       if (i >= params[0] - 1) {
         if (preMidSubLow !== 0) {
-          cr.cr = highSubPreMid / preMidSubLow * 100
+          cr.cr = (highSubPreMid / preMidSubLow) * 100
         } else {
           cr.cr = 0
         }
@@ -88,28 +88,28 @@ const currentRatio: IndicatorTemplate<Cr, number> = {
           if (i >= params[0] + params[1] + ma1ForwardPeriod - 3) {
             cr.ma1 = ma1List[ma1List.length - 1 - ma1ForwardPeriod]
           }
-          ma1Sum -= (result[i - (params[1] - 1)].cr ?? 0)
+          ma1Sum -= result[i - (params[1] - 1)].cr ?? 0
         }
         if (i >= params[0] + params[2] - 2) {
           ma2List.push(ma2Sum / params[2])
           if (i >= params[0] + params[2] + ma2ForwardPeriod - 3) {
             cr.ma2 = ma2List[ma2List.length - 1 - ma2ForwardPeriod]
           }
-          ma2Sum -= (result[i - (params[2] - 1)].cr ?? 0)
+          ma2Sum -= result[i - (params[2] - 1)].cr ?? 0
         }
         if (i >= params[0] + params[3] - 2) {
           ma3List.push(ma3Sum / params[3])
           if (i >= params[0] + params[3] + ma3ForwardPeriod - 3) {
             cr.ma3 = ma3List[ma3List.length - 1 - ma3ForwardPeriod]
           }
-          ma3Sum -= (result[i - (params[3] - 1)].cr ?? 0)
+          ma3Sum -= result[i - (params[3] - 1)].cr ?? 0
         }
         if (i >= params[0] + params[4] - 2) {
           ma4List.push(ma4Sum / params[4])
           if (i >= params[0] + params[4] + ma4ForwardPeriod - 3) {
             cr.ma4 = ma4List[ma4List.length - 1 - ma4ForwardPeriod]
           }
-          ma4Sum -= (result[i - (params[4] - 1)].cr ?? 0)
+          ma4Sum -= result[i - (params[4] - 1)].cr ?? 0
         }
       }
       result.push(cr)

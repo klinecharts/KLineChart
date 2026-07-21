@@ -19,10 +19,12 @@ import type { SymbolInfo } from './SymbolInfo'
 
 export type DataLoadType = 'init' | 'forward' | 'backward' | 'update'
 
-export type DataLoadMore = boolean | {
-  backward?: boolean
-  forward?: boolean
-}
+export type DataLoadMore =
+  | boolean
+  | {
+      backward?: boolean
+      forward?: boolean
+    }
 
 export interface DataLoaderGetBarsParams {
   type: DataLoadType

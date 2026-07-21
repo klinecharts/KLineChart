@@ -19,10 +19,10 @@ import { isValid } from './utils/typeChecks'
 
 type DrawListener = () => void
 
-async function isSupportedDevicePixelContentBox (): Promise<boolean> {
+async function isSupportedDevicePixelContentBox(): Promise<boolean> {
   return await new Promise((resolve: (val: boolean) => void) => {
     const ro = new ResizeObserver((entries: ResizeObserverEntry[]) => {
-      resolve(entries.every(entry => 'devicePixelContentBoxSize' in entry))
+      resolve(entries.every((entry) => 'devicePixelContentBoxSize' in entry))
       ro.disconnect()
     })
     ro.observe(document.body, { box: 'device-pixel-content-box' })
@@ -58,33 +58,35 @@ export default class Canvas {
     this._resetPixelRatio()
   }
 
-  constructor (style: Partial<CSSStyleDeclaration>, listener: DrawListener) {
+  constructor(style: Partial<CSSStyleDeclaration>, listener: DrawListener) {
     this._listener = listener
     this._element = createDom('canvas', style)
     this._ctx = this._element.getContext('2d')!
-    isSupportedDevicePixelContentBox().then(result => {
-      this._supportedDevicePixelContentBox = result
-      if (result) {
-        this._resizeObserver = new ResizeObserver((entries: ResizeObserverEntry[]) => {
-          const entry = entries.find((entry: ResizeObserverEntry) => entry.target === this._element)
-          const size = entry?.devicePixelContentBoxSize[0]
-          if (isValid(size)) {
-            this._nextPixelWidth = size.inlineSize
-            this._nextPixelHeight = size.blockSize
-            if (this._pixelWidth !== this._nextPixelWidth || this._pixelHeight !== this._nextPixelHeight) {
-              this._resetPixelRatio()
+    isSupportedDevicePixelContentBox()
+      .then((result) => {
+        this._supportedDevicePixelContentBox = result
+        if (result) {
+          this._resizeObserver = new ResizeObserver((entries: ResizeObserverEntry[]) => {
+            const entry = entries.find((entry: ResizeObserverEntry) => entry.target === this._element)
+            const size = entry?.devicePixelContentBoxSize[0]
+            if (isValid(size)) {
+              this._nextPixelWidth = size.inlineSize
+              this._nextPixelHeight = size.blockSize
+              if (this._pixelWidth !== this._nextPixelWidth || this._pixelHeight !== this._nextPixelHeight) {
+                this._resetPixelRatio()
+              }
             }
-          }
-        })
-        this._resizeObserver.observe(this._element, { box: 'device-pixel-content-box' })
-      } else {
-        this._mediaQueryList = window.matchMedia(`(resolution: ${getPixelRatio(this._element)}dppx)`)
-        this._mediaQueryList.addListener(this._mediaQueryListener)
-      }
-    }).catch((_: unknown) => false)
+          })
+          this._resizeObserver.observe(this._element, { box: 'device-pixel-content-box' })
+        } else {
+          this._mediaQueryList = window.matchMedia(`(resolution: ${getPixelRatio(this._element)}dppx)`)
+          this._mediaQueryList.addListener(this._mediaQueryListener)
+        }
+      })
+      .catch((_: unknown) => false)
   }
 
-  private _resetPixelRatio (): void {
+  private _resetPixelRatio(): void {
     this._executeListener(() => {
       const width = this._element.clientWidth
       const height = this._element.clientHeight
@@ -100,7 +102,7 @@ export default class Canvas {
     })
   }
 
-  private _executeListener (fn?: () => void): void {
+  private _executeListener(fn?: () => void): void {
     if (this._requestAnimationId === DEFAULT_REQUEST_ID) {
       this._requestAnimationId = requestAnimationFrame(() => {
         this._ctx.clearRect(0, 0, this._width, this._height)
@@ -111,7 +113,7 @@ export default class Canvas {
     }
   }
 
-  update (w: number, h: number): void {
+  update(w: number, h: number): void {
     if (this._width !== w || this._height !== h) {
       this._element.style.width = `${w}px`
       this._element.style.height = `${h}px`
@@ -126,15 +128,15 @@ export default class Canvas {
     }
   }
 
-  getElement (): HTMLCanvasElement {
+  getElement(): HTMLCanvasElement {
     return this._element
   }
 
-  getContext (): CanvasRenderingContext2D {
+  getContext(): CanvasRenderingContext2D {
     return this._ctx
   }
 
-  destroy (): void {
+  destroy(): void {
     if (isValid(this._resizeObserver)) {
       this._resizeObserver.unobserve(this._element)
     }
