@@ -1,13 +1,16 @@
 import { rollup } from 'rollup'
 
-import { createInputConfig, createOutputConfig, version, env } from './config.js'
+import { createInputConfig, createOutputConfig, env, version } from './config.js'
 import { failure, start, success } from './logger.js'
 
-async function build ({ index, replaceValues, fileName, format, parentDir, name }) {
+async function build({ index, replaceValues, fileName, format, parentDir, name }) {
   const text = `klinecharts@${version} ${env ? `${env} ` : ''}${format.toUpperCase()} bundle`
   const startTime = Date.now()
   const outputOptions = createOutputConfig({
-    fileName, format, name, parentDir
+    fileName,
+    format,
+    name,
+    parentDir
   })
 
   start(`Building ${text}...`)

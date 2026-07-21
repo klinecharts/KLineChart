@@ -24,7 +24,7 @@ export interface DateTime {
 }
 
 const reEscapeChar = /\\(\\)?/g
-const rePropName = RegExp('[^.[\\]]+' + '|' + '\\[(?:' + '([^"\'][^[]*)' + '|' + '(["\'])((?:(?!\\2)[^\\\\]|\\\\.)*?)\\2' + ')\\]' + '|' + '(?=(?:\\.|\\[\\])(?:\\.|\\[\\]|$))', 'g')
+const rePropName = new RegExp('[^.[\\]]+' + '|' + '\\[(?:' + '([^"\'][^[]*)' + '|' + '(["\'])((?:(?!\\2)[^\\\\]|\\\\.)*?)\\2' + ')\\]' + '|' + '(?=(?:\\.|\\[\\])(?:\\.|\\[\\]|$))', 'g')
 
 export function formatValue(data: unknown, key: string, defaultValue?: unknown): unknown {
   if (isValid(data)) {

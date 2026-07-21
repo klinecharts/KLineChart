@@ -2,11 +2,11 @@
 
 import { nodeResolve } from '@rollup/plugin-node-resolve'
 import replace from '@rollup/plugin-replace'
-import typescript from '@rollup/plugin-typescript'
 import terser from '@rollup/plugin-terser'
+import typescript from '@rollup/plugin-typescript'
 import fileSize from 'rollup-plugin-filesize'
 
-import { resolvePath, getVersion } from '../utils.js'
+import { getVersion, resolvePath } from '../utils.js'
 
 const version = getVersion()
 
@@ -24,7 +24,7 @@ const isProd = env === 'production'
 
 const buildDir = resolvePath('dist')
 
-function createInputConfig ({ input, replaceValues }) {
+function createInputConfig({ input, replaceValues }) {
   return {
     input,
     plugins: [
@@ -40,13 +40,11 @@ function createInputConfig ({ input, replaceValues }) {
       }),
       fileSize(),
       isProd && terser()
-    ].filter(p => !!p)
+    ].filter((p) => !!p)
   }
 }
 
-function createOutputConfig ({
-  fileName, format, name, parentDir
-}) {
+function createOutputConfig({ fileName, format, name, parentDir }) {
   let file
   if (parentDir) {
     file = resolvePath(fileName, resolvePath(parentDir, buildDir))
@@ -73,11 +71,4 @@ function createOutputConfig ({
   return config
 }
 
-export {
-  createInputConfig,
-  createOutputConfig,
-  version,
-  env,
-  isDev,
-  isProd
-}
+export { createInputConfig, createOutputConfig, env, isDev, isProd, version }

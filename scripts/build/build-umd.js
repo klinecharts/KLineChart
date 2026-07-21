@@ -1,11 +1,11 @@
-import build from './build.js'
-import { isDev, env } from './config.js'
 import { resolvePath } from '../utils.js'
+import build from './build.js'
+import { env, isDev } from './config.js'
 
 const fileName = isDev ? 'klinecharts.js' : 'klinecharts.min.js'
 const index = resolvePath('index.ts', resolvePath('src'))
 
-build({
+await build({
   index,
   replaceValues: { 'process.env.NODE_ENV': JSON.stringify(env) },
   fileName,

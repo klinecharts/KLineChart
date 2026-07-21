@@ -1,6 +1,6 @@
 import { execFile } from 'node:child_process'
-import { promisify } from 'node:util'
 import { createRequire } from 'node:module'
+import { promisify } from 'node:util'
 
 import { version } from './config.js'
 import { failure, start, success } from './logger.js'
@@ -14,23 +14,12 @@ const output = 'dist/index.d.ts'
 start(`Building klinecharts@${version} declaration bundle...`)
 
 try {
-  const { stdout, stderr } = await execFileAsync(process.execPath, [
-    dtsBundleGenerator,
-    '--no-banner',
-    'true',
-    '--fail-on-class',
-    'true',
-    '--umd-module-name',
-    'klinecharts',
-    '-o',
-    output,
-    'src/index.ts'
-  ])
+  const { stdout, stderr } = await execFileAsync(process.execPath, [dtsBundleGenerator, '--no-banner', 'true', '--fail-on-class', 'true', '--umd-module-name', 'klinecharts', '-o', output, 'src/index.ts'])
 
   const outputLines = stdout
     .split('\n')
-    .map(line => line.trim())
-    .filter(line => line && !line.startsWith('Done in '))
+    .map((line) => line.trim())
+    .filter((line) => line && !line.startsWith('Done in '))
 
   if (outputLines.length > 0) {
     console.log(outputLines.join('\n'))
