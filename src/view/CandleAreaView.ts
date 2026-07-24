@@ -41,22 +41,20 @@ export default class CandleAreaView extends ChildrenView {
   private readonly _animation = new Animation({ iterationCount: Infinity }).doFrame((time) => {
     this._animationFrameTime = time
     const pane = this.getWidget().getPane()
-    pane.getChart().updatePane(UpdateLevel.Main, pane.getId())
+    // Ripple lives on the overlay canvas; avoid full main-layer repaints at 60fps.
+    pane.getChart().updatePane(UpdateLevel.Overlay, pane.getId())
   })
 
   override drawImp (ctx: CanvasRenderingContext2D): void {
     const widget = this.getWidget()
     const pane = widget.getPane()
     const chart = pane.getChart()
-    const dataList = chart.getDataList()
-    const lastDataIndex = dataList.length - 1
     const bounding = widget.getBounding()
     const yAxis = pane.getYAxisComponentById()
     const styles = chart.getStyles().candle.area
     const coordinates: Coordinate[] = []
     let minY = Number.MAX_SAFE_INTEGER
     let areaStartX: number = Number.MIN_SAFE_INTEGER
-    let ripplePointCoordinate: Nullable<Coordinate> = null
     this.eachChildren((data) => {
       const x = data.x
       const { current: kLineData } = data.data
@@ -68,9 +66,6 @@ export default class CandleAreaView extends ChildrenView {
         }
         coordinates.push({ x, y })
         minY = Math.min(minY, y)
-        if (data.dataIndex === lastDataIndex) {
-          ripplePointCoordinate = { x, y }
-        }
       }
     })
 
@@ -112,12 +107,13 @@ export default class CandleAreaView extends ChildrenView {
     }
 
     const pointStyles = styles.point
+    const ripplePointCoordinate = this._getLastPointCoordinate()
     if (pointStyles.show && isValid(ripplePointCoordinate)) {
       this.createFigure({
         name: 'circle',
         attrs: {
-          x: ripplePointCoordinate!.x,
-          y: ripplePointCoordinate!.y,
+          x: ripplePointCoordinate.x,
+          y: ripplePointCoordinate.y,
           r: pointStyles.radius
         },
         styles: {
@@ -125,24 +121,76 @@ export default class CandleAreaView extends ChildrenView {
           color: pointStyles.color
         }
       })?.draw(ctx)
-      let rippleRadius = pointStyles.rippleRadius
       if (pointStyles.animation) {
-        rippleRadius = pointStyles.radius + this._animationFrameTime / pointStyles.animationDuration * (pointStyles.rippleRadius - pointStyles.radius)
         this._animation.setDuration(pointStyles.animationDuration).start()
+      } else {
+        this.stopAnimation()
       }
-      this._ripplePoint
-        ?.setAttrs({
-          x: ripplePointCoordinate!.x,
-          y: ripplePointCoordinate!.y,
-          r: rippleRadius
-        })
-        .setStyles({ style: 'fill', color: pointStyles.rippleColor }).draw(ctx)
+      // Keep overlay ripple in sync after main paints (scroll/zoom/data).
+      chart.updatePane(UpdateLevel.Overlay, pane.getId())
     } else {
       this.stopAnimation()
     }
   }
 
+  /**
+   * Draw the last-price ripple on the overlay canvas so animation does not
+   * repaint candles, grid, and indicators on every frame.
+   */
+  drawRipple (ctx: CanvasRenderingContext2D): void {
+    const chart = this.getWidget().getPane().getChart()
+    if (chart.getStyles().candle.type !== 'area') {
+      this.stopAnimation()
+      return
+    }
+    const pointStyles = chart.getStyles().candle.area.point
+    const ripplePointCoordinate = this._getLastPointCoordinate()
+    if (!pointStyles.show || !isValid(ripplePointCoordinate)) {
+      this.stopAnimation()
+      return
+    }
+
+    let rippleRadius = pointStyles.rippleRadius
+    if (pointStyles.animation) {
+      rippleRadius = pointStyles.radius + this._animationFrameTime / pointStyles.animationDuration * (pointStyles.rippleRadius - pointStyles.radius)
+      this._animation.setDuration(pointStyles.animationDuration).start()
+    } else {
+      this.stopAnimation()
+    }
+
+    this._ripplePoint
+      ?.setAttrs({
+        x: ripplePointCoordinate.x,
+        y: ripplePointCoordinate.y,
+        r: rippleRadius
+      })
+      .setStyles({ style: 'fill', color: pointStyles.rippleColor }).draw(ctx)
+  }
+
   stopAnimation (): void {
     this._animation.stop()
+  }
+
+  private _getLastPointCoordinate (): Nullable<Coordinate> {
+    const widget = this.getWidget()
+    const pane = widget.getPane()
+    const chart = pane.getChart()
+    const dataList = chart.getDataList()
+    const lastDataIndex = dataList.length - 1
+    if (lastDataIndex < 0) {
+      return null
+    }
+    const styles = chart.getStyles().candle.area
+    const yAxis = pane.getYAxisComponentById()
+    let coordinate: Nullable<Coordinate> = null
+    this.eachChildren((data) => {
+      if (data.dataIndex === lastDataIndex) {
+        const value = data.data.current?.[styles.value]
+        if (isNumber(value)) {
+          coordinate = { x: data.x, y: yAxis.convertToPixel(value) }
+        }
+      }
+    })
+    return coordinate
   }
 }
