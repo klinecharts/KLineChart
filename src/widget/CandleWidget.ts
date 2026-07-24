@@ -53,6 +53,8 @@ export default class CandleWidget extends IndicatorWidget {
   }
 
   override updateOverlayContent (ctx: CanvasRenderingContext2D): void {
+    // Area ripple animates on the overlay layer to avoid Main-level repaints.
+    this._candleAreaView.drawRipple(ctx)
     this._crosshairFeatureView.draw(ctx)
   }
 
