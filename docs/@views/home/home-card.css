@@ -1,7 +1,7 @@
 .home-card {
   position: relative;
   overflow: hidden;
-  border-radius: 20px;
+  border-radius: 12px;
   border: 1px solid var(--home-brand-border);
   background: transparent;
 }

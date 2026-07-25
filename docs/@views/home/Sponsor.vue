@@ -168,7 +168,7 @@ function showParticle() {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding: 28px 24px;
+  padding: 22px;
 }
 
 .eyebrow {
@@ -217,7 +217,7 @@ function showParticle() {
 
 .featured-main {
   min-height: 220px;
-  padding: 28px;
+  padding: 22px;
   align-items: flex-start;
   justify-content: flex-start;
   text-align: left;
@@ -230,7 +230,7 @@ function showParticle() {
 
 .featured-sub {
   min-height: 128px;
-  padding: 22px 24px;
+  padding: 22px;
 }
 
 .tier {
@@ -326,7 +326,7 @@ function showParticle() {
 
 .supporting-item {
   min-height: 72px;
-  padding: 0 22px;
+  padding: 22px;
   align-items: center;
 }
 

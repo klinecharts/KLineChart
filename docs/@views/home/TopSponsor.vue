@@ -44,7 +44,7 @@ const link = computed(() =>
   width: 100%;
   max-width: 1120px;
   gap: 8px;
-  padding: 30px 16px 14px;
+  padding: 22px;
   text-decoration: none;
   --home-reveal-distance: 20px;
   --home-reveal-delay: .75s;
@@ -130,7 +130,6 @@ const link = computed(() =>
     align-items: center;
     justify-content: center;
     gap: 24px;
-    padding: 30px 20px 16px;
   }
 
   .brand {
@@ -157,7 +156,6 @@ const link = computed(() =>
   .top-sponsor-link {
     max-width: 760px;
     gap: 32px;
-    padding: 34px 24px 18px;
   }
 
   .desc {

@@ -1,7 +1,7 @@
 :root {
   --home-content-max: 1152px;
   --home-section-gap: 80px;
-  --home-card-padding: 22px 20px 24px;
+  --home-card-padding: 22px;
   --home-grid-gap: 14px;
   --home-grid-gap-lg: 20px;
   --home-reveal-distance: 24px;

@@ -14,7 +14,7 @@
   --customize-case-grid-gap: 14px;
   --customize-grid-gap-md: 20px;
   --customize-grid-gap-lg: 24px;
-  --customize-surface-radius: 20px;
+  --customize-surface-radius: 12px;
   --customize-inset-radius: 14px;
   --customize-inset-radius-sm: 12px;
   --customize-surface-bg: color-mix(in srgb, var(--vp-c-bg-soft) 36%, var(--vp-c-bg));

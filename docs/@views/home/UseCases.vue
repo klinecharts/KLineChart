@@ -31,10 +31,6 @@ const items = computed(() =>
         class="use-case home-card home-stagger-item"
         :style="{ '--stagger-delay': `${index * 0.07}s` }"
       >
-        <div class="use-case-body home-card-body">
-          <h3>{{ item.title }}</h3>
-          <p class="summary">{{ item.description }}</p>
-        </div>
         <div class="illustration-wrap" aria-hidden="true">
           <img
             class="illustration"
@@ -44,6 +40,10 @@ const items = computed(() =>
             height="120"
             loading="lazy"
           >
+        </div>
+        <div class="use-case-body home-card-body">
+          <h3>{{ item.title }}</h3>
+          <p class="summary">{{ item.description }}</p>
         </div>
       </article>
     </div>
@@ -59,17 +59,16 @@ const items = computed(() =>
 
 .use-case {
   display: flex;
-  flex-direction: row;
-  align-items: stretch;
+  flex-direction: column;
   min-height: 100%;
-  padding: 0;
+  padding: 22px;
   overflow: hidden;
 }
 
 .use-case-body {
   flex: 1;
   min-width: 0;
-  justify-content: center;
+  padding: 22px 0 0;
 }
 
 .summary {
@@ -80,12 +79,13 @@ const items = computed(() =>
 }
 
 .illustration-wrap {
-  flex: 0 0 clamp(96px, 34%, 176px);
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 100%;
-  padding: 12px 8px;
+  box-sizing: border-box;
+  width: 100%;
+  height: 124px;
+  padding: 0;
   overflow: hidden;
 }
 
@@ -93,19 +93,36 @@ const items = computed(() =>
   display: block;
   width: 100%;
   max-width: 160px;
-  height: auto;
-  aspect-ratio: 4 / 3;
+  height: 100%;
   object-fit: contain;
 }
 
-@media (min-width: 960px) {
+@media (min-width: 768px) {
   .use-cases {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--home-grid-gap-lg);
   }
 
   .illustration-wrap {
-    padding: 20px 14px;
+    height: 140px;
+  }
+
+  .illustration {
+    max-width: 180px;
+  }
+}
+
+@media (min-width: 960px) {
+  .use-cases {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .illustration-wrap {
+    height: 150px;
+  }
+
+  .illustration {
+    max-width: 200px;
   }
 }
 </style>

@@ -79,7 +79,7 @@ const projects = computed(() => [
   align-items: flex-start;
   gap: 18px;
   min-width: 0;
-  padding: 24px;
+  padding: 22px;
   color: inherit;
   text-decoration: none;
 }
@@ -152,7 +152,6 @@ const projects = computed(() => [
 @media (max-width: 420px) {
   .project {
     gap: 14px;
-    padding: 20px;
   }
 
   .mark {
