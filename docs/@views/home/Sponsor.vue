@@ -160,7 +160,7 @@ function showParticle() {
   position: relative;
   display: grid;
   width: 100%;
-  gap: 28px;
+  gap: var(--home-grid-gap);
 }
 
 .intro {
@@ -198,12 +198,12 @@ function showParticle() {
 
 .board {
   display: grid;
-  gap: 18px;
+  gap: var(--home-grid-gap);
 }
 
 .featured {
   display: grid;
-  gap: 18px;
+  gap: var(--home-grid-gap);
 }
 
 .featured-main,
@@ -225,7 +225,7 @@ function showParticle() {
 
 .featured-side {
   display: grid;
-  gap: 18px;
+  gap: var(--home-grid-gap);
 }
 
 .featured-sub {
@@ -321,7 +321,7 @@ function showParticle() {
 
 .supporting-grid {
   display: grid;
-  gap: 12px;
+  gap: var(--home-grid-gap);
 }
 
 .supporting-item {
@@ -376,6 +376,14 @@ function showParticle() {
 }
 
 @media (min-width: 768px) {
+  .sponsor-shell,
+  .board,
+  .featured,
+  .featured-side,
+  .supporting-grid {
+    gap: var(--home-grid-gap-lg);
+  }
+
   .supporting-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -385,7 +393,6 @@ function showParticle() {
   .sponsor-shell {
     grid-template-columns: minmax(280px, 0.78fr) minmax(0, 1.22fr);
     align-items: start;
-    gap: 26px;
   }
 
   .intro {

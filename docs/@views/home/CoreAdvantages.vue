@@ -175,10 +175,15 @@ const items = computed(() => icons.map((_, index) => buildItem(index)))
   }
 }
 
+@media (min-width: 768px) {
+  .bento {
+    gap: var(--home-grid-gap-lg);
+  }
+}
+
 @media (min-width: 960px) {
   .bento {
     grid-template-columns: repeat(12, minmax(0, 1fr));
-    gap: var(--home-grid-gap-lg);
   }
 
   .tile-1,
