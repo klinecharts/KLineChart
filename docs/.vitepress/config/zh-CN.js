@@ -21,7 +21,14 @@ export default defineConfig({
           { text: '实例API', link: '/api/instance/getDom' }
         ]
       },
-      { text: 'Pro', link: 'https://pro.klinecharts.com' },
+      {
+        text: '资源',
+        items: [
+          { text: 'Pro', link: 'https://pro.klinecharts.com' },
+          { text: 'Extension', link: 'https://github.com/klinecharts/extension' },
+          { text: 'Data Aggregator', link: 'https://github.com/klinecharts/data-aggregator' }
+        ]
+      },
       { text: '预览', link: 'https://preview.klinecharts.com' },
       { text: '定制', link: '/customize' },
       { text: '赞助', link: '/sponsor' },

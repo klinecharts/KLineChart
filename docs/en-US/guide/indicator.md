@@ -56,6 +56,8 @@ To create a custom indicator, define an indicator config, register it globally v
 
 More examples are available in [https://github.com/klinecharts/KLineChart/tree/main/src/extension/indicator](https://github.com/klinecharts/KLineChart/tree/main/src/extension/indicator).
 
+> You can also visit [KLineChart Extension](https://github.com/klinecharts/extension) to find more reusable extensions for KLineChart.
+
 ### Minimal example
 
 ```ts

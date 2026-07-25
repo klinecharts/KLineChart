@@ -178,6 +178,8 @@ getBars: ({
 
 图表在执行 `init` 的 `getBars` 回调完成后（也就是历史数据就绪后）才会调用 `subscribeBar`。
 
+> 如果实时数据源提供的是逐笔成交，而不是当前周期的 K 线，可以使用 [Data Aggregator](https://github.com/klinecharts/data-aggregator) 将成交数据聚合为不同周期的 K 线，再通过 `subscribeBar` 推送给图表。
+
 `subscribeBar` 的参数签名：
 
 ```ts

@@ -56,6 +56,8 @@ console.log(indicators)
 
 更多示例可参考 [https://github.com/klinecharts/KLineChart/tree/main/src/extension/indicator](https://github.com/klinecharts/KLineChart/tree/main/src/extension/indicator) 下的文件。
 
+> 也可以前往 [KLineChart Extension](https://github.com/klinecharts/extension) 获取更多可复用的 KLineChart 扩展。
+
 ### 最小可用示例
 
 ```ts

@@ -7,6 +7,8 @@
 ## 自定义覆盖物
 自定义一个覆盖物，然后通过 [registerOverlay](/api/chart/registerOverlay) 全局添加，添加到图表即可和内置覆盖物一样去使用。更多示例可参考 [https://github.com/klinecharts/KLineChart/tree/main/src/extension/overlay](https://github.com/klinecharts/KLineChart/tree/main/src/extension/overlay) 下的文件。
 
+> 也可以前往 [KLineChart Extension](https://github.com/klinecharts/extension) 获取更多可复用的 KLineChart 扩展。
+
 ### 核心流程
 1. 通过 `registerOverlay` 注册模版（`name` 唯一）。
 2. 通过 `createOverlay` 创建实例（可传 `name`、对象或数组）。

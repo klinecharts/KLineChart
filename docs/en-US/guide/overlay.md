@@ -7,6 +7,8 @@ This document introduces the built-in overlays in the chart and how to customize
 ## Custom overlays
 Create a custom overlay, register it globally via [registerOverlay](/api/chart/registerOverlay), then use it in the chart just like a built-in overlay. For more examples, refer to [https://github.com/klinecharts/KLineChart/tree/main/src/extension/overlay](https://github.com/klinecharts/KLineChart/tree/main/src/extension/overlay).
 
+> You can also visit [KLineChart Extension](https://github.com/klinecharts/extension) to find more reusable extensions for KLineChart.
+
 ### Core flow
 1. Register a template with `registerOverlay` (`name` must be unique).
 2. Create an instance with `createOverlay` (supports `name`, object, or array).

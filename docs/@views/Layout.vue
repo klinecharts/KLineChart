@@ -9,6 +9,7 @@ import HomeTopSponsor from './home/TopSponsor.vue'
 import HomeCreateChart from './home/create-chart/index.vue'
 import HomeUseCases from './home/UseCases.vue'
 import HomeCoreAdvantages from './home/CoreAdvantages.vue'
+import HomeEcosystem from './home/Ecosystem.vue'
 import HomeUsers from './home/Users.vue'
 import HomeSponsor from './home/Sponsor.vue'
 // import AsideSponsor from './AsideSponsor.vue'
@@ -28,6 +29,7 @@ import NotFound from './NotFound.vue'
       <HomeCreateChart/>
       <HomeCoreAdvantages/>
       <HomeUseCases/>
+      <HomeEcosystem/>
       <HomeUsers/>
       <HomeSponsor/>
     </template>

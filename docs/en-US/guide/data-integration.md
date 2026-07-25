@@ -178,6 +178,8 @@ A practical rule is:
 
 The chart calls `subscribeBar` only after the `init` callback of `getBars` has completed, which means after historical data is ready.
 
+> If your real-time source provides individual trades instead of bars for the current period, use [Data Aggregator](https://github.com/klinecharts/data-aggregator) to aggregate trades into K-line data across multiple periods before pushing them to the chart through `subscribeBar`.
+
 The signature of `subscribeBar`:
 
 ```ts

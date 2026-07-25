@@ -16,7 +16,14 @@ export default defineConfig({
           { text: 'Instance API', link: '/en-US/api/instance/getDom' }
         ]
       },
-      { text: 'Pro', link: 'https://pro.klinecharts.com/en-US' },
+      {
+        text: 'Resources',
+        items: [
+          { text: 'Pro', link: 'https://pro.klinecharts.com/en-US' },
+          { text: 'Extension', link: 'https://github.com/klinecharts/extension' },
+          { text: 'Data Aggregator', link: 'https://github.com/klinecharts/data-aggregator' }
+        ]
+      },
       { text: 'Preview', link: 'https://preview.klinecharts.com/#en-US' },
       { text: 'Customize', link: '/en-US/customize' },
       { text: 'Sponsor', link: '/en-US/sponsor' },
