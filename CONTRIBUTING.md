@@ -2,6 +2,8 @@
 
 👍🎉 First off, thanks for taking the time to contribute! 🎉👍
 
+By participating in this project, you agree to abide by our [Code of Conduct](CODE_OF_CONDUCT.md).
+
 ## How to contribute to the KLineChart community?
 There are many ways to contribute:
 + Help others solve problems in social discussion groups
