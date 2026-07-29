@@ -13,32 +13,37 @@
  */
 
 import { getPixelRatio } from './utils/canvas'
-import { DEFAULT_REQUEST_ID, requestAnimationFrame } from './utils/compatible'
+import { cancelAnimationFrame, DEFAULT_REQUEST_ID, requestAnimationFrame } from './utils/compatible'
 import { createDom } from './utils/dom'
 import { isValid } from './utils/typeChecks'
 
 type DrawListener = () => void
 
+let supportedDevicePixelContentBox: Promise<boolean> | null = null
+
 async function isSupportedDevicePixelContentBox(): Promise<boolean> {
-  return await new Promise((resolve: (val: boolean) => void) => {
+  supportedDevicePixelContentBox ??= new Promise((resolve: (val: boolean) => void) => {
     const ro = new ResizeObserver((entries: ResizeObserverEntry[]) => {
-      resolve(entries.every((entry) => 'devicePixelContentBoxSize' in entry))
+      resolve(entries.every((entry) => isValid(entry.devicePixelContentBoxSize?.[0])))
       ro.disconnect()
     })
     ro.observe(document.body, { box: 'device-pixel-content-box' })
   }).catch(() => false)
+  return await supportedDevicePixelContentBox
 }
 
 export default class Canvas {
   private readonly _element: HTMLCanvasElement
-  private _resizeObserver: ResizeObserver
-  private _mediaQueryList: MediaQueryList
+  private _resizeObserver: ResizeObserver | null = null
+  private _mediaQueryList: MediaQueryList | null = null
 
   private readonly _ctx: CanvasRenderingContext2D
 
   private readonly _listener: DrawListener
 
-  private _supportedDevicePixelContentBox = false
+  private _destroyed = false
+  private _resizePending = false
+  private _sizeInitialized = false
 
   private _width = 0
   private _height = 0
@@ -52,10 +57,10 @@ export default class Canvas {
   private _requestAnimationId = DEFAULT_REQUEST_ID
 
   private readonly _mediaQueryListener: () => void = () => {
-    const pixelRatio = getPixelRatio(this._element)
-    this._nextPixelWidth = Math.round(this._element.clientWidth * pixelRatio)
-    this._nextPixelHeight = Math.round(this._element.clientHeight * pixelRatio)
-    this._resetPixelRatio()
+    if (!this._destroyed) {
+      this._observePixelRatio()
+      this._resize(getPixelRatio(this._element))
+    }
   }
 
   constructor(style: Partial<CSSStyleDeclaration>, listener: DrawListener) {
@@ -64,67 +69,84 @@ export default class Canvas {
     this._ctx = this._element.getContext('2d')!
     isSupportedDevicePixelContentBox()
       .then((result) => {
-        this._supportedDevicePixelContentBox = result
+        if (this._destroyed) {
+          return
+        }
         if (result) {
           this._resizeObserver = new ResizeObserver((entries: ResizeObserverEntry[]) => {
             const entry = entries.find((entry: ResizeObserverEntry) => entry.target === this._element)
             const size = entry?.devicePixelContentBoxSize[0]
-            if (isValid(size)) {
+            if (this._sizeInitialized && isValid(size)) {
               this._nextPixelWidth = size.inlineSize
               this._nextPixelHeight = size.blockSize
               if (this._pixelWidth !== this._nextPixelWidth || this._pixelHeight !== this._nextPixelHeight) {
-                this._resetPixelRatio()
+                this._scheduleDraw(true)
               }
             }
           })
           this._resizeObserver.observe(this._element, { box: 'device-pixel-content-box' })
         } else {
-          this._mediaQueryList = window.matchMedia(`(resolution: ${getPixelRatio(this._element)}dppx)`)
-          this._mediaQueryList.addListener(this._mediaQueryListener)
+          this._observePixelRatio()
         }
       })
       .catch((_: unknown) => false)
   }
 
-  private _resetPixelRatio(): void {
-    this._executeListener(() => {
-      const width = this._element.clientWidth
-      const height = this._element.clientHeight
-      this._width = width
-      this._height = height
-      this._pixelWidth = this._nextPixelWidth
-      this._pixelHeight = this._nextPixelHeight
-      this._element.width = this._nextPixelWidth
-      this._element.height = this._nextPixelHeight
-      const horizontalPixelRatio = this._nextPixelWidth / width
-      const verticalPixelRatio = this._nextPixelHeight / height
-      this._ctx.scale(horizontalPixelRatio, verticalPixelRatio)
-    })
+  private _observePixelRatio(): void {
+    if (isValid(this._mediaQueryList)) {
+      this._mediaQueryList.removeListener(this._mediaQueryListener)
+    }
+    const view = this._element.ownerDocument.defaultView
+    this._mediaQueryList = view?.matchMedia(`(resolution: ${getPixelRatio(this._element)}dppx)`) ?? null
+    this._mediaQueryList?.addListener(this._mediaQueryListener)
   }
 
-  private _executeListener(fn?: () => void): void {
+  private _resize(pixelRatio: number): void {
+    this._nextPixelWidth = Math.round(this._width * pixelRatio)
+    this._nextPixelHeight = Math.round(this._height * pixelRatio)
+    this._scheduleDraw(true)
+  }
+
+  private _scheduleDraw(resize = false): void {
+    this._resizePending ||= resize
     if (this._requestAnimationId === DEFAULT_REQUEST_ID) {
       this._requestAnimationId = requestAnimationFrame(() => {
-        this._ctx.clearRect(0, 0, this._width, this._height)
-        fn?.()
-        this._listener()
         this._requestAnimationId = DEFAULT_REQUEST_ID
+        if (this._destroyed) {
+          return
+        }
+        if (this._resizePending) {
+          this._resizePending = false
+          this._pixelWidth = this._nextPixelWidth
+          this._pixelHeight = this._nextPixelHeight
+          this._element.width = this._pixelWidth
+          this._element.height = this._pixelHeight
+        }
+        this._ctx.setTransform(1, 0, 0, 1, 0, 0)
+        this._ctx.clearRect(0, 0, this._pixelWidth, this._pixelHeight)
+        this._ctx.save()
+        if (this._width > 0 && this._height > 0) {
+          this._ctx.scale(this._pixelWidth / this._width, this._pixelHeight / this._height)
+        }
+        try {
+          this._listener()
+        } finally {
+          this._ctx.restore()
+        }
       })
     }
   }
 
   update(w: number, h: number): void {
-    if (this._width !== w || this._height !== h) {
+    if (!this._sizeInitialized || this._width !== w || this._height !== h) {
+      this._sizeInitialized = true
+      this._width = w
+      this._height = h
       this._element.style.width = `${w}px`
       this._element.style.height = `${h}px`
-      if (!this._supportedDevicePixelContentBox) {
-        const pixelRatio = getPixelRatio(this._element)
-        this._nextPixelWidth = Math.round(w * pixelRatio)
-        this._nextPixelHeight = Math.round(h * pixelRatio)
-        this._resetPixelRatio()
-      }
+      this._resize(getPixelRatio(this._element))
     } else {
-      this._executeListener()
+      this._scheduleDraw()
     }
   }
 
@@ -137,11 +159,18 @@ export default class Canvas {
   }
 
   destroy(): void {
+    this._destroyed = true
+    if (this._requestAnimationId !== DEFAULT_REQUEST_ID) {
+      cancelAnimationFrame(this._requestAnimationId)
+      this._requestAnimationId = DEFAULT_REQUEST_ID
+    }
     if (isValid(this._resizeObserver)) {
-      this._resizeObserver.unobserve(this._element)
+      this._resizeObserver.disconnect()
+      this._resizeObserver = null
     }
     if (isValid(this._mediaQueryList)) {
       this._mediaQueryList.removeListener(this._mediaQueryListener)
+      this._mediaQueryList = null
     }
   }
 }

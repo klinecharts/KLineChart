@@ -13,7 +13,7 @@
  */
 
 import type Nullable from './Nullable'
-import { requestAnimationFrame } from './utils/compatible'
+import { cancelAnimationFrame, DEFAULT_REQUEST_ID, requestAnimationFrame } from './utils/compatible'
 import { merge } from './utils/typeChecks'
 
 type AnimationDoFrameCallback = (frameTime: number) => void
@@ -31,30 +31,36 @@ export default class Animation {
   private _currentIterationCount = 0
   private _running = false
 
+  private _requestAnimationId = DEFAULT_REQUEST_ID
   private _time = 0
 
   constructor(options?: Partial<AnimationOptions>) {
     merge(this._options, options)
   }
 
-  _loop(): void {
+  private _loop(): void {
     this._running = true
-    const step: () => void = () => {
+    this._time = performance.now()
+    const step = (timestamp: unknown): void => {
+      this._requestAnimationId = DEFAULT_REQUEST_ID
       if (this._running) {
-        const diffTime = new Date().getTime() - this._time
+        const time = typeof timestamp === 'number' ? timestamp : performance.now()
+        const diffTime = Math.max(0, time - this._time)
         if (diffTime < this._options.duration) {
           this._doFrameCallback?.(diffTime)
-          requestAnimationFrame(step)
+          if (this._running && this._requestAnimationId === DEFAULT_REQUEST_ID) {
+            this._requestAnimationId = requestAnimationFrame(step)
+          }
         } else {
           this.stop()
           this._currentIterationCount++
           if (this._currentIterationCount < this._options.iterationCount) {
-            this.start()
+            this._loop()
           }
         }
       }
     }
-    requestAnimationFrame(step)
+    this._requestAnimationId = requestAnimationFrame(step)
   }
 
   doFrame(callback: AnimationDoFrameCallback): this {
@@ -74,13 +80,17 @@ export default class Animation {
 
   start(): void {
     if (!this._running) {
-      this._time = new Date().getTime()
+      this._currentIterationCount = 0
       this._loop()
     }
   }
 
   stop(): void {
     if (this._running) {
+      if (this._requestAnimationId !== DEFAULT_REQUEST_ID) {
+        cancelAnimationFrame(this._requestAnimationId)
+        this._requestAnimationId = DEFAULT_REQUEST_ID
+      }
       this._doFrameCallback?.(this._options.duration)
     }
     this._running = false
