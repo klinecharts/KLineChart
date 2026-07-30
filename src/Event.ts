@@ -13,12 +13,12 @@
  */
 
 import type Chart from './Chart'
+import Animation from './common/Animation'
 import type Coordinate from './common/Coordinate'
 import type Crosshair from './common/Crosshair'
 import EventHandlerImp, { type EventHandler, type MouseTouchEvent, TOUCH_MIN_RADIUS } from './common/EventHandler'
 import type Nullable from './common/Nullable'
 import { UpdateLevel } from './common/Updater'
-import { cancelAnimationFrame, requestAnimationFrame } from './common/utils/compatible'
 import { isAppleOS } from './common/utils/platform'
 import { isArray, isFunction, isValid } from './common/utils/typeChecks'
 
@@ -38,6 +38,10 @@ interface EventTriggerWidgetInfo {
   pane: Nullable<Pane>
   widget: Nullable<Widget>
 }
+
+const FLING_DECAY = 0.975
+const FLING_FRAME_DURATION = 1000 / 60
+const FLING_MIN_FRAME_DISTANCE = 1
 
 const hotkeyModifierAlias: Record<string, string> = {
   command: 'meta',
@@ -70,9 +74,9 @@ export default class Event implements EventHandler {
   private readonly _event: EventHandlerImp
 
   // 惯性滚动开始时间
-  private _flingStartTime = new Date().getTime()
-  // 惯性滚动定时器
-  private _flingScrollRequestId: Nullable<number> = null
+  private _flingStartTime = performance.now()
+  // 惯性滚动动画
+  private _flingScrollAnimation: Nullable<Animation> = null
   // 开始滚动时坐标点
   private _startScrollCoordinate: Nullable<Coordinate> = null
   // 开始触摸时坐标
@@ -518,11 +522,11 @@ export default class Event implements EventHandler {
             this._chart.updatePane(UpdateLevel.Overlay)
             return true
           }
-          if (this._flingScrollRequestId !== null) {
-            cancelAnimationFrame(this._flingScrollRequestId)
-            this._flingScrollRequestId = null
+          if (this._flingScrollAnimation !== null) {
+            this._flingScrollAnimation.cancel()
+            this._flingScrollAnimation = null
           }
-          this._flingStartTime = new Date().getTime()
+          this._flingStartTime = performance.now()
 
           const yAxes = (pane as DrawPane<YAxisImp>).getYAxisComponents()
 
@@ -606,27 +610,23 @@ export default class Event implements EventHandler {
         case WidgetNameConstants.MAIN: {
           widget.dispatchEvent('mouseUpEvent', event)
           if (this._startScrollCoordinate !== null) {
-            const time = new Date().getTime() - this._flingStartTime
+            const time = performance.now() - this._flingStartTime
             const distance = event.x - this._startScrollCoordinate.x
-            let v = (distance / (time > 0 ? time : 1)) * 20
-            if (time < 200 && Math.abs(v) > 0) {
+            const initialFrameDistance = (distance / (time > 0 ? time : 1)) * 20
+            if (time < 200 && Math.abs(initialFrameDistance) > FLING_MIN_FRAME_DISTANCE) {
               const store = this._chart.getChartStore()
-              const flingScroll: () => void = () => {
-                this._flingScrollRequestId = requestAnimationFrame(() => {
-                  store.startScroll()
-                  store.scroll(v)
-                  v = v * (1 - 0.025)
-                  if (Math.abs(v) < 1) {
-                    if (this._flingScrollRequestId !== null) {
-                      cancelAnimationFrame(this._flingScrollRequestId)
-                      this._flingScrollRequestId = null
-                    }
-                  } else {
-                    flingScroll()
-                  }
-                })
-              }
-              flingScroll()
+              const duration = (Math.log(FLING_MIN_FRAME_DISTANCE / Math.abs(initialFrameDistance)) / Math.log(FLING_DECAY)) * FLING_FRAME_DURATION
+              const animation = new Animation({ duration }).doFrame((frameTime) => {
+                const frameCount = frameTime / FLING_FRAME_DURATION
+                const progressDistance = (initialFrameDistance * (1 - FLING_DECAY ** frameCount)) / (1 - FLING_DECAY)
+                store.scroll(progressDistance)
+                if (frameTime >= duration && this._flingScrollAnimation === animation) {
+                  this._flingScrollAnimation = null
+                }
+              })
+              store.startScroll()
+              this._flingScrollAnimation = animation
+              animation.start()
             }
           }
           return true
@@ -879,6 +879,8 @@ export default class Event implements EventHandler {
   }
 
   destroy(): void {
+    this._flingScrollAnimation?.cancel()
+    this._flingScrollAnimation = null
     document.removeEventListener('keydown', this._boundKeyBoardDownEvent)
     this._event.destroy()
   }

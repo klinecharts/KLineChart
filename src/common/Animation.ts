@@ -95,4 +95,12 @@ export default class Animation {
     }
     this._running = false
   }
+
+  cancel(): void {
+    if (this._requestAnimationId !== DEFAULT_REQUEST_ID) {
+      cancelAnimationFrame(this._requestAnimationId)
+      this._requestAnimationId = DEFAULT_REQUEST_ID
+    }
+    this._running = false
+  }
 }
