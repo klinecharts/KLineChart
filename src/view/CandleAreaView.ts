@@ -125,9 +125,12 @@ export default class CandleAreaView extends ChildrenView {
         }
       })?.draw(ctx)
       let rippleRadius = pointStyles.rippleRadius
-      if (pointStyles.animation) {
-        rippleRadius = pointStyles.radius + (this._animationFrameTime / pointStyles.animationDuration) * (pointStyles.rippleRadius - pointStyles.radius)
+      if (pointStyles.animation && isNumber(pointStyles.animationDuration) && pointStyles.animationDuration > 0) {
+        const progress = Math.min(this._animationFrameTime / pointStyles.animationDuration, 1)
+        rippleRadius = pointStyles.radius + progress * (pointStyles.rippleRadius - pointStyles.radius)
         this._animation.setDuration(pointStyles.animationDuration).start()
+      } else {
+        this.stopAnimation()
       }
       this._ripplePoint
         ?.setAttrs({
@@ -143,6 +146,7 @@ export default class CandleAreaView extends ChildrenView {
   }
 
   stopAnimation(): void {
-    this._animation.stop()
+    this._animationFrameTime = 0
+    this._animation.cancel()
   }
 }

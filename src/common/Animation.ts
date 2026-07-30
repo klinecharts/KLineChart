@@ -87,10 +87,7 @@ export default class Animation {
 
   stop(): void {
     if (this._running) {
-      if (this._requestAnimationId !== DEFAULT_REQUEST_ID) {
-        cancelAnimationFrame(this._requestAnimationId)
-        this._requestAnimationId = DEFAULT_REQUEST_ID
-      }
+      this.cancel()
       this._doFrameCallback?.(this._options.duration)
     }
     this._running = false

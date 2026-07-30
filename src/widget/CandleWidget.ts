@@ -55,4 +55,9 @@ export default class CandleWidget extends IndicatorWidget {
   override createTooltipView(): IndicatorTooltipView {
     return new CandleTooltipView(this)
   }
+
+  override destroy(): void {
+    this._candleAreaView.stopAnimation()
+    super.destroy()
+  }
 }
