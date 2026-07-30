@@ -13,10 +13,10 @@
  */
 
 let baseId = 1
-let prevIdTimestamp = new Date().getTime()
+let prevIdTimestamp = Date.now()
 
 export function createId(prefix?: string): string {
-  const timestamp = new Date().getTime()
+  const timestamp = Date.now()
   if (timestamp === prevIdTimestamp) {
     ++baseId
   } else {
