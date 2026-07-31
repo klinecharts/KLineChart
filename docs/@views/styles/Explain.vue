@@ -2,14 +2,29 @@
 import { ref } from 'vue'
 
 const items = ref([
-  'grid.horizontal', 'grid.vertical', 'candle.bar',
-  'candle.candle.priceMark.last.line', 'candle.candle.priceMark.last.text',
-  'candle.candle.priceMark.high', 'candle.candle.priceMark.low', 'candle.candle.tooltip',
-  'indicator.ohlc', 'indicator.lastValueMark', 'indicator.tooltip',
-  'xAxis.axisLine', 'xAxis.tickLine', 'xAxis.tickText',
-  'yAxis.axisLine', 'yAxis.tickLine', 'yAxis.tickText',
-  'separator', 'crosshair.horizontal.line', 'crosshair.horizontal.text',
-  'crosshair.vertical.line', 'crosshair.vertical.text', 'overlay'
+  'grid.horizontal',
+  'grid.vertical',
+  'candle.bar',
+  'candle.candle.priceMark.last.line',
+  'candle.candle.priceMark.last.text',
+  'candle.candle.priceMark.high',
+  'candle.candle.priceMark.low',
+  'candle.candle.tooltip',
+  'indicator.ohlc',
+  'indicator.lastValueMark',
+  'indicator.tooltip',
+  'yAxis.axisLine',
+  'yAxis.tickLine',
+  'yAxis.tickText',
+  'xAxis.axisLine',
+  'xAxis.tickLine',
+  'xAxis.tickText',
+  'separator',
+  'crosshair.horizontal.line',
+  'crosshair.horizontal.text',
+  'crosshair.vertical.line',
+  'crosshair.vertical.text',
+  'overlay'
 ])
 </script>
 

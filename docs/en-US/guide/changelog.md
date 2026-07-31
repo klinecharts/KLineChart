@@ -1,5 +1,17 @@
 # 📠 Change Log
 
+## 10.0.1
+`2026-08-01`
++ 💄 Improve mobile inertial scrolling for smoother and more consistent animations.
++ 💄 Improve mobile touch handling to prevent page scrolling and browser navigation gestures while dragging the chart.
++ 💄 Improve the state and lifecycle management of area chart ripple animations.
++ 💄 Improve Canvas rendering scheduling, resizing, and device pixel ratio handling.
++ 🐞 Fix an incorrect formula in the built-in `PVT` indicator.
++ 🐞 Fix `rgbToHex` incorrectly using the red channel value when converting the green and blue channels.
++ 🐞 Fix regular expression errors in `hsla` color validation and transparent color detection.
++ 🐞 Fix declaration file builds failing in some environments.
+
+
 ## 10.0.0
 `2026-07-11`
 
