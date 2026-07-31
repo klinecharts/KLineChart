@@ -37,9 +37,8 @@ const priceAndVolumeTrend: IndicatorTemplate<Pvt> = {
       const volume = kLineData.volume ?? 1
       const prevClose = (dataList[i - 1] ?? kLineData).close
       let x = 0
-      const total = prevClose * volume
-      if (total !== 0) {
-        x = (close - prevClose) / total
+      if (prevClose !== 0) {
+        x = ((close - prevClose) / prevClose) * volume
       }
       sum += x
       pvt.pvt = sum
