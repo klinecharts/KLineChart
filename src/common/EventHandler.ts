@@ -378,9 +378,9 @@ export default class EventHandlerImp {
     if (!this._preventTouchDragProcess) {
       this._processEvent(this._makeCompatEvent(moveEvent, touch), this._handler.touchMoveEvent)
 
-      // we should prevent default in case of touch only
-      // to prevent scroll of the page
-      // preventDefault(moveEvent)
+      // Prevent the browser from handling a drag that has been claimed by the chart.
+      // This avoids page scrolling and navigation gestures while panning the chart.
+      this._preventDefault(moveEvent)
     }
   }
 

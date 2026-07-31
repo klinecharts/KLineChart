@@ -173,6 +173,8 @@ export default class ChartImp implements Chart {
       userSelect: 'none',
       webkitUserSelect: 'none',
       overflow: 'hidden',
+      touchAction: 'none',
+      overscrollBehavior: 'none',
       // @ts-ignore
       msUserSelect: 'none',
       MozUserSelect: 'none',
