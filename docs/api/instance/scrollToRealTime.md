@@ -16,7 +16,7 @@ outline: deep
 
 ## 用法 {#usage}
 <script setup>
-import ScrollToRealTime from '../../@views/api/samples/ScrollToRealTime/index.vue'
+import ScrollToRealTime from '../../@views/api/samples/scrollToRealTime/index.vue'
 </script>
 
 ### 基本用法 {#basic}

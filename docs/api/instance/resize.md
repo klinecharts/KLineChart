@@ -3,7 +3,7 @@ outline: deep
 ---
 
 <script setup>
-import Resize from '../../@views/api/samples/Resize/index.vue'
+import Resize from '../../@views/api/samples/resize/index.vue'
 import Tip from '../../@components/Tip.vue'
 </script>
 
