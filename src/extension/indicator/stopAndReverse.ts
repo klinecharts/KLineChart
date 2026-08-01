@@ -90,7 +90,7 @@ const stopAndReverse: IndicatorTemplate<Sar, number> = {
         if (sar < kLineData.high) {
           sar = ep
           // 重新初始化值
-          af = 0
+          af = startAf
           ep = -100
           isIncreasing = !isIncreasing
         } else if (sar < highMax) {
