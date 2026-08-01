@@ -314,7 +314,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
     const formatter = chartStore.getInnerFormatter()
     const thousandsSeparator = chartStore.getThousandsSeparator()
     const decimalFold = chartStore.getDecimalFold()
-    const textHeight = styles.xAxis.tickText.size
+    const textHeight = styles.yAxis.tickText.size
     let validY = NaN
     ticks.forEach(({ value }) => {
       let v = this.displayValueToText(+value, precision)
