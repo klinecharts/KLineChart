@@ -67,7 +67,7 @@ const currentRatio: IndicatorTemplate<Cr, number> = {
     dataList.forEach((kLineData, i) => {
       const cr: Cr = {}
       const prevData = dataList[i - 1] ?? kLineData
-      const prevMid = (prevData.high + prevData.close + prevData.low + prevData.open) / 4
+      const prevMid = (prevData.high + prevData.low) / 2
 
       const highSubPreMid = Math.max(0, kLineData.high - prevMid)
 
