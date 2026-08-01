@@ -102,14 +102,16 @@ export function formatPrecision(value: string | number, precision?: number): str
 export function formatBigNumber(value: string | number): string {
   const v = +value
   if (isNumber(v)) {
-    if (v > 1000000000) {
-      return `${+(v / 1000000000).toFixed(3)}B`
+    const sign = v < 0 ? '-' : ''
+    const a = Math.abs(v)
+    if (a >= 1000000000) {
+      return `${sign}${+(a / 1000000000).toFixed(3)}B`
     }
-    if (v > 1000000) {
-      return `${+(v / 1000000).toFixed(3)}M`
+    if (a >= 1000000) {
+      return `${sign}${+(a / 1000000).toFixed(3)}M`
     }
-    if (v > 1000) {
-      return `${+(v / 1000).toFixed(3)}K`
+    if (a >= 1000) {
+      return `${sign}${+(a / 1000).toFixed(3)}K`
     }
   }
   return `${value}`
