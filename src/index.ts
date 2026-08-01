@@ -80,7 +80,7 @@ function init(ds: HTMLElement | string, options?: Options): Nullable<Chart> {
     logError('', '', 'The chart cannot be initialized correctly. Please check the parameters. The chart container cannot be null and child elements need to be added!!!')
     return null
   }
-  let chart = charts.get(dom.id)
+  let chart = charts.get(dom.getAttribute('k-line-chart-id') ?? '')
   if (isValid(chart)) {
     logWarn('', '', 'The chart has been initialized on the dom！！！')
     return chart
