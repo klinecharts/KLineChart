@@ -410,7 +410,9 @@ export default class OverlayImp<E = unknown> implements Overlay<E> {
   }
 
   eventPressedPointMove(point: Partial<Point>, pointIndex: number): void {
-    this.points[pointIndex].timestamp = point.timestamp
+    if (isNumber(point.timestamp)) {
+      this.points[pointIndex].timestamp = point.timestamp
+    }
     if (isNumber(point.dataIndex)) {
       this.points[pointIndex].dataIndex = point.dataIndex
     }
