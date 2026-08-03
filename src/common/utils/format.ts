@@ -27,6 +27,19 @@ const reEscapeChar = /\\(\\)?/g
 const rePropName = new RegExp('[^.[\\]]+' + '|' + '\\[(?:' + '([^"\'][^[]*)' + '|' + '(["\'])((?:(?!\\2)[^\\\\]|\\\\.)*?)\\2' + ')\\]' + '|' + '(?=(?:\\.|\\[\\])(?:\\.|\\[\\]|$))', 'g')
 
 export function formatValue(data: unknown, key: string, defaultValue?: unknown): unknown {
+  // Fast path: simple single-segment key without path separators.
+  // `rePropName` below splits on '.', '[', and ']', so a key containing any of those
+  // is compound and must take the general path. A separator-free key parses to a
+  // single-element `path` and resolves to `data[key]`, which an inline read matches exactly.
+  // This avoids a regex match + closure + array allocation per call, which matters in hot paths
+  // (e.g. `eachFigures` runs 4 `formatValue` calls per visible bar per indicator).
+  if (key.length > 0 && !key.includes('.') && !key.includes('[') && !key.includes(']')) {
+    if (isValid(data)) {
+      const value = (data as Record<string, unknown>)[key]
+      return isValid(value) ? value : (defaultValue ?? '--')
+    }
+    return defaultValue ?? '--'
+  }
   if (isValid(data)) {
     const path: string[] = []
     key.replace(rePropName, (subString: string, ...args: unknown[]) => {
