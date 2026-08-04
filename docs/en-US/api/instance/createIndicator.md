@@ -65,4 +65,4 @@ import CreateIndicatorYAxis from '../../../@views/api/samples/createIndicator-y-
 <CreateIndicatorObject/>
 
 ### Binding y-axis {#y-axis}
-<CreateIndicatorPaneOptionsAxis/>
+<CreateIndicatorYAxis />
