@@ -114,6 +114,39 @@ function ellipticalArcToBezier(cx: number, cy: number, rx: number, ry: number, r
   return [cp1x, cp1y, cp2x, cp2y, x2, y2]
 }
 
+interface ParsedPathCommand {
+  type: string
+  args: number[]
+}
+
+// Path strings come from styles (icon glyphs, overlay shapes) and are immutable
+// between frames, but were re-tokenized with a regex on every draw. Cache the
+// parsed commands keyed by the raw path string so repeated draws reuse them.
+const pathCommandsCache = new Map<string, ParsedPathCommand[]>()
+
+function parsePath(path: string): ParsedPathCommand[] {
+  const cached = pathCommandsCache.get(path)
+  if (cached !== undefined) {
+    return cached
+  }
+  const commands = path.match(/[MLHVCSQTAZ][^MLHVCSQTAZ]*/gi)
+  const parsed: ParsedPathCommand[] = []
+  if (isValid(commands)) {
+    commands.forEach((command) => {
+      parsed.push({
+        type: command[0],
+        args: command
+          .slice(1)
+          .trim()
+          .split(/[\s,]+/)
+          .map(Number)
+      })
+    })
+  }
+  pathCommandsCache.set(path, parsed)
+  return parsed
+}
+
 export function drawPath(ctx: CanvasRenderingContext2D, attrs: PathAttrs | PathAttrs[], styles: Partial<PathStyle>): void {
   let paths: PathAttrs[] = []
   paths = paths.concat(attrs)
@@ -122,8 +155,8 @@ export function drawPath(ctx: CanvasRenderingContext2D, attrs: PathAttrs | PathA
   ctx.strokeStyle = color
   ctx.setLineDash([])
   paths.forEach(({ x, y, path }) => {
-    const commands = path.match(/[MLHVCSQTAZ][^MLHVCSQTAZ]*/gi)
-    if (isValid(commands)) {
+    const commands = parsePath(path)
+    if (commands.length > 0) {
       const offsetX = x
       const offsetY = y
       ctx.beginPath()
@@ -132,12 +165,8 @@ export function drawPath(ctx: CanvasRenderingContext2D, attrs: PathAttrs | PathA
         let currentY = 0
         let startX = 0
         let startY = 0
-        const type = command[0]
-        const args = command
-          .slice(1)
-          .trim()
-          .split(/[\s,]+/)
-          .map(Number)
+        const type = command.type
+        const args = command.args
         switch (type) {
           case 'M':
             currentX = args[0] + offsetX
