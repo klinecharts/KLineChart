@@ -3,11 +3,9 @@ import { useData } from 'vitepress'
 
 const { lang } = useData()
 
-import i18n from '../../../@i18n'
-
-import Section from '../Section.vue'
-
 import ChartPreview from '../../../@components/ChartPreview.vue'
+import i18n from '../../../@i18n'
+import Section from '../Section.vue'
 
 import { data } from './index.data.js'
 </script>

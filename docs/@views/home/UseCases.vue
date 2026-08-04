@@ -1,16 +1,16 @@
 <script setup>
-import { computed } from 'vue'
 import { useData, withBase } from 'vitepress'
+import { computed } from 'vue'
 
 import i18n from '../../@i18n'
-import Section from './Section.vue'
 import { useInView } from './composables/useInView.js'
+import Section from './Section.vue'
 
 const { lang, isDark } = useData()
 const { target: casesRef, isVisible } = useInView()
 
 const items = computed(() =>
-  [1, 2, 3, 4].map(index => ({
+  [1, 2, 3, 4].map((index) => ({
     variant: index,
     title: i18n(`view_home_case_${index}_title`, lang.value),
     description: i18n(`view_home_case_${index}_desc`, lang.value)

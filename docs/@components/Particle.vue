@@ -13,7 +13,7 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { reactive, ref } from 'vue'
 
 // Props
 const props = defineProps({

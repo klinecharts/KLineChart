@@ -1,7 +1,7 @@
 <script setup>
-import { ref } from 'vue'
-import { useFlyout } from 'vitepress/dist/client/theme-default/composables/flyout'
 import VPMenu from 'vitepress/dist/client/theme-default/components/VPMenu.vue'
+import { useFlyout } from 'vitepress/dist/client/theme-default/composables/flyout'
+import { ref } from 'vue'
 
 const props = defineProps(['icon', 'button', 'label', 'hiddenArrow', 'items'])
 

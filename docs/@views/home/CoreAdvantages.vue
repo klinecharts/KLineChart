@@ -1,10 +1,10 @@
 <script setup>
-import { computed } from 'vue'
 import { useData, withBase } from 'vitepress'
+import { computed } from 'vue'
 
 import i18n from '../../@i18n'
-import Section from './Section.vue'
 import { useInView } from './composables/useInView.js'
+import Section from './Section.vue'
 
 const { lang, isDark } = useData()
 const { target: bentoRef, isVisible } = useInView()
@@ -33,10 +33,7 @@ function buildItem(index) {
         label: i18n(`view_home_advantage_${index + 1}_metric_2_label`, lang.value)
       }
     ],
-    points: [
-      i18n(`view_home_advantage_${index + 1}_point_1`, lang.value),
-      i18n(`view_home_advantage_${index + 1}_point_2`, lang.value)
-    ]
+    points: [i18n(`view_home_advantage_${index + 1}_point_1`, lang.value), i18n(`view_home_advantage_${index + 1}_point_2`, lang.value)]
   }
 }
 

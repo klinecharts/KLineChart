@@ -1,25 +1,20 @@
 <script setup>
-import { ref, onMounted, onUnmounted, watch } from 'vue'
-import { useData } from 'vitepress'
-
-import { codeToHtml } from 'shiki'
-
-import { transform } from '@babel/standalone'
-import { parse } from '@babel/parser'
 import generator from '@babel/generator'
+import { parse } from '@babel/parser'
+import { transform } from '@babel/standalone'
 import traverse from '@babel/traverse'
 import * as t from '@babel/types'
-
-import ResizeObserver from 'resize-observer-polyfill'
-
 import stackBlitz from '@stackblitz/sdk'
 import { getParameters } from 'codesandbox/lib/api/define'
+import ResizeObserver from 'resize-observer-polyfill'
+import { codeToHtml } from 'shiki'
+import { useData } from 'vitepress'
+import { onMounted, onUnmounted, ref, watch } from 'vue'
 
 import i18n from '../@i18n'
-
-import Tooltip from './Tooltip.vue'
 import ChartSkeleton from './ChartSkeleton.vue'
 import SmoothExpand from './SmoothExpand.vue'
+import Tooltip from './Tooltip.vue'
 
 const { isDark, lang } = useData()
 
@@ -48,10 +43,10 @@ const handlerMessage = (e) => {
   }
 }
 
-function openStackBlitz () {
+function openStackBlitz() {
   const files = {
     'index.js': props.code,
-    'index.html': `<div id="${props.chartId}" style="height: 400px"/>`,
+    'index.html': `<div id="${props.chartId}" style="height: 400px"/>`
   }
   if (props.css) {
     files['index.css'] = props.css
@@ -61,13 +56,13 @@ function openStackBlitz () {
     description: props.description,
     template: 'javascript',
     dependencies: {
-      'klinecharts': version.value
+      klinecharts: version.value
     },
     files
   })
 }
 
-function getCodePenParameters () {
+function getCodePenParameters() {
   const js = props.code
   const parameters = {
     title: `${props.title} - klinecharts@${version.value}`,
@@ -82,13 +77,13 @@ function getCodePenParameters () {
   return JSON.stringify(parameters)
 }
 
-function getCodeSandboxParameters () {
+function getCodeSandboxParameters() {
   const files = {
     'index.js': {
-      content: props.code,
+      content: props.code
     },
     'index.html': {
-      content: `<div id="${props.chartId}" style="height: 400px"/>`,
+      content: `<div id="${props.chartId}" style="height: 400px"/>`
     },
     'index.css': {
       content: props.css
@@ -99,8 +94,8 @@ function getCodeSandboxParameters () {
         dependencies: {
           klinecharts: version.value
         }
-      },
-    },
+      }
+    }
   }
   if (props.css) {
     files['index.css'] = { content: props.css }
@@ -108,7 +103,7 @@ function getCodeSandboxParameters () {
   return getParameters({ files })
 }
 
-async function copyHandler () {
+async function copyHandler() {
   copied.value = true
   const text = props.code
   try {
@@ -127,9 +122,7 @@ async function copyHandler () {
     element.style.fontSize = '12pt' // Prevent zooming on iOS
 
     const selection = document.getSelection()
-    const originalRange = selection
-      ? selection.rangeCount > 0 && selection.getRangeAt(0)
-      : null
+    const originalRange = selection ? selection.rangeCount > 0 && selection.getRangeAt(0) : null
 
     document.body.appendChild(element)
     element.select()
@@ -163,34 +156,26 @@ onMounted(() => {
   const highlightCode = async () => {
     codeHtml.value = await codeToHtml(props.code, {
       lang: 'javascript',
-      themes: { 
+      themes: {
         light: 'github-light',
-        dark: 'github-dark',
+        dark: 'github-dark'
       },
       defaultColor: 'light'
     })
   }
-  
+
   if (props.code) {
     highlightCode()
     if (!!props.chartId) {
-      window.addEventListener('message', handlerMessage, false);
+      window.addEventListener('message', handlerMessage, false)
       chartInitializedFlag.value = true
       const transformJs = props.code + '\n' + `window['chart_${props.chartId}'] = chart`
       const ast = parse(transformJs, { sourceType: 'module' })
       const tra = process.env.NODE_ENV === 'development' ? traverse.default : traverse
       tra(ast, {
         CallExpression(path) {
-          if (
-            t.isCallExpression(path.node) &&
-            t.isIdentifier(path.node.callee, { name: 'callback' })
-          ) {
-            const postMessageFun = t.expressionStatement(
-              t.callExpression(
-                t.memberExpression(t.identifier('window'), t.identifier('postMessage')),
-                [t.stringLiteral(props.chartId)]
-              )
-            )
+          if (t.isCallExpression(path.node) && t.isIdentifier(path.node.callee, { name: 'callback' })) {
+            const postMessageFun = t.expressionStatement(t.callExpression(t.memberExpression(t.identifier('window'), t.identifier('postMessage')), [t.stringLiteral(props.chartId)]))
             path.insertBefore(postMessageFun)
           }
         }
@@ -198,11 +183,8 @@ onMounted(() => {
 
       const gen = process.env.NODE_ENV === 'development' ? generator.default : generator
       const { code } = transform(gen(ast, {}, transformJs).code, {
-        presets: [
-          'es2015',
-          ['stage-3', { decoratorsBeforeExport: true }],
-        ],
-        plugins: ['transform-modules-umd'],
+        presets: ['es2015', ['stage-3', { decoratorsBeforeExport: true }]],
+        plugins: ['transform-modules-umd']
       })
       const chartDom = document.createElement('div')
       const height = `${props.chartHeight || 350}px`

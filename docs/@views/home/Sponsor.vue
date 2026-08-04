@@ -1,10 +1,9 @@
 <script setup>
-import { computed, ref } from 'vue'
 import { useData } from 'vitepress'
-
-import Section from './Section.vue'
-import i18n from '../../@i18n'
+import { computed, ref } from 'vue'
 import Particle from '../../@components/Particle.vue'
+import i18n from '../../@i18n'
+import Section from './Section.vue'
 
 const sponsors = [
   {
@@ -40,7 +39,7 @@ const sponsors = [
     logoStyle: 'max-height: 40px;max-width: 40px;',
     website: 'https://flowlong.aizuda.com/',
     amount: 500
-  },
+  }
 ].sort((a, b) => b.amount - a.amount)
 
 const featuredSponsors = computed(() => sponsors.slice(0, 3))

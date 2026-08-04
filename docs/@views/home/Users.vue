@@ -1,6 +1,6 @@
 <script setup>
-import { computed } from 'vue'
 import { useData } from 'vitepress'
+import { computed } from 'vue'
 
 import i18n from '../../@i18n'
 import Section from './Section.vue'

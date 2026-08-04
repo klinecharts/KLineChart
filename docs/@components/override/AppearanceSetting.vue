@@ -85,16 +85,11 @@
 </template>
 
 <script setup>
-import { computed, inject, ref, watch, onMounted } from 'vue'
-import { inBrowser, useData } from 'vitepress'
 import { useLocalStorage } from '@vueuse/core'
+import { inBrowser, useData } from 'vitepress'
+import { computed, inject, onMounted, ref, watch } from 'vue'
 import i18n from '../../@i18n'
-import {
-  applyThemeColorStyle,
-  DEFAULT_THEME_COLOR,
-  normalizeThemeColor,
-  THEME_COLOR_STORAGE_KEY
-} from '../../.vitepress/theme/theme-color'
+import { applyThemeColorStyle, DEFAULT_THEME_COLOR, normalizeThemeColor, THEME_COLOR_STORAGE_KEY } from '../../.vitepress/theme/theme-color'
 
 const visible = ref(false)
 const { isDark, lang } = useData()
@@ -109,18 +104,7 @@ const pickerSaturation = ref(0)
 const pickerValue = ref(0)
 const activeDrag = ref(null)
 
-const colors = [
-  '#F92855',
-  '#EC4899',
-  '#F17313',
-  '#E6AC00',
-  '#2DC08E',
-  '#84CC16',
-  '#1677FF',
-  '#3FB5FB',
-  '#A14DFD',
-  '#8F6CEE'
-]
+const colors = ['#F92855', '#EC4899', '#F17313', '#E6AC00', '#2DC08E', '#84CC16', '#1677FF', '#3FB5FB', '#A14DFD', '#8F6CEE']
 
 const finalColor = computed(() => normalizeThemeColor(currentColor.value) || DEFAULT_THEME_COLOR)
 const activeColor = computed(() => finalColor.value)
@@ -131,16 +115,20 @@ onMounted(() => {
   syncPickerFromColor(finalColor.value)
 })
 
-watch(activeColor, (color) => {
-  applyThemeColorStyle(color || DEFAULT_THEME_COLOR)
-  syncPickerFromColor(color || DEFAULT_THEME_COLOR)
-}, { immediate: inBrowser, flush: 'post' })
+watch(
+  activeColor,
+  (color) => {
+    applyThemeColorStyle(color || DEFAULT_THEME_COLOR)
+    syncPickerFromColor(color || DEFAULT_THEME_COLOR)
+  },
+  { immediate: inBrowser, flush: 'post' }
+)
 
-function changePrimaryColor (color) {
+function changePrimaryColor(color) {
   currentColor.value = color
 }
 
-function setAppearance (dark) {
+function setAppearance(dark) {
   if (isDark.value === dark) {
     return
   }
@@ -151,31 +139,31 @@ function setAppearance (dark) {
   }
 }
 
-function selectPreset (color) {
+function selectPreset(color) {
   changePrimaryColor(color)
 }
 
-function resetColor () {
+function resetColor() {
   currentColor.value = DEFAULT_THEME_COLOR
 }
 
-function startPickerDrag (type, event) {
+function startPickerDrag(type, event) {
   activeDrag.value = type
   event.currentTarget.setPointerCapture(event.pointerId)
   updatePicker(type, event)
 }
 
-function movePickerDrag (type, event) {
+function movePickerDrag(type, event) {
   if (activeDrag.value === type) {
     updatePicker(type, event)
   }
 }
 
-function stopPickerDrag () {
+function stopPickerDrag() {
   activeDrag.value = null
 }
 
-function updatePicker (type, event) {
+function updatePicker(type, event) {
   const target = type === 'hue' ? hueRef.value : saturationRef.value
   if (!target) {
     return
@@ -192,7 +180,7 @@ function updatePicker (type, event) {
   changePrimaryColor(hsvToHex(pickerHue.value, pickerSaturation.value, pickerValue.value))
 }
 
-function selectHexColor (event) {
+function selectHexColor(event) {
   const normalized = normalizeThemeColor(`#${event.target.value}`)
   if (normalized) {
     changePrimaryColor(normalized)
@@ -201,14 +189,14 @@ function selectHexColor (event) {
   }
 }
 
-function syncPickerFromColor (color) {
+function syncPickerFromColor(color) {
   const { h, s, v } = rgbToHsv(hexToRgb(color))
   pickerHue.value = h
   pickerSaturation.value = s
   pickerValue.value = v
 }
 
-function hexToRgb (hex) {
+function hexToRgb(hex) {
   const value = hex.replace('#', '')
   return {
     r: parseInt(value.slice(0, 2), 16),
@@ -217,7 +205,7 @@ function hexToRgb (hex) {
   }
 }
 
-function rgbToHsv ({ r, g, b }) {
+function rgbToHsv({ r, g, b }) {
   const red = r / 255
   const green = g / 255
   const blue = b / 255
@@ -243,7 +231,7 @@ function rgbToHsv ({ r, g, b }) {
   }
 }
 
-function hsvToHex (h, s, v) {
+function hsvToHex(h, s, v) {
   const saturation = s / 100
   const value = v / 100
   const chroma = value * saturation
@@ -266,13 +254,18 @@ function hsvToHex (h, s, v) {
     rgb = [chroma, 0, x]
   }
 
-  return `#${rgb.map(channel => Math.round((channel + match) * 255).toString(16).padStart(2, '0')).join('')}`.toUpperCase()
+  return `#${rgb
+    .map((channel) =>
+      Math.round((channel + match) * 255)
+        .toString(16)
+        .padStart(2, '0')
+    )
+    .join('')}`.toUpperCase()
 }
 
-function clamp (value, min, max) {
+function clamp(value, min, max) {
   return Math.min(max, Math.max(min, value))
 }
-
 </script>
 
 <style scoped>

@@ -8,9 +8,9 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
 import { useWindowScroll } from '@vueuse/core'
 import { useData } from 'vitepress'
+import { onMounted, ref } from 'vue'
 
 import i18n from '../@i18n'
 

@@ -1,17 +1,17 @@
 <script setup>
 import { useData } from 'vitepress'
 import DefaultTheme from 'vitepress/theme'
-import { nextTick, provide, onMounted, ref } from 'vue'
+import { nextTick, onMounted, provide, ref } from 'vue'
 
 import Banner from './Banner.vue'
-import HomeHero from './home/hero/index.vue'
-import HomeTopSponsor from './home/TopSponsor.vue'
-import HomeCreateChart from './home/create-chart/index.vue'
-import HomeUseCases from './home/UseCases.vue'
 import HomeCoreAdvantages from './home/CoreAdvantages.vue'
+import HomeCreateChart from './home/create-chart/index.vue'
 import HomeEcosystem from './home/Ecosystem.vue'
-import HomeUsers from './home/Users.vue'
+import HomeHero from './home/hero/index.vue'
 import HomeSponsor from './home/Sponsor.vue'
+import HomeTopSponsor from './home/TopSponsor.vue'
+import HomeUseCases from './home/UseCases.vue'
+import HomeUsers from './home/Users.vue'
 // import AsideSponsor from './AsideSponsor.vue'
 import NotFound from './NotFound.vue'
 </script>

@@ -1,22 +1,17 @@
 <script setup>
-import { computed } from 'vue'
 import { useData } from 'vitepress'
-import { useLangs } from 'vitepress/dist/client/theme-default/composables/langs'
 import VPFlyout from 'vitepress/dist/client/theme-default/components/VPFlyout.vue'
 import VPMenuLink from 'vitepress/dist/client/theme-default/components/VPMenuLink.vue'
 import VPSocialLinks from 'vitepress/dist/client/theme-default/components/VPSocialLinks.vue'
+import { useLangs } from 'vitepress/dist/client/theme-default/composables/langs'
+import { computed } from 'vue'
 
 import AppearanceSetting from './AppearanceSetting.vue'
 
 const { site, theme } = useData()
 const { localeLinks, currentLang } = useLangs({ correspondingLink: true })
 
-const hasExtraContent = computed(
-  () =>
-    (localeLinks.value.length && currentLang.value.label) ||
-    site.value.appearance ||
-    theme.value.socialLinks
-)
+const hasExtraContent = computed(() => (localeLinks.value.length && currentLang.value.label) || site.value.appearance || theme.value.socialLinks)
 </script>
 
 <template>

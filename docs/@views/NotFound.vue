@@ -1,10 +1,9 @@
 <script setup>
+import { useData, withBase } from 'vitepress'
 import { onMounted, ref } from 'vue'
-import { withBase, useData } from 'vitepress'
-
-import i18n from '../@i18n'
 import Logo from '../@components/Logo.vue'
 import Particle from '../@components/Particle.vue'
+import i18n from '../@i18n'
 
 const { lang } = useData()
 
@@ -15,7 +14,7 @@ onMounted(() => {
   root.value = lang.value === 'zh-CN' ? '/' : `/${lang.value}/`
 })
 
-function showParticle () {
+function showParticle() {
   if (particle.value?.start) {
     particle.value.start()
   }

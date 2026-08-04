@@ -1,6 +1,6 @@
-import { ref, onMounted, onUnmounted } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 
-export function useInView (options = {}) {
+export function useInView(options = {}) {
   const target = ref(null)
   const isVisible = ref(false)
   let observer

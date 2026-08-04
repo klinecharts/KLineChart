@@ -1,7 +1,6 @@
 <script setup>
-import { ref } from 'vue'
-
 import { useData } from 'vitepress'
+import { ref } from 'vue'
 
 import i18n from '../../@i18n'
 
@@ -20,9 +19,7 @@ const dirs = ref([
       {
         name: 'common',
         explain: 'view_local_dev_dir_explain_common',
-        children: [
-          { name: 'utils', explain: 'view_local_dev_dir_explain_utils', },
-        ]
+        children: [{ name: 'utils', explain: 'view_local_dev_dir_explain_utils' }]
       },
       { name: 'component', explain: 'view_local_dev_dir_explain_component' },
       {
@@ -40,7 +37,7 @@ const dirs = ref([
       },
       { name: 'pane', explain: 'view_local_dev_dir_explain_pane' },
       { name: 'view', explain: 'view_local_dev_dir_explain_view' },
-      { name: 'widget', explain: 'view_local_dev_dir_explain_widget' },
+      { name: 'widget', explain: 'view_local_dev_dir_explain_widget' }
     ]
   },
   { name: 'tests', explain: 'view_local_dev_dir_explain_tests' }

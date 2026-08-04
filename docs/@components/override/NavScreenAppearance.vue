@@ -1,6 +1,6 @@
 <script setup>
-import { ref } from 'vue'
 import { useData } from 'vitepress'
+import { ref } from 'vue'
 import AppearanceSetting from './AppearanceSetting.vue'
 import { APPEARANCE_ICON } from './appearance-icon'
 

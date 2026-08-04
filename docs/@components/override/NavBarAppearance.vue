@@ -1,7 +1,7 @@
 <script setup>
-import { ref, computed } from 'vue'
 import { useData } from 'vitepress'
 import VPFlyout from 'vitepress/dist/client/theme-default/components/VPFlyout.vue'
+import { computed, ref } from 'vue'
 
 import AppearanceSetting from './AppearanceSetting.vue'
 import { APPEARANCE_ICON } from './appearance-icon'
