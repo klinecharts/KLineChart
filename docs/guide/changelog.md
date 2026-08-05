@@ -1,15 +1,30 @@
 # 📠 更新日志
 
+## 10.0.2
+`2026-08-06`
++ 💄 优化路径图形的解析和缓存，减少重复解析 SVG 路径带来的性能开销。[@NemeZZiZZ](https://github.com/NemeZZiZZ) [@liihuu](https://github.com/liihuu) 
++ 💄 优化简单字段的格式化取值性能。[@NemeZZiZZ](https://github.com/NemeZZiZZ)
++ 🐞 修复内置指标 `CR` 的中间价计算公式错误。[@NemeZZiZZ](https://github.com/NemeZZiZZ)
++ 🐞 修复内置指标 `ROC` 的回看周期和移动平均起始位置错误。[@NemeZZiZZ](https://github.com/NemeZZiZZ)
++ 🐞 修复内置指标 `SAR` 在由下跌趋势反转为上涨趋势时加速因子重置错误。[@NemeZZiZZ](https://github.com/NemeZZiZZ)
++ 🐞 修复 `formatBigNumber` 无法正确格式化负数和临界值的问题。[@NemeZZiZZ](https://github.com/NemeZZiZZ)
++ 🐞 修复数据持平或基准价格为 0 时百分比 y 轴可能出现 `NaN` 的问题。[@NemeZZiZZ](https://github.com/NemeZZiZZ)
++ 🐞 修复拖动覆盖物控制点时可能将有效时间戳覆盖为无效值的问题。[@NemeZZiZZ](https://github.com/NemeZZiZZ)
++ 🐞 修复 y 轴刻度文字防重叠计算错误使用 x 轴文字尺寸的问题。[@NemeZZiZZ](https://github.com/NemeZZiZZ)
++ 🐞 修复重复调用 `init` 时无法正确识别已初始化图表的问题。[@NemeZZiZZ](https://github.com/NemeZZiZZ)
++ 🐞 修复十字光标路径类型功能按钮的水平位置未计入内边距的问题。[@liihuu](https://github.com/liihuu) 
+
+
 ## 10.0.1
 `2026-08-01`
-+ 💄 优化移动端惯性滚动，使滚动动画更平滑、稳定。
-+ 💄 优化移动端触摸事件处理，避免拖动图表时触发页面滚动或浏览器导航手势。
-+ 💄 优化面积图涟漪动画的状态和生命周期管理。
-+ 💄 优化 Canvas 的渲染调度、尺寸变化和设备像素比处理。
-+ 🐞 修复内置指标 `PVT` 的计算公式错误。
-+ 🐞 修复 `rgbToHex` 转换绿色和蓝色通道时错误使用红色通道值的问题。
-+ 🐞 修复 `hsla` 颜色校验和透明色判断中的正则表达式错误。
-+ 🐞 修复部分环境下类型声明文件构建失败的问题。
++ 💄 优化移动端惯性滚动，使滚动动画更平滑、稳定。[@liihuu](https://github.com/liihuu) 
++ 💄 优化移动端触摸事件处理，避免拖动图表时触发页面滚动或浏览器导航手势。[@liihuu](https://github.com/liihuu) 
++ 💄 优化面积图涟漪动画的状态和生命周期管理。[@liihuu](https://github.com/liihuu) 
++ 💄 优化 Canvas 的渲染调度、尺寸变化和设备像素比处理。[@liihuu](https://github.com/liihuu) 
++ 🐞 修复内置指标 `PVT` 的计算公式错误。[@snoofox](https://github.com/snoofox)
++ 🐞 修复 `rgbToHex` 转换绿色和蓝色通道时错误使用红色通道值的问题。[@0-v-0](https://github.com/0-v-0)
++ 🐞 修复 `hsla` 颜色校验和透明色判断中的正则表达式错误。[@0-v-0](https://github.com/0-v-0)
++ 🐞 修复部分环境下类型声明文件构建失败的问题。[@asfand987](https://github.com/asfand987)
 
 
 ## 10.0.0

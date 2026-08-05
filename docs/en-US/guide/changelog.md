@@ -1,15 +1,30 @@
 # 📠 Change Log
 
+## 10.0.2
+`2026-08-06`
++ 💄 Optimize path figure parsing and caching to reduce the overhead of repeatedly parsing SVG paths. [@NemeZZiZZ](https://github.com/NemeZZiZZ) [@liihuu](https://github.com/liihuu) 
++ 💄 Optimize value lookup performance for simple fields during formatting. [@NemeZZiZZ](https://github.com/NemeZZiZZ)
++ 🐞 Fix an incorrect middle-price formula in the built-in `CR` indicator. [@NemeZZiZZ](https://github.com/NemeZZiZZ)
++ 🐞 Fix the lookback period and moving average start position in the built-in `ROC` indicator. [@NemeZZiZZ](https://github.com/NemeZZiZZ)
++ 🐞 Fix the built-in `SAR` indicator resetting its acceleration factor incorrectly on a downtrend-to-uptrend reversal. [@NemeZZiZZ](https://github.com/NemeZZiZZ)
++ 🐞 Fix `formatBigNumber` incorrectly formatting negative values and exact magnitude boundaries. [@NemeZZiZZ](https://github.com/NemeZZiZZ)
++ 🐞 Fix the percentage y-axis potentially producing `NaN` for flat data or a zero base price. [@NemeZZiZZ](https://github.com/NemeZZiZZ)
++ 🐞 Fix dragging an overlay control point potentially replacing a valid timestamp with an invalid value. [@NemeZZiZZ](https://github.com/NemeZZiZZ)
++ 🐞 Fix y-axis tick label collision detection incorrectly using the x-axis text size. [@NemeZZiZZ](https://github.com/NemeZZiZZ)
++ 🐞 Fix repeated `init` calls failing to identify a chart already initialized on the same container. [@NemeZZiZZ](https://github.com/NemeZZiZZ)
++ 🐞 Fix the horizontal position of crosshair path features not accounting for padding. [@liihuu](https://github.com/liihuu) 
+
+
 ## 10.0.1
 `2026-08-01`
-+ 💄 Improve mobile inertial scrolling for smoother and more consistent animations.
-+ 💄 Improve mobile touch handling to prevent page scrolling and browser navigation gestures while dragging the chart.
-+ 💄 Improve the state and lifecycle management of area chart ripple animations.
-+ 💄 Improve Canvas rendering scheduling, resizing, and device pixel ratio handling.
-+ 🐞 Fix an incorrect formula in the built-in `PVT` indicator.
-+ 🐞 Fix `rgbToHex` incorrectly using the red channel value when converting the green and blue channels.
-+ 🐞 Fix regular expression errors in `hsla` color validation and transparent color detection.
-+ 🐞 Fix declaration file builds failing in some environments.
++ 💄 Improve mobile inertial scrolling for smoother and more consistent animations. [@liihuu](https://github.com/liihuu) 
++ 💄 Improve mobile touch handling to prevent page scrolling and browser navigation gestures while dragging the chart. [@liihuu](https://github.com/liihuu) 
++ 💄 Improve the state and lifecycle management of area chart ripple animations. [@liihuu](https://github.com/liihuu) 
++ 💄 Improve Canvas rendering scheduling, resizing, and device pixel ratio handling. [@liihuu](https://github.com/liihuu) 
++ 🐞 Fix an incorrect formula in the built-in `PVT` indicator. [@snoofox](https://github.com/snoofox)
++ 🐞 Fix `rgbToHex` incorrectly using the red channel value when converting the green and blue channels. [@0-v-0](https://github.com/0-v-0)
++ 🐞 Fix regular expression errors in `hsla` color validation and transparent color detection. [@0-v-0](https://github.com/0-v-0)
++ 🐞 Fix declaration file builds failing in some environments. [@asfand987](https://github.com/asfand987)
 
 
 ## 10.0.0
