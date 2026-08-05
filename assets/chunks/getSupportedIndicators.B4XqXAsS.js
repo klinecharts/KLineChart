@@ -1,1 +1,0 @@
-import{n as e}from"./theme.CNMqDc2I.js";import{$ as t,Ut as n,_t as r}from"./framework.ChqpOa4_.js";var i=JSON.parse(`{"js":"import { getSupportedIndicators } from 'klinecharts'\\n\\nconst supports = getSupportedIndicators()\\n"}`),a={__name:`index`,setup(a){return(a,o)=>(r(),t(e,{title:`getSupportedIndicators`,hiddenChart:!0,code:n(i).js},null,8,[`code`]))}};export{a as t};

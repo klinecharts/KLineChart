@@ -1,1 +1,0 @@
-import{n as e}from"./theme.CNMqDc2I.js";import{$ as t,Ut as n,_t as r}from"./framework.ChqpOa4_.js";var i=JSON.parse(`{"js":"import { getHotkey } from 'klinecharts'\\n\\nconst hotkey = getHotkey('zoomIn')\\n"}`),a={__name:`index`,setup(a){return(a,o)=>(r(),t(e,{title:`getHotkey`,hiddenChart:!0,code:n(i).js},null,8,[`code`]))}};export{a as t};
