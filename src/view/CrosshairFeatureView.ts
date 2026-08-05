@@ -148,7 +148,7 @@ export default class CrosshairFeatureView extends View<YAxis> {
             const path = content as FeaturePathStyle
             this.createFigure({
               name: 'path',
-              attrs: { path: path.path, x, y: y + marginTop + paddingTop - size / 2, width: size, height: size },
+              attrs: { path: path.path, x: x + paddingLeft, y: y + marginTop + paddingTop - size / 2, width: size, height: size },
               styles: {
                 style: path.style,
                 lineWidth: path.lineWidth,
