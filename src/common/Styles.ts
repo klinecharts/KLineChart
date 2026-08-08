@@ -279,6 +279,7 @@ export interface IndicatorStyle {
   texts: TextStyle[]
   lastValueMark: IndicatorLastValueMarkStyle
   tooltip: IndicatorTooltipStyle
+  grid: GridStyle
   [key: string]: unknown
 }
 
@@ -640,7 +641,8 @@ function getDefaultIndicatorStyle(): IndicatorStyle {
         defaultValue: 'n/a'
       },
       features: []
-    }
+    },
+    grid: getDefaultGridStyle()
   }
 }
 
