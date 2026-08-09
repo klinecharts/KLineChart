@@ -751,14 +751,10 @@ export default class StoreImp implements Store {
       }
     }
     // More processing and loading, more loading if there are callback methods and no data is being loaded
-    if (from === 0) {
-      if (this._dataLoadMore.forward) {
-        this._processDataLoad('forward')
-      }
-    } else if (to === totalBarCount) {
-      if (this._dataLoadMore.backward) {
-        this._processDataLoad('backward')
-      }
+    if (from === 0 && this._dataLoadMore.forward) {
+      this._processDataLoad('forward')
+    } else if (to === totalBarCount && this._dataLoadMore.backward) {
+      this._processDataLoad('backward')
     }
   }
 
