@@ -16,6 +16,7 @@ outline: deep
   - `lock` 是否锁定不让拖动。
   - `visible` 是否可见。
   - `zLevel` 绘制层级，值越大，越靠前显示，只作用于覆盖物之间。
+  - `fixedZLevel` 是否固定绘制层级。默认悬浮时会将覆盖物临时提升到最上层，设置为 `true` 后始终保持声明的 `zLevel`。
   - `needDefaultPointFigure` 是否需要默认的点对应的图形。
   - `needDefaultXAxisFigure` 是否需要默认的x轴上的图形。
   - `needDefaultYAxisFigure` 是否需要默认的y轴上的图形。
