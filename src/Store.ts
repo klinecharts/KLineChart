@@ -1704,17 +1704,21 @@ export default class StoreImp implements Store {
         let ignoreUpdateFlag = false
         let sortFlag = false
         if (overlay !== null) {
-          overlay.override({ zLevel: overlay.getPrevZLevel() })
-          sortFlag = true
+          if (!overlay.fixedZLevel) {
+            overlay.override({ zLevel: overlay.getPrevZLevel() })
+            sortFlag = true
+          }
           if (processOnMouseLeaveEvent(overlay, figure)) {
             ignoreUpdateFlag = true
           }
         }
 
         if (infoOverlay !== null) {
-          infoOverlay.setPrevZLevel(infoOverlay.zLevel)
-          infoOverlay.override({ zLevel: Number.MAX_SAFE_INTEGER })
-          sortFlag = true
+          if (!infoOverlay.fixedZLevel) {
+            infoOverlay.setPrevZLevel(infoOverlay.zLevel)
+            infoOverlay.override({ zLevel: Number.MAX_SAFE_INTEGER })
+            sortFlag = true
+          }
           if (processOnMouseEnterEvent(infoOverlay, info.figure)) {
             ignoreUpdateFlag = true
           }
