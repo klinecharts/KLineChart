@@ -751,14 +751,10 @@ export default class StoreImp implements Store {
       }
     }
     // More processing and loading, more loading if there are callback methods and no data is being loaded
-    if (from === 0) {
-      if (this._dataLoadMore.forward) {
-        this._processDataLoad('forward')
-      }
-    } else if (to === totalBarCount) {
-      if (this._dataLoadMore.backward) {
-        this._processDataLoad('backward')
-      }
+    if (from === 0 && this._dataLoadMore.forward) {
+      this._processDataLoad('forward')
+    } else if (to === totalBarCount && this._dataLoadMore.backward) {
+      this._processDataLoad('backward')
     }
   }
 
@@ -1708,17 +1704,21 @@ export default class StoreImp implements Store {
         let ignoreUpdateFlag = false
         let sortFlag = false
         if (overlay !== null) {
-          overlay.override({ zLevel: overlay.getPrevZLevel() })
-          sortFlag = true
+          if (!overlay.fixedZLevel) {
+            overlay.override({ zLevel: overlay.getPrevZLevel() })
+            sortFlag = true
+          }
           if (processOnMouseLeaveEvent(overlay, figure)) {
             ignoreUpdateFlag = true
           }
         }
 
         if (infoOverlay !== null) {
-          infoOverlay.setPrevZLevel(infoOverlay.zLevel)
-          infoOverlay.override({ zLevel: Number.MAX_SAFE_INTEGER })
-          sortFlag = true
+          if (!infoOverlay.fixedZLevel) {
+            infoOverlay.setPrevZLevel(infoOverlay.zLevel)
+            infoOverlay.override({ zLevel: Number.MAX_SAFE_INTEGER })
+            sortFlag = true
+          }
           if (processOnMouseEnterEvent(infoOverlay, info.figure)) {
             ignoreUpdateFlag = true
           }

@@ -148,6 +148,16 @@ export interface Overlay<E = unknown> extends OverlayEventCollection<E> {
   zLevel: number
 
   /**
+   * Whether `zLevel` should stay fixed while the overlay is hovered.
+   *
+   * By default the hovered overlay is temporarily raised above every other
+   * overlay, which makes it impossible to keep a control overlay reliably on
+   * top. Set this to `true` to opt the overlay out of that raise and always
+   * honour its declared `zLevel`.
+   */
+  fixedZLevel: boolean
+
+  /**
    * Whether the default figure corresponding to the point is required
    */
   needDefaultPointFigure: boolean
@@ -241,6 +251,7 @@ export default class OverlayImp<E = unknown> implements Overlay<E> {
   lock = false
   visible = true
   zLevel = 0
+  fixedZLevel = false
   needDefaultPointFigure = false
   needDefaultXAxisFigure = false
   needDefaultYAxisFigure = false

@@ -10,6 +10,7 @@
       lock?: boolean
       visible?: boolean
       zLevel?: number
+      fixedZLevel?: boolean
       needDefaultPointFigure?: boolean
       needDefaultXAxisFigure?: boolean
       needDefaultYAxisFigure?: boolean
@@ -43,6 +44,7 @@
         lock?: boolean
         visible?: boolean
         zLevel?: number
+        fixedZLevel?: boolean
         needDefaultPointFigure?: boolean
         needDefaultXAxisFigure?: boolean
         needDefaultYAxisFigure?: boolean
