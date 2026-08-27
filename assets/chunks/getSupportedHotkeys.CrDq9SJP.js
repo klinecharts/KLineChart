@@ -1,1 +1,0 @@
-import{n as e}from"./theme.CjALq0Xd.js";import{$ as t,Ut as n,_t as r}from"./framework.ChqpOa4_.js";var i=JSON.parse(`{"js":"import { getSupportedHotkeys } from 'klinecharts'\\n\\nconst supports = getSupportedHotkeys()\\n"}`),a={__name:`index`,setup(a){return(a,o)=>(r(),t(e,{title:`getSupportedHotkeys`,hiddenChart:!0,code:n(i).js},null,8,[`code`]))}};export{a as t};
