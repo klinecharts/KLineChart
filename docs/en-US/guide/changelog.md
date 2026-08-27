@@ -1,5 +1,12 @@
 # 📠 Change Log
 
+## 10.0.3
+`2026-08-28`
++ 🆕 Add the `fixedZLevel` overlay option to preserve the configured `zLevel` while hovered. [@Togetic](https://github.com/Togetic)
++ 💄 Optimize default indicator style parsing to reduce repeated calculations during rendering. [@liihuu](https://github.com/liihuu)
++ 🐞 Fix backward data loading not being triggered after forward loading is exhausted. [@firehorseuk](https://github.com/firehorseuk)
+
+
 ## 10.0.2
 `2026-08-06`
 + 💄 Optimize path figure parsing and caching to reduce the overhead of repeatedly parsing SVG paths. [@NemeZZiZZ](https://github.com/NemeZZiZZ) [@liihuu](https://github.com/liihuu) 

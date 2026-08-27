@@ -1,5 +1,12 @@
 # 📠 更新日志
 
+## 10.0.3
+`2026-08-28`
++ 🆕 覆盖物新增 `fixedZLevel` 配置，支持在悬停时保持设定的 `zLevel`。[@Togetic](https://github.com/Togetic)
++ 💄 优化指标默认样式解析，减少渲染过程中的重复计算。[@liihuu](https://github.com/liihuu)
++ 🐞 修复向前加载结束后无法继续触发向后加载的问题。[@firehorseuk](https://github.com/firehorseuk)
+
+
 ## 10.0.2
 `2026-08-06`
 + 💄 优化路径图形的解析和缓存，减少重复解析 SVG 路径带来的性能开销。[@NemeZZiZZ](https://github.com/NemeZZiZZ) [@liihuu](https://github.com/liihuu) 
