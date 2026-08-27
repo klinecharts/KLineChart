@@ -246,8 +246,13 @@ export type IndicatorConstructor<D = unknown, C = unknown, E = unknown> = new ()
 
 export type EachFigureCallback<D> = (figure: IndicatorFigure<D>, figureStyles: IndicatorFigureStyle, index: number) => void
 
-export function eachFigures<D = unknown>(indicator: Indicator<D>, dataIndex: number, barSpace: BarSpace, defaultStyles: IndicatorStyle, eachFigureCallback: EachFigureCallback<D>): void {
-  const result = indicator.result
+export interface PreparedIndicatorFigure<D = unknown> {
+  figure: IndicatorFigure<D>
+  defaultStyles: IndicatorFigureStyle
+  index: number
+}
+
+export function prepareIndicatorFigures<D = unknown>(indicator: Indicator<D>, defaultStyles: IndicatorStyle): Array<PreparedIndicatorFigure<D>> {
   const figures = indicator.figures
   const styles = indicator.styles
 
@@ -268,6 +273,7 @@ export function eachFigures<D = unknown>(indicator: Indicator<D>, dataIndex: num
   let barCount = 0
   let lineCount = 0
 
+  const preparedFigures: Array<PreparedIndicatorFigure<D>> = []
   let defaultFigureStyles: SmoothLineStyle | TextStyle | IndicatorFigureStyle
   let figureIndex = 0
   figures.forEach((figure) => {
@@ -303,18 +309,27 @@ export function eachFigures<D = unknown>(indicator: Indicator<D>, dataIndex: num
       }
     }
     if (isValid(figure.type)) {
-      const ss = figure.styles?.({
-        data: {
-          prev: result[dataIndex - 1],
-          current: result[dataIndex],
-          next: result[dataIndex + 1]
-        },
-        indicator,
-        barSpace,
-        defaultStyles
-      })
-      eachFigureCallback(figure, { ...defaultFigureStyles, ...ss }, figureIndex)
+      preparedFigures.push({ figure, defaultStyles: { ...defaultFigureStyles } as IndicatorFigureStyle, index: figureIndex })
     }
+  })
+  return preparedFigures
+}
+
+export function eachFigures<D = unknown>(indicator: Indicator<D>, dataIndex: number, barSpace: BarSpace, defaultStyles: IndicatorStyle, eachFigureCallback: EachFigureCallback<D>, preparedFigures = prepareIndicatorFigures(indicator, defaultStyles)): void {
+  const result = indicator.result
+  preparedFigures.forEach(({ figure, defaultStyles: defaultFigureStyles, index }) => {
+    const dynamicStyles = figure.styles?.({
+      data: {
+        prev: result[dataIndex - 1],
+        current: result[dataIndex],
+        next: result[dataIndex + 1]
+      },
+      indicator,
+      barSpace,
+      defaultStyles
+    })
+    const figureStyles = isValid(dynamicStyles) ? { ...defaultFigureStyles, ...dynamicStyles } : defaultFigureStyles
+    eachFigureCallback(figure, figureStyles, index)
   })
 }
 

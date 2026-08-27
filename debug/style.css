@@ -42,6 +42,13 @@ body {
   background: #f6f8fa;
 }
 
+#fps-meter {
+  margin-left: auto;
+  color: #57606a;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-variant-numeric: tabular-nums;
+}
+
 #period-switcher button,
 #load-forward,
 #add-backward {

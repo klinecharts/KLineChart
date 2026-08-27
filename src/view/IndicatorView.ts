@@ -18,7 +18,7 @@ import type { CandleColorCompareRule, SmoothLineStyle } from '../common/Styles'
 import { formatValue } from '../common/utils/format'
 import { isNumber, isValid } from '../common/utils/typeChecks'
 
-import { eachFigures, type IndicatorFigure, type IndicatorFigureAttrs, type IndicatorFigureStyle } from '../component/Indicator'
+import { eachFigures, type IndicatorFigure, type IndicatorFigureAttrs, type IndicatorFigureStyle, prepareIndicatorFigures } from '../component/Indicator'
 
 import CandleBarView, { type CandleBarOptions } from './CandleBarView'
 
@@ -91,6 +91,7 @@ export default class IndicatorView extends CandleBarView {
         }
         if (!isCover) {
           const result = indicator.result
+          const preparedFigures = prepareIndicatorFigures(indicator, defaultStyles)
           const lines: Array<Array<{ coordinates: Coordinate[]; styles: Partial<SmoothLineStyle> }>> = []
 
           this.eachChildren((data, barSpace) => {
@@ -118,86 +119,93 @@ export default class IndicatorView extends CandleBarView {
                 nextCoordinate[key] = yAxis.convertToPixel(nextValue)
               }
             })
-            eachFigures(indicator, dataIndex, barSpace, defaultStyles, (figure: IndicatorFigure, figureStyles: IndicatorFigureStyle, figureIndex: number) => {
-              if (isValid(currentData?.[figure.key])) {
-                const valueY = currentCoordinate[figure.key]
-                let attrs = figure.attrs?.({
-                  data: { prev: prevData, current: currentData, next: nextData },
-                  coordinate: { prev: prevCoordinate, current: currentCoordinate, next: nextCoordinate },
-                  bounding,
-                  barSpace,
-                  xAxis,
-                  yAxis
-                })
-                switch (figure.type) {
-                  case 'text': {
-                    attrs = {
-                      x,
-                      y: valueY,
-                      text: currentData?.[figure.key],
-                      align: 'center',
-                      baseline: 'middle',
-                      ...attrs
+            eachFigures(
+              indicator,
+              dataIndex,
+              barSpace,
+              defaultStyles,
+              (figure: IndicatorFigure, figureStyles: IndicatorFigureStyle, figureIndex: number) => {
+                if (isValid(currentData?.[figure.key])) {
+                  const valueY = currentCoordinate[figure.key]
+                  let attrs = figure.attrs?.({
+                    data: { prev: prevData, current: currentData, next: nextData },
+                    coordinate: { prev: prevCoordinate, current: currentCoordinate, next: nextCoordinate },
+                    bounding,
+                    barSpace,
+                    xAxis,
+                    yAxis
+                  })
+                  switch (figure.type) {
+                    case 'text': {
+                      attrs = {
+                        x,
+                        y: valueY,
+                        text: currentData?.[figure.key],
+                        align: 'center',
+                        baseline: 'middle',
+                        ...attrs
+                      }
+                      break
                     }
-                    break
+                    case 'circle': {
+                      attrs = { x, y: valueY, r: Math.max(1, halfGapBar), ...attrs }
+                      break
+                    }
+                    case 'rect':
+                    case 'bar': {
+                      const baseValue = figure.baseValue ?? yAxis.getRange().from
+                      const baseValueY = yAxis.convertToPixel(baseValue)
+                      let height = Math.abs(baseValueY - (valueY as number))
+                      if (baseValue !== currentData?.[figure.key]) {
+                        height = Math.max(1, height)
+                      }
+                      let y = 0
+                      if (valueY > baseValueY) {
+                        y = baseValueY
+                      } else {
+                        y = valueY
+                      }
+                      const barWidth = attrs?.width ?? halfGapBar * 2
+                      attrs = {
+                        x: x - barWidth / 2,
+                        y,
+                        width: Math.max(1, barWidth),
+                        height,
+                        ...attrs
+                      }
+                      break
+                    }
+                    case 'line': {
+                      if (!isValid(lines[figureIndex])) {
+                        lines[figureIndex] = []
+                      }
+                      if (isNumber(currentCoordinate[figure.key]) && isNumber(nextCoordinate[figure.key])) {
+                        lines[figureIndex].push({
+                          coordinates: attrs?.coordinates ?? [
+                            { x: currentCoordinate.x, y: currentCoordinate[figure.key] },
+                            { x: nextCoordinate.x, y: nextCoordinate[figure.key] }
+                          ],
+                          styles: figureStyles as unknown as SmoothLineStyle
+                        })
+                      }
+                      break
+                    }
+                    default: {
+                      break
+                    }
                   }
-                  case 'circle': {
-                    attrs = { x, y: valueY, r: Math.max(1, halfGapBar), ...attrs }
-                    break
-                  }
-                  case 'rect':
-                  case 'bar': {
-                    const baseValue = figure.baseValue ?? yAxis.getRange().from
-                    const baseValueY = yAxis.convertToPixel(baseValue)
-                    let height = Math.abs(baseValueY - (valueY as number))
-                    if (baseValue !== currentData?.[figure.key]) {
-                      height = Math.max(1, height)
-                    }
-                    let y = 0
-                    if (valueY > baseValueY) {
-                      y = baseValueY
-                    } else {
-                      y = valueY
-                    }
-                    const barWidth = attrs?.width ?? halfGapBar * 2
-                    attrs = {
-                      x: x - barWidth / 2,
-                      y,
-                      width: Math.max(1, barWidth),
-                      height,
-                      ...attrs
-                    }
-                    break
-                  }
-                  case 'line': {
-                    if (!isValid(lines[figureIndex])) {
-                      lines[figureIndex] = []
-                    }
-                    if (isNumber(currentCoordinate[figure.key]) && isNumber(nextCoordinate[figure.key])) {
-                      lines[figureIndex].push({
-                        coordinates: attrs?.coordinates ?? [
-                          { x: currentCoordinate.x, y: currentCoordinate[figure.key] },
-                          { x: nextCoordinate.x, y: nextCoordinate[figure.key] }
-                        ],
-                        styles: figureStyles as unknown as SmoothLineStyle
-                      })
-                    }
-                    break
-                  }
-                  default: {
-                    break
+                  const type = figure.type!
+                  if (isValid<IndicatorFigureAttrs>(attrs) && type !== 'line') {
+                    this.createFigure({
+                      name: type === 'bar' ? 'rect' : type,
+                      attrs,
+                      styles: figureStyles
+                    })?.draw(ctx)
                   }
                 }
-                const type = figure.type!
-                if (isValid<IndicatorFigureAttrs>(attrs) && type !== 'line') {
-                  this.createFigure({
-                    name: type === 'bar' ? 'rect' : type,
-                    attrs,
-                    styles: figureStyles
-                  })?.draw(ctx)
-                }
-              }
-            })
+              },
+              preparedFigures
+            )
           })
 
           // merge line and render

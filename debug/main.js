@@ -1,8 +1,9 @@
 import { dispose, init } from '../src/index.ts'
 
 const MINUTE = 60 * 1000
-const LOAD_BAR_COUNT = 100
+const LOAD_BAR_COUNT = 1000
 const STREAM_UPDATE_INTERVAL = 1000
+const FPS_UPDATE_INTERVAL = 500
 const PERIODS = [
   { key: 'time-sharing', period: { span: 1, type: 'minute' }, candleType: 'area' },
   { key: '1m', period: { span: 1, type: 'minute' }, candleType: 'candle_solid' },
@@ -14,7 +15,38 @@ const PERIODS = [
 
 let chart = null
 let streamTimer = null
+let fpsAnimationFrame = null
 let activePeriodKey = PERIODS[0].key
+
+function startFpsMonitor() {
+  const fpsMeter = document.getElementById('fps-meter')
+  if (fpsMeter === null) {
+    return
+  }
+
+  let frameCount = 0
+  let sampleStart = performance.now()
+
+  const measure = (timestamp) => {
+    frameCount++
+    const elapsed = timestamp - sampleStart
+    if (elapsed >= FPS_UPDATE_INTERVAL) {
+      fpsMeter.value = `FPS: ${Math.round((frameCount * 1000) / elapsed)}`
+      frameCount = 0
+      sampleStart = timestamp
+    }
+    fpsAnimationFrame = window.requestAnimationFrame(measure)
+  }
+
+  fpsAnimationFrame = window.requestAnimationFrame(measure)
+}
+
+function stopFpsMonitor() {
+  if (fpsAnimationFrame !== null) {
+    window.cancelAnimationFrame(fpsAnimationFrame)
+    fpsAnimationFrame = null
+  }
+}
 
 function getActivePeriodConfig() {
   return PERIODS.find(({ key }) => key === activePeriodKey) ?? PERIODS[0]
@@ -291,7 +323,15 @@ function mountChart() {
   chart.setDataLoader(createDataLoader())
   // const id = chart.createIndicator('EMA', true)
   // chart.createYAxis({ name: 'logarithm', position: 'left' })
-  chart.createIndicator({ name: 'EMA', paneId: 'new' })
+  chart.createIndicator({ name: 'MA', paneId: 'candle_pane' }, true)
+  chart.createIndicator({ name: 'EMA', paneId: 'candle_pane' }, true)
+  chart.createIndicator({ name: 'SAR', paneId: 'candle_pane' }, true)
+  chart.createIndicator({ name: 'BOLL', paneId: 'candle_pane' }, true)
+  chart.createIndicator('VOL')
+  chart.createIndicator('MACD')
+  chart.createIndicator('KDJ')
+  chart.createIndicator('RSI')
+
   // chart.createYAxis({ name: 'normal', position: 'left', paneId: 'new' })
   // chart.createIndicator('SAR', true)
   // chart.overrideIndicator({ id, yAxisId: 'new' })
@@ -311,6 +351,7 @@ function bindToolbar() {
 
 window.addEventListener('beforeunload', () => {
   stopRealtimeUpdates()
+  stopFpsMonitor()
   const chartDom = document.getElementById('chart')
   if (chartDom !== null) {
     dispose(chartDom)
@@ -319,3 +360,4 @@ window.addEventListener('beforeunload', () => {
 
 bindToolbar()
 mountChart()
+startFpsMonitor()
