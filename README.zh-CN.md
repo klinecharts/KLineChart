@@ -74,10 +74,10 @@ yarn add klinecharts
 在根目录下执行命令，需要 [Node.js](https://nodejs.org) 环境。
 ```bash
 # 安装依赖
-npm install
+pnpm install
 
 # 启动文档服务
-npm run docs:dev
+pnpm run docs:dev
 ```
 启动成功后，在浏览器中打开 http://localhost:8888。
 
@@ -86,10 +86,10 @@ npm run docs:dev
 在根目录下执行命令，需要 [Node.js](https://nodejs.org) 环境。
 ```bash
 # 安装依赖
-npm install
+pnpm install
 
 # 打包文件
-npm run build
+pnpm run build
 ```
 构建好的文件在`dist`文件夹。
 

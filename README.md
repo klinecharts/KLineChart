@@ -76,10 +76,10 @@ yarn add klinecharts
 Execute command in root directory. [Node.js](https://nodejs.org) is required.
 ```bash
 # Install the dependencies
-npm install
+pnpm install
 
 # Start document service
-npm run docs:dev
+pnpm run docs:dev
 ```
 After successful startup, open in the browser http://localhost:8888 .
 
@@ -87,10 +87,10 @@ After successful startup, open in the browser http://localhost:8888 .
 Execute command in root directory. [Node.js](https://nodejs.org) is required.
 ```bash
 # Install the dependencies
-npm install
+pnpm install
 
 # Build files
-npm run build
+pnpm run build
 ```
 The generated files are in the dist folder.
 
