@@ -267,8 +267,11 @@ export default class ChartImp implements Chart {
       this._layoutPending = true
       Promise.resolve()
         .then((_) => {
-          this._layout()
-          this._layoutPending = false
+          try {
+            this._layout()
+          } finally {
+            this._layoutPending = false
+          }
         })
         .catch((_: unknown) => {
           // todo
