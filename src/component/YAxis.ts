@@ -13,10 +13,11 @@
  */
 
 import type Bounding from '../common/Bounding'
+import type Nullable from '../common/Nullable'
 import { SymbolDefaultPrecisionConstants } from '../common/SymbolInfo'
 import { calcTextWidth } from '../common/utils/canvas'
 import { formatPrecision } from '../common/utils/format'
-import { getPrecision, index10, nice, round } from '../common/utils/number'
+import { getPrecision, index10, log10, nice, round } from '../common/utils/number'
 import { isFunction, isNumber, isString, isValid, merge } from '../common/utils/typeChecks'
 import type DrawPane from '../pane/DrawPane'
 import { PaneIdConstants } from '../pane/types'
@@ -38,6 +39,34 @@ export interface YAxis extends Axis, Required<YAxisTemplate> {
 
 export type YAxisConstructor = new (parent: DrawPane) => YAxis
 
+const Y_AXIS_WIDTH_GRID_PX = 4
+const Y_AXIS_WIDTH_SETTLE_MS = 400
+
+/**
+ * Replace every digit with a fixed representative so the measured width depends
+ * on the label's shape (length), not on which digits it currently holds.
+ */
+function stableWidthText(text: string, reserveSign: boolean): string {
+  const stable = text.replace(/[0-9]/g, '8')
+  return reserveSign && !stable.includes('-') ? `-${stable}` : stable
+}
+
+/**
+ * The widest label the crosshair can produce within the current decade of the
+ * range — the decade's top over whichever end is larger in magnitude. It does
+ * not move while the range drifts inside a decade and changes once when the
+ * data genuinely changes magnitude.
+ */
+function widthAnchorValue(range: AxisRange): number {
+  const { displayFrom, displayTo } = range
+  const magnitude = Math.max(Math.abs(displayFrom), Math.abs(displayTo))
+  if (!Number.isFinite(magnitude) || magnitude === 0) {
+    return displayTo
+  }
+  const anchored = 9.99 * index10(Math.floor(log10(magnitude)))
+  return displayFrom < 0 || displayTo < 0 ? -anchored : anchored
+}
+
 export default abstract class YAxisImp extends AxisImp implements YAxis {
   id = ''
   paneId = ''
@@ -48,6 +77,9 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
     top: 0.2,
     bottom: 0.1
   }
+
+  private _settledWidth: Nullable<number> = null
+  private _settledWidthLastNeededAt = 0
 
   createRange: AxisCreateRangeCallback = (params) => params.defaultRange
   minSpan: AxisMinSpanCallback = (precision) => index10(-precision)
@@ -376,14 +408,14 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
 
     if (lastPriceMarkTextVisible || crosshairHorizontalTextVisible) {
       const pricePrecision = chartStore.getSymbol()?.pricePrecision ?? SymbolDefaultPrecisionConstants.PRICE
-      const max = this.getRange().displayTo
+      const max = widthAnchorValue(this.getRange())
 
       if (lastPriceMarkTextVisible) {
         const dataList = chartStore.getDataList()
         const data = dataList[dataList.length - 1]
         if (isValid(data)) {
           const { paddingLeft, paddingRight, size, family, weight } = priceMarkStyles.last.text
-          lastPriceTextWidth = paddingLeft + calcTextWidth(formatPrecision(data.close, pricePrecision), size, weight, family) + paddingRight
+          lastPriceTextWidth = paddingLeft + calcTextWidth(stableWidthText(formatPrecision(data.close, pricePrecision), false), size, weight, family) + paddingRight
           const formatExtendText = chartStore.getInnerFormatter().formatExtendText
           priceMarkStyles.last.extendTexts.forEach((item, index) => {
             const text = formatExtendText({ type: 'last_price', data, index })
@@ -418,11 +450,43 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
           valueText = chartStore.getInnerFormatter().formatBigNumber(valueText)
         }
         valueText = chartStore.getDecimalFold().format(valueText)
+        valueText = stableWidthText(valueText, this.getRange().displayFrom < 0 || this.getRange().displayTo < 0)
         crosshairHorizontalTextWidth +=
           crosshairStyles.horizontal.text.paddingLeft + crosshairStyles.horizontal.text.paddingRight + crosshairStyles.horizontal.text.borderSize * 2 + calcTextWidth(valueText, crosshairStyles.horizontal.text.size, crosshairStyles.horizontal.text.weight, crosshairStyles.horizontal.text.family)
       }
     }
-    return Math.max(yAxisWidth, lastPriceTextWidth, crosshairHorizontalTextWidth)
+    return this._settleWidth(Math.max(yAxisWidth, lastPriceTextWidth, crosshairHorizontalTextWidth))
+  }
+
+  /**
+   * Grow immediately (a label must always fit) but shrink only after the wider
+   * label has been gone for a quiet moment, rounded up to a small pixel grid so
+   * digit noise cannot move the column.
+   */
+  private _settleWidth(measured: number): number {
+    if (!Number.isFinite(measured) || measured <= 0) {
+      return measured
+    }
+    const wanted = Math.ceil(measured / Y_AXIS_WIDTH_GRID_PX) * Y_AXIS_WIDTH_GRID_PX
+    const now = Date.now()
+    const held = this._settledWidth
+    if (held === null || wanted > held) {
+      this._settledWidth = wanted
+      this._settledWidthLastNeededAt = now
+      return wanted
+    }
+    // The stamp records when the held width was last NEEDED: the wait to give
+    // the room back starts when the wide label leaves and restarts if one returns.
+    if (wanted === held) {
+      this._settledWidthLastNeededAt = now
+      return held
+    }
+    if (now - this._settledWidthLastNeededAt >= Y_AXIS_WIDTH_SETTLE_MS) {
+      this._settledWidth = wanted
+      this._settledWidthLastNeededAt = now
+      return wanted
+    }
+    return held
   }
 
   protected override getBounding(): Bounding {
