@@ -63,6 +63,8 @@ const currentRatio: IndicatorTemplate<Cr, number> = {
     const ma3List: number[] = []
     let ma4Sum = 0
     const ma4List: number[] = []
+    let highSubSum = 0
+    let preMidSubSum = 0
     const result: Cr[] = []
     dataList.forEach((kLineData, i) => {
       const cr: Cr = {}
@@ -73,9 +75,19 @@ const currentRatio: IndicatorTemplate<Cr, number> = {
 
       const preMidSubLow = Math.max(0, prevMid - kLineData.low)
 
+      highSubSum += highSubPreMid
+      preMidSubSum += preMidSubLow
+      if (i >= params[0]) {
+        const outData = dataList[i - params[0]]
+        const outPrevData = dataList[i - params[0] - 1] ?? outData
+        const outPrevMid = (outPrevData.high + outPrevData.low) / 2
+        highSubSum -= Math.max(0, outData.high - outPrevMid)
+        preMidSubSum -= Math.max(0, outPrevMid - outData.low)
+      }
+
       if (i >= params[0] - 1) {
-        if (preMidSubLow !== 0) {
-          cr.cr = (highSubPreMid / preMidSubLow) * 100
+        if (preMidSubSum !== 0) {
+          cr.cr = (highSubSum / preMidSubSum) * 100
         } else {
           cr.cr = 0
         }
