@@ -290,7 +290,11 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
           const v = f.toFixed(precision)
           ticks[n] = { text: v, coord: 0, value: v }
           ++n
-          f += interval
+          const next = f + interval
+          if (next === f) {
+            break
+          }
+          f = next
         }
       }
     }
