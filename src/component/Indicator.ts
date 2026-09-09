@@ -411,12 +411,14 @@ export default class IndicatorImp<D = unknown, C = unknown, E = unknown> impleme
     }
     merge(this, others)
     if (isValid(calcParams)) {
-      this.calcParams = calcParams
+      this.calcParams = clone(calcParams)
       if (isFunction(this.regenerateFigures)) {
         this.figures = this.regenerateFigures(this.calcParams)
       }
     }
-    this.figures = figures ?? this.figures
+    if (isValid(figures)) {
+      this.figures = clone(figures)
+    }
   }
 
   setSeriesPrecision(precision: number): void {
