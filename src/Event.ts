@@ -419,7 +419,7 @@ export default class Event implements EventHandler {
   }
 
   mouseUpEvent(e: MouseTouchEvent): boolean {
-    const { widget } = this._findWidgetByEvent(e)
+    const widget = this._mouseDownWidget ?? this._findWidgetByEvent(e).widget
     let consumed = false
     if (widget !== null) {
       const event = this._makeWidgetEvent(e, widget)
