@@ -46,7 +46,16 @@ export function binarySearchNearest<T>(dataList: T[], valueKey: keyof T, targetV
       break
     }
   }
-  return left
+  let nearestIndex = left
+  let nearestDistance = Math.abs(Number(dataList[left][valueKey]) - Number(targetValue))
+  for (let i = left + 1; i <= right; i++) {
+    const distance = Math.abs(Number(dataList[i][valueKey]) - Number(targetValue))
+    if (distance < nearestDistance) {
+      nearestDistance = distance
+      nearestIndex = i
+    }
+  }
+  return nearestIndex
 }
 
 /**
