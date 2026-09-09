@@ -1796,6 +1796,7 @@ export default class StoreImp implements Store {
   }
 
   destroy(): void {
+    this._processDataUnsubscribe()
     this._clearData()
     this._clearLastPriceMarkExtendTextUpdateTimer()
     this._taskScheduler.clear()
