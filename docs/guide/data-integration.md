@@ -99,6 +99,30 @@ function normalizeToKLineData(data: any) {
 
 <Tip title="特别说明" :tip="['当图表内部确认已设置交易对与周期，并且可见区域需要数据时，才会触发 <code>getBars</code> 。']"/>
 
+### 完整数据流转
+
+图表内部的数据流转是固定的一条链路，理解它就不会对“数据什么时候进来、什么时候更新”感到困惑：
+
+```txt
+setSymbol(symbol) + setPeriod(period) + setDataLoader(loader)
+        │  三者都就绪后，图表才会发起第一次数据加载
+        ▼
+getBars({ type: 'init', timestamp: null, ... })
+        │  拉取历史数据，通过 callback(data, more) 回传给图表
+        ▼
+图表渲染历史数据，并自动调用 subscribeBar({ symbol, period, callback })
+        │  之后实时源每收到一条数据
+        ▼
+subscribeBar 的 callback(data) ──► 图表按 timestamp 合并到最后一根 K 线
+```
+
+几点说明：
+
+- 三个前置条件缺一不可：只调用 `setDataLoader(...)` 而没有 `setSymbol(...)` / `setPeriod(...)`，`getBars` 不会被触发，图表会一直空白。
+- `subscribeBar` 不需要你手动调用，`init` 的 `callback` 执行完成后，图表内部会自动调用它。
+- 再次调用 `setSymbol` / `setPeriod` / `resetData` 会重新走一遍这条链路：先触发 `unsubscribeBar`，再发起 `getBars({ type: 'init' })`。
+- `setSymbol` 中只有 `ticker` 是必填字段，`pricePrecision` / `volumePrecision` 可以省略，省略时分别使用默认值 `2` 和 `0`。
+
 ### getBars 拉取历史数据（含分页）
 
 `setDataLoader` 的 `getBars` 负责在需要历史数据时拉取并回填。
@@ -160,6 +184,8 @@ getBars: ({
 
 - 如果后端返回数量小于你的分页 size，通常可以认为这个方向已经没有更多数据
 - 如果后端明确返回 `hasMore` / `nextCursor`，优先使用后端结果
+
+另外需要注意：`more` 的两个方向相互独立。一个方向返回 `false` 只表示该方向已经没有更多数据，不会影响另一个方向的边界加载，即使其中一个方向已经耗尽，另一个方向的分页仍会正常触发。
 
 #### getBars 数据合并
 - `type: 'init'`：清空已有数据，并用新的数组覆盖当前数据。
@@ -254,6 +280,20 @@ chart.setDataLoader({
 })
 ```
 
+## 常见陷阱
+
+### 从 v9 升级后调用 applyNewData / updateData
+v9 的 `applyNewData(...)` 和 `updateData(...)` 在 v10 中已经被移除，v10 统一通过 `setDataLoader` 接入和管理数据。如果你从老版本迁移，请参考 [v9 迁移到 v10](./v9-to-v10.md)，用 `setDataLoader` 替代这两个方法。
+
+### 同步回调 + 恒为 true 的 more 造成循环加载
+如果 `getBars` 的 `callback` 是同步调用的，并且每次都返回 `more: true`，那么当可见区域一次就能装下全部数据时，图表会在边界连续触发加载，形成“加载循环”，表现为图表不断请求数据甚至来回滚动。建议：
+
+- `callback` 异步返回结果（先发起请求，等响应后再回调），避免在同一个事件循环里连续触发下一次加载
+- `more` 如实返回，该方向没有更多数据时返回 `false`
+
+### 只调用了 setDataLoader，图表一直空白
+`getBars` 只有在 `dataLoader`、`symbol`、`period` 三者都就绪后才会被触发。只调用 `setDataLoader(...)` 而忘记 `setSymbol(...)` 和 `setPeriod(...)` 时，加载不会开始，图表也不会有任何提示。
+
 ## 常见问题快速排查
 1. 图表没有任何数据
    - 确认 `getBars` 的实现里一定会调用 `callback(data)` 返回 `KLineData[]`
@@ -270,3 +310,6 @@ chart.setDataLoader({
    - 通常是分页边界时间处理不一致，或后端数据包含重复时间戳
 6. 技术指标数值不对
    - 先检查 `volume`、`turnover` 是否正确传递
+7. 想监听“数据更新”事件
+   - 图表没有数据更新相关的事件，实时数据本身就是由你的 `subscribeBar` 推送给图表的
+   - 如果需要感知可见区域变化（例如判断翻页加载时机），可以使用 `chart.subscribeAction('onVisibleRangeChange', ...)`，参考 [subscribeAction](../api/instance/subscribeAction.md)
