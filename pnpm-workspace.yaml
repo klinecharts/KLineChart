@@ -3,3 +3,7 @@ packages:
 
 allowBuilds:
   vue-demi: true
+
+minimumReleaseAgeExclude:
+  - '@rollup/*'
+  - rollup
