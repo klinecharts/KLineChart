@@ -1,5 +1,4 @@
 import { fileURLToPath, URL } from 'node:url'
-import { transformerTwoslash } from '@shikijs/vitepress-twoslash'
 import fs from 'fs'
 import path from 'path'
 import { defineConfig } from 'vitepress'
@@ -94,7 +93,6 @@ function config() {
         light: 'github-light',
         dark: 'github-dark'
       },
-      codeTransformers: [transformerTwoslash()],
       languages: ['js', 'jsx', 'ts', 'tsx']
     },
     head: [

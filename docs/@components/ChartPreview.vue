@@ -7,7 +7,11 @@ import * as t from '@babel/types'
 import stackBlitz from '@stackblitz/sdk'
 import { getParameters } from 'codesandbox/lib/api/define'
 import ResizeObserver from 'resize-observer-polyfill'
-import { codeToHtml } from 'shiki'
+import { createHighlighterCore } from 'shiki/core'
+import { createJavaScriptRegexEngine } from 'shiki/engine/javascript'
+import javascript from 'shiki/langs/javascript.mjs'
+import githubDark from 'shiki/themes/github-dark.mjs'
+import githubLight from 'shiki/themes/github-light.mjs'
 import { useData } from 'vitepress'
 import { onMounted, onUnmounted, ref, watch } from 'vue'
 
@@ -36,6 +40,17 @@ const copied = ref(false)
 
 const inBrowser = typeof window !== 'undefined'
 const version = ref('latest')
+
+let highlighterPromise
+
+function getHighlighter() {
+  highlighterPromise ??= createHighlighterCore({
+    themes: [githubLight, githubDark],
+    langs: [javascript],
+    engine: createJavaScriptRegexEngine()
+  })
+  return highlighterPromise
+}
 
 const handlerMessage = (e) => {
   if (e.data === props.chartId) {
@@ -154,7 +169,8 @@ onMounted(() => {
   href.value = location.href
   loading.value = true
   const highlightCode = async () => {
-    codeHtml.value = await codeToHtml(props.code, {
+    const highlighter = await getHighlighter()
+    codeHtml.value = highlighter.codeToHtml(props.code, {
       lang: 'javascript',
       themes: {
         light: 'github-light',
