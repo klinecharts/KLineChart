@@ -7,6 +7,14 @@ import { getThemeColorInitScript } from '../theme/theme-color'
 import enUS, { search as enUSSearch } from './en-US'
 import zhCN, { search as zhCNSearch } from './zh-CN'
 
+const siteUrl = 'https://klinecharts.com'
+const socialImageUrl = `${siteUrl}/images/social-card.png`
+
+function getPageUrl(page) {
+  const cleanPath = page.replace(/(^|\/)index\.(?:html|md)$/, '$1').replace(/\.(?:html|md)$/, '')
+  return `${siteUrl}/${cleanPath}`
+}
+
 function config() {
   const klinecharts = fs.readFileSync(path.join(path.dirname(process.cwd()), 'dist', 'umd', 'klinecharts.min.js'), { encoding: 'utf-8' })
   return defineConfig({
@@ -49,6 +57,35 @@ function config() {
     cleanUrls: true,
     metaChunk: true,
     title: 'KLineChart',
+    transformHead({ page, pageData, title, description }) {
+      if (pageData.isNotFound) {
+        return []
+      }
+
+      const url = getPageUrl(page)
+      const isEnglish = page.startsWith('en-US/')
+      const imageAlt = isEnglish ? 'KLineChart - Highly customizable lightweight financial chart' : 'KLineChart - 可高度自定义的轻量金融图表'
+
+      return [
+        ['link', { rel: 'canonical', href: url }],
+        ['meta', { property: 'og:type', content: 'website' }],
+        ['meta', { property: 'og:site_name', content: 'KLineChart' }],
+        ['meta', { property: 'og:title', content: title }],
+        ['meta', { property: 'og:description', content: description }],
+        ['meta', { property: 'og:url', content: url }],
+        ['meta', { property: 'og:image', content: socialImageUrl }],
+        ['meta', { property: 'og:image:type', content: 'image/png' }],
+        ['meta', { property: 'og:image:width', content: '1200' }],
+        ['meta', { property: 'og:image:height', content: '630' }],
+        ['meta', { property: 'og:image:alt', content: imageAlt }],
+        ['meta', { property: 'og:locale', content: isEnglish ? 'en_US' : 'zh_CN' }],
+        ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
+        ['meta', { name: 'twitter:title', content: title }],
+        ['meta', { name: 'twitter:description', content: description }],
+        ['meta', { name: 'twitter:image', content: socialImageUrl }],
+        ['meta', { name: 'twitter:image:alt', content: imageAlt }]
+      ]
+    },
     outDir: '../website',
     srcExclude: ['@components', '@views', '@i18n'],
     lastUpdated: true,
