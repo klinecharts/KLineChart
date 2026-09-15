@@ -41,6 +41,7 @@ import type IndicatorImp from './component/Indicator'
 import type { IndicatorCreate, IndicatorFilter, IndicatorOverride } from './component/Indicator'
 import type OverlayImp from './component/Overlay'
 import { OVERLAY_ID_PREFIX, type OverlayCreate, type OverlayFigure, type OverlayFilter, type OverlayOverride } from './component/Overlay'
+import { getSupportedLocales } from './extension/i18n/index'
 import { getIndicatorClass } from './extension/indicator/index'
 import { getOverlayInnerClass } from './extension/overlay/index'
 import { getStyles as getExtensionStyles } from './extension/styles/index'
@@ -481,6 +482,11 @@ export default class StoreImp implements Store {
   }
 
   setLocale(locale: string): void {
+    if (!getSupportedLocales().includes(locale)) {
+      logWarn('', '', `Locale ${locale} is not supported, fallback to en-US.`)
+      this._locale = 'en-US'
+      return
+    }
     this._locale = locale
   }
 
