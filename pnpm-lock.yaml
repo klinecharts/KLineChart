@@ -254,8 +254,8 @@ importers:
         specifier: ^8.2.0
         version: 8.3.0(@types/node@20.19.43)(jiti@2.6.1)(terser@5.51.2)
       vitepress:
-        specifier: 2.0.0-alpha.20
-        version: 2.0.0-alpha.20(@types/node@20.19.43)(jiti@2.6.1)(postcss@8.5.28)(terser@5.51.2)(typescript@5.9.3)
+        specifier: 2.0.0-alpha.19
+        version: 2.0.0-alpha.19(@types/node@20.19.43)(jiti@2.6.1)(postcss@8.5.28)(terser@5.51.2)(typescript@5.9.3)
 
   docs: {}
 
@@ -3337,8 +3337,8 @@ packages:
       yaml:
         optional: true
 
-  vitepress@2.0.0-alpha.20:
-    resolution: {integrity: sha512-uQWKmP9PaBkf9zxHn0iOml/ZPPDaGKqQXVMBHz3yjwyyd9Eg+BKLGxbqmOGlfOMCt6Fj8TLiAnE59qlKZ0A3xw==}
+  vitepress@2.0.0-alpha.19:
+    resolution: {integrity: sha512-WnBsb0Bwr43kXKyiis+lld/7ri3hnMbthS8N3hpFtjjwsdLO4IRmiAE08D7aud4q6oMDf9uwRowxzNqRFe/amw==}
     hasBin: true
     peerDependencies:
       markdown-it-mathjax3: ^4
@@ -6701,13 +6701,15 @@ snapshots:
       jiti: 2.6.1
       terser: 5.51.2
 
-  vitepress@2.0.0-alpha.20(@types/node@20.19.43)(jiti@2.6.1)(postcss@8.5.28)(terser@5.51.2)(typescript@5.9.3):
+  vitepress@2.0.0-alpha.19(@types/node@20.19.43)(jiti@2.6.1)(postcss@8.5.28)(terser@5.51.2)(typescript@5.9.3):
     dependencies:
       '@docsearch/css': 4.7.0
       '@docsearch/js': 4.7.0
       '@docsearch/sidepanel-js': 4.7.0
       '@iconify-json/simple-icons': 1.2.96
+      '@shikijs/core': 4.4.3
       '@shikijs/transformers': 4.4.3
+      '@shikijs/types': 4.4.3
       '@types/markdown-it': 14.2.0
       '@vitejs/plugin-vue': 6.0.8(vite@8.3.0(@types/node@20.19.43)(jiti@2.6.1)(terser@5.51.2))(vue@3.5.42(typescript@5.9.3))
       '@vue/devtools-api': 8.2.1

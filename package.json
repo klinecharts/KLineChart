@@ -98,6 +98,6 @@
     "tslib": "^2.8.1",
     "typescript": "^5.8.3",
     "vite": "^8.2.0",
-    "vitepress": "2.0.0-alpha.20"
+    "vitepress": "2.0.0-alpha.19"
   }
 }

@@ -1,10 +1,8 @@
 <script setup>
 import generator from '@babel/generator'
 import { parse } from '@babel/parser'
-import { transform } from '@babel/standalone'
 import traverse from '@babel/traverse'
 import * as t from '@babel/types'
-import stackBlitz from '@stackblitz/sdk'
 import { getParameters } from 'codesandbox/lib/api/define'
 import ResizeObserver from 'resize-observer-polyfill'
 import { createHighlighterCore } from 'shiki/core'
@@ -58,7 +56,8 @@ const handlerMessage = (e) => {
   }
 }
 
-function openStackBlitz() {
+async function openStackBlitz() {
+  const { default: stackBlitz } = await import('@stackblitz/sdk')
   const files = {
     'index.js': props.code,
     'index.html': `<div id="${props.chartId}" style="height: 400px"/>`
@@ -116,6 +115,14 @@ function getCodeSandboxParameters() {
     files['index.css'] = { content: props.css }
   }
   return getParameters({ files })
+}
+
+function submitCodeSandbox(event) {
+  event.currentTarget.elements.parameters.value = getCodeSandboxParameters()
+}
+
+function submitCodePen(event) {
+  event.currentTarget.elements.data.value = getCodePenParameters()
 }
 
 async function copyHandler() {
@@ -187,6 +194,19 @@ onMounted(() => {
       chartInitializedFlag.value = true
       const transformJs = props.code + '\n' + `window['chart_${props.chartId}'] = chart`
       const ast = parse(transformJs, { sourceType: 'module' })
+      ast.program.body = ast.program.body.map(node => {
+        if (t.isImportDeclaration(node) && node.source.value === 'klinecharts') {
+          return t.variableDeclaration('const', [
+            t.variableDeclarator(
+              t.objectPattern(node.specifiers.map(specifier =>
+                t.objectProperty(specifier.imported, specifier.local, false, specifier.imported.name === specifier.local.name)
+              )),
+              t.memberExpression(t.identifier('window'), t.identifier('klinecharts'))
+            )
+          ])
+        }
+        return node
+      })
       const tra = process.env.NODE_ENV === 'development' ? traverse.default : traverse
       tra(ast, {
         CallExpression(path) {
@@ -198,17 +218,14 @@ onMounted(() => {
       })
 
       const gen = process.env.NODE_ENV === 'development' ? generator.default : generator
-      const { code } = transform(gen(ast, {}, transformJs).code, {
-        presets: ['es2015', ['stage-3', { decoratorsBeforeExport: true }]],
-        plugins: ['transform-modules-umd']
-      })
+      const code = gen(ast, {}, transformJs).code
       const chartDom = document.createElement('div')
       const height = `${props.chartHeight || 350}px`
       chartDom.style.height = height
       chartDom.id = props.chartId
       chartContainer.value.appendChild(chartDom)
       const script = document.createElement('script')
-      script.innerHTML = code
+      script.textContent = `(() => {\n${code}\n})()`
       chartContainer.value.appendChild(script)
       window[`chart_${props.chartId}`].setStyles(isDark.value ? 'dark' : 'light')
     }
@@ -254,11 +271,11 @@ onUnmounted(() => {
       <form
         action="https://codesandbox.io/api/v1/sandboxes/define"
         method="POST"
-        target="_blank">
+        target="_blank"
+        @submit="submitCodeSandbox">
         <input
           type="hidden"
-          name="parameters"
-          :value="getCodeSandboxParameters()"/>
+          name="parameters"/>
         <button type="submit">
           <Tooltip :tip="i18n('component_chart_preview_open_in_codesandbox', lang)">
             <svg width="18px" height="18px" viewBox="0 0 24 24">
@@ -270,11 +287,11 @@ onUnmounted(() => {
       <form
         action="https://codepen.io/pen/define"
         method="POST"
-        target="_blank">
+        target="_blank"
+        @submit="submitCodePen">
         <input
           type="hidden"
-          name="data"
-          :value="getCodePenParameters()"/>
+          name="data"/>
         <button type="submit">
           <Tooltip :tip="i18n('component_chart_preview_open_in_codepen', lang)">
             <svg width="20px" height="20px" viewBox="0 0 24 24"><path stroke="none" d="m21.66 8.264l-9.18-6.12a.88.88 0 0 0-.966 0l-9.146 6.12c-.225.129-.354.451-.354.676v6.087c0 .258.129.548.354.741l9.147 6.087a.88.88 0 0 0 .966 0l9.146-6.087c.226-.129.355-.45.355-.74V8.94c.032-.257-.097-.547-.323-.676m-8.793-3.8l6.731 4.509l-3.06 1.996l-3.703-2.512c.032 0 .032-3.993.032-3.993m-1.707 0v3.993L7.424 10.97L4.43 8.973zM3.753 10.55L5.878 12l-2.125 1.45zm7.407 8.985l-6.73-4.509l2.994-1.996l3.736 2.512zm.87-5.475L8.97 12l3.06-2.061L15.09 12zm.837 5.475v-3.993l3.736-2.512l2.995 1.996zm7.407-6.087L18.15 12l2.125-1.45z"/></svg>
