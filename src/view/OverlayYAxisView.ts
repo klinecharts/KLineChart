@@ -66,7 +66,7 @@ export default class OverlayYAxisView<C extends Axis = YAxis> extends OverlayVie
           figures.push({ type: 'text', attrs: { x, y: coordinate.y, text, align: textAlign, baseline: 'middle' }, ignoreEvent: true })
         }
       })
-      if (coordinates.length > 1) {
+      if (coordinates.length > 1 && topY <= bottomY) {
         figures.unshift({ type: 'rect', attrs: { x: 0, y: topY, width: bounding.width, height: bottomY - topY }, ignoreEvent: true })
       }
     }
