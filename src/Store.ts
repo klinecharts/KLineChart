@@ -81,6 +81,8 @@ export const DEFAULT_MIN_TIME_SPAN = 15 * 60 * 1000
 export interface Store {
   setStyles: (value: string | DeepPartial<Styles>) => void
   getStyles: () => Styles
+  setLayoutOptions: (layout: DeepPartial<Layout>) => void
+  getLayoutOptions: () => DeepRequired<Layout>
   setFormatter: (formatter: Partial<Formatter>) => void
   getFormatter: () => Formatter
   setLocale: (locale: string) => void
@@ -463,6 +465,10 @@ export default class StoreImp implements Store {
 
   getStyles(): Styles {
     return this._styles
+  }
+
+  setLayoutOptions(layout: DeepPartial<Layout>): void {
+    merge(this._layoutOptions, layout)
   }
 
   setFormatter(formatter: Partial<Formatter>): void {
