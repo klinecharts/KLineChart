@@ -666,8 +666,7 @@ export default class StoreImp implements Store {
         this._chart.layout({
           measureWidth: true,
           update: true,
-          buildYAxisTick: true,
-          cacheYAxisWidth: type !== 'init'
+          buildYAxisTick: true
         })
       }
     }
@@ -840,8 +839,7 @@ export default class StoreImp implements Store {
     this._chart.layout({
       measureWidth: true,
       update: true,
-      buildYAxisTick: true,
-      cacheYAxisWidth: true
+      buildYAxisTick: true
     })
   }
 
@@ -866,8 +864,7 @@ export default class StoreImp implements Store {
       this._chart.layout({
         measureWidth: true,
         update: true,
-        buildYAxisTick: true,
-        cacheYAxisWidth: true
+        buildYAxisTick: true
       })
     }
     return this
@@ -929,8 +926,7 @@ export default class StoreImp implements Store {
     this._chart.layout({
       measureWidth: true,
       update: true,
-      buildYAxisTick: true,
-      cacheYAxisWidth: true
+      buildYAxisTick: true
     })
     const realDistance = Math.round(prevLastBarRightSideDistance - this._lastBarRightSideDiffBarCount * this._barSpace)
     if (realDistance !== 0) {
