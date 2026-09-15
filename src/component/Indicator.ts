@@ -23,7 +23,7 @@ import type ExcludePickPartial from '../common/ExcludePickPartial'
 import type Nullable from '../common/Nullable'
 import type { IndicatorPolygonStyle, IndicatorStyle, RectStyle, SmoothLineStyle, TextStyle, TooltipFeatureStyle, TooltipLegend } from '../common/Styles'
 import { formatValue } from '../common/utils/format'
-import { clone, isBoolean, isFunction, isNumber, isString, isValid, merge } from '../common/utils/typeChecks'
+import { clone, isBoolean, isFunction, isNumber, isString, isValid, merge, pickDefined } from '../common/utils/typeChecks'
 import type { ArcAttrs } from '../extension/figure/arc'
 import type { LineAttrs } from '../extension/figure/line'
 import type { RectAttrs } from '../extension/figure/rect'
@@ -407,9 +407,11 @@ export default class IndicatorImp<D = unknown, C = unknown, E = unknown> impleme
 
     if (isValid(styles)) {
       this.styles ??= {}
-      merge(this.styles, styles)
+      // pickDefined strips explicit `undefined` values so they mean
+      // "not provided" instead of resetting the current value (merge copies them otherwise).
+      merge(this.styles, pickDefined(styles))
     }
-    merge(this, others)
+    merge(this, pickDefined(others))
     if (isValid(calcParams)) {
       this.calcParams = calcParams
       if (isFunction(this.regenerateFigures)) {
