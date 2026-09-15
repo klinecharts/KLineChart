@@ -134,10 +134,13 @@ export default class SeparatorWidget extends Widget<SeparatorPane> {
         }
         const reducedPaneMinHeight = reducedPane.getOptions().minHeight
         if (startDragReducedPaneHeight > reducedPaneMinHeight) {
-          const reducedPaneHeight = Math.max(startDragReducedPaneHeight - Math.abs(dragDistance), reducedPaneMinHeight)
+          // Round the resulting heights: dragDistance can be fractional on browsers that
+          // report sub-pixel mouse/touch coordinates (zoom, HiDPI), and a fractional pane
+          // height never matches the integer clientHeight, forcing a full repaint on every update.
+          const reducedPaneHeight = Math.round(Math.max(startDragReducedPaneHeight - Math.abs(dragDistance), reducedPaneMinHeight))
           const diffHeight = startDragReducedPaneHeight - reducedPaneHeight
           reducedPane.setBounding({ height: reducedPaneHeight })
-          const increasedPaneHeight = startDragIncreasedPaneHeight + diffHeight
+          const increasedPaneHeight = Math.round(startDragIncreasedPaneHeight + diffHeight)
           increasedPane.setBounding({ height: increasedPaneHeight })
           reducedPane.setOptions({ height: reducedPaneHeight })
           increasedPane.setOptions({ height: increasedPaneHeight })
