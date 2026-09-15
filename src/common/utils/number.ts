@@ -21,32 +21,46 @@
  */
 export function binarySearchNearest<T>(dataList: T[], valueKey: keyof T, targetValue: T[keyof T]): number {
   let left = 0
-  let right = 0
-  for (right = dataList.length - 1; left !== right; ) {
-    const midIndex = Math.floor((right + left) / 2)
-    const mid = right - left
-    const midValue = dataList[midIndex][valueKey]
-    if (targetValue === dataList[left][valueKey]) {
+  let right = dataList.length - 1
+  let leftValue = dataList[left][valueKey]
+  let rightValue = dataList[right][valueKey]
+  while (left !== right) {
+    const span = right - left
+    const midIndex = left + Math.floor(span / 2)
+    if (targetValue === leftValue) {
       return left
     }
-    if (targetValue === dataList[right][valueKey]) {
+    if (targetValue === rightValue) {
       return right
     }
+    const midValue = dataList[midIndex][valueKey]
     if (targetValue === midValue) {
       return midIndex
     }
 
     if (targetValue > midValue) {
       left = midIndex
+      leftValue = midValue
     } else {
       right = midIndex
+      rightValue = midValue
     }
 
-    if (mid <= 2) {
+    if (span <= 2) {
       break
     }
   }
-  return left
+  let nearestIndex = left
+  const numericTarget = Number(targetValue)
+  let nearestDistance = Math.abs(Number(leftValue) - numericTarget)
+  for (let i = left + 1; i <= right; i++) {
+    const distance = Math.abs(Number(i === right ? rightValue : dataList[i][valueKey]) - numericTarget)
+    if (distance < nearestDistance) {
+      nearestDistance = distance
+      nearestIndex = i
+    }
+  }
+  return nearestIndex
 }
 
 /**
