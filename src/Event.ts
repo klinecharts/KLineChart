@@ -93,10 +93,10 @@ export default class Event implements EventHandler {
   private readonly _prevYAxisRanges = new Map<YAxisImp, Nullable<AxisRange>>()
 
   private _xAxisStartScaleCoordinate: Nullable<Coordinate> = null
-  private _xAxisStartScaleDistance = 0
+  private _xAxisStartScaleDistance: Nullable<number> = null
   private _xAxisScale = 1
 
-  private _yAxisStartScaleDistance = 0
+  private _yAxisStartScaleDistance: Nullable<number> = null
 
   private _mouseMoveTriggerWidgetInfo: EventTriggerWidgetInfo = { pane: null, widget: null }
 
@@ -441,9 +441,9 @@ export default class Event implements EventHandler {
     this._startScrollCoordinate = null
     this._prevYAxisRanges.clear()
     this._xAxisStartScaleCoordinate = null
-    this._xAxisStartScaleDistance = 0
+    this._xAxisStartScaleDistance = null
     this._xAxisScale = 1
-    this._yAxisStartScaleDistance = 0
+    this._yAxisStartScaleDistance = null
     return consumed
   }
 
@@ -642,9 +642,9 @@ export default class Event implements EventHandler {
       this._startScrollCoordinate = null
       this._prevYAxisRanges.clear()
       this._xAxisStartScaleCoordinate = null
-      this._xAxisStartScaleDistance = 0
+      this._xAxisStartScaleDistance = null
       this._xAxisScale = 1
-      this._yAxisStartScaleDistance = 0
+      this._yAxisStartScaleDistance = null
     }
     return false
   }
@@ -743,7 +743,7 @@ export default class Event implements EventHandler {
       this._chart.updatePane(UpdateLevel.Overlay)
     }
     this._xAxisStartScaleCoordinate = { x: event.x, y: event.y }
-    this._xAxisStartScaleDistance = event.pageX
+    this._xAxisStartScaleDistance = event.x
     return consumed
   }
 
@@ -751,8 +751,8 @@ export default class Event implements EventHandler {
     const consumed = widget.dispatchEvent('pressedMouseMoveEvent', event)
     if (!consumed) {
       const xAxis = (widget.getPane() as unknown as XAxisPane).getXAxisComponent()
-      if (xAxis.scrollZoomEnabled && this._xAxisStartScaleDistance !== 0) {
-        const scale = this._xAxisStartScaleDistance / event.pageX
+      if (xAxis.scrollZoomEnabled && this._xAxisStartScaleDistance !== null && this._xAxisStartScaleDistance !== 0 && event.x !== 0) {
+        const scale = this._xAxisStartScaleDistance / event.x
         if (Number.isFinite(scale)) {
           const zoomScale = (scale - this._xAxisScale) * 10
           this._xAxisScale = scale
@@ -773,7 +773,7 @@ export default class Event implements EventHandler {
     const yAxis = this._getYAxisScaleTargetByWidget(widget)
     const range = yAxis.getRange()
     this._prevYAxisRanges.set(yAxis, { ...range })
-    this._yAxisStartScaleDistance = event.pageY
+    this._yAxisStartScaleDistance = event.y
     return consumed
   }
 
@@ -783,9 +783,9 @@ export default class Event implements EventHandler {
       const yAxis = this._getYAxisByWidget(widget)
       const targetYAxis = this._getYAxisScaleTargetByWidget(widget)
       const prevYAxisRange = this._prevYAxisRanges.get(targetYAxis)
-      if (isValid(prevYAxisRange) && yAxis.scrollZoomEnabled && this._yAxisStartScaleDistance !== 0) {
+      if (isValid(prevYAxisRange) && yAxis.scrollZoomEnabled && this._yAxisStartScaleDistance !== null && this._yAxisStartScaleDistance !== 0 && event.y !== 0) {
         event.preventDefault?.()
-        const scaleFactor = event.pageY / this._yAxisStartScaleDistance
+        const scaleFactor = event.y / this._yAxisStartScaleDistance
         this._zoomYAxis(targetYAxis, scaleFactor, prevYAxisRange)
         this._syncManualYAxesValueRange(widget, targetYAxis)
       }
