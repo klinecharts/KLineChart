@@ -649,6 +649,26 @@ export default class Event implements EventHandler {
     return false
   }
 
+  touchCancelEvent(e: MouseTouchEvent): boolean {
+    const { widget } = this._findWidgetByEvent(e)
+    if (widget !== null) {
+      const event = this._makeWidgetEvent(e, widget)
+      // notify the widget the gesture is over, same as a touch end
+      widget.dispatchEvent('mouseUpEvent', event)
+    }
+    this._startScrollCoordinate = null
+    this._prevYAxisRanges.clear()
+    this._xAxisStartScaleCoordinate = null
+    this._xAxisStartScaleDistance = 0
+    this._xAxisScale = 1
+    this._yAxisStartScaleDistance = 0
+    this._touchCoordinate = null
+    this._touchCancelCrosshair = false
+    this._touchZoomed = false
+    this._chart.getChartStore().setCrosshair()
+    return true
+  }
+
   tapEvent(e: MouseTouchEvent): boolean {
     const { pane, widget } = this._findWidgetByEvent(e)
     let consumed = false
