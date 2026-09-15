@@ -1,1 +1,0 @@
-import{n as e}from"./theme.CpK40kS9.js";import{$ as t,gt as n,zt as r}from"./framework.CLgUg8g9.js";var i=JSON.parse(`{"js":"import { getSupportedFigures } from 'klinecharts'\\n\\nconst supports = getSupportedFigures()\\n"}`),a={__name:`index`,setup(a){return(a,o)=>(n(),t(e,{title:`getSupportedFigures`,hiddenChart:!0,code:r(i).js},null,8,[`code`]))}};export{a as t};
