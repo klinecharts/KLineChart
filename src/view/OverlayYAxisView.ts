@@ -80,6 +80,10 @@ export default class OverlayYAxisView<C extends Axis = YAxis> extends OverlayVie
     const yAxis = pane.getYAxisComponentById() as unknown as Nullable<YAxis>
     const xAxis = chart.getXAxisPane().getXAxisComponent()
     const bounding = widget.getBounding()
-    return overlay.createYAxisFigures?.({ chart, overlay, coordinates, bounding, xAxis, yAxis }) ?? []
+    try {
+      return overlay.createYAxisFigures?.({ chart, overlay, coordinates, bounding, xAxis, yAxis }) ?? []
+    } catch {
+      return []
+    }
   }
 }

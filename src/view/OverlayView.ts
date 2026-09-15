@@ -571,7 +571,11 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     const yAxis = pane.getYAxisComponentById() as unknown as Nullable<YAxis>
     const xAxis = chart.getXAxisPane().getXAxisComponent()
     const bounding = widget.getBounding()
-    return o.createPointFigures?.({ chart, overlay: o, coordinates, bounding, xAxis, yAxis }) ?? []
+    try {
+      return o.createPointFigures?.({ chart, overlay: o, coordinates, bounding, xAxis, yAxis }) ?? []
+    } catch {
+      return []
+    }
   }
 
   protected drawDefaultFigures(ctx: CanvasRenderingContext2D, overlay: OverlayImp, coordinates: Coordinate[]): void {
