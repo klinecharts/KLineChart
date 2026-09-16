@@ -147,6 +147,14 @@ export default class EventHandlerImp {
   private _unsubscribeRootMouseEvents: Nullable<() => void> = null
   private _unsubscribeRootTouchEvents: Nullable<() => void> = null
 
+  // `getBoundingClientRect()` forces a synchronous layout reflow. It is read on
+  // every mouse/touch event via `_makeCompatEvent`, so caching it removes layout
+  // thrashing during fast mousemove/touchmove bursts. The cache is invalidated on
+  // the events that can move or resize the target (scroll, resize, mouseEnter).
+  private _boundingRectCache: Nullable<DOMRect> = null
+  private _unsubscribeScroll: Nullable<() => void> = null
+  private _resizeObserver: Nullable<ResizeObserver> = null
+
   private _startPinchMiddleCoordinate: Nullable<Coordinate> = null
   private _startPinchDistance = 0
   private _pinchPrevented = false
@@ -170,6 +178,7 @@ export default class EventHandlerImp {
     this._options = options
 
     this._init()
+    this._initBoundingRectCache()
   }
 
   destroy(): void {
@@ -213,11 +222,23 @@ export default class EventHandlerImp {
       this._unsubscribeMobileSafariEvents = null
     }
 
+    if (this._unsubscribeScroll !== null) {
+      this._unsubscribeScroll()
+      this._unsubscribeScroll = null
+    }
+
+    this._resizeObserver?.disconnect()
+    this._resizeObserver = null
+    this._boundingRectCache = null
+
     this._clearLongTapTimeout()
     this._resetClickTimeout()
   }
 
   private _mouseEnterHandler(enterEvent: MouseEvent): void {
+    // The cached rect may be stale if the target moved between hover sessions;
+    // refresh at the start of each interaction session.
+    this._invalidateBoundingRect()
     this._unsubscribeMousemove?.()
     this._unsubscribeMouseWheel?.()
     this._unsubscribeContextMenu?.()
@@ -733,6 +754,37 @@ export default class EventHandlerImp {
     this._target.addEventListener('touchmove', () => {}, { passive: false })
   }
 
+  private _initBoundingRectCache(): void {
+    // Page scroll shifts the target's viewport position (`box.left/top`), so the
+    // cache must be invalidated whenever the page is scrolled. Passive listener:
+    // never blocks scrolling, only refreshes the cached rect before the next read.
+    const invalidate = (): void => {
+      this._boundingRectCache = null
+    }
+    window.addEventListener('scroll', invalidate, { passive: true, capture: true })
+    this._unsubscribeScroll = () => {
+      window.removeEventListener('scroll', invalidate, { capture: true })
+    }
+
+    // A ResizeObserver on the target covers size changes (window resize, layout
+    // shifts) without forcing a reflow on every event.
+    if (isValid(ResizeObserver)) {
+      this._resizeObserver = new ResizeObserver(invalidate)
+      this._resizeObserver.observe(this._target)
+    }
+  }
+
+  private _readBoundingRect(): DOMRect {
+    if (this._boundingRectCache === null) {
+      this._boundingRectCache = this._target.getBoundingClientRect()
+    }
+    return this._boundingRectCache
+  }
+
+  private _invalidateBoundingRect(): void {
+    this._boundingRectCache = null
+  }
+
   private _initPinch(): void {
     if (!isValid(this._handler.pinchStartEvent) && !isValid(this._handler.pinchEvent) && !isValid(this._handler.pinchEndEvent)) {
       return
@@ -780,7 +832,7 @@ export default class EventHandlerImp {
   }
 
   private _startPinch(touches: TouchList): void {
-    const box = this._target.getBoundingClientRect()
+    const box = this._readBoundingRect()
     this._startPinchMiddleCoordinate = {
       x: (touches[0].clientX - box.left + (touches[1].clientX - box.left)) / 2,
       y: (touches[0].clientY - box.top + (touches[1].clientY - box.top)) / 2
@@ -859,7 +911,7 @@ export default class EventHandlerImp {
     // TouchEvent has no clientX/Y coordinates:
     // We have to use the last Touch instead
     const eventLike = touch ?? (event as MouseEvent)
-    const box = this._target.getBoundingClientRect()
+    const box = this._readBoundingRect()
     return {
       x: eventLike.clientX - box.left,
       y: eventLike.clientY - box.top,
