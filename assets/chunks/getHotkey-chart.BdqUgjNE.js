@@ -1,0 +1,1 @@
+import{n as e}from"./theme.CVLqDTWx.js";import{$ as t,gt as n,zt as r}from"./framework.DHZLtyCS.js";var i=JSON.parse(`{"js":"import { getHotkey } from 'klinecharts'\\n\\nconst hotkey = getHotkey('zoomIn')\\n"}`),a={__name:`index`,setup(a){return(a,o)=>(n(),t(e,{title:`getHotkey`,hiddenChart:!0,code:r(i).js},null,8,[`code`]))}};export{a as t};
