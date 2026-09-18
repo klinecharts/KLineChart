@@ -1,12 +1,13 @@
 <script setup>
-import { useData, withBase } from 'vitepress'
+import { useData } from 'vitepress'
 import { computed } from 'vue'
 
 import i18n from '../../@i18n'
 import { useInView } from './composables/useInView.js'
 import Section from './Section.vue'
+import UseCaseIllustration from './UseCaseIllustration.vue'
 
-const { lang, isDark } = useData()
+const { lang } = useData()
 const { target: casesRef, isVisible } = useInView()
 
 const items = computed(() =>
@@ -32,14 +33,7 @@ const items = computed(() =>
         :style="{ '--stagger-delay': `${index * 0.07}s` }"
       >
         <div class="illustration-wrap" aria-hidden="true">
-          <img
-            class="illustration"
-            :src="withBase(`/images/use-cases/use-case-${item.variant}-${isDark ? 'dark' : 'light'}.png`)"
-            :alt="''"
-            width="160"
-            height="120"
-            loading="lazy"
-          >
+          <UseCaseIllustration class="illustration" :variant="item.variant" />
         </div>
         <div class="use-case-body home-card-body">
           <h3>{{ item.title }}</h3>
