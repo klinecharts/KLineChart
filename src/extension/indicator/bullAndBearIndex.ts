@@ -50,7 +50,7 @@ const bullAndBearIndex: IndicatorTemplate<Bbi, number> = {
         mas.forEach((ma) => {
           maSum += ma
         })
-        bbi.bbi = maSum / 4
+        bbi.bbi = params.length > 0 ? maSum / params.length : 0
       }
       return bbi
     })
