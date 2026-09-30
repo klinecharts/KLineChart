@@ -56,6 +56,7 @@ export interface EventHandler {
 
   mouseUpEvent?: MouseTouchEventCallback
   touchEndEvent?: MouseTouchEventCallback
+  touchCancelEvent?: MouseTouchEventCallback
 
   mouseDownOutsideEvent?: MouseTouchEventCallback
 
@@ -514,6 +515,26 @@ export default class EventHandlerImp {
     }
   }
 
+  private _touchCancelHandler(touchCancelEvent: TouchEvent): void {
+    const touch = this._touchWithId(touchCancelEvent.changedTouches, this._activeTouchId)
+    this._activeTouchId = null
+    this._lastTouchEventTimeStamp = this._eventTimeStamp(touchCancelEvent)
+    this._clearLongTapTimeout()
+    this._touchMoveStartCoordinate = null
+    // a cancelled gesture must not resolve into a tap
+    this._cancelTap = true
+    this._resetTapTimeout()
+
+    if (this._unsubscribeRootTouchEvents !== null) {
+      this._unsubscribeRootTouchEvents()
+      this._unsubscribeRootTouchEvents = null
+    }
+
+    if (touch !== null) {
+      this._processEvent(this._makeCompatEvent(touchCancelEvent, touch), this._handler.touchCancelEvent)
+    }
+  }
+
   private _mouseUpHandler(mouseUpEvent: MouseEvent): void {
     if (mouseUpEvent.button !== MouseEventButton.Left) {
       return
@@ -589,14 +610,17 @@ export default class EventHandlerImp {
     {
       const boundTouchMoveWithDownHandler = this._touchMoveHandler.bind(this)
       const boundTouchEndHandler = this._touchEndHandler.bind(this)
+      const boundTouchCancelHandler = this._touchCancelHandler.bind(this)
 
       this._unsubscribeRootTouchEvents = () => {
         rootElement.removeEventListener('touchmove', boundTouchMoveWithDownHandler)
         rootElement.removeEventListener('touchend', boundTouchEndHandler)
+        rootElement.removeEventListener('touchcancel', boundTouchCancelHandler)
       }
 
       rootElement.addEventListener('touchmove', boundTouchMoveWithDownHandler, { passive: false })
       rootElement.addEventListener('touchend', boundTouchEndHandler, { passive: false })
+      rootElement.addEventListener('touchcancel', boundTouchCancelHandler, { passive: false })
 
       this._clearLongTapTimeout()
       this._longTapTimeoutId = setTimeout(this._longTapHandler.bind(this, downEvent), Delay.LongTap)
