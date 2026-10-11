@@ -9,6 +9,7 @@ const { lang } = useData()
 
 const userLogos = {
   pandaai: '/images/users/pandaai.png',
+  openvlab: '/images/users/openvlab.png',
   dolphindb: '/images/users/dolphindb.svg',
   fmz: '/images/users/fmz.svg',
   northstar: '/images/users/Northstar.png',
@@ -20,6 +21,12 @@ const users = computed(() => [
     name: '同花顺',
     logo: userLogos.ths,
     website: 'https://www.10jqka.com.cn/'
+  },
+  {
+    name: 'OpenVlab',
+    logo: userLogos.openvlab,
+    website: 'https://www.openvlab.cn/',
+    showName: true
   },
   {
     name: 'PandaAI',
