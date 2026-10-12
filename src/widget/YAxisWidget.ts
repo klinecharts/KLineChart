@@ -56,7 +56,9 @@ export default class YAxisWidget extends DrawWidget<DrawPane<YAxis>> {
   }
 
   override updateOverlay(ctx: CanvasRenderingContext2D): void {
-    this._overlayYAxisView.draw(ctx)
+    if (this.getPane().isDefaultYAxis(this._yAxis.id)) {
+      this._overlayYAxisView.draw(ctx)
+    }
     this._crosshairHorizontalLabelView.draw(ctx)
   }
 }
