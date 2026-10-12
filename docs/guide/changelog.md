@@ -1,5 +1,23 @@
 # 📠 更新日志
 
+## 10.0.4
+`2026-10-13`
++ 💄 合并同一事件循环内连续数据更新触发的指标重算，减少实时数据批量更新时的重复计算。[@NemeZZiZZ](https://github.com/NemeZZiZZ)
++ 💄 对拖动分隔线后的窗口高度取整，避免子像素高度导致持续全量重绘。[@NemeZZiZZ](https://github.com/NemeZZiZZ)
++ 🐞 修复布局执行异常后等待状态未重置，导致后续布局不再执行的问题。[@NemeZZiZZ](https://github.com/NemeZZiZZ)
++ 🐞 修复销毁图表时未取消数据加载器订阅的问题。[@NemeZZiZZ](https://github.com/NemeZZiZZ)
++ 🐞 修复指标 `figures` 仅按引用比较导致更新判断不准确的问题。[@NemeZZiZZ](https://github.com/NemeZZiZZ)
++ 🐞 修复触摸手势被取消后仍保留拖动、缩放或十字光标状态的问题。[@NemeZZiZZ](https://github.com/NemeZZiZZ)
++ 🐞 修复内置指标 `BBI` 使用自定义参数数量时仍固定除以 4 的问题。[@NemeZZiZZ](https://github.com/NemeZZiZZ)
++ 🐞 修复内置指标 `CR` 未按计算周期累计上涨值和下跌值的问题。[@NemeZZiZZ](https://github.com/NemeZZiZZ)
++ 🐞 修复鼠标抬起和移出图表时，事件可能未正确分发给原目标组件的问题。[@NemeZZiZZ](https://github.com/NemeZZiZZ)
++ 🐞 修复覆盖指标配置时 `calcParams` 和 `figures` 与外部对象共享引用，以及显式传入 `undefined` 会覆盖已有值的问题。[@NemeZZiZZ](https://github.com/NemeZZiZZ)
++ 🐞 修复 y 轴宽度会随实时标签内容频繁抖动的问题。[@NemeZZiZZ](https://github.com/NemeZZiZZ)
++ 🐞 修复 y 轴刻度间隔小于浮点数精度时可能陷入死循环的问题。[@NemeZZiZZ](https://github.com/NemeZZiZZ)
++ 🐞 修复 `binarySearchNearest` 在目标值不存在时可能返回搜索区间边界，而非最近数据的问题。[@NemeZZiZZ](https://github.com/NemeZZiZZ)
++ 🐞 修复设置未注册语言时可能抛出异常的问题，现在会回退到 `en-US`。[@NemeZZiZZ](https://github.com/NemeZZiZZ)
+
+
 ## 10.0.3
 `2026-08-28`
 + 🆕 覆盖物新增 `fixedZLevel` 配置，支持在悬停时保持设定的 `zLevel`。[@Togetic](https://github.com/Togetic)
