@@ -1,0 +1,1 @@
+import{n as e}from"./theme.Byp9oMHS.js";import{$ as t,gt as n,zt as r}from"./framework.DUf9qmgg.js";var i=JSON.parse(`{"js":"import { version } from 'klinecharts'\\n\\nconst v = version()\\n"}`),a={__name:`index`,setup(a){return(a,o)=>(n(),t(e,{title:`version`,hiddenChart:!0,code:r(i).js},null,8,[`code`]))}};export{a as t};
