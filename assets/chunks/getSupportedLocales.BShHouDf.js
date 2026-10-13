@@ -1,0 +1,1 @@
+import{n as e}from"./theme.nkzHOo4K.js";import{$ as t,gt as n,zt as r}from"./framework.DUf9qmgg.js";var i=JSON.parse(`{"js":"import { getSupportedLocales } from 'klinecharts'\\n\\nconst supports = getSupportedLocales()\\n"}`),a={__name:`index`,setup(a){return(a,o)=>(n(),t(e,{title:`getSupportedLocales`,hiddenChart:!0,code:r(i).js},null,8,[`code`]))}};export{a as t};
