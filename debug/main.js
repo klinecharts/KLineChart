@@ -1,6 +1,7 @@
 import { dispose, init } from '../src/index.ts'
 
 const MINUTE = 60 * 1000
+const UNIX_EPOCH_TIMESTAMP = 0
 const LOAD_BAR_COUNT = 1000
 const STREAM_UPDATE_INTERVAL = 1000
 const FPS_UPDATE_INTERVAL = 500
@@ -16,7 +17,7 @@ const PERIODS = [
 let chart = null
 let streamTimer = null
 let fpsAnimationFrame = null
-let activePeriodKey = PERIODS[0].key
+let activePeriodKey = '15m'
 
 function startFpsMonitor() {
   const fpsMeter = document.getElementById('fps-meter')
@@ -71,6 +72,10 @@ function getPeriodDuration(period) {
     default:
       return MINUTE
   }
+}
+
+function alignTimestampToPeriod(timestamp, duration) {
+  return UNIX_EPOCH_TIMESTAMP + Math.floor((timestamp - UNIX_EPOCH_TIMESTAMP) / duration) * duration
 }
 
 function setActivePeriodButton() {
@@ -228,7 +233,8 @@ function createDataLoader() {
       switch (type) {
         case 'init': {
           const duration = getPeriodDuration(period)
-          dataList = createBackDataList(2680, (timestamp ?? Date.now()) - LOAD_BAR_COUNT * duration, period)
+          const currentTimestamp = alignTimestampToPeriod(timestamp ?? Date.now(), duration)
+          dataList = createBackDataList(2680, currentTimestamp - LOAD_BAR_COUNT * duration, period)
           break
         }
         case 'forward': {
@@ -246,7 +252,7 @@ function createDataLoader() {
       }
       // callback(dataList, { forward: true, backward: true })
       setTimeout(() => {
-        callback(dataList, { forward: false, backward: false })
+        callback(dataList, { forward: true, backward: false })
       }, 1000)
     },
     subscribeBar: ({ period, callback }) => {
