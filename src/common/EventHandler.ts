@@ -628,6 +628,11 @@ export default class EventHandlerImp {
 
     this._processEvent(this._makeCompatEvent(downEvent, touch), this._handler.touchStartEvent)
 
+    // A tap outside the double tap distance starts its own sequence, as a mouse press does below.
+    if (this._tapTimeoutId !== null && this._mouseTouchMoveWithDownInfo(this._getCoordinate(touch), this._tapCoordinate).manhattanDistance >= ManhattanDistance.DoubleTap) {
+      this._resetTapTimeout()
+    }
+
     if (this._tapTimeoutId === null) {
       this._tapCount = 0
       this._tapTimeoutId = setTimeout(this._resetTapTimeout.bind(this), Delay.ResetClick)
@@ -680,6 +685,12 @@ export default class EventHandlerImp {
     }
 
     this._processEvent(this._makeCompatEvent(downEvent), this._handler.mouseDownEvent)
+
+    // A press outside the double click distance starts its own sequence. Otherwise its release is
+    // classified against the earlier click and dropped as neither a click nor a double click.
+    if (this._clickTimeoutId !== null && this._mouseTouchMoveWithDownInfo(this._getCoordinate(downEvent), this._clickCoordinate).manhattanDistance >= ManhattanDistance.DoubleClick) {
+      this._resetClickTimeout()
+    }
 
     if (this._clickTimeoutId === null) {
       this._clickCount = 0
