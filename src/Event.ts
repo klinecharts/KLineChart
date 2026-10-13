@@ -387,6 +387,19 @@ export default class Event implements EventHandler {
     if (this._mouseDownWidget !== null && this._mouseDownWidget.getName() === WidgetNameConstants.SEPARATOR) {
       return this._mouseDownWidget.dispatchEvent('pressedMouseMoveEvent', e)
     }
+    // An axis keeps its pressed drag until release, so dragging past the axis bounds
+    // keeps scrolling or scaling instead of stopping (#794).
+    const downWidget = this._mouseDownWidget
+    if (downWidget !== null) {
+      switch (downWidget.getName()) {
+        case WidgetNameConstants.X_AXIS: {
+          return this._processXAxisScrollingEvent(downWidget as Widget<DrawPane<XAxis>>, this._makeWidgetEvent(e, downWidget))
+        }
+        case WidgetNameConstants.Y_AXIS: {
+          return this._processYAxisScalingEvent(downWidget as Widget<DrawPane<YAxisImp>>, this._makeWidgetEvent(e, downWidget))
+        }
+      }
+    }
     const { pane, widget } = this._findWidgetByEvent(e)
     if (widget !== null && this._mouseDownWidget?.getPane().getId() === pane?.getId() && this._mouseDownWidget?.getName() === widget.getName()) {
       const event = this._makeWidgetEvent(e, widget)
@@ -406,12 +419,6 @@ export default class Event implements EventHandler {
           }
           this._chart.getChartStore().setCrosshair(crosshair, { forceInvalidate: true })
           return consumed
-        }
-        case WidgetNameConstants.X_AXIS: {
-          return this._processXAxisScrollingEvent(widget as Widget<DrawPane<XAxis>>, event)
-        }
-        case WidgetNameConstants.Y_AXIS: {
-          return this._processYAxisScalingEvent(widget as Widget<DrawPane<YAxisImp>>, event)
         }
       }
     }
