@@ -42,7 +42,7 @@ const link = computed(() => (lang.value === 'en-US' ? '/en-US/sponsor' : '/spons
   width: 100%;
   max-width: 1120px;
   gap: 8px;
-  padding: 22px;
+  padding: 30px 22px 22px 22px;
   text-decoration: none;
   --home-reveal-distance: 20px;
   --home-reveal-delay: .75s;
