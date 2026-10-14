@@ -534,10 +534,7 @@ export default class Event implements EventHandler {
             this._chart.updatePane(UpdateLevel.Overlay)
             return true
           }
-          if (this._flingScrollAnimation !== null) {
-            this._flingScrollAnimation.cancel()
-            this._flingScrollAnimation = null
-          }
+          this.stopFlingScroll()
           this._flingStartTime = performance.now()
 
           const yAxes = (pane as DrawPane<YAxisImp>).getYAxisComponents()
@@ -910,9 +907,13 @@ export default class Event implements EventHandler {
     }
   }
 
-  destroy(): void {
+  stopFlingScroll(): void {
     this._flingScrollAnimation?.cancel()
     this._flingScrollAnimation = null
+  }
+
+  destroy(): void {
+    this.stopFlingScroll()
     document.removeEventListener('keydown', this._boundKeyBoardDownEvent)
     this._event.destroy()
   }

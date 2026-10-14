@@ -1136,6 +1136,7 @@ export default class ChartImp implements Chart {
   }
 
   scrollByDistance(distance: number, animationDuration?: number): void {
+    this._chartEvent.stopFlingScroll()
     const duration = isNumber(animationDuration) && animationDuration > 0 ? animationDuration : 0
     this._chartStore.startScroll()
     if (duration > 0) {
