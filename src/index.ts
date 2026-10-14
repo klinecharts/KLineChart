@@ -49,7 +49,7 @@ import { getOverlayClass, getSupportedOverlays, registerOverlay } from './extens
 import { registerStyles } from './extension/styles/index'
 import { registerXAxis } from './extension/x-axis'
 import { registerYAxis } from './extension/y-axis'
-import type { FormatDateType, Options, ZoomAnchor } from './Options'
+import type { FormatDateType, Layout, Options, ZoomAnchor } from './Options'
 
 const charts = new Map<string, ChartImp>()
 let chartBaseId = 1
@@ -163,6 +163,7 @@ export {
   getSupportedOverlays,
   type IndicatorSeries,
   init,
+  type Layout,
   type LineType,
   type OverlayDrawingMode,
   type OverlayMode,

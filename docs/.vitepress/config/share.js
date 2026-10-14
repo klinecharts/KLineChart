@@ -34,6 +34,8 @@ export function getInstanceApiMenus (lang = '') {
     { text: 'getSize', link: `${prefix}/getSize` },
     { text: 'setStyles', link: `${prefix}/setStyles` },
     { text: 'getStyles', link: `${prefix}/getStyles` },
+    { text: 'setLayoutOptions', link: `${prefix}/setLayoutOptions` },
+    { text: 'getLayoutOptions', link: `${prefix}/getLayoutOptions` },
     { text: 'setFormatter', link: `${prefix}/setFormatter` },
     { text: 'getFormatter', link: `${prefix}/getFormatter` },
     { text: 'setLocale', link: `${prefix}/setLocale` },
