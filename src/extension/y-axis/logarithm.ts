@@ -15,17 +15,25 @@
 import { index10, log10 } from '../../common/utils/number'
 import type { AxisTemplate } from '../../component/Axis'
 
+function valueToLogarithm(value: number): number {
+  return value < 0 ? -log10(1 - value) : log10(1 + value)
+}
+
+function logarithmToValue(value: number): number {
+  return value < 0 ? 1 - index10(-value) : index10(value) - 1
+}
+
 const logarithm: AxisTemplate = {
   name: 'logarithm',
   minSpan: (precision) => 0.05 * index10(-precision),
-  valueToRealValue: (value) => log10(value),
-  realValueToDisplayValue: (value) => index10(value),
-  displayValueToRealValue: (value) => log10(value),
-  realValueToValue: (value) => index10(value),
+  valueToRealValue: (value) => valueToLogarithm(value),
+  realValueToDisplayValue: (value) => logarithmToValue(value),
+  displayValueToRealValue: (value) => valueToLogarithm(value),
+  realValueToValue: (value) => logarithmToValue(value),
   createRange: ({ defaultRange }) => {
     const { from, to, range } = defaultRange
-    const realFrom = log10(from)
-    const realTo = log10(to)
+    const realFrom = valueToLogarithm(from)
+    const realTo = valueToLogarithm(to)
     return {
       from,
       to,
