@@ -131,6 +131,8 @@ Custom types: `registerIndicator(...)` / `registerOverlay(...)` — register bef
 | Method | Purpose |
 |--------|---------|
 | `setStyles(partial)` | Update styles (shallow merge) |
+| `setLayoutOptions(partial)` | Update defaults for subsequently created panes and y-axes |
+| `getLayoutOptions()` | Get the complete current default layout options |
 | `setPaneOptions(opts)` | Pane height/state |
 | `overrideYAxis(opts)` | Y-axis position/ticks |
 | `subscribeAction(type, cb)` | Crosshair, click, etc. |
@@ -155,6 +157,8 @@ init(container, {
   styles: 'dark'
 })
 ```
+
+To change layout defaults after initialization, use `setLayoutOptions(partial)`. It merges incrementally and only affects panes and y-axes created afterward; use `setPaneOptions`, `overrideYAxis`, or `overrideXAxis` for existing chart elements. Use `getLayoutOptions()` to read the complete current defaults.
 
 ## v9 → v10 migration
 

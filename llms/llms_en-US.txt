@@ -62,10 +62,12 @@ Instance‑level APIs configure a specific chart and drive interactions. All mar
   - `getPeriod.md`, `setPeriod.md`
   - `getSymbol.md`, `setSymbol.md`
 - **Layout, panes, styles**
+  - `setLayoutOptions.md`, `getLayoutOptions.md`
   - `setPaneOptions.md`, `getPaneOptions.md`
   - Axis configuration is handled separately by `overrideYAxis.md` and `overrideXAxis.md`.
   - `resize.md`, `getSize.md`
   - `setStyles.md`, `getStyles.md`
+  - `setLayoutOptions(layout)` incrementally updates defaults for panes and y-axes created afterward; it does not modify existing panes or axes. `getLayoutOptions()` returns the complete current defaults.
 - **Scroll / zoom / viewport**
   - `scrollByDistance.md`, `scrollToDataIndex.md`, `scrollToTimestamp.md`, `scrollToRealTime.md`
   - `zoomAtDataIndex.md`, `zoomAtTimestamp.md`, `zoomAtCoordinate.md`

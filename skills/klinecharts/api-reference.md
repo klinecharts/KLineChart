@@ -24,7 +24,9 @@
 
 **Styles:** `setStyles`, `setFormatter`, `setLocale`, `setTimezone`
 
-**Layout:** `setPaneOptions`, `overrideYAxis`, `overrideXAxis`, `getDom`, `getSize`, `resize`
+**Layout:** `setLayoutOptions`, `getLayoutOptions`, `setPaneOptions`, `getPaneOptions`, `overrideYAxis`, `overrideXAxis`, `getDom`, `getSize`, `resize`
+
+`setLayoutOptions(partial)` incrementally updates the defaults used by panes and y-axes created afterward. It does not update existing panes or axes. `getLayoutOptions()` returns the complete current default layout configuration.
 
 **Interaction:** `scrollToRealTime`, `scrollByDistance`, `scrollToTimestamp`, `zoomAtCoordinate`, `setBarSpace`, `subscribeAction`, `unsubscribeAction`, `convertToPixel`, `convertFromPixel`, `getConvertPictureUrl`
 

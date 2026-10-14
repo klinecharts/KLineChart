@@ -93,6 +93,12 @@ init(container, {
 })
 ```
 
+运行时默认布局 API：
+
+- `chart.setLayoutOptions(layout)`：增量更新默认布局，只影响调用之后新建的窗口和 Y 轴，不修改现有窗口或坐标轴
+- `chart.getLayoutOptions()`：获取当前完整的默认布局配置，包括 `barSpaceLimit`、`pane` 和 `yAxis`
+- 修改现有窗口或坐标轴时，分别使用 `setPaneOptions(options)`、`overrideYAxis(options)` 或 `overrideXAxis(options)`
+
 ---
 
 4) 数据加载约定（必须对齐源码类型）
@@ -202,7 +208,7 @@ init(container, {
 
 源码对应的核心文件线索（LLM 定位用）：
 - `src/index.ts`：对外导出 `init/dispose` 以及各类 register/getSupported API
-- `src/Chart.ts`：Chart 实现，包含 `createIndicator` / `createOverlay` / `setDataLoader` / `overrideYAxis` / `overrideXAxis` / `setZoomAnchor` / `getZoomAnchor` 等实例方法
+- `src/Chart.ts`：Chart 实现，包含 `createIndicator` / `createOverlay` / `setDataLoader` / `setLayoutOptions` / `getLayoutOptions` / `overrideYAxis` / `overrideXAxis` / `setZoomAnchor` / `getZoomAnchor` 等实例方法
 
 ---
 
