@@ -31,6 +31,24 @@ export function merge(target: any, source: any): void {
   }
 }
 
+export function pickDefined<T>(target: T): T {
+  if (!isObject(target) || isArray(target)) {
+    return target
+  }
+  // biome-ignore lint/suspicious/noExplicitAny: The copied container is populated dynamically.
+  const copy: any = {}
+  for (const key in target) {
+    // biome-ignore lint/suspicious/noPrototypeBuiltins: Object.hasOwn is unavailable for the ES5 target.
+    if (Object.prototype.hasOwnProperty.call(target, key) as boolean) {
+      const value = target[key]
+      if (value !== undefined) {
+        copy[key] = pickDefined(value)
+      }
+    }
+  }
+  return copy
+}
+
 export function clone<T>(target: T): T {
   if (!isObject(target)) {
     return target

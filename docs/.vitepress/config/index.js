@@ -1,5 +1,5 @@
+import { createHash } from 'node:crypto'
 import { fileURLToPath, URL } from 'node:url'
-import { transformerTwoslash } from '@shikijs/vitepress-twoslash'
 import fs from 'fs'
 import path from 'path'
 import { defineConfig } from 'vitepress'
@@ -7,8 +7,30 @@ import { getThemeColorInitScript } from '../theme/theme-color'
 import enUS, { search as enUSSearch } from './en-US'
 import zhCN, { search as zhCNSearch } from './zh-CN'
 
+const siteUrl = 'https://klinecharts.com'
+const socialImageUrl = `${siteUrl}/images/social-card.png`
+
+function getPageUrl(page) {
+  const cleanPath = page.replace(/(^|\/)index\.(?:html|md)$/, '$1').replace(/\.(?:html|md)$/, '')
+  return `${siteUrl}/${cleanPath}`
+}
+
+function getPageTitle(pageData) {
+  const title = pageData.title || 'KLineChart'
+  const template = pageData.titleTemplate
+  if (typeof template === 'string' && template.includes(':title')) {
+    return template.replace(/:title/g, title)
+  }
+  if (template === false || title === 'KLineChart') {
+    return title
+  }
+  return `${title} | ${template === true || template === undefined ? 'KLineChart' : template}`
+}
+
 function config() {
-  const klinecharts = fs.readFileSync(path.join(path.dirname(process.cwd()), 'dist', 'umd', 'klinecharts.min.js'), { encoding: 'utf-8' })
+  const rootDir = path.dirname(process.cwd())
+  const klcSource = fs.readFileSync(path.join(rootDir, 'dist', 'umd', 'klinecharts.min.js'), { encoding: 'utf-8' })
+  const klcProdSourcePath = `assets/klinecharts.${createHash('sha256').update(klcSource).digest('hex').slice(0, 8)}.min.js`
   return defineConfig({
     vite: {
       server: {
@@ -49,7 +71,7 @@ function config() {
     cleanUrls: true,
     metaChunk: true,
     title: 'KLineChart',
-    outDir: '../website',
+    outDir: path.join(rootDir, 'website'),
     srcExclude: ['@components', '@views', '@i18n'],
     lastUpdated: true,
     markdown: {
@@ -57,13 +79,11 @@ function config() {
         light: 'github-light',
         dark: 'github-dark'
       },
-      codeTransformers: [transformerTwoslash()],
       languages: ['js', 'jsx', 'ts', 'tsx']
     },
     head: [
       ['link', { rel: 'icon', type: 'image/x-icon', href: '/images/fav.png' }],
       ['script', {}, getThemeColorInitScript()],
-      ['script', {}, `${klinecharts}`],
       [
         'script',
         {},
@@ -113,6 +133,41 @@ function config() {
     },
     sitemap: {
       hostname: 'https://www.klinecharts.com'
+    },
+    transformPageData(pageData) {
+      const page = pageData.relativePath
+      const url = getPageUrl(page)
+      const isEnglish = page.startsWith('en-US/')
+      const title = getPageTitle(pageData)
+      const description = pageData.description || (isEnglish ? enUS.description : zhCN.description)
+      const imageAlt = isEnglish ? 'KLineChart - Highly customizable lightweight financial chart' : 'KLineChart - 可高度自定义的轻量金融图表'
+      const klcHead = process.env.NODE_ENV === 'production' ? ['script', { src: `/${klcProdSourcePath}` }] : ['script', {}, klcSource]
+      const head = [
+        ['link', { rel: 'canonical', href: url }],
+        ['meta', { property: 'og:type', content: 'website' }],
+        ['meta', { property: 'og:site_name', content: 'KLineChart' }],
+        ['meta', { property: 'og:title', content: title }],
+        ['meta', { property: 'og:description', content: description }],
+        ['meta', { property: 'og:url', content: url }],
+        ['meta', { property: 'og:image', content: socialImageUrl }],
+        ['meta', { property: 'og:image:type', content: 'image/png' }],
+        ['meta', { property: 'og:image:width', content: '1200' }],
+        ['meta', { property: 'og:image:height', content: '630' }],
+        ['meta', { property: 'og:image:alt', content: imageAlt }],
+        ['meta', { property: 'og:locale', content: isEnglish ? 'en_US' : 'zh_CN' }],
+        ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
+        ['meta', { name: 'twitter:title', content: title }],
+        ['meta', { name: 'twitter:description', content: description }],
+        ['meta', { name: 'twitter:image', content: socialImageUrl }],
+        ['meta', { name: 'twitter:image:alt', content: imageAlt }],
+        klcHead
+      ]
+      pageData.frontmatter.head = [...(pageData.frontmatter.head ?? []), ...head]
+    },
+    buildEnd(siteConfig) {
+      const klcOutput = path.join(siteConfig.outDir, klcProdSourcePath)
+      fs.mkdirSync(path.dirname(klcOutput), { recursive: true })
+      fs.writeFileSync(klcOutput, klcSource)
     }
   })
 }

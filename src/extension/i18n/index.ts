@@ -30,7 +30,7 @@ function getSupportedLocales(): string[] {
 }
 
 function i18n(key: string, locale: string): string {
-  return locales[locale][key] ?? key
+  return locales[locale]?.[key] ?? key
 }
 
 export { getSupportedLocales, i18n, registerLocale }

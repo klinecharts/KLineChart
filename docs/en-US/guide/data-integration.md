@@ -99,6 +99,30 @@ Among the three functions in `setDataLoader({ getBars, subscribeBar, unsubscribe
 
 <Tip title="Special Note" :tip="['<code>getBars</code> is triggered only after the chart has confirmed that symbol and period are set, and the visible area requires data.']"/>
 
+### Full Data Flow
+
+The data flow inside the chart is a fixed pipeline. Once you understand it, you will no longer be confused about "when data comes in and when it updates":
+
+```txt
+setSymbol(symbol) + setPeriod(period) + setDataLoader(loader)
+        │  The chart starts the first data load only after all three are ready
+        ▼
+getBars({ type: 'init', timestamp: null, ... })
+        │  Fetch historical data and return it to the chart through callback(data, more)
+        ▼
+The chart renders the historical data and automatically calls subscribeBar({ symbol, period, callback })
+        │  Afterwards, every time the real-time source receives a record
+        ▼
+subscribeBar's callback(data) ──► the chart merges it into the last bar by timestamp
+```
+
+A few notes:
+
+- All three prerequisites are required: if you only call `setDataLoader(...)` without `setSymbol(...)` / `setPeriod(...)`, `getBars` will never be triggered and the chart will stay blank.
+- You do not need to call `subscribeBar` yourself; the chart calls it automatically once the `init` `callback` has finished.
+- Calling `setSymbol` / `setPeriod` / `resetData` again re-runs this pipeline: `unsubscribeBar` fires first, then a new `getBars({ type: 'init' })` starts.
+- In `setSymbol` only `ticker` is required; `pricePrecision` / `volumePrecision` may be omitted, in which case the default values `2` and `0` are used.
+
 ### getBars Fetches Historical Data (Including Pagination)
 
 The `getBars` function in `setDataLoader` is responsible for fetching and returning historical data when needed.
@@ -160,6 +184,8 @@ A practical rule is:
 
 - If the backend returns fewer items than your page size, that direction usually has no more data
 - If the backend explicitly returns `hasMore` or `nextCursor`, prefer the backend result
+
+Also note that the two directions of `more` are independent. Returning `false` for one direction only means that direction has no more data; it does not affect boundary loading in the other direction. Even if one direction is exhausted, pagination in the other direction will still be triggered normally.
 
 #### getBars Data Merge
 - `type: 'init'`: clears existing data and replaces it with the new array.
@@ -254,6 +280,20 @@ chart.setDataLoader({
 })
 ```
 
+## Common Pitfalls
+
+### Calling applyNewData / updateData After Upgrading from v9
+The v9 methods `applyNewData(...)` and `updateData(...)` have been removed in v10. In v10, data integration and management go through `setDataLoader` only. If you are migrating from an older version, see [v9 to v10](./v9-to-v10.md) and replace these two methods with `setDataLoader`.
+
+### Synchronous Callback + Always-True `more` Causes a Loading Loop
+If the `callback` of `getBars` is invoked synchronously and always returns `more: true`, then when all the data fits in the visible area at once, the chart will keep triggering loads at the boundary, forming a "loading loop" — the chart keeps requesting data and may even scroll back and forth. Recommendations:
+
+- Return the result asynchronously from `callback` (start the request first, call back when the response arrives), so the next load is not triggered within the same event loop
+- Return `more` honestly: use `false` when a direction has no more data
+
+### Only setDataLoader Is Called and the Chart Stays Blank
+`getBars` is triggered only when `dataLoader`, `symbol`, and `period` are all ready. If you only call `setDataLoader(...)` and forget `setSymbol(...)` and `setPeriod(...)`, loading never starts and the chart gives no hint about it.
+
 ## Quick Troubleshooting
 1. No data on the chart at all
    - Make sure `getBars` definitely calls `callback(data)` and returns `KLineData[]`
@@ -270,3 +310,6 @@ chart.setDataLoader({
    - Usually the pagination boundary timestamp is handled inconsistently, or the backend data contains duplicate timestamps
 6. Indicator values are incorrect
    - First check whether `volume` and `turnover` are passed correctly
+7. Want to listen for a "data update" event
+   - The chart has no data-update event; real-time data is pushed to the chart by your own `subscribeBar`
+   - If you need to be aware of visible-range changes (for example, to time pagination loading), use `chart.subscribeAction('onVisibleRangeChange', ...)`, see [subscribeAction](../api/instance/subscribeAction.md)

@@ -1,0 +1,9 @@
+packages:
+  - docs
+
+allowBuilds:
+  vue-demi: true
+
+minimumReleaseAgeExclude:
+  - '@rollup/*'
+  - rollup

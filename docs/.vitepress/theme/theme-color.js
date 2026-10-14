@@ -1,8 +1,8 @@
-export const THEME_COLOR_STORAGE_KEY = 'klinecharts-primary-color'
-export const THEME_COLOR_STYLE_ID = 'klinecharts-theme-color-style'
+export const THEME_COLOR_STORAGE_KEY = 'klc-primary-color'
+export const THEME_COLOR_STYLE_ID = 'klc-theme-color-style'
 export const DEFAULT_THEME_COLOR = '#E6AC00'
 
-export function normalizeThemeColor (color) {
+export function normalizeThemeColor(color) {
   if (typeof color !== 'string') {
     return null
   }
@@ -10,7 +10,7 @@ export function normalizeThemeColor (color) {
   return /^#[0-9a-fA-F]{6}$/.test(value) ? value.toUpperCase() : null
 }
 
-export function lightenThemeColor (color, percent) {
+export function lightenThemeColor(color, percent) {
   const normalized = color.replace(/^#/, '')
 
   let r = parseInt(normalized.substring(0, 2), 16)
@@ -21,15 +21,10 @@ export function lightenThemeColor (color, percent) {
   g = Math.min(255, Math.floor(g + (255 - g) * (percent / 100)))
   b = Math.min(255, Math.floor(b + (255 - b) * (percent / 100)))
 
-  return (
-    '#' +
-    [r, g, b]
-      .map(x => x.toString(16).padStart(2, '0'))
-      .join('')
-  )
+  return '#' + [r, g, b].map((x) => x.toString(16).padStart(2, '0')).join('')
 }
 
-export function themeColorToRgba (hex, alpha) {
+export function themeColorToRgba(hex, alpha) {
   const r = parseInt(hex.slice(1, 3), 16)
   const g = parseInt(hex.slice(3, 5), 16)
   const b = parseInt(hex.slice(5, 7), 16)
@@ -37,7 +32,7 @@ export function themeColorToRgba (hex, alpha) {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`
 }
 
-export function createThemeColorStyleText (color) {
+export function createThemeColorStyleText(color) {
   const targetColor = normalizeThemeColor(color) || DEFAULT_THEME_COLOR
   return `
 :root {
@@ -52,7 +47,7 @@ export function createThemeColorStyleText (color) {
 }`
 }
 
-export function applyThemeColorStyle (color, doc = document) {
+export function applyThemeColorStyle(color, doc = document) {
   const styleText = createThemeColorStyleText(color)
   let style = doc.getElementById(THEME_COLOR_STYLE_ID)
   if (!style) {
@@ -63,7 +58,7 @@ export function applyThemeColorStyle (color, doc = document) {
   style.textContent = styleText
 }
 
-export function getThemeColorInitScript () {
+export function getThemeColorInitScript() {
   return `(function () {
   var STORAGE_KEY = '${THEME_COLOR_STORAGE_KEY}'
   var STYLE_ID = '${THEME_COLOR_STYLE_ID}'

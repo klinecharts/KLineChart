@@ -125,7 +125,6 @@ export default class ChartImp implements Chart {
     secondMeasureWidth: false,
     update: true,
     buildYAxisTick: false,
-    cacheYAxisWidth: false,
     forceBuildYAxisTick: false
   }
 
@@ -145,8 +144,6 @@ export default class ChartImp implements Chart {
       })
     }
   }
-
-  private readonly _cacheYAxisWidth = { left: 0, right: 0 }
 
   constructor(container: HTMLElement, options?: Options) {
     this._initContainer(container)
@@ -239,7 +236,7 @@ export default class ChartImp implements Chart {
     return this._separatorPanes
   }
 
-  layout(options: { sort?: boolean; measureHeight?: boolean; measureWidth?: boolean; secondMeasureWidth?: boolean; update?: boolean; buildYAxisTick?: boolean; cacheYAxisWidth?: boolean; forceBuildYAxisTick?: boolean }): void {
+  layout(options: { sort?: boolean; measureHeight?: boolean; measureWidth?: boolean; secondMeasureWidth?: boolean; update?: boolean; buildYAxisTick?: boolean; forceBuildYAxisTick?: boolean }): void {
     if (options.sort ?? false) {
       this._layoutUpdateOptions.sort = options.sort!
     }
@@ -257,9 +254,6 @@ export default class ChartImp implements Chart {
     }
     if (options.buildYAxisTick ?? false) {
       this._layoutUpdateOptions.buildYAxisTick = options.buildYAxisTick!
-    }
-    if (options.cacheYAxisWidth ?? false) {
-      this._layoutUpdateOptions.cacheYAxisWidth = options.cacheYAxisWidth!
     }
     if (options.forceBuildYAxisTick ?? false) {
       this._layoutUpdateOptions.forceBuildYAxisTick = options.forceBuildYAxisTick!
@@ -281,7 +275,7 @@ export default class ChartImp implements Chart {
   }
 
   private _layout(): void {
-    const { sort, measureHeight, measureWidth, secondMeasureWidth, update, buildYAxisTick, cacheYAxisWidth, forceBuildYAxisTick } = this._layoutUpdateOptions
+    const { sort, measureHeight, measureWidth, secondMeasureWidth, update, buildYAxisTick, forceBuildYAxisTick } = this._layoutUpdateOptions
     if (sort) {
       while (isValid(this._chartContainer.firstChild)) {
         this._chartContainer.removeChild(this._chartContainer.firstChild)
@@ -419,16 +413,8 @@ export default class ChartImp implements Chart {
           })
         })
 
-        let leftYAxisWidth = leftOutsideYAxisWidths.reduce((total, width) => total + width, 0)
-        let rightYAxisWidth = rightOutsideYAxisWidths.reduce((total, width) => total + width, 0)
-
-        if (cacheYAxisWidth) {
-          leftYAxisWidth = Math.max(this._cacheYAxisWidth.left, leftYAxisWidth)
-          rightYAxisWidth = Math.max(this._cacheYAxisWidth.right, rightYAxisWidth)
-        }
-
-        this._cacheYAxisWidth.left = leftYAxisWidth
-        this._cacheYAxisWidth.right = rightYAxisWidth
+        const leftYAxisWidth = leftOutsideYAxisWidths.reduce((total, width) => total + width, 0)
+        const rightYAxisWidth = rightOutsideYAxisWidths.reduce((total, width) => total + width, 0)
 
         let mainWidth = totalWidth
         let mainLeft = 0
@@ -525,7 +511,6 @@ export default class ChartImp implements Chart {
       secondMeasureWidth: false,
       update: false,
       buildYAxisTick: false,
-      cacheYAxisWidth: false,
       forceBuildYAxisTick: false
     }
   }

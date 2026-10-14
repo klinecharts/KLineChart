@@ -1,5 +1,23 @@
 # 📠 Change Log
 
+## 10.0.4
+`2026-10-13`
++ 💄 Coalesce indicator recalculations triggered by consecutive data updates in the same event loop, reducing duplicate work during realtime batch updates. [@NemeZZiZZ](https://github.com/NemeZZiZZ)
++ 💄 Round pane heights after separator dragging to prevent subpixel dimensions from causing continuous full repaints. [@NemeZZiZZ](https://github.com/NemeZZiZZ)
++ 🐞 Fix the pending state not being reset after a layout error, which prevented subsequent layouts from running. [@NemeZZiZZ](https://github.com/NemeZZiZZ)
++ 🐞 Fix data loader subscriptions not being removed when a chart is destroyed. [@NemeZZiZZ](https://github.com/NemeZZiZZ)
++ 🐞 Fix inaccurate indicator update detection caused by comparing `figures` only by reference. [@NemeZZiZZ](https://github.com/NemeZZiZZ)
++ 🐞 Fix drag, zoom, and crosshair state remaining active after a touch gesture is cancelled. [@NemeZZiZZ](https://github.com/NemeZZiZZ)
++ 🐞 Fix the built-in `BBI` indicator always dividing by 4 when a custom number of parameters is used. [@NemeZZiZZ](https://github.com/NemeZZiZZ)
++ 🐞 Fix the built-in `CR` indicator not accumulating upward and downward values over the configured period. [@NemeZZiZZ](https://github.com/NemeZZiZZ)
++ 🐞 Fix mouse-up and chart-leave events potentially not being dispatched to the original target widget. [@NemeZZiZZ](https://github.com/NemeZZiZZ)
++ 🐞 Fix `calcParams` and `figures` sharing references with external objects after indicator overrides, and explicit `undefined` values replacing existing options. [@NemeZZiZZ](https://github.com/NemeZZiZZ)
++ 🐞 Fix y-axis width jitter caused by frequently changing realtime label content. [@NemeZZiZZ](https://github.com/NemeZZiZZ)
++ 🐞 Fix a potential infinite loop when the y-axis tick interval is smaller than floating-point precision. [@NemeZZiZZ](https://github.com/NemeZZiZZ)
++ 🐞 Fix `binarySearchNearest` potentially returning a search-window edge instead of the nearest item when the target value does not exist. [@NemeZZiZZ](https://github.com/NemeZZiZZ)
++ 🐞 Fix an exception when setting an unregistered locale; it now falls back to `en-US`. [@NemeZZiZZ](https://github.com/NemeZZiZZ)
+
+
 ## 10.0.3
 `2026-08-28`
 + 🆕 Add the `fixedZLevel` overlay option to preserve the configured `zLevel` while hovered. [@Togetic](https://github.com/Togetic)

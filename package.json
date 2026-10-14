@@ -1,6 +1,6 @@
 {
   "name": "klinecharts",
-  "version": "10.0.3",
+  "version": "10.0.4",
   "description": "Lightweight k-line chart built with html5 canvas",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -61,13 +61,13 @@
     "build-core": "pnpm build-esm && pnpm build-cjs && pnpm build-umd",
     "build-dts": "node scripts/build/build-dts.js",
     "build": "pnpm clean && pnpm build-core && pnpm build-dts",
-    "docs:dev": "pnpm -F=docs dev",
-    "docs:build": "pnpm build-umd:prod && pnpm -F=docs build",
-    "docs:preview": "pnpm -F=docs preview",
+    "docs:dev": "pnpm --filter docs --fail-if-no-match dev",
+    "docs:build": "pnpm build-umd:prod && pnpm --filter docs --fail-if-no-match build",
+    "docs:preview": "pnpm --filter docs --fail-if-no-match preview",
     "docs:deploy": "pnpm docs:build && gh-pages -d website",
     "debug": "vite --host 0.0.0.0 debug"
   },
-  "packageManager": "pnpm@10.4.1",
+  "packageManager": "pnpm@12.4.1",
   "devDependencies": {
     "@babel/generator": "^7.26.9",
     "@babel/parser": "^7.26.9",
@@ -82,7 +82,6 @@
     "@rollup/plugin-replace": "^6.0.3",
     "@rollup/plugin-terser": "^1.0.0",
     "@rollup/plugin-typescript": "^12.3.0",
-    "@shikijs/vitepress-twoslash": "^3.2.2",
     "@stackblitz/sdk": "^1.9.0",
     "@types/node": "^20.19.41",
     "@vueuse/core": "^11.1.0",
