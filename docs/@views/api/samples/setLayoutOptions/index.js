@@ -3,7 +3,6 @@ import { init } from 'klinecharts'
 const chart = init('setLayoutOptions-chart')
 chart.setLayoutOptions({
   yAxis: {
-    inside: true,
     position: 'left'
   }
 })

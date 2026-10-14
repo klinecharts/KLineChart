@@ -24,12 +24,4 @@ import SetLayoutOptions from '../../../@views/api/samples/setLayoutOptions/index
 </script>
 
 ### Basic {#basic}
-
-```javascript
-chart.setLayoutOptions({
-  yAxis: {
-    inside: true,
-    position: 'left'
-  }
-})
-```
+<SetLayoutOptions/>
