@@ -1,5 +1,17 @@
 # 📠 更新日志
 
+## 10.1.0
+`2026-10-15`
++ 🆕 新增实例方法 `setLayoutOptions(options)` 和 `getLayoutOptions()`，支持在初始化后修改和获取默认布局配置。[@NemeZZiZZ](https://github.com/NemeZZiZZ) [@liihuu](https://github.com/liihuu)
++ 🆕 支持通过回调动态设置蜡烛图、指标 OHLC、最新价线及标签的颜色。[@liihuu](https://github.com/liihuu)
++ 💄 优化时间轴刻度生成：按时间层级选择并缓存刻度，提升滚动时的显示稳定性和性能。[@liihuu](https://github.com/liihuu)
++ 🐞 修复调用 `scrollByDistance` 时可能与尚未结束的惯性滚动发生冲突的问题。[@liihuu](https://github.com/liihuu)
++ 🐞 修复拖动坐标轴时，指针离开坐标轴区域后滚动或缩放会中断的问题。[@joshkeldam](https://github.com/joshkeldam)
++ 🐞 修复在距离上一次点击较远的位置快速点击时，新点击可能未被识别的问题。[@joshkeldam](https://github.com/joshkeldam)
++ 🐞 修复对数 y 轴在包含负数、零或小于 1 的价格时标签和坐标转换异常的问题。[@NemeZZiZZ](https://github.com/NemeZZiZZ)
++ 🐞 修复多 y 轴场景下覆盖物的 y 轴标签可能在非默认轴上重复显示的问题。[@liihuu](https://github.com/liihuu)
+
+
 ## 10.0.4
 `2026-10-13`
 + 💄 合并同一事件循环内连续数据更新触发的指标重算，减少实时数据批量更新时的重复计算。[@NemeZZiZZ](https://github.com/NemeZZiZZ)

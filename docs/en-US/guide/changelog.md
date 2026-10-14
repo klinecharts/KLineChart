@@ -1,5 +1,17 @@
 # 📠 Change Log
 
+## 10.1.0
+`2026-10-15`
++ 🆕 Add the `setLayoutOptions(options)` and `getLayoutOptions()` instance methods to update and retrieve default layout options after initialization. [@NemeZZiZZ](https://github.com/NemeZZiZZ) [@liihuu](https://github.com/liihuu)
++ 🆕 Support callbacks for dynamically assigning colors to candlesticks, indicator OHLC bars, and last-price lines and labels. [@liihuu](https://github.com/liihuu)
++ 💄 Optimize time-axis tick generation by selecting and caching ticks by time hierarchy, improving display stability and scrolling performance. [@liihuu](https://github.com/liihuu)
++ 🐞 Fix `scrollByDistance` potentially conflicting with an active fling-scroll animation. [@liihuu](https://github.com/liihuu)
++ 🐞 Fix axis scrolling or scaling stopping when the pointer leaves the axis while dragging. [@joshkeldam](https://github.com/joshkeldam)
++ 🐞 Fix a rapid click far from the previous click potentially not being recognized as a new click sequence. [@joshkeldam](https://github.com/joshkeldam)
++ 🐞 Fix logarithmic y-axis labels and coordinate conversion for ranges containing negative, zero, or sub-1 prices. [@NemeZZiZZ](https://github.com/NemeZZiZZ)
++ 🐞 Fix overlay y-axis labels potentially being rendered repeatedly on non-default axes in multi-axis panes. [@liihuu](https://github.com/liihuu)
+
+
 ## 10.0.4
 `2026-10-13`
 + 💄 Coalesce indicator recalculations triggered by consecutive data updates in the same event loop, reducing duplicate work during realtime batch updates. [@NemeZZiZZ](https://github.com/NemeZZiZZ)
