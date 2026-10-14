@@ -12,6 +12,7 @@
  * limitations under the License.
  */
 
+import { getCompareColor } from '../common/utils/logic'
 import { isValid } from '../common/utils/typeChecks'
 import type YAxis from '../component/YAxis'
 
@@ -31,17 +32,10 @@ export default class CandleLastPriceView extends View {
       const dataList = chartStore.getDataList()
       const data = dataList[dataList.length - 1]
       if (isValid(data)) {
-        const { close, open } = data
-        const comparePrice = lastPriceMarkStyles.compareRule === 'current_open' ? open : (dataList[dataList.length - 2]?.close ?? close)
+        const { close } = data
         const priceY = yAxis.convertToNicePixel(close)
-        let color = ''
-        if (close > comparePrice) {
-          color = lastPriceMarkStyles.upColor
-        } else if (close < comparePrice) {
-          color = lastPriceMarkStyles.downColor
-        } else {
-          color = lastPriceMarkStyles.noChangeColor
-        }
+        const colorData = { prev: dataList[dataList.length - 2] ?? null, current: data, next: null }
+        const color = getCompareColor(colorData, lastPriceMarkStyles, lastPriceMarkLineStyles.color)
         this.createFigure({
           name: 'line',
           attrs: {

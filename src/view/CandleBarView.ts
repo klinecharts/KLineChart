@@ -16,8 +16,8 @@ import type BarSpace from '../common/BarSpace'
 import type { VisibleRangeData } from '../common/Data'
 import type { EventHandler } from '../common/EventHandler'
 import type Nullable from '../common/Nullable'
-import type { CandleBarColor, CandleType, RectStyle } from '../common/Styles'
-import { isValid } from '../common/utils/typeChecks'
+import type { CandleBarColor, CandleBarColorCallback, CandleType, RectStyle } from '../common/Styles'
+import { isFunction, isValid } from '../common/utils/typeChecks'
 
 import type { FigureCreate } from '../component/Figure'
 import type { RectAttrs } from '../extension/figure/rect'
@@ -27,7 +27,7 @@ import ChildrenView from './ChildrenView'
 export interface CandleBarOptions {
   yAxisId: string
   type: Exclude<CandleType, 'area'>
-  styles: CandleBarColor
+  styles: CandleBarColor | CandleBarColorCallback
 }
 
 export default class CandleBarView extends ChildrenView {
@@ -61,20 +61,27 @@ export default class CandleBarView extends ChildrenView {
         } = visibleData
         if (isValid(current)) {
           const { open, high, low, close } = current
-          const comparePrice = styles.compareRule === 'current_open' ? open : (prev?.close ?? close)
           const colors: string[] = []
-          if (close > comparePrice) {
-            colors[0] = styles.upColor
-            colors[1] = styles.upBorderColor
-            colors[2] = styles.upWickColor
-          } else if (close < comparePrice) {
-            colors[0] = styles.downColor
-            colors[1] = styles.downBorderColor
-            colors[2] = styles.downWickColor
+          if (isFunction<CandleBarColorCallback>(styles)) {
+            const result = styles(visibleData.data)
+            colors[0] = result.color
+            colors[1] = result.borderColor
+            colors[2] = result.wickColor
           } else {
-            colors[0] = styles.noChangeColor
-            colors[1] = styles.noChangeBorderColor
-            colors[2] = styles.noChangeWickColor
+            const comparePrice = styles.compareRule === 'current_open' ? open : (prev?.close ?? close)
+            if (close > comparePrice) {
+              colors[0] = styles.upColor
+              colors[1] = styles.upBorderColor
+              colors[2] = styles.upWickColor
+            } else if (close < comparePrice) {
+              colors[0] = styles.downColor
+              colors[1] = styles.downBorderColor
+              colors[2] = styles.downWickColor
+            } else {
+              colors[0] = styles.noChangeColor
+              colors[1] = styles.noChangeBorderColor
+              colors[2] = styles.noChangeWickColor
+            }
           }
           const openY = yAxis.convertToPixel(open)
           const closeY = yAxis.convertToPixel(close)

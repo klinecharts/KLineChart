@@ -200,19 +200,21 @@ export interface CandleHighLowPriceMarkStyle {
   textWeight: string
 }
 
-export type CandleLastPriceMarkLineStyle = Omit<StateLineStyle, 'color'>
+export type CandleLastPriceMarkLineStyle = Omit<StateLineStyle, 'color'> & { color: Nullable<string | CompareColorCallback> }
 
 export type CandleLastPriceMarkExtendTextPosition = 'above_price' | 'below_price'
 
 export type CandleLastPriceMarkExtendTextStyle = LastValueMarkTextStyle & {
   position: CandleLastPriceMarkExtendTextPosition
   updateInterval: number
+} & {
+  backgroundColor: Nullable<string | CompareColorCallback>
 }
 export interface CandleLastPriceMarkStyle extends ChangeColor {
   show: boolean
   compareRule: CandleColorCompareRule
   line: CandleLastPriceMarkLineStyle
-  text: LastValueMarkTextStyle
+  text: LastValueMarkTextStyle & { backgroundColor: Nullable<string | CompareColorCallback> }
   extendTexts: CandleLastPriceMarkExtendTextStyle[]
 }
 
@@ -251,9 +253,19 @@ export interface CandleBarColor extends ChangeColor {
   noChangeWickColor: string
 }
 
+export type CompareColorCallback = (data: NeighborData<Nullable<KLineData>>) => string
+
+export interface CandleBarColorCallbackReturnStyle {
+  color: string
+  borderColor: string
+  wickColor: string
+}
+
+export type CandleBarColorCallback = (data: NeighborData<Nullable<KLineData>>) => CandleBarColorCallbackReturnStyle
+
 export interface CandleStyle {
   type: CandleType
-  bar: CandleBarColor
+  bar: CandleBarColor | CandleBarColorCallback
   area: CandleAreaStyle
   priceMark: CandlePriceMarkStyle
   tooltip: CandleTooltipStyle
@@ -270,9 +282,8 @@ export interface IndicatorTooltipStyle extends TooltipStyle {
   title: TooltipTitleStyle & { showName: boolean; showParams: boolean }
   legend: TooltipLegendStyle
 }
-
 export interface IndicatorStyle {
-  ohlc: Pick<CandleBarColor, 'compareRule' | 'upColor' | 'downColor' | 'noChangeColor'>
+  ohlc: Pick<CandleBarColor, 'compareRule' | 'upColor' | 'downColor' | 'noChangeColor'> | CompareColorCallback
   bars: IndicatorPolygonStyle[]
   lines: SmoothLineStyle[]
   circles: IndicatorPolygonStyle[]
@@ -447,7 +458,8 @@ function getDefaultCandleStyle(): CandleStyle {
           show: true,
           style: 'dashed',
           dashedValue: [4, 4],
-          size: 1
+          size: 1,
+          color: null
         },
         text: {
           show: true,
@@ -464,7 +476,8 @@ function getDefaultCandleStyle(): CandleStyle {
           color: Color.WHITE,
           family: 'Helvetica Neue',
           weight: 'normal',
-          borderRadius: 2
+          borderRadius: 2,
+          backgroundColor: null
         },
         extendTexts: []
       }

@@ -15,6 +15,7 @@
 import type { TextStyle } from '../common/Styles'
 import { SymbolDefaultPrecisionConstants } from '../common/SymbolInfo'
 import { calcTextWidth } from '../common/utils/canvas'
+import { getCompareColor } from '../common/utils/logic'
 import { isValid } from '../common/utils/typeChecks'
 import type { FigureCreate } from '../component/Figure'
 import type YAxis from '../component/YAxis'
@@ -37,17 +38,10 @@ export default class CandleLastPriceLabelView extends View<YAxis> {
       const dataList = chartStore.getDataList()
       const data = dataList[dataList.length - 1]
       if (isValid(data)) {
-        const { close, open } = data
-        const comparePrice = lastPriceMarkStyles.compareRule === 'current_open' ? open : (dataList[dataList.length - 2]?.close ?? close)
+        const { close } = data
         const priceY = yAxis.convertToNicePixel(close)
-        let backgroundColor = ''
-        if (close > comparePrice) {
-          backgroundColor = lastPriceMarkStyles.upColor
-        } else if (close < comparePrice) {
-          backgroundColor = lastPriceMarkStyles.downColor
-        } else {
-          backgroundColor = lastPriceMarkStyles.noChangeColor
-        }
+        const colorData = { prev: dataList[dataList.length - 2] ?? null, current: data, next: null }
+        const backgroundColor = getCompareColor(colorData, lastPriceMarkStyles, lastPriceMarkTextStyles.backgroundColor)
         let x = 0
         let textAlgin: CanvasTextAlign = 'left'
         if (yAxis.isFromZero()) {
@@ -88,6 +82,7 @@ export default class CandleLastPriceLabelView extends View<YAxis> {
         lastPriceMarkStyles.extendTexts.forEach((item, index) => {
           const text = formatExtendText({ type: 'last_price', data, index })
           if (text.length > 0 && item.show) {
+            const extendTextBackgroundColor = getCompareColor(colorData, lastPriceMarkStyles, item.backgroundColor)
             const textHalfHeight = item.size / 2
             let textY = 0
             if (item.position === 'above_price') {
@@ -111,7 +106,7 @@ export default class CandleLastPriceLabelView extends View<YAxis> {
                 align: textAlgin,
                 baseline: 'middle'
               },
-              styles: { ...item, backgroundColor }
+              styles: { ...item, backgroundColor: extendTextBackgroundColor }
             })
           }
         })

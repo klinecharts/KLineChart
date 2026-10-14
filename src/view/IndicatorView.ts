@@ -14,9 +14,9 @@
 
 import type Coordinate from '../common/Coordinate'
 import type Nullable from '../common/Nullable'
-import type { CandleColorCompareRule, SmoothLineStyle } from '../common/Styles'
+import type { CandleBarColorCallback, CompareColorCallback, SmoothLineStyle } from '../common/Styles'
 import { formatValue } from '../common/utils/format'
-import { isNumber, isValid } from '../common/utils/typeChecks'
+import { isFunction, isNumber, isValid } from '../common/utils/typeChecks'
 
 import { eachFigures, type IndicatorFigure, type IndicatorFigureAttrs, type IndicatorFigureStyle, prepareIndicatorFigures } from '../component/Indicator'
 
@@ -32,14 +32,21 @@ export default class IndicatorView extends CandleBarView {
       if (indicator.shouldOhlc && indicator.visible && !yAxis.isInCandle()) {
         const indicatorStyles = indicator.styles
         const defaultStyles = chartStore.getStyles().indicator
-        const compareRule = formatValue(indicatorStyles, 'ohlc.compareRule', defaultStyles.ohlc.compareRule) as CandleColorCompareRule
-        const upColor = formatValue(indicatorStyles, 'ohlc.upColor', defaultStyles.ohlc.upColor) as string
-        const downColor = formatValue(indicatorStyles, 'ohlc.downColor', defaultStyles.ohlc.downColor) as string
-        const noChangeColor = formatValue(indicatorStyles, 'ohlc.noChangeColor', defaultStyles.ohlc.noChangeColor) as string
-        return {
-          yAxisId: indicator.yAxisId,
-          type: 'ohlc',
-          styles: {
+        const customOhlcStyles = indicatorStyles?.ohlc
+        const ohlcStyles = isValid(customOhlcStyles) ? customOhlcStyles : defaultStyles.ohlc
+        let styles: CandleBarOptions['styles']
+        if (isFunction<CompareColorCallback>(ohlcStyles)) {
+          styles = ((data) => {
+            const color = ohlcStyles(data)
+            return { color, borderColor: color, wickColor: color }
+          }) satisfies CandleBarColorCallback
+        } else {
+          const defaultOhlcStyles = isFunction(defaultStyles.ohlc) ? null : defaultStyles.ohlc
+          const compareRule = formatValue(ohlcStyles, 'compareRule', defaultOhlcStyles?.compareRule) as 'current_open' | 'previous_close'
+          const upColor = formatValue(ohlcStyles, 'upColor', defaultOhlcStyles?.upColor) as string
+          const downColor = formatValue(ohlcStyles, 'downColor', defaultOhlcStyles?.downColor) as string
+          const noChangeColor = formatValue(ohlcStyles, 'noChangeColor', defaultOhlcStyles?.noChangeColor) as string
+          styles = {
             compareRule,
             upColor,
             downColor,
@@ -51,6 +58,11 @@ export default class IndicatorView extends CandleBarView {
             downWickColor: downColor,
             noChangeWickColor: noChangeColor
           }
+        }
+        return {
+          yAxisId: indicator.yAxisId,
+          type: 'ohlc',
+          styles
         }
       }
     }

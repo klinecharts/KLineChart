@@ -12,8 +12,6 @@
  * limitations under the License.
  */
 
-type DeepPartial<T> = {
-  [P in keyof T]?: T[P] extends Array<infer U> ? Array<DeepPartial<U>> : T[P] extends ReadonlyArray<infer X> ? ReadonlyArray<DeepPartial<X>> : T[P] extends object ? DeepPartial<T[P]> : T[P]
-}
+type DeepPartial<T> = T extends (...args: never[]) => unknown ? T : T extends Array<infer U> ? Array<DeepPartial<U>> : T extends ReadonlyArray<infer X> ? ReadonlyArray<DeepPartial<X>> : T extends object ? { [P in keyof T]?: DeepPartial<T[P]> } : T
 
 export default DeepPartial
