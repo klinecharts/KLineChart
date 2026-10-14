@@ -18,11 +18,15 @@ outline: deep
 <script setup>
 import SetStylesBasic from '../../../@views/api/samples/setStyles-basic/index.vue'
 import SetStylesBuiltIn from '../../../@views/api/samples/setStyles-built-in/index.vue'
+import SetStylesColorfulCandle from '../../../@views/api/samples/setStyles-colorful-candle/index.vue'
 import SetStylesExtension from '../../../@views/api/samples/setStyles-extension/index.vue'
 </script>
 
 ### Basic usage {#basic}
 <SetStylesBasic/>
+
+### Colorful candlesticks {#colorful-candle}
+<SetStylesColorfulCandle/>
 
 ### Built-in templates {#built-in}
 <SetStylesBuiltIn/>

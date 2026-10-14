@@ -19,11 +19,15 @@ outline: deep
 <script setup>
 import SetStylesBasic from '../../@views/api/samples/setStyles-basic/index.vue'
 import SetStylesBuiltIn from '../../@views/api/samples/setStyles-built-in/index.vue'
+import SetStylesColorfulCandle from '../../@views/api/samples/setStyles-colorful-candle/index.vue'
 import SetStylesExtension from '../../@views/api/samples/setStyles-extension/index.vue'
 </script>
 
 ### 基本使用 {#basic}
 <SetStylesBasic/>
+
+### 五彩 K 线 {#colorful-candle}
+<SetStylesColorfulCandle/>
 
 ### 内置模版 {#built-in}
 <SetStylesBuiltIn/>
