@@ -18,6 +18,13 @@ outline: deep
 `setLayoutOptions` returns `undefined` .
 
 ## Usage {#usage}
+
+<script setup>
+import SetLayoutOptions from '../../../@views/api/samples/setLayoutOptions/index.vue'
+</script>
+
+### Basic {#basic}
+
 ```javascript
 chart.setLayoutOptions({
   yAxis: {
