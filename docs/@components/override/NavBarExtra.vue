@@ -9,7 +9,7 @@ import { computed } from 'vue'
 import AppearanceSetting from './AppearanceSetting.vue'
 
 const { site, theme } = useData()
-const { localeLinks, currentLang } = useLangs({ correspondingLink: true })
+const { localeLinks, currentLang } = useLangs({ linkToCorrespondingPage: true })
 
 const hasExtraContent = computed(() => (localeLinks.value.length && currentLang.value.label) || site.value.appearance || theme.value.socialLinks)
 </script>
@@ -34,6 +34,7 @@ const hasExtraContent = computed(() => (localeLinks.value.length && currentLang.
           :hreflang="locale.lang"
           rel="alternate"
           :dir="locale.dir"
+          data-allow-mismatch="attribute"
         />
       </template>
     </div>
