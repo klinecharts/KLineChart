@@ -72,6 +72,7 @@ const hotKeyModifierOrder = ['ctrl', 'alt', 'shift', 'meta']
 export default class Event implements EventHandler {
   private readonly _chart: Chart
   private readonly _event: EventHandlerImp
+  private readonly _container: HTMLElement
 
   // 惯性滚动开始时间
   private _flingStartTime = performance.now()
@@ -104,6 +105,12 @@ export default class Event implements EventHandler {
     const target = event.target as Nullable<HTMLElement>
     const tagName = target?.tagName.toLowerCase()
     if (tagName === 'input' || tagName === 'textarea' || target?.isContentEditable === true) {
+      return
+    }
+    // Hotkeys are scoped to the focused chart, so several charts on one page
+    // don't react to the same key press at the same time.
+    const activeElement = document.activeElement
+    if (activeElement !== this._container && !this._container.contains(activeElement)) {
       return
     }
     const { enabled, exclude } = this._chart.getHotKey()
@@ -186,6 +193,7 @@ export default class Event implements EventHandler {
 
   constructor(container: HTMLElement, chart: Chart) {
     this._chart = chart
+    this._container = container
     this._event = new EventHandlerImp(container, this, {
       treatVertDragAsPageScroll: () => false,
       treatHorzDragAsPageScroll: () => false
