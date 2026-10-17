@@ -811,7 +811,11 @@ export default class StoreImp implements Store {
           break
         }
       }
-      void this._dataLoader.getBars(params)
+      // A rejected loader promise must release the loading flag, otherwise
+      // every following load is skipped and the chart silently stops loading.
+      void Promise.resolve(this._dataLoader.getBars(params)).catch(() => {
+        this._loading = false
+      })
     }
   }
 
