@@ -196,8 +196,12 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
       const data = visibleData.data.current
       if (isValid(data)) {
         if (shouldCompareHighLow) {
-          min = Math.min(min, data.low)
-          max = Math.max(max, data.high)
+          if (isNumber(data.low)) {
+            min = Math.min(min, data.low)
+          }
+          if (isNumber(data.high)) {
+            max = Math.max(max, data.high)
+          }
         }
         if (shouldUseCandleData && isArea) {
           const value = data[areaValueKey]
