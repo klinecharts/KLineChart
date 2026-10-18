@@ -751,7 +751,7 @@ export default class Event implements EventHandler {
     const consumed = widget.dispatchEvent('pressedMouseMoveEvent', event)
     if (!consumed) {
       const xAxis = (widget.getPane() as unknown as XAxisPane).getXAxisComponent()
-      if (xAxis.scrollZoomEnabled && this._xAxisStartScaleDistance !== null && this._xAxisStartScaleDistance !== 0 && event.x !== 0) {
+      if (xAxis.scrollZoomEnabled && this._xAxisStartScaleDistance !== null && this._xAxisStartScaleDistance !== 0 && event.x > 0) {
         const scale = this._xAxisStartScaleDistance / event.x
         if (Number.isFinite(scale)) {
           const zoomScale = (scale - this._xAxisScale) * 10
@@ -783,7 +783,7 @@ export default class Event implements EventHandler {
       const yAxis = this._getYAxisByWidget(widget)
       const targetYAxis = this._getYAxisScaleTargetByWidget(widget)
       const prevYAxisRange = this._prevYAxisRanges.get(targetYAxis)
-      if (isValid(prevYAxisRange) && yAxis.scrollZoomEnabled && this._yAxisStartScaleDistance !== null && this._yAxisStartScaleDistance !== 0 && event.y !== 0) {
+      if (isValid(prevYAxisRange) && yAxis.scrollZoomEnabled && this._yAxisStartScaleDistance !== null && this._yAxisStartScaleDistance !== 0 && event.y > 0) {
         event.preventDefault?.()
         const scaleFactor = event.y / this._yAxisStartScaleDistance
         this._zoomYAxis(targetYAxis, scaleFactor, prevYAxisRange)
