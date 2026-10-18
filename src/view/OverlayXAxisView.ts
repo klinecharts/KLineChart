@@ -16,6 +16,7 @@ import type Coordinate from '../common/Coordinate'
 import type Nullable from '../common/Nullable'
 
 import { isNumber } from '../common/utils/typeChecks'
+import { logError } from '../common/utils/logger'
 import type OverlayImp from '../component/Overlay'
 import type { Overlay, OverlayFigure } from '../component/Overlay'
 import type { XAxis } from '../component/XAxis'
@@ -74,7 +75,9 @@ export default class OverlayXAxisView extends OverlayYAxisView<XAxis> {
     const bounding = widget.getBounding()
     try {
       return o.createXAxisFigures?.({ chart, overlay: o, coordinates, bounding, xAxis, yAxis }) ?? []
-    } catch {
+    } catch (error) {
+      // A failing user callback must not break the draw path; surface it in dev builds.
+      logError('createXAxisFigures', o.name, String(error))
       return []
     }
   }

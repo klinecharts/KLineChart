@@ -17,6 +17,7 @@ import type Nullable from '../common/Nullable'
 import { SymbolDefaultPrecisionConstants } from '../common/SymbolInfo'
 import { formatPrecision } from '../common/utils/format'
 import { isNumber } from '../common/utils/typeChecks'
+import { logError } from '../common/utils/logger'
 
 import type { Axis } from '../component/Axis'
 import type OverlayImp from '../component/Overlay'
@@ -82,7 +83,9 @@ export default class OverlayYAxisView<C extends Axis = YAxis> extends OverlayVie
     const bounding = widget.getBounding()
     try {
       return overlay.createYAxisFigures?.({ chart, overlay, coordinates, bounding, xAxis, yAxis }) ?? []
-    } catch {
+    } catch (error) {
+      // A failing user callback must not break the draw path; surface it in dev builds.
+      logError('createYAxisFigures', overlay.name, String(error))
       return []
     }
   }
