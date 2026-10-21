@@ -18,11 +18,18 @@ import { UpdateLevel } from '../common/Updater'
 import { getPixelRatio } from '../common/utils/canvas'
 import { createDom } from '../common/utils/dom'
 import type DrawPane from '../pane/DrawPane'
+import type Nullable from '../common/Nullable'
 import Widget from './Widget'
 
 export default abstract class DrawWidget<P extends DrawPane = DrawPane> extends Widget<P> {
   private readonly _mainCanvas: Canvas
   private readonly _overlayCanvas: Canvas
+
+  private _appliedLeft: Nullable<number> = null
+
+  private _appliedWidth: Nullable<number> = null
+
+  private _appliedHeight: Nullable<number> = null
 
   constructor(rootContainer: HTMLElement, pane: P) {
     super(rootContainer, pane)
@@ -69,14 +76,18 @@ export default abstract class DrawWidget<P extends DrawPane = DrawPane> extends 
 
   override updateImp(container: HTMLElement, bounding: Bounding, level: UpdateLevel): void {
     const { width, height, left } = bounding
-    container.style.left = `${left}px`
 
     let l = level
-    const w = container.clientWidth
-    const h = container.clientHeight
-    if (width !== w || height !== h) {
+    // Geometry is only written when the bounding actually changed, so steady-state
+    // updates (e.g. overlay-only crosshair moves) do not read layout properties
+    // back from the DOM after writing styles.
+    if (this._appliedLeft !== left || this._appliedWidth !== width || this._appliedHeight !== height) {
+      container.style.left = `${left}px`
       container.style.width = `${width}px`
       container.style.height = `${height}px`
+      this._appliedLeft = left
+      this._appliedWidth = width
+      this._appliedHeight = height
       l = UpdateLevel.Drawer
     }
     switch (l) {
