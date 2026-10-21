@@ -1306,7 +1306,9 @@ export default class StoreImp implements Store {
     this._crosshair = { ...cr, realX, kLineData, realDataIndex, dataIndex, timestamp: this.dataIndexToTimestamp(realDataIndex) ?? undefined }
     if (prevCrosshair.x !== cr.x || prevCrosshair.y !== cr.y || prevCrosshair.paneId !== cr.paneId || (forceInvalidate ?? false)) {
       if (isValid(kLineData) && !(notExecuteAction ?? false) && this.hasAction('onCrosshairChange') && isString(this._crosshair.paneId)) {
-        this.executeAction('onCrosshairChange', crosshair)
+        // Pass the resolved crosshair so subscribers receive the same enriched
+        // payload as getCrosshair(), instead of the raw event coordinates.
+        this.executeAction('onCrosshairChange', this._crosshair)
       }
       if (!(notInvalidate ?? false)) {
         this._chart.updatePane(UpdateLevel.Overlay)
