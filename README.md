@@ -15,9 +15,9 @@ English | <a href="https://github.com/liihuu/KLineChart/blob/main/README.zh-CN.m
 
 [![GitHub Workflow Status (with branch)](https://img.shields.io/github/actions/workflow/status/liihuu/KLineChart/build.yml?logo=github)](https://github.com/liihuu/KLineChart/actions/workflows/build.yml)
 [![Version](https://badgen.net/npm/v/klinecharts)](https://www.npmjs.com/package/klinecharts)
-[![Size](https://badgen.net/bundlephobia/minzip/klinecharts@latest)](https://bundlephobia.com/result?p=klinecharts@latest)
+[![Size](https://badgen.net/bundlephobia/minzip/klinecharts)](https://bundlephobia.com/result?p=klinecharts@latest)
 [![npms.io (maintenance)](https://img.shields.io/npms-io/quality-score/klinecharts)](https://www.npmjs.com/package/klinecharts)
-[![Typescript](https://badgen.net/npm/types/klinecharts)](types/index.d.ts)
+[![Typescript](https://badgen.net/npm/types/klinecharts)](https://github.com/klinecharts/KLineChart)
 [![LICENSE](https://badgen.net/github/license/liihuu/KLineChart)](LICENSE)
 [![Docs](https://badgen.net/badge/docs%20by/vitepress/bd34fe)](https://vitepress.dev/)
 </div>
@@ -39,7 +39,7 @@ English | <a href="https://github.com/liihuu/KLineChart/blob/main/README.zh-CN.m
 
 ## ✨ Features
 - 📦 **Out of the box:** Simple and fast integration, basically zero cost to get started.
-- 🚀 **Lightweight and smooth:** Zero dependencies, only 40k under gzip compression.
+- 🚀 **Lightweight and smooth:** Zero dependencies, only 50k under gzip compression.
 - 💪 **Powerful functions:** Built-in multiple indicators and line drawing models.
 - 🎨 **Highly scalable:** With rich style configuration and API, the function can be extended as you like.
 - 📱 **Mobile:** Support mobile, one chart, handle multiple terminals.

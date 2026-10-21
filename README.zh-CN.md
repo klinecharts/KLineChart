@@ -15,9 +15,9 @@
 
 [![GitHub Workflow Status (with branch)](https://img.shields.io/github/actions/workflow/status/liihuu/KLineChart/build.yml?logo=github)](https://github.com/liihuu/KLineChart/actions/workflows/build.yml)
 [![Version](https://badgen.net/npm/v/klinecharts)](https://www.npmjs.com/package/klinecharts)
-[![Size](https://badgen.net/bundlephobia/minzip/klinecharts@latest)](https://bundlephobia.com/result?p=klinecharts@latest)
+[![Size](https://badgen.net/bundlephobia/minzip/klinecharts)](https://bundlephobia.com/result?p=klinecharts@latest)
 [![npms.io (maintenance)](https://img.shields.io/npms-io/quality-score/klinecharts)](https://www.npmjs.com/package/klinecharts)
-[![Typescript](https://badgen.net/npm/types/klinecharts)](types/index.d.ts)
+[![Typescript](https://badgen.net/npm/types/klinecharts)](https://github.com/klinecharts/KLineChart)
 [![LICENSE](https://badgen.net/github/license/liihuu/KLineChart)](LICENSE)
 [![Docs](https://badgen.net/badge/docs%20by/vitepress/bd34fe)](https://vitepress.dev/)
 
@@ -38,7 +38,7 @@
 
 ## ✨ 特性
 + 📦 **开箱即用：** 简单快速集成，基本零成本上手。
-+ 🚀 **轻量流畅：** 零依赖，Gzip压缩下仅40k。
++ 🚀 **轻量流畅：** 零依赖，Gzip压缩下仅50k。
 + 💪 **功能强大：** 内置多种指标和画线模型。
 + 🎨 **高可扩展：** 丰富的样式配置和API，功能扩展随心所欲。
 + 📱 **移动端：** 支持移动端，一个图表，搞定多端。
