@@ -17,6 +17,7 @@ import type { EventHandler, EventName, MouseTouchEvent, MouseTouchEventCallback 
 import type Nullable from '../common/Nullable'
 import type Point from '../common/Point'
 import { isFunction, isNumber, isValid } from '../common/utils/typeChecks'
+import { logError } from '../common/utils/logger'
 
 import type { Axis } from '../component/Axis'
 import type OverlayImp from '../component/Overlay'
@@ -571,7 +572,13 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     const yAxis = pane.getYAxisComponentById() as unknown as Nullable<YAxis>
     const xAxis = chart.getXAxisPane().getXAxisComponent()
     const bounding = widget.getBounding()
-    return o.createPointFigures?.({ chart, overlay: o, coordinates, bounding, xAxis, yAxis }) ?? []
+    try {
+      return o.createPointFigures?.({ chart, overlay: o, coordinates, bounding, xAxis, yAxis }) ?? []
+    } catch (error) {
+      // A failing user callback must not break the draw path; surface it in dev builds.
+      logError('createPointFigures', o.name, String(error))
+      return []
+    }
   }
 
   protected drawDefaultFigures(ctx: CanvasRenderingContext2D, overlay: OverlayImp, coordinates: Coordinate[]): void {
