@@ -26,6 +26,7 @@ export default abstract class DrawWidget<P extends DrawPane = DrawPane> extends 
 
   constructor(rootContainer: HTMLElement, pane: P) {
     super(rootContainer, pane)
+    const getPixelRatioCap = (): number => this.getPane().getChart().getChartStore().getLayoutOptions().pixelRatioCap
     this._mainCanvas = new Canvas(
       {
         position: 'absolute',
@@ -36,7 +37,8 @@ export default abstract class DrawWidget<P extends DrawPane = DrawPane> extends 
       },
       () => {
         this.updateMain(this._mainCanvas.getContext())
-      }
+      },
+      getPixelRatioCap
     )
     this._overlayCanvas = new Canvas(
       {
@@ -48,7 +50,8 @@ export default abstract class DrawWidget<P extends DrawPane = DrawPane> extends 
       },
       () => {
         this.updateOverlay(this._overlayCanvas.getContext())
-      }
+      },
+      getPixelRatioCap
     )
     const container = this.getContainer()
     container.appendChild(this._mainCanvas.getElement())
@@ -104,6 +107,11 @@ export default abstract class DrawWidget<P extends DrawPane = DrawPane> extends 
     this._mainCanvas.destroy()
     this._overlayCanvas.destroy()
     super.destroy()
+  }
+
+  refreshPixelRatio(): void {
+    this._mainCanvas.refreshPixelRatio()
+    this._overlayCanvas.refreshPixelRatio()
   }
 
   getImage(includeOverlay: boolean): HTMLCanvasElement {
