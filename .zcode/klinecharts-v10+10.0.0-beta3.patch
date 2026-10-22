@@ -1,0 +1,756 @@
+diff --git a/node_modules/klinecharts-v10/dist/index.esm.js b/node_modules/klinecharts-v10/dist/index.esm.js
+index 52d173b..15c7d3c 100644
+--- a/node_modules/klinecharts-v10/dist/index.esm.js
++++ b/node_modules/klinecharts-v10/dist/index.esm.js
+@@ -33,7 +33,7 @@ function logError(api, invalidParam, append) {
+     log('%c😟 klinecharts error%c %s%s%s', 'padding:3px 4px;border-radius:2px;color:#ffffff;background-color:#F92855;', 'color:#F92855;', api, invalidParam, append );
+ }
+ function logTag() {
+-    log('%c❤️ Welcome to klinecharts. Version is 10.0.0-beta3', 'border-radius:4px;border:dashed 1px #1677FF;line-height:70px;padding:0 20px;margin:16px 0;font-size:14px;color:#1677FF;', '', '', '', '');
++    /* welcome log silenced (Quantix patch) */ 0 && log('%c❤️ Welcome to klinecharts. Version is 10.0.0-beta3', 'border-radius:4px;border:dashed 1px #1677FF;line-height:70px;padding:0 20px;margin:16px 0;font-size:14px;color:#1677FF;', '', '', '', '');
+ }
+ 
+ /**
+@@ -1609,7 +1609,7 @@ var IndicatorImp = /** @class */ (function () {
+     }
+     IndicatorImp.prototype.override = function (indicator) {
+         var _a, _b;
+-        var _c = this, result = _c.result, currentOthers = __rest(_c, ["result"]);
++        var _c = this, result = _c.result, currentOthers = __rest(_c, ["result", "_prevIndicator"]); /* Quantix patch: _prevIndicator is an own property, so cloning it here chained every previous snapshot into the next one — one more generation per override call, each holding a deep copy of `result`. Profiles showed the clone recursing 150 levels deep. */
+         this._prevIndicator = __assign(__assign({}, clone(currentOthers)), { result: result });
+         var id = indicator.id, name = indicator.name, shortName = indicator.shortName, precision = indicator.precision, styles = indicator.styles, figures = indicator.figures, calcParams = indicator.calcParams, others = __rest(indicator, ["id", "name", "shortName", "precision", "styles", "figures", "calcParams"]);
+         if (!isString(this.id) && isString(id)) {
+@@ -4000,7 +4000,11 @@ var Eventful = /** @class */ (function () {
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  */
+-var DEVIATION = 2;
++var DEVIATION = 6; /* Quantix patch: was 2. Pixel tolerance for hit-testing a
++   figure — selecting a drawn line demanded near pixel-perfect aim, and the lines are
++   thin. Read ONLY by checkCoordinateOnLine / checkCoordinateOnRect / checkCoordinateOnArc,
++   so nothing about rendering changes; raising it widens the grab area, not the stroke.
++   Kept modest on purpose: too generous and a click lands on a neighbouring overlay. */
+ var FigureImp = /** @class */ (function (_super) {
+     __extends(FigureImp, _super);
+     function FigureImp(figure) {
+@@ -5156,7 +5160,7 @@ var PaneIdConstants = {
+  */
+ var BarSpaceLimitConstants = {
+     MIN: 1,
+-    MAX: 50
++    MAX: 500
+ };
+ var DEFAULT_LAYOUT_BASIC_PARAMS = {
+     barSpaceLimitMin: BarSpaceLimitConstants.MIN,
+@@ -6694,7 +6698,14 @@ var WidgetNameConstants = {
+     Y_AXIS: 'yAxis',
+     SEPARATOR: 'separator'
+ };
+-var REAL_SEPARATOR_HEIGHT = 7;
++var IS_COARSE_POINTER = typeof window !== "undefined" && typeof window.matchMedia === "function" && window.matchMedia("(pointer: coarse)").matches;
++var REAL_SEPARATOR_HEIGHT = IS_COARSE_POINTER ? 20 : 7; /* Quantix patch: was a flat 7. This is the pane separator's grab band — BOTH the height of its DOM element and, more importantly, the hit region computed in _findWidgetByEvent, which is pure coordinate math and therefore cannot be widened by CSS or by styles.separator.size (that one only thickens the drawn line). 7px is a mouse target: on a touchscreen the pane heights simply could not be changed, because there was nothing a finger could land on. 20 on a coarse pointer, unchanged on a fine one, so the desktop keeps its thin band and its precise cursor. */
++function activeSeparatorBackground(color) {
++    /* Keep the 20px touch target, but paint only its centered 8px strip. */
++    return REAL_SEPARATOR_HEIGHT > 7
++        ? "linear-gradient(to bottom, transparent 30%, ".concat(color, " 30%, ").concat(color, " 70%, transparent 70%)")
++        : color;
++}
+ 
+ /**
+  * Licensed under the Apache License, Version 2.0 (the "License");
+@@ -12401,6 +12412,7 @@ var SeparatorWidget = /** @class */ (function (_super) {
+         this._topPane = dragPanes.topPane;
+         this._bottomPane = dragPanes.bottomPane;
+         this._dragFlag = true;
++        this.getContainer().style.background = activeSeparatorBackground(this.getPane().getChart().getStyles().separator.activeBackgroundColor);
+         this._dragStartY = event.pageY;
+         this._topPaneHeight = this._topPane.getBounding().height;
+         this._bottomPaneHeight = this._bottomPane.getBounding().height;
+@@ -12464,7 +12476,7 @@ var SeparatorWidget = /** @class */ (function (_super) {
+         if (isValid(dragPanes)) {
+             var chart = this.getPane().getChart();
+             var styles = chart.getStyles().separator;
+-            this.getContainer().style.background = styles.activeBackgroundColor;
++            this.getContainer().style.background = activeSeparatorBackground(styles.activeBackgroundColor);
+             return true;
+         }
+         return false;
+@@ -12956,6 +12968,22 @@ var EventHandlerImp = /** @class */ (function () {
+             }
+         }
+     };
++    EventHandlerImp.prototype._touchCancelHandler = function (touchCancelEvent) {
++        var touch = this._touchWithId(touchCancelEvent.changedTouches, this._activeTouchId);
++        this._activeTouchId = null;
++        this._lastTouchEventTimeStamp = this._eventTimeStamp(touchCancelEvent);
++        this._clearLongTapTimeout();
++        this._touchMoveStartCoordinate = null;
++        this._cancelTap = true;
++        this._resetTapTimeout();
++        if (this._unsubscribeRootTouchEvents !== null) {
++            this._unsubscribeRootTouchEvents();
++            this._unsubscribeRootTouchEvents = null;
++        }
++        if (touch !== null) {
++            this._processEvent(this._makeCompatEvent(touchCancelEvent, touch), this._handler.touchCancelEvent);
++        }
++    };
+     EventHandlerImp.prototype._mouseUpHandler = function (mouseUpEvent) {
+         if (mouseUpEvent.button !== MouseEventButton.Left) {
+             return;
+@@ -13018,16 +13046,19 @@ var EventHandlerImp = /** @class */ (function () {
+             var boundTouchMoveWithDownHandler_1 = this._touchMoveHandler.bind(this);
+             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+             var boundTouchEndHandler_1 = this._touchEndHandler.bind(this);
++            var boundTouchCancelHandler_1 = this._touchCancelHandler.bind(this);
+             this._unsubscribeRootTouchEvents = function () {
+                 // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+                 rootElement.removeEventListener('touchmove', boundTouchMoveWithDownHandler_1);
+                 // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+                 rootElement.removeEventListener('touchend', boundTouchEndHandler_1);
++                rootElement.removeEventListener('touchcancel', boundTouchCancelHandler_1);
+             };
+             // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+             rootElement.addEventListener('touchmove', boundTouchMoveWithDownHandler_1, { passive: false });
+             // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+             rootElement.addEventListener('touchend', boundTouchEndHandler_1, { passive: false });
++            rootElement.addEventListener('touchcancel', boundTouchCancelHandler_1, { passive: false });
+             this._clearLongTapTimeout();
+             // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+             this._longTapTimeoutId = setTimeout(this._longTapHandler.bind(this, downEvent), Delay.LongTap);
+@@ -13457,7 +13488,7 @@ var Event = /** @class */ (function () {
+     function Event(container, chart) {
+         var _this = this;
+         // 惯性滚动开始时间
+-        this._flingStartTime = new Date().getTime();
++        this._flingStartTime = new Date().getTime(); this._flingSampleCoordinate = null; this._flingSampleTime = 0;
+         // 惯性滚动定时器
+         this._flingScrollRequestId = null;
+         // 开始滚动时坐标点
+@@ -13825,17 +13856,21 @@ var Event = /** @class */ (function () {
+         var e_2, _a;
+         var _b;
+         var _c = this._findWidgetByEvent(e), pane = _c.pane, widget = _c.widget;
++        this._mouseDownWidget = widget;
+         if (widget !== null) {
+             var event_8 = this._makeWidgetEvent(e, widget);
+             (_b = event_8.preventDefault) === null || _b === void 0 ? void 0 : _b.call(event_8);
+             var name_8 = widget.getName();
+             switch (name_8) {
++                case WidgetNameConstants.SEPARATOR: {
++                    return widget.dispatchEvent('touchStartEvent', event_8);
++                }
+                 case WidgetNameConstants.MAIN: {
+                     var chartStore = this._chart.getChartStore();
+                     if (widget.dispatchEvent('mouseDownEvent', event_8)) {
+                         this._touchCancelCrosshair = true;
+                         this._touchCoordinate = null;
+-                        chartStore.setCrosshair(undefined, { notInvalidate: true });
++                        /* Quantix patch: was setCrosshair(undefined) — the crosshair was deliberately CLEARED while an overlay is being drawn. On a mouse that is right: the cursor itself shows where the point will land. On a finger there is no cursor and the fingertip covers the very spot being placed, so arming a tool looked identical to arming the pointer and points landed blind. Both sites are inside touch handlers, so the mouse path is untouched. */ chartStore.setCrosshair({ x: event_8.x, y: event_8.y, paneId: pane === null || pane === void 0 ? void 0 : pane.getId() }, { notInvalidate: true });
+                         this._chart.updatePane(1 /* UpdateLevel.Overlay */);
+                         return true;
+                     }
+@@ -13843,7 +13878,7 @@ var Event = /** @class */ (function () {
+                         cancelAnimationFrame(this._flingScrollRequestId);
+                         this._flingScrollRequestId = null;
+                     }
+-                    this._flingStartTime = new Date().getTime();
++                    this._flingStartTime = new Date().getTime(); this._flingSampleCoordinate = null; this._flingSampleTime = 0;
+                     var yAxes = pane.getYAxisComponents();
+                     try {
+                         for (var yAxes_2 = __values(yAxes), yAxes_2_1 = yAxes_2.next(); !yAxes_2_1.done; yAxes_2_1 = yAxes_2.next()) {
+@@ -13893,7 +13928,13 @@ var Event = /** @class */ (function () {
+     };
+     Event.prototype.touchMoveEvent = function (e) {
+         var _a, _b, _c;
+-        var _d = this._findWidgetByEvent(e), pane = _d.pane, widget = _d.widget;
++        if (this._mouseDownWidget !== null && this._mouseDownWidget.getName() === WidgetNameConstants.SEPARATOR) {
++            return this._mouseDownWidget.dispatchEvent('touchMoveEvent', this._makeWidgetEvent(e, this._mouseDownWidget));
++        }
++        var activeWidget = this._mouseDownWidget;
++        var _d = activeWidget === null
++            ? this._findWidgetByEvent(e)
++            : { pane: activeWidget.getPane(), widget: activeWidget }, pane = _d.pane, widget = _d.widget;
+         if (widget !== null) {
+             var event_9 = this._makeWidgetEvent(e, widget);
+             var name_9 = widget.getName();
+@@ -13902,7 +13943,7 @@ var Event = /** @class */ (function () {
+                 case WidgetNameConstants.MAIN: {
+                     if (widget.dispatchEvent('pressedMouseMoveEvent', event_9)) {
+                         (_a = event_9.preventDefault) === null || _a === void 0 ? void 0 : _a.call(event_9);
+-                        chartStore.setCrosshair(undefined, { notInvalidate: true });
++                        /* Quantix patch: was setCrosshair(undefined) — the crosshair was deliberately CLEARED while an overlay is being drawn. On a mouse that is right: the cursor itself shows where the point will land. On a finger there is no cursor and the fingertip covers the very spot being placed, so arming a tool looked identical to arming the pointer and points landed blind. Both sites are inside touch handlers, so the mouse path is untouched. */ chartStore.setCrosshair({ x: event_9.x, y: event_9.y, paneId: pane === null || pane === void 0 ? void 0 : pane.getId() }, { notInvalidate: true });
+                         this._chart.updatePane(1 /* UpdateLevel.Overlay */);
+                         return true;
+                     }
+@@ -13928,7 +13969,13 @@ var Event = /** @class */ (function () {
+     };
+     Event.prototype.touchEndEvent = function (e) {
+         var _this = this;
+-        var widget = this._findWidgetByEvent(e).widget;
++        if (this._mouseDownWidget !== null && this._mouseDownWidget.getName() === WidgetNameConstants.SEPARATOR) {
++            var separatorWidget = this._mouseDownWidget;
++            this._mouseDownWidget = null;
++            return separatorWidget.dispatchEvent('touchEndEvent', this._makeWidgetEvent(e, separatorWidget));
++        }
++        var widget = this._mouseDownWidget !== null ? this._mouseDownWidget : this._findWidgetByEvent(e).widget;
++        this._mouseDownWidget = null;
+         if (widget !== null) {
+             var event_10 = this._makeWidgetEvent(e, widget);
+             var name_10 = widget.getName();
+@@ -13936,17 +13983,29 @@ var Event = /** @class */ (function () {
+                 case WidgetNameConstants.MAIN: {
+                     widget.dispatchEvent('mouseUpEvent', event_10);
+                     if (this._startScrollCoordinate !== null) {
+-                        var time = new Date().getTime() - this._flingStartTime;
+-                        var distance = event_10.x - this._startScrollCoordinate.x;
+-                        var v_1 = distance / (time > 0 ? time : 1) * 20;
+-                        if (time < 200 && Math.abs(v_1) > 0) {
++                        var flingFrom = this._flingSampleCoordinate || this._startScrollCoordinate;
++                        var time = new Date().getTime() - (this._flingSampleTime || this._flingStartTime);
++                        var distance = event_10.x - flingFrom.x;
++                        var velocity_1 = distance / (time > 0 ? time : 1);
++                        if (time < 200 && Math.abs(velocity_1) > 0.01) {
+                             var store_1 = this._chart.getChartStore();
++                            var lastFrameTime_1 = new Date().getTime();
++                            var decayMs_1 = 325;
+                             var flingScroll_1 = function () {
+                                 _this._flingScrollRequestId = requestAnimationFrame(function () {
++                                    /* Quantix patch: calculate friction from real elapsed time.
++                                       The old fixed per-frame distance looked constant on modern
++                                       high-refresh displays. This integrates an exponential velocity
++                                       curve, so every frame travels less than the one before it. */
++                                    var now_1 = new Date().getTime();
++                                    var elapsed_1 = Math.min(Math.max(now_1 - lastFrameTime_1, 0), 48);
++                                    lastFrameTime_1 = now_1;
++                                    var decay_1 = Math.exp(-elapsed_1 / decayMs_1);
++                                    var frameDistance_1 = velocity_1 * decayMs_1 * (1 - decay_1);
++                                    velocity_1 = velocity_1 * decay_1;
+                                     store_1.startScroll();
+-                                    store_1.scroll(v_1);
+-                                    v_1 = v_1 * (1 - 0.025);
+-                                    if (Math.abs(v_1) < 1) {
++                                    store_1.scroll(frameDistance_1);
++                                    if (Math.abs(velocity_1) < 0.02) {
+                                         if (_this._flingScrollRequestId !== null) {
+                                             cancelAnimationFrame(_this._flingScrollRequestId);
+                                             _this._flingScrollRequestId = null;
+@@ -13960,6 +14019,12 @@ var Event = /** @class */ (function () {
+                             flingScroll_1();
+                         }
+                     }
++                    this._startScrollCoordinate = null;
++                    this._prevYAxisRanges.clear();
++                    this._xAxisStartScaleCoordinate = null;
++                    this._xAxisStartScaleDistance = 0;
++                    this._xAxisScale = 1;
++                    this._yAxisStartScaleDistance = 0;
+                     return true;
+                 }
+                 case WidgetNameConstants.X_AXIS:
+@@ -13979,6 +14044,30 @@ var Event = /** @class */ (function () {
+         }
+         return false;
+     };
++    Event.prototype.touchCancelEvent = function (e) {
++        var widget = this._mouseDownWidget;
++        this._mouseDownWidget = null;
++        if (widget !== null) {
++            var event_11 = this._makeWidgetEvent(e, widget);
++            if (widget.getName() === WidgetNameConstants.SEPARATOR) {
++                widget.dispatchEvent('touchEndEvent', event_11);
++            }
++            else {
++                widget.dispatchEvent('mouseUpEvent', event_11);
++            }
++        }
++        this._startScrollCoordinate = null;
++        this._prevYAxisRanges.clear();
++        this._xAxisStartScaleCoordinate = null;
++        this._xAxisStartScaleDistance = 0;
++        this._xAxisScale = 1;
++        this._yAxisStartScaleDistance = 0;
++        this._touchCoordinate = null;
++        this._touchCancelCrosshair = false;
++        this._touchZoomed = false;
++        this._chart.getChartStore().setCrosshair();
++        return true;
++    };
+     Event.prototype.tapEvent = function (e) {
+         var _a = this._findWidgetByEvent(e), pane = _a.pane, widget = _a.widget;
+         var consumed = false;
+@@ -13996,8 +14085,7 @@ var Event = /** @class */ (function () {
+                 }
+                 else {
+                     if (!this._touchCancelCrosshair && !this._touchZoomed) {
+-                        this._touchCoordinate = { x: event_12.x, y: event_12.y };
+-                        chartStore.setCrosshair({ x: event_12.x, y: event_12.y, paneId: pane === null || pane === void 0 ? void 0 : pane.getId() }, { notInvalidate: true });
++                        /* Quantix patch: a plain tap in POINTER mode used to raise the crosshair, which on touch made the two modes indistinguishable — the same tap gesture drew a crosshair whether or not a drawing tool was armed, and with the crosshair now following the finger while drawing (see the touchStart/touchMove patches) there would be no way to tell them apart. Tap now DISMISSES it instead. Long-press still raises it, so reading values by touch is still possible — that is the deliberate gesture for it. Touch path only: a mouse click goes through mouseClickEvent. */ this._touchCoordinate = null; chartStore.setCrosshair(undefined, { notInvalidate: true });
+                         consumed = true;
+                     }
+                     this._touchCancelCrosshair = false;
+@@ -14073,6 +14161,9 @@ var Event = /** @class */ (function () {
+                 finally { if (e_3) throw e_3.error; }
+             }
+             var distance = event.x - this._startScrollCoordinate.x;
++            /* Quantix patch: inertia was measured over the WHOLE gesture (velocity = total distance / total time, and only if the entire touch lasted under 200ms), so a normal drag — which takes longer than that — never glided, and a long slow drag ending in a flick averaged its own slowness away. Sampled over the last ~40ms instead, the way a phone user expects: lift while still moving and it glides, pause before lifting and it stops dead. The existing cancel-on-touchstart is untouched, so a new touch still catches it. */
++            var flingNow = new Date().getTime();
++            if (!this._flingSampleTime || flingNow - this._flingSampleTime > 40) { this._flingSampleCoordinate = { x: event.x }; this._flingSampleTime = flingNow; }
+             this._chart.getChartStore().scroll(distance);
+         }
+     };
+@@ -14201,6 +14292,34 @@ var Event = /** @class */ (function () {
+         }
+         var widget = null;
+         if (pane !== null) {
++            /* Quantix patch: an inside Y axis overlaps the main widget by design.
++             * beta3 hit-tested MAIN first, so a finger on the visible price labels
++             * could never reach Y_AXIS and vertical price scaling stopped working
++             * in the compact PWA layout. Prefer only an inside axis on coarse
++             * pointers; outside axes and all fine-pointer desktop behavior keep the
++             * original order. */
++            if (IS_COARSE_POINTER) {
++                try {
++                    for (var _d = __values(pane.getYAxisWidgets()), _e = _d.next(); !_e.done; _e = _d.next()) {
++                        var insideYAxisWidget = _e.value;
++                        var insideYAxis = insideYAxisWidget.getAxisComponent();
++                        var insideYAxisBounding = insideYAxisWidget.getBounding();
++                        if (insideYAxis.inside &&
++                            x >= insideYAxisBounding.left && x <= insideYAxisBounding.left + insideYAxisBounding.width &&
++                            y >= insideYAxisBounding.top && y <= insideYAxisBounding.top + insideYAxisBounding.height) {
++                            widget = insideYAxisWidget;
++                            break;
++                        }
++                    }
++                }
++                catch (e_6_1) { e_6 = { error: e_6_1 }; }
++                finally {
++                    try {
++                        if (_e && !_e.done && (_c = _d.return)) _c.call(_d);
++                    }
++                    finally { if (e_6) throw e_6.error; }
++                }
++            }
+             if (!isValid(widget)) {
+                 var mainWidget = pane.getMainWidget();
+                 var mainBounding = mainWidget.getBounding();
+@@ -14473,12 +14592,35 @@ var ChartImp = /** @class */ (function () {
+         }
+         if (!this._layoutPending) {
+             this._layoutPending = true;
+-            Promise.resolve().then(function (_) {
+-                _this._layout();
+-                _this._layoutPending = false;
+-            }).catch(function (_) {
+-                // todo
+-            });
++            /* Quantix patch: coalesce to ONE layout per animation frame instead of one per
++               microtask. Every overrideIndicator ends here, and the indicator hooks push
++               updates from separate tasks (one per WS message), so a burst ran a full
++               relayout + redraw of every pane once per message.
++               Nothing is dropped or reordered: the flags accumulate in _layoutUpdateOptions
++               above and _layout always paints the CURRENT store state, so a coalesced frame
++               can only be newer, never staler, and panes still paint in one pass (no tearing
++               between them). The microtask path is kept for a hidden tab (rAF is paused
++               there) and where rAF does not exist.
++               try/finally so a throw inside _layout can no longer leave _layoutPending true
++               forever — that wedged the chart permanently. */
++            var flushLayout = function (_) {
++                try {
++                    _this._layout();
++                }
++                catch (_e) {
++                    // todo
++                }
++                finally {
++                    _this._layoutPending = false;
++                }
++            };
++            if (typeof requestAnimationFrame === 'function' &&
++                !(typeof document !== 'undefined' && document.hidden)) {
++                requestAnimationFrame(flushLayout);
++            }
++            else {
++                Promise.resolve().then(flushLayout).catch(function (_) { });
++            }
+         }
+     };
+     ChartImp.prototype._layout = function () {
+diff --git a/node_modules/klinecharts-v10/dist/umd/klinecharts.js b/node_modules/klinecharts-v10/dist/umd/klinecharts.js
+index a64534d..77346ca 100644
+--- a/node_modules/klinecharts-v10/dist/umd/klinecharts.js
++++ b/node_modules/klinecharts-v10/dist/umd/klinecharts.js
+@@ -38,7 +38,7 @@ function logError(api, invalidParam, append) {
+     log('%c😟 klinecharts error%c %s%s%s', 'padding:3px 4px;border-radius:2px;color:#ffffff;background-color:#F92855;', 'color:#F92855;', api, invalidParam, append );
+ }
+ function logTag() {
+-    log('%c❤️ Welcome to klinecharts. Version is 10.0.0-beta3', 'border-radius:4px;border:dashed 1px #1677FF;line-height:70px;padding:0 20px;margin:16px 0;font-size:14px;color:#1677FF;', '', '', '', '');
++    /* welcome log silenced (Quantix patch) */ 0 && log('%c❤️ Welcome to klinecharts. Version is 10.0.0-beta3', 'border-radius:4px;border:dashed 1px #1677FF;line-height:70px;padding:0 20px;margin:16px 0;font-size:14px;color:#1677FF;', '', '', '', '');
+ }
+ 
+ /**
+@@ -1614,7 +1614,7 @@ var IndicatorImp = /** @class */ (function () {
+     }
+     IndicatorImp.prototype.override = function (indicator) {
+         var _a, _b;
+-        var _c = this, result = _c.result, currentOthers = __rest(_c, ["result"]);
++        var _c = this, result = _c.result, currentOthers = __rest(_c, ["result", "_prevIndicator"]); /* Quantix patch: _prevIndicator is an own property, so cloning it here chained every previous snapshot into the next one — one more generation per override call, each holding a deep copy of `result`. Profiles showed the clone recursing 150 levels deep. */
+         this._prevIndicator = __assign(__assign({}, clone(currentOthers)), { result: result });
+         var id = indicator.id, name = indicator.name, shortName = indicator.shortName, precision = indicator.precision, styles = indicator.styles, figures = indicator.figures, calcParams = indicator.calcParams, others = __rest(indicator, ["id", "name", "shortName", "precision", "styles", "figures", "calcParams"]);
+         if (!isString(this.id) && isString(id)) {
+@@ -4005,7 +4005,11 @@ var Eventful = /** @class */ (function () {
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  */
+-var DEVIATION = 2;
++var DEVIATION = 6; /* Quantix patch: was 2. Pixel tolerance for hit-testing a
++   figure — selecting a drawn line demanded near pixel-perfect aim, and the lines are
++   thin. Read ONLY by checkCoordinateOnLine / checkCoordinateOnRect / checkCoordinateOnArc,
++   so nothing about rendering changes; raising it widens the grab area, not the stroke.
++   Kept modest on purpose: too generous and a click lands on a neighbouring overlay. */
+ var FigureImp = /** @class */ (function (_super) {
+     __extends(FigureImp, _super);
+     function FigureImp(figure) {
+@@ -5161,7 +5165,7 @@ var PaneIdConstants = {
+  */
+ var BarSpaceLimitConstants = {
+     MIN: 1,
+-    MAX: 50
++    MAX: 500
+ };
+ var DEFAULT_LAYOUT_BASIC_PARAMS = {
+     barSpaceLimitMin: BarSpaceLimitConstants.MIN,
+@@ -6699,7 +6703,14 @@ var WidgetNameConstants = {
+     Y_AXIS: 'yAxis',
+     SEPARATOR: 'separator'
+ };
+-var REAL_SEPARATOR_HEIGHT = 7;
++var IS_COARSE_POINTER = typeof window !== "undefined" && typeof window.matchMedia === "function" && window.matchMedia("(pointer: coarse)").matches;
++var REAL_SEPARATOR_HEIGHT = IS_COARSE_POINTER ? 20 : 7; /* Quantix patch: was a flat 7. This is the pane separator's grab band — BOTH the height of its DOM element and, more importantly, the hit region computed in _findWidgetByEvent, which is pure coordinate math and therefore cannot be widened by CSS or by styles.separator.size (that one only thickens the drawn line). 7px is a mouse target: on a touchscreen the pane heights simply could not be changed, because there was nothing a finger could land on. 20 on a coarse pointer, unchanged on a fine one, so the desktop keeps its thin band and its precise cursor. */
++function activeSeparatorBackground(color) {
++    /* Keep the 20px touch target, but paint only its centered 8px strip. */
++    return REAL_SEPARATOR_HEIGHT > 7
++        ? "linear-gradient(to bottom, transparent 30%, ".concat(color, " 30%, ").concat(color, " 70%, transparent 70%)")
++        : color;
++}
+ 
+ /**
+  * Licensed under the Apache License, Version 2.0 (the "License");
+@@ -12406,6 +12417,7 @@ var SeparatorWidget = /** @class */ (function (_super) {
+         this._topPane = dragPanes.topPane;
+         this._bottomPane = dragPanes.bottomPane;
+         this._dragFlag = true;
++        this.getContainer().style.background = activeSeparatorBackground(this.getPane().getChart().getStyles().separator.activeBackgroundColor);
+         this._dragStartY = event.pageY;
+         this._topPaneHeight = this._topPane.getBounding().height;
+         this._bottomPaneHeight = this._bottomPane.getBounding().height;
+@@ -12469,7 +12481,7 @@ var SeparatorWidget = /** @class */ (function (_super) {
+         if (isValid(dragPanes)) {
+             var chart = this.getPane().getChart();
+             var styles = chart.getStyles().separator;
+-            this.getContainer().style.background = styles.activeBackgroundColor;
++            this.getContainer().style.background = activeSeparatorBackground(styles.activeBackgroundColor);
+             return true;
+         }
+         return false;
+@@ -12961,6 +12973,22 @@ var EventHandlerImp = /** @class */ (function () {
+             }
+         }
+     };
++    EventHandlerImp.prototype._touchCancelHandler = function (touchCancelEvent) {
++        var touch = this._touchWithId(touchCancelEvent.changedTouches, this._activeTouchId);
++        this._activeTouchId = null;
++        this._lastTouchEventTimeStamp = this._eventTimeStamp(touchCancelEvent);
++        this._clearLongTapTimeout();
++        this._touchMoveStartCoordinate = null;
++        this._cancelTap = true;
++        this._resetTapTimeout();
++        if (this._unsubscribeRootTouchEvents !== null) {
++            this._unsubscribeRootTouchEvents();
++            this._unsubscribeRootTouchEvents = null;
++        }
++        if (touch !== null) {
++            this._processEvent(this._makeCompatEvent(touchCancelEvent, touch), this._handler.touchCancelEvent);
++        }
++    };
+     EventHandlerImp.prototype._mouseUpHandler = function (mouseUpEvent) {
+         if (mouseUpEvent.button !== MouseEventButton.Left) {
+             return;
+@@ -13023,16 +13051,19 @@ var EventHandlerImp = /** @class */ (function () {
+             var boundTouchMoveWithDownHandler_1 = this._touchMoveHandler.bind(this);
+             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+             var boundTouchEndHandler_1 = this._touchEndHandler.bind(this);
++            var boundTouchCancelHandler_1 = this._touchCancelHandler.bind(this);
+             this._unsubscribeRootTouchEvents = function () {
+                 // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+                 rootElement.removeEventListener('touchmove', boundTouchMoveWithDownHandler_1);
+                 // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+                 rootElement.removeEventListener('touchend', boundTouchEndHandler_1);
++                rootElement.removeEventListener('touchcancel', boundTouchCancelHandler_1);
+             };
+             // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+             rootElement.addEventListener('touchmove', boundTouchMoveWithDownHandler_1, { passive: false });
+             // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+             rootElement.addEventListener('touchend', boundTouchEndHandler_1, { passive: false });
++            rootElement.addEventListener('touchcancel', boundTouchCancelHandler_1, { passive: false });
+             this._clearLongTapTimeout();
+             // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+             this._longTapTimeoutId = setTimeout(this._longTapHandler.bind(this, downEvent), Delay.LongTap);
+@@ -13462,7 +13493,7 @@ var Event = /** @class */ (function () {
+     function Event(container, chart) {
+         var _this = this;
+         // 惯性滚动开始时间
+-        this._flingStartTime = new Date().getTime();
++        this._flingStartTime = new Date().getTime(); this._flingSampleCoordinate = null; this._flingSampleTime = 0;
+         // 惯性滚动定时器
+         this._flingScrollRequestId = null;
+         // 开始滚动时坐标点
+@@ -13830,17 +13861,21 @@ var Event = /** @class */ (function () {
+         var e_2, _a;
+         var _b;
+         var _c = this._findWidgetByEvent(e), pane = _c.pane, widget = _c.widget;
++        this._mouseDownWidget = widget;
+         if (widget !== null) {
+             var event_8 = this._makeWidgetEvent(e, widget);
+             (_b = event_8.preventDefault) === null || _b === void 0 ? void 0 : _b.call(event_8);
+             var name_8 = widget.getName();
+             switch (name_8) {
++                case WidgetNameConstants.SEPARATOR: {
++                    return widget.dispatchEvent('touchStartEvent', event_8);
++                }
+                 case WidgetNameConstants.MAIN: {
+                     var chartStore = this._chart.getChartStore();
+                     if (widget.dispatchEvent('mouseDownEvent', event_8)) {
+                         this._touchCancelCrosshair = true;
+                         this._touchCoordinate = null;
+-                        chartStore.setCrosshair(undefined, { notInvalidate: true });
++                        /* Quantix patch: was setCrosshair(undefined) — the crosshair was deliberately CLEARED while an overlay is being drawn. On a mouse that is right: the cursor itself shows where the point will land. On a finger there is no cursor and the fingertip covers the very spot being placed, so arming a tool looked identical to arming the pointer and points landed blind. Both sites are inside touch handlers, so the mouse path is untouched. */ chartStore.setCrosshair({ x: event_8.x, y: event_8.y, paneId: pane === null || pane === void 0 ? void 0 : pane.getId() }, { notInvalidate: true });
+                         this._chart.updatePane(1 /* UpdateLevel.Overlay */);
+                         return true;
+                     }
+@@ -13848,7 +13883,7 @@ var Event = /** @class */ (function () {
+                         cancelAnimationFrame(this._flingScrollRequestId);
+                         this._flingScrollRequestId = null;
+                     }
+-                    this._flingStartTime = new Date().getTime();
++                    this._flingStartTime = new Date().getTime(); this._flingSampleCoordinate = null; this._flingSampleTime = 0;
+                     var yAxes = pane.getYAxisComponents();
+                     try {
+                         for (var yAxes_2 = __values(yAxes), yAxes_2_1 = yAxes_2.next(); !yAxes_2_1.done; yAxes_2_1 = yAxes_2.next()) {
+@@ -13898,7 +13933,13 @@ var Event = /** @class */ (function () {
+     };
+     Event.prototype.touchMoveEvent = function (e) {
+         var _a, _b, _c;
+-        var _d = this._findWidgetByEvent(e), pane = _d.pane, widget = _d.widget;
++        if (this._mouseDownWidget !== null && this._mouseDownWidget.getName() === WidgetNameConstants.SEPARATOR) {
++            return this._mouseDownWidget.dispatchEvent('touchMoveEvent', this._makeWidgetEvent(e, this._mouseDownWidget));
++        }
++        var activeWidget = this._mouseDownWidget;
++        var _d = activeWidget === null
++            ? this._findWidgetByEvent(e)
++            : { pane: activeWidget.getPane(), widget: activeWidget }, pane = _d.pane, widget = _d.widget;
+         if (widget !== null) {
+             var event_9 = this._makeWidgetEvent(e, widget);
+             var name_9 = widget.getName();
+@@ -13907,7 +13948,7 @@ var Event = /** @class */ (function () {
+                 case WidgetNameConstants.MAIN: {
+                     if (widget.dispatchEvent('pressedMouseMoveEvent', event_9)) {
+                         (_a = event_9.preventDefault) === null || _a === void 0 ? void 0 : _a.call(event_9);
+-                        chartStore.setCrosshair(undefined, { notInvalidate: true });
++                        /* Quantix patch: was setCrosshair(undefined) — the crosshair was deliberately CLEARED while an overlay is being drawn. On a mouse that is right: the cursor itself shows where the point will land. On a finger there is no cursor and the fingertip covers the very spot being placed, so arming a tool looked identical to arming the pointer and points landed blind. Both sites are inside touch handlers, so the mouse path is untouched. */ chartStore.setCrosshair({ x: event_9.x, y: event_9.y, paneId: pane === null || pane === void 0 ? void 0 : pane.getId() }, { notInvalidate: true });
+                         this._chart.updatePane(1 /* UpdateLevel.Overlay */);
+                         return true;
+                     }
+@@ -13933,7 +13974,13 @@ var Event = /** @class */ (function () {
+     };
+     Event.prototype.touchEndEvent = function (e) {
+         var _this = this;
+-        var widget = this._findWidgetByEvent(e).widget;
++        if (this._mouseDownWidget !== null && this._mouseDownWidget.getName() === WidgetNameConstants.SEPARATOR) {
++            var separatorWidget = this._mouseDownWidget;
++            this._mouseDownWidget = null;
++            return separatorWidget.dispatchEvent('touchEndEvent', this._makeWidgetEvent(e, separatorWidget));
++        }
++        var widget = this._mouseDownWidget !== null ? this._mouseDownWidget : this._findWidgetByEvent(e).widget;
++        this._mouseDownWidget = null;
+         if (widget !== null) {
+             var event_10 = this._makeWidgetEvent(e, widget);
+             var name_10 = widget.getName();
+@@ -13941,17 +13988,29 @@ var Event = /** @class */ (function () {
+                 case WidgetNameConstants.MAIN: {
+                     widget.dispatchEvent('mouseUpEvent', event_10);
+                     if (this._startScrollCoordinate !== null) {
+-                        var time = new Date().getTime() - this._flingStartTime;
+-                        var distance = event_10.x - this._startScrollCoordinate.x;
+-                        var v_1 = distance / (time > 0 ? time : 1) * 20;
+-                        if (time < 200 && Math.abs(v_1) > 0) {
++                        var flingFrom = this._flingSampleCoordinate || this._startScrollCoordinate;
++                        var time = new Date().getTime() - (this._flingSampleTime || this._flingStartTime);
++                        var distance = event_10.x - flingFrom.x;
++                        var velocity_1 = distance / (time > 0 ? time : 1);
++                        if (time < 200 && Math.abs(velocity_1) > 0.01) {
+                             var store_1 = this._chart.getChartStore();
++                            var lastFrameTime_1 = new Date().getTime();
++                            var decayMs_1 = 325;
+                             var flingScroll_1 = function () {
+                                 _this._flingScrollRequestId = requestAnimationFrame(function () {
++                                    /* Quantix patch: calculate friction from real elapsed time.
++                                       The old fixed per-frame distance looked constant on modern
++                                       high-refresh displays. This integrates an exponential velocity
++                                       curve, so every frame travels less than the one before it. */
++                                    var now_1 = new Date().getTime();
++                                    var elapsed_1 = Math.min(Math.max(now_1 - lastFrameTime_1, 0), 48);
++                                    lastFrameTime_1 = now_1;
++                                    var decay_1 = Math.exp(-elapsed_1 / decayMs_1);
++                                    var frameDistance_1 = velocity_1 * decayMs_1 * (1 - decay_1);
++                                    velocity_1 = velocity_1 * decay_1;
+                                     store_1.startScroll();
+-                                    store_1.scroll(v_1);
+-                                    v_1 = v_1 * (1 - 0.025);
+-                                    if (Math.abs(v_1) < 1) {
++                                    store_1.scroll(frameDistance_1);
++                                    if (Math.abs(velocity_1) < 0.02) {
+                                         if (_this._flingScrollRequestId !== null) {
+                                             cancelAnimationFrame(_this._flingScrollRequestId);
+                                             _this._flingScrollRequestId = null;
+@@ -13965,6 +14024,12 @@ var Event = /** @class */ (function () {
+                             flingScroll_1();
+                         }
+                     }
++                    this._startScrollCoordinate = null;
++                    this._prevYAxisRanges.clear();
++                    this._xAxisStartScaleCoordinate = null;
++                    this._xAxisStartScaleDistance = 0;
++                    this._xAxisScale = 1;
++                    this._yAxisStartScaleDistance = 0;
+                     return true;
+                 }
+                 case WidgetNameConstants.X_AXIS:
+@@ -13984,6 +14049,30 @@ var Event = /** @class */ (function () {
+         }
+         return false;
+     };
++    Event.prototype.touchCancelEvent = function (e) {
++        var widget = this._mouseDownWidget;
++        this._mouseDownWidget = null;
++        if (widget !== null) {
++            var event_11 = this._makeWidgetEvent(e, widget);
++            if (widget.getName() === WidgetNameConstants.SEPARATOR) {
++                widget.dispatchEvent('touchEndEvent', event_11);
++            }
++            else {
++                widget.dispatchEvent('mouseUpEvent', event_11);
++            }
++        }
++        this._startScrollCoordinate = null;
++        this._prevYAxisRanges.clear();
++        this._xAxisStartScaleCoordinate = null;
++        this._xAxisStartScaleDistance = 0;
++        this._xAxisScale = 1;
++        this._yAxisStartScaleDistance = 0;
++        this._touchCoordinate = null;
++        this._touchCancelCrosshair = false;
++        this._touchZoomed = false;
++        this._chart.getChartStore().setCrosshair();
++        return true;
++    };
+     Event.prototype.tapEvent = function (e) {
+         var _a = this._findWidgetByEvent(e), pane = _a.pane, widget = _a.widget;
+         var consumed = false;
+@@ -14001,8 +14090,7 @@ var Event = /** @class */ (function () {
+                 }
+                 else {
+                     if (!this._touchCancelCrosshair && !this._touchZoomed) {
+-                        this._touchCoordinate = { x: event_12.x, y: event_12.y };
+-                        chartStore.setCrosshair({ x: event_12.x, y: event_12.y, paneId: pane === null || pane === void 0 ? void 0 : pane.getId() }, { notInvalidate: true });
++                        /* Quantix patch: a plain tap in POINTER mode used to raise the crosshair, which on touch made the two modes indistinguishable — the same tap gesture drew a crosshair whether or not a drawing tool was armed, and with the crosshair now following the finger while drawing (see the touchStart/touchMove patches) there would be no way to tell them apart. Tap now DISMISSES it instead. Long-press still raises it, so reading values by touch is still possible — that is the deliberate gesture for it. Touch path only: a mouse click goes through mouseClickEvent. */ this._touchCoordinate = null; chartStore.setCrosshair(undefined, { notInvalidate: true });
+                         consumed = true;
+                     }
+                     this._touchCancelCrosshair = false;
+@@ -14078,6 +14166,9 @@ var Event = /** @class */ (function () {
+                 finally { if (e_3) throw e_3.error; }
+             }
+             var distance = event.x - this._startScrollCoordinate.x;
++            /* Quantix patch: inertia was measured over the WHOLE gesture (velocity = total distance / total time, and only if the entire touch lasted under 200ms), so a normal drag — which takes longer than that — never glided, and a long slow drag ending in a flick averaged its own slowness away. Sampled over the last ~40ms instead, the way a phone user expects: lift while still moving and it glides, pause before lifting and it stops dead. The existing cancel-on-touchstart is untouched, so a new touch still catches it. */
++            var flingNow = new Date().getTime();
++            if (!this._flingSampleTime || flingNow - this._flingSampleTime > 40) { this._flingSampleCoordinate = { x: event.x }; this._flingSampleTime = flingNow; }
+             this._chart.getChartStore().scroll(distance);
+         }
+     };
+@@ -14206,6 +14297,34 @@ var Event = /** @class */ (function () {
+         }
+         var widget = null;
+         if (pane !== null) {
++            /* Quantix patch: an inside Y axis overlaps the main widget by design.
++             * beta3 hit-tested MAIN first, so a finger on the visible price labels
++             * could never reach Y_AXIS and vertical price scaling stopped working
++             * in the compact PWA layout. Prefer only an inside axis on coarse
++             * pointers; outside axes and all fine-pointer desktop behavior keep the
++             * original order. */
++            if (IS_COARSE_POINTER) {
++                try {
++                    for (var _d = __values(pane.getYAxisWidgets()), _e = _d.next(); !_e.done; _e = _d.next()) {
++                        var insideYAxisWidget = _e.value;
++                        var insideYAxis = insideYAxisWidget.getAxisComponent();
++                        var insideYAxisBounding = insideYAxisWidget.getBounding();
++                        if (insideYAxis.inside &&
++                            x >= insideYAxisBounding.left && x <= insideYAxisBounding.left + insideYAxisBounding.width &&
++                            y >= insideYAxisBounding.top && y <= insideYAxisBounding.top + insideYAxisBounding.height) {
++                            widget = insideYAxisWidget;
++                            break;
++                        }
++                    }
++                }
++                catch (e_6_1) { e_6 = { error: e_6_1 }; }
++                finally {
++                    try {
++                        if (_e && !_e.done && (_c = _d.return)) _c.call(_d);
++                    }
++                    finally { if (e_6) throw e_6.error; }
++                }
++            }
+             if (!isValid(widget)) {
+                 var mainWidget = pane.getMainWidget();
+                 var mainBounding = mainWidget.getBounding();
+@@ -14478,12 +14597,35 @@ var ChartImp = /** @class */ (function () {
+         }
+         if (!this._layoutPending) {
+             this._layoutPending = true;
+-            Promise.resolve().then(function (_) {
+-                _this._layout();
+-                _this._layoutPending = false;
+-            }).catch(function (_) {
+-                // todo
+-            });
++            /* Quantix patch: coalesce to ONE layout per animation frame instead of one per
++               microtask. Every overrideIndicator ends here, and the indicator hooks push
++               updates from separate tasks (one per WS message), so a burst ran a full
++               relayout + redraw of every pane once per message.
++               Nothing is dropped or reordered: the flags accumulate in _layoutUpdateOptions
++               above and _layout always paints the CURRENT store state, so a coalesced frame
++               can only be newer, never staler, and panes still paint in one pass (no tearing
++               between them). The microtask path is kept for a hidden tab (rAF is paused
++               there) and where rAF does not exist.
++               try/finally so a throw inside _layout can no longer leave _layoutPending true
++               forever — that wedged the chart permanently. */
++            var flushLayout = function (_) {
++                try {
++                    _this._layout();
++                }
++                catch (_e) {
++                    // todo
++                }
++                finally {
++                    _this._layoutPending = false;
++                }
++            };
++            if (typeof requestAnimationFrame === 'function' &&
++                !(typeof document !== 'undefined' && document.hidden)) {
++                requestAnimationFrame(flushLayout);
++            }
++            else {
++                Promise.resolve().then(flushLayout).catch(function (_) { });
++            }
+         }
+     };
+     ChartImp.prototype._layout = function () {

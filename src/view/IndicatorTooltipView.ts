@@ -301,20 +301,28 @@ export default class IndicatorTooltipView extends View<YAxis> {
       const data = result[dataIndex] ?? {}
       const defaultValue = tooltipStyles.legend.defaultValue
       // @ts-ignore
-      eachFigures(indicator, dataIndex, barSpace, styles, (figure: IndicatorFigure, figureStyles: Required<IndicatorFigureStyle>) => {
-        if (isString(figure.title)) {
-          const color = figureStyles.color
-          let value = data[figure.key]
-          if (isNumber(value)) {
-            value = formatPrecision(value, indicator.precision)
-            if (indicator.shouldFormatBigNumber) {
-              value = formatter.formatBigNumber(value as string)
+      eachFigures(
+        indicator,
+        dataIndex,
+        barSpace,
+        styles,
+        (figure: IndicatorFigure, figureStyles: Required<IndicatorFigureStyle>) => {
+          if (isString(figure.title)) {
+            const color = figureStyles.color
+            let value = data[figure.key]
+            if (isNumber(value)) {
+              value = formatPrecision(value, indicator.precision)
+              if (indicator.shouldFormatBigNumber) {
+                value = formatter.formatBigNumber(value as string)
+              }
+              value = decimalFold.format(thousandsSeparator.format(value as string))
             }
-            value = decimalFold.format(thousandsSeparator.format(value as string))
+            legends.push({ title: { text: figure.title, color }, value: { text: (value ?? defaultValue) as string, color } })
           }
-          legends.push({ title: { text: figure.title, color }, value: { text: (value ?? defaultValue) as string, color } })
-        }
-      })
+        },
+        undefined,
+        chartStore.getStylesVersion()
+      )
       tooltipData.legends = legends
     }
 

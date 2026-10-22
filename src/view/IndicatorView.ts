@@ -103,7 +103,7 @@ export default class IndicatorView extends CandleBarView {
         }
         if (!isCover) {
           const result = indicator.result
-          const preparedFigures = prepareIndicatorFigures(indicator, defaultStyles)
+          const preparedFigures = prepareIndicatorFigures(indicator, defaultStyles, chartStore.getStylesVersion())
           const lines: Array<Array<{ coordinates: Coordinate[]; styles: Partial<SmoothLineStyle> }>> = []
 
           this.eachChildren((data, barSpace) => {
