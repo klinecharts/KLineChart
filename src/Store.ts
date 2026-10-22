@@ -135,6 +135,9 @@ export default class StoreImp implements Store {
    */
   private readonly _styles = getDefaultStyles()
 
+  // Bumped on every setStyles call; lets hot paths cache style-derived data.
+  private _stylesVersion = 0
+
   /**
    * Custom api
    */
@@ -468,8 +471,13 @@ export default class StoreImp implements Store {
         }
       })
     }
+    this._stylesVersion++
   }
 
+  /**
+   * Returns the live styles object. Do not mutate it directly — use
+   * `setStyles` so that internal caches derived from styles stay consistent.
+   */
   getStyles(): Styles {
     return this._styles
   }
@@ -478,6 +486,9 @@ export default class StoreImp implements Store {
     merge(this._layoutOptions, layout)
   }
 
+  getStylesVersion(): number {
+    return this._stylesVersion
+  }
   setFormatter(formatter: Partial<Formatter>): void {
     merge(this._formatter, formatter)
   }
