@@ -54,6 +54,8 @@ export default class CandleBarView extends ChildrenView {
         halfOhlcSize = Math.floor(ohlcSize / 2)
       }
       const yAxis = pane.getYAxisComponentById(candleBarOptions.yAxisId)
+      // Per-candle click handlers are only needed when someone listens.
+      const dispatchClick = isMain && chartStore.hasAction('onCandleBarClick')
       this.eachChildren((visibleData, barSpace) => {
         const {
           x,
@@ -152,7 +154,7 @@ export default class CandleBarView extends ChildrenView {
           }
           rects.forEach((rect) => {
             let handler: Nullable<EventHandler> = null
-            if (isMain) {
+            if (dispatchClick) {
               handler = {
                 mouseClickEvent: this._boundCandleBarClickEvent(visibleData)
               }
