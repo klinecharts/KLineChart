@@ -252,7 +252,19 @@ export interface PreparedIndicatorFigure<D = unknown> {
   index: number
 }
 
-export function prepareIndicatorFigures<D = unknown>(indicator: Indicator<D>, defaultStyles: IndicatorStyle): Array<PreparedIndicatorFigure<D>> {
+// Cache of prepared figures per indicator instance. Entries are dropped when the
+// indicator is overridden (see IndicatorImp.override) and stale entries are skipped
+// when the caller-provided styles version (bumped on every ChartStore.setStyles)
+// or the default styles object no longer matches.
+const preparedFiguresCache = new WeakMap<object, { stylesVersion: number; defaultStyles: IndicatorStyle; preparedFigures: Array<PreparedIndicatorFigure<unknown>> }>()
+
+export function prepareIndicatorFigures<D = unknown>(indicator: Indicator<D>, defaultStyles: IndicatorStyle, stylesVersion?: number): Array<PreparedIndicatorFigure<D>> {
+  if (stylesVersion !== undefined) {
+    const cached = preparedFiguresCache.get(indicator)
+    if (cached !== undefined && cached.stylesVersion === stylesVersion && cached.defaultStyles === defaultStyles) {
+      return cached.preparedFigures as unknown as Array<PreparedIndicatorFigure<D>>
+    }
+  }
   const figures = indicator.figures
   const styles = indicator.styles
 
@@ -312,11 +324,15 @@ export function prepareIndicatorFigures<D = unknown>(indicator: Indicator<D>, de
       preparedFigures.push({ figure, defaultStyles: { ...defaultFigureStyles } as IndicatorFigureStyle, index: figureIndex })
     }
   })
+  if (stylesVersion !== undefined) {
+    preparedFiguresCache.set(indicator, { stylesVersion, defaultStyles, preparedFigures: preparedFigures as unknown as Array<PreparedIndicatorFigure<unknown>> })
+  }
   return preparedFigures
 }
 
-export function eachFigures<D = unknown>(indicator: Indicator<D>, dataIndex: number, barSpace: BarSpace, defaultStyles: IndicatorStyle, eachFigureCallback: EachFigureCallback<D>, preparedFigures = prepareIndicatorFigures(indicator, defaultStyles)): void {
+export function eachFigures<D = unknown>(indicator: Indicator<D>, dataIndex: number, barSpace: BarSpace, defaultStyles: IndicatorStyle, eachFigureCallback: EachFigureCallback<D>, preparedFigures?: Array<PreparedIndicatorFigure<D>>, stylesVersion?: number): void {
   const result = indicator.result
+  preparedFigures ??= prepareIndicatorFigures(indicator, defaultStyles, stylesVersion)
   preparedFigures.forEach(({ figure, defaultStyles: defaultFigureStyles, index }) => {
     const dynamicStyles = figure.styles?.({
       data: {
@@ -421,6 +437,7 @@ export default class IndicatorImp<D = unknown, C = unknown, E = unknown> impleme
     if (isValid(figures)) {
       this.figures = clone(figures)
     }
+    preparedFiguresCache.delete(this)
   }
 
   setSeriesPrecision(precision: number): void {

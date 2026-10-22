@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "mimosa-hook-status/v1",
+  "recordedAt": "2026-09-09T15:56:24.056Z",
+  "sessionId": "sess_09899062-cb1f-4e66-b9fc-82684e331b39",
+  "event": "PostToolUse",
+  "toolName": "Edit",
+  "file": "/Users/nemezzizz/.zcode/cli/memories/projects/klinechart-92ac723c1258bf40/memory/klinechart-pr-campaign-status.md",
+  "outcome": "clear",
+  "coverage": "complete",
+  "findingCount": 0,
+  "durationMs": 2,
+  "hostState": "hook_complete",
+  "reportHint": ".mimosa/reports/"
+}

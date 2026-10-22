@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "mimosa-hook-status/v1",
+  "recordedAt": "2026-09-09T16:27:35.399Z",
+  "sessionId": "sess_142fd3f3-80d9-4b04-8a2d-e4b7a01b8c46",
+  "event": "PostToolUse",
+  "toolName": "Edit",
+  "file": "/Users/nemezzizz/.zcode/cli/memories/projects/klinechart-92ac723c1258bf40/memory/klinechart-yaxis-inside-claim.md",
+  "outcome": "clear",
+  "coverage": "complete",
+  "findingCount": 0,
+  "durationMs": 3,
+  "hostState": "hook_complete",
+  "reportHint": ".mimosa/reports/"
+}
