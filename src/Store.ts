@@ -1327,6 +1327,11 @@ export default class StoreImp implements Store {
       this._actions.set(type, new Action())
     }
     this._actions.get(type)?.subscribe(callback)
+    // Candle click handlers are only attached during a main-pane redraw when
+    // the action has subscribers; re-render once so a late subscriber gets them.
+    if (type === 'onCandleBarClick') {
+      this._chart.updatePane(UpdateLevel.Main, PaneIdConstants.CANDLE)
+    }
   }
 
   unsubscribeAction(type: ActionType, callback?: ActionCallback): void {
