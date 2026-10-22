@@ -267,6 +267,13 @@ export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
     })
   }
 
+  refreshPixelRatio(): void {
+    this._mainWidget.refreshPixelRatio()
+    this._yAxisWidgets.forEach((widget) => {
+      widget.refreshPixelRatio()
+    })
+  }
+
   override getImage(includeOverlay: boolean): HTMLCanvasElement {
     const { width, height } = this.getBounding()
     const canvas = createDom('canvas', {

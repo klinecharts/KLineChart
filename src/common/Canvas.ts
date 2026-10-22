@@ -41,6 +41,8 @@ export default class Canvas {
 
   private readonly _listener: DrawListener
 
+  private readonly _getPixelRatioCap: () => number
+
   private _destroyed = false
   private _resizePending = false
   private _sizeInitialized = false
@@ -59,11 +61,12 @@ export default class Canvas {
   private readonly _mediaQueryListener: () => void = () => {
     if (!this._destroyed) {
       this._observePixelRatio()
-      this._resize(getPixelRatio(this._element))
+      this._resize(this._cappedPixelRatio())
     }
   }
 
-  constructor(style: Partial<CSSStyleDeclaration>, listener: DrawListener) {
+  constructor(style: Partial<CSSStyleDeclaration>, listener: DrawListener, getPixelRatioCap?: () => number) {
+    this._getPixelRatioCap = getPixelRatioCap ?? (() => Number.POSITIVE_INFINITY)
     this._listener = listener
     this._element = createDom('canvas', style)
     this._ctx = this._element.getContext('2d')!
@@ -77,8 +80,15 @@ export default class Canvas {
             const entry = entries.find((entry: ResizeObserverEntry) => entry.target === this._element)
             const size = entry?.devicePixelContentBoxSize[0]
             if (this._sizeInitialized && isValid(size)) {
-              this._nextPixelWidth = size.inlineSize
-              this._nextPixelHeight = size.blockSize
+              const dpr = getPixelRatio(this._element)
+              const cap = this._getPixelRatioCap()
+              if (cap > 0 && cap < dpr) {
+                this._nextPixelWidth = Math.round(this._width * cap)
+                this._nextPixelHeight = Math.round(this._height * cap)
+              } else {
+                this._nextPixelWidth = size.inlineSize
+                this._nextPixelHeight = size.blockSize
+              }
               if (this._pixelWidth !== this._nextPixelWidth || this._pixelHeight !== this._nextPixelHeight) {
                 this._scheduleDraw(true)
               }
@@ -97,8 +107,21 @@ export default class Canvas {
       this._mediaQueryList.removeListener(this._mediaQueryListener)
     }
     const view = this._element.ownerDocument.defaultView
-    this._mediaQueryList = view?.matchMedia(`(resolution: ${getPixelRatio(this._element)}dppx)`) ?? null
+    this._mediaQueryList = view?.matchMedia(`(resolution: ${this._cappedPixelRatio()}dppx)`) ?? null
     this._mediaQueryList?.addListener(this._mediaQueryListener)
+  }
+
+  private _cappedPixelRatio(): number {
+    const dpr = getPixelRatio(this._element)
+    const cap = this._getPixelRatioCap()
+    return cap > 0 && cap < dpr ? cap : dpr
+  }
+
+  refreshPixelRatio(): void {
+    const ratio = this._cappedPixelRatio()
+    if (Math.round(this._width * ratio) !== this._nextPixelWidth || Math.round(this._height * ratio) !== this._nextPixelHeight) {
+      this._resize(ratio)
+    }
   }
 
   private _resize(pixelRatio: number): void {
@@ -144,7 +167,7 @@ export default class Canvas {
       this._height = h
       this._element.style.width = `${w}px`
       this._element.style.height = `${h}px`
-      this._resize(getPixelRatio(this._element))
+      this._resize(this._cappedPixelRatio())
     } else {
       this._scheduleDraw()
     }

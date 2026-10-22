@@ -614,7 +614,19 @@ export default class ChartImp implements Chart {
   }
 
   setLayoutOptions(layout: DeepPartial<Layout>): void {
+    const cap = layout.pixelRatioCap
+    if (cap !== undefined) {
+      if (!(typeof cap === 'number' && cap > 0)) {
+        logWarn('setLayoutOptions', 'layout.pixelRatioCap', 'pixelRatioCap must be a positive number!!!')
+        delete layout.pixelRatioCap
+      }
+    }
     this._chartStore.setLayoutOptions(layout)
+    if (typeof cap === 'number' && cap > 0) {
+      this._drawPanes.forEach((pane) => {
+        pane.refreshPixelRatio()
+      })
+    }
   }
 
   getLayoutOptions(): DeepRequired<Layout> {
