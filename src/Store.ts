@@ -207,6 +207,7 @@ export default class StoreImp implements Store {
    * Is loading data flag
    */
   private _loading = false
+  private _destroyed = false
 
   /**
    * Whether there are forward and backward more flag
@@ -785,6 +786,9 @@ export default class StoreImp implements Store {
         period: this._period,
         timestamp: null,
         callback: (data: KLineData[], more?: DataLoadMore) => {
+          if (this._destroyed) {
+            return
+          }
           this._loading = false
           this._addData(data, type, more)
           if (type === 'init') {
@@ -1831,6 +1835,7 @@ export default class StoreImp implements Store {
   }
 
   destroy(): void {
+    this._destroyed = true
     this._processDataUnsubscribe()
     this._clearData()
     this._clearLastPriceMarkExtendTextUpdateTimer()

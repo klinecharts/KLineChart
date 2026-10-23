@@ -138,6 +138,7 @@ export default class EventHandlerImp {
   private _unsubscribeOutsideMouseEvents: Nullable<() => void> = null
   private _unsubscribeOutsideTouchEvents: Nullable<() => void> = null
   private _unsubscribeMobileSafariEvents: Nullable<() => void> = null
+  private _targetEventDisposers: Array<() => void> = []
 
   private _unsubscribeMousemove: Nullable<() => void> = null
 
@@ -174,6 +175,11 @@ export default class EventHandlerImp {
   }
 
   destroy(): void {
+    for (const disposeTargetEvent of this._targetEventDisposers) {
+      disposeTargetEvent()
+    }
+    this._targetEventDisposers = []
+
     if (this._unsubscribeOutsideMouseEvents !== null) {
       this._unsubscribeOutsideMouseEvents()
       this._unsubscribeOutsideMouseEvents = null
@@ -699,11 +705,20 @@ export default class EventHandlerImp {
     }
   }
 
+  private _addTargetEvent(type: 'mouseenter' | 'mouseleave' | 'mousedown' | 'dblclick', listener: (event: MouseEvent) => void, options?: AddEventListenerOptions): void
+  private _addTargetEvent(type: 'touchstart' | 'touchmove' | 'touchend' | 'touchcancel', listener: (event: TouchEvent) => void, options?: AddEventListenerOptions): void
+  private _addTargetEvent(type: string, listener: (event: never) => void, options?: AddEventListenerOptions): void {
+    this._target.addEventListener(type, listener as EventListener, options)
+    this._targetEventDisposers.push(() => {
+      this._target.removeEventListener(type, listener as EventListener, options)
+    })
+  }
+
   private _init(): void {
-    this._target.addEventListener('mouseenter', this._mouseEnterHandler.bind(this))
+    this._addTargetEvent('mouseenter', this._mouseEnterHandler.bind(this))
 
     // Do not show context menu when something went wrong
-    this._target.addEventListener('touchcancel', this._clearLongTapTimeout.bind(this))
+    this._addTargetEvent('touchcancel', this._clearLongTapTimeout.bind(this))
 
     {
       const doc = this._target.ownerDocument
@@ -743,11 +758,11 @@ export default class EventHandlerImp {
       this._target.addEventListener('dblclick', this._onMobileSafariDoubleClick)
     }
 
-    this._target.addEventListener('mouseleave', this._mouseLeaveHandler.bind(this))
+    this._addTargetEvent('mouseleave', this._mouseLeaveHandler.bind(this))
 
-    this._target.addEventListener('touchstart', this._touchStartHandler.bind(this), { passive: true })
+    this._addTargetEvent('touchstart', this._touchStartHandler.bind(this), { passive: true })
 
-    this._target.addEventListener('mousedown', (e: MouseEvent) => {
+    this._addTargetEvent('mousedown', (e: MouseEvent) => {
       if (e.button === MouseEventButton.Middle) {
         // prevent incorrect scrolling event
         e.preventDefault()
@@ -756,7 +771,7 @@ export default class EventHandlerImp {
       return undefined
     })
 
-    this._target.addEventListener('mousedown', this._mouseDownHandler.bind(this))
+    this._addTargetEvent('mousedown', this._mouseDownHandler.bind(this))
     this._initPinch()
 
     // Hey mobile Safari, what's up?
@@ -765,7 +780,7 @@ export default class EventHandlerImp {
     // so we can't prevent them (as soon we subscribe on touchmove inside touchstart's handler).
     // And we'll get scroll of the page along with chart's one instead of only chart's scroll.
     // biome-ignore lint/suspicious/noEmptyBlockStatements: Safari requires an empty non-passive handler.
-    this._target.addEventListener('touchmove', () => {}, { passive: false })
+    this._addTargetEvent('touchmove', () => {}, { passive: false })
   }
 
   private _initPinch(): void {
@@ -773,7 +788,7 @@ export default class EventHandlerImp {
       return
     }
 
-    this._target.addEventListener(
+    this._addTargetEvent(
       'touchstart',
       (event: TouchEvent) => {
         this._checkPinchState(event.touches)
@@ -781,7 +796,7 @@ export default class EventHandlerImp {
       { passive: true }
     )
 
-    this._target.addEventListener(
+    this._addTargetEvent(
       'touchmove',
       (event: TouchEvent) => {
         if (event.touches.length !== 2 || this._startPinchMiddleCoordinate === null) {
@@ -797,7 +812,7 @@ export default class EventHandlerImp {
       { passive: false }
     )
 
-    this._target.addEventListener('touchend', (event: TouchEvent) => {
+    this._addTargetEvent('touchend', (event: TouchEvent) => {
       this._checkPinchState(event.touches)
     })
   }
