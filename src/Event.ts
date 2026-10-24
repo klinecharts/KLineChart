@@ -387,8 +387,8 @@ export default class Event implements EventHandler {
     if (this._mouseDownWidget !== null && this._mouseDownWidget.getName() === WidgetNameConstants.SEPARATOR) {
       return this._mouseDownWidget.dispatchEvent('pressedMouseMoveEvent', e)
     }
-    // An axis keeps its pressed drag until release, so dragging past the axis bounds
-    // keeps scrolling or scaling instead of stopping (#794).
+    // The pressed widget keeps its drag until release, so dragging past its bounds
+    // keeps scrolling, scaling or moving overlays instead of stopping (#794).
     const downWidget = this._mouseDownWidget
     if (downWidget !== null) {
       switch (downWidget.getName()) {
@@ -398,24 +398,21 @@ export default class Event implements EventHandler {
         case WidgetNameConstants.Y_AXIS: {
           return this._processYAxisScalingEvent(downWidget as Widget<DrawPane<YAxisImp>>, this._makeWidgetEvent(e, downWidget))
         }
-      }
-    }
-    const { pane, widget } = this._findWidgetByEvent(e)
-    if (widget !== null && this._mouseDownWidget?.getPane().getId() === pane?.getId() && this._mouseDownWidget?.getName() === widget.getName()) {
-      const event = this._makeWidgetEvent(e, widget)
-      const name = widget.getName()
-      switch (name) {
         case WidgetNameConstants.MAIN: {
+          const event = this._makeWidgetEvent(e, downWidget)
           let crosshair: Crosshair | undefined
-          const consumed = widget.dispatchEvent('pressedMouseMoveEvent', event)
+          const consumed = downWidget.dispatchEvent('pressedMouseMoveEvent', event)
           if (!consumed) {
-            this._processMainScrollingEvent(widget as Widget<DrawPane<YAxisImp>>, event)
+            this._processMainScrollingEvent(downWidget as Widget<DrawPane<YAxisImp>>, event)
           } else {
             // Explicitly update overlay when event was consumed (e.g., continuous drawing)
             this._chart.updatePane(UpdateLevel.Overlay)
           }
-          if (!consumed || widget.getForceCursor() === 'pointer') {
-            crosshair = { x: event.x, y: event.y, paneId: pane?.getId() }
+          // Hide the crosshair while the pointer is outside the pressed widget
+          const { width, height } = downWidget.getBounding()
+          const inside = event.x >= 0 && event.x <= width && event.y >= 0 && event.y <= height
+          if (inside && (!consumed || downWidget.getForceCursor() === 'pointer')) {
+            crosshair = { x: event.x, y: event.y, paneId: downWidget.getPane().getId() }
           }
           this._chart.getChartStore().setCrosshair(crosshair, { forceInvalidate: true })
           return consumed
