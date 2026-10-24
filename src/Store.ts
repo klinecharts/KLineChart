@@ -611,6 +611,7 @@ export default class StoreImp implements Store {
   private _addData(data: KLineData | KLineData[], type: DataLoadType, more?: DataLoadMore): void {
     let success = false
     let adjustFlag = false
+    let lastBarUpdate: Nullable<KLineData> = null
     if (isArray<KLineData>(data)) {
       const realMore = { backward: false, forward: false }
       if (isBoolean(more)) {
@@ -666,11 +667,18 @@ export default class StoreImp implements Store {
       } else if (timestamp === lastDataTimestamp) {
         this._dataList[dataCount - 1] = data
         success = true
+        lastBarUpdate = data
         adjustFlag = true
       }
     }
     if (success && adjustFlag) {
-      this._adjustVisibleRange()
+      if (lastBarUpdate === null) {
+        this._adjustVisibleRange()
+      } else {
+        // The range is unchanged, only the last bar's values are:
+        // patch the visible range in place instead of rebuilding it.
+        this._updateLastBarInVisibleRange(lastBarUpdate)
+      }
       this.setCrosshair(this._crosshair, { notInvalidate: true })
       const filterIndicators = this.getIndicatorsByFilter({})
       if (filterIndicators.length > 0) {
@@ -699,6 +707,58 @@ export default class StoreImp implements Store {
       --gapBarSpace
     }
     this._gapBarSpace = Math.max(1, gapBarSpace)
+  }
+
+  /**
+   * Only the values of the last bar were replaced (same-timestamp tick):
+   * the range, coordinates and neighbor bars are all unchanged, so patch
+   * the visible range data in place instead of rebuilding every entry.
+   */
+  private _updateLastBarInVisibleRange(data: KLineData): void {
+    const dataList = this._dataList
+    const lastIndex = dataList.length - 1
+    let touched = false
+    for (let i = this._visibleRangeDataList.length - 1; i >= 0; i--) {
+      const item = this._visibleRangeDataList[i]
+      const { dataIndex } = item
+      if (dataIndex === lastIndex) {
+        const itemData = item.data
+        itemData.prev = dataList[dataIndex - 1] ?? data
+        itemData.current = data
+        itemData.next = data
+        touched = true
+      } else if (dataIndex === lastIndex - 1) {
+        item.data.next = data
+        touched = true
+      } else if (dataIndex === lastIndex + 1) {
+        item.data.prev = data
+        touched = true
+      } else if (dataIndex < lastIndex - 1) {
+        break
+      }
+    }
+    if (touched) {
+      const high = this._visibleRangeHighLowPrice[0]
+      const low = this._visibleRangeHighLowPrice[1]
+      high.price = Number.MIN_SAFE_INTEGER
+      high.x = 0
+      low.price = Number.MAX_SAFE_INTEGER
+      low.x = 0
+      for (const item of this._visibleRangeDataList) {
+        const kLineData = item.data.current
+        if (isValid(kLineData)) {
+          if (high.price < kLineData.high) {
+            high.price = kLineData.high
+            high.x = item.x
+          }
+          if (low.price > kLineData.low) {
+            low.price = kLineData.low
+            low.x = item.x
+          }
+        }
+      }
+    }
+    this.executeAction('onVisibleRangeChange', this._visibleRange)
   }
 
   private _adjustVisibleRange(): void {
