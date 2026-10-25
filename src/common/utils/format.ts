@@ -117,14 +117,22 @@ export function formatBigNumber(value: string | number): string {
   if (isNumber(v)) {
     const sign = v < 0 ? '-' : ''
     const a = Math.abs(v)
-    if (a >= 1000000000) {
-      return `${sign}${+(a / 1000000000).toFixed(3)}B`
-    }
-    if (a >= 1000000) {
-      return `${sign}${+(a / 1000000).toFixed(3)}M`
-    }
-    if (a >= 1000) {
-      return `${sign}${+(a / 1000).toFixed(3)}K`
+    const units: Array<[number, string]> = [
+      [1000000000, 'B'],
+      [1000000, 'M'],
+      [1000, 'K']
+    ]
+    for (let i = 0; i < units.length; i++) {
+      const [size, unit] = units[i]
+      if (a >= size) {
+        const scaled = +(a / size).toFixed(3)
+        // 999999.9 rounds to 1000K, which is 1M
+        if (scaled >= 1000 && i > 0) {
+          const [upSize, upUnit] = units[i - 1]
+          return `${sign}${+(a / upSize).toFixed(3)}${upUnit}`
+        }
+        return `${sign}${scaled}${unit}`
+      }
     }
   }
   return `${value}`
