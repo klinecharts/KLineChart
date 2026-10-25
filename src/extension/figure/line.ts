@@ -36,7 +36,11 @@ export function checkCoordinateOnLine(coordinate: Coordinate, attrs: LineAttrs |
           const kb = getLinearSlopeIntercept(prevCoordinate, currentCoordinate)!
           const y = getLinearYFromSlopeIntercept(kb, coordinate)
           const yDif = Math.abs(y - coordinate.y)
-          if (Math.abs(prevCoordinate.x - coordinate.x) + Math.abs(currentCoordinate.x - coordinate.x) - Math.abs(prevCoordinate.x - currentCoordinate.x) < DEVIATION + DEVIATION && (yDif * yDif) / (kb[0] * kb[0] + 1) < DEVIATION * DEVIATION) {
+          if (
+            Math.abs(prevCoordinate.x - coordinate.x) + Math.abs(currentCoordinate.x - coordinate.x) - Math.abs(prevCoordinate.x - currentCoordinate.x) < DEVIATION + DEVIATION &&
+            Math.abs(prevCoordinate.y - coordinate.y) + Math.abs(currentCoordinate.y - coordinate.y) - Math.abs(prevCoordinate.y - currentCoordinate.y) < DEVIATION + DEVIATION &&
+            (yDif * yDif) / (kb[0] * kb[0] + 1) < DEVIATION * DEVIATION
+          ) {
             return true
           }
         }
