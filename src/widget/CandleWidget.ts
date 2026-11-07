@@ -49,6 +49,9 @@ export default class CandleWidget extends IndicatorWidget {
   }
 
   override updateOverlayContent(ctx: CanvasRenderingContext2D): void {
+    if (this.getPane().getChart().getStyles().candle.type === 'area') {
+      this._candleAreaView.drawOverlayImp(ctx)
+    }
     this._crosshairFeatureView.draw(ctx)
   }
 
