@@ -1663,16 +1663,47 @@ export default class StoreImp implements Store {
   overrideOverlay(override: OverlayOverride): boolean {
     let sortFlag = false
     const updatePaneIds: string[] = []
-    const filterOverlays = this.getOverlaysByFilter(override)
+    // An overlay id is unique, but `getOverlaysByFilter` also scopes the lookup by
+    // `paneId`, so an override that moves the overlay to another pane would never
+    // find its target. Look the overlay up across panes when an id is given.
+    const filterOverlays = isValid(override.id) ? this.getOverlaysByFilter({ id: override.id }) : this.getOverlaysByFilter(override)
     filterOverlays.forEach((overlay) => {
+      const prevPaneId = overlay.paneId
       overlay.override(override)
+      const currentPaneId = overlay.paneId
+      if (prevPaneId !== currentPaneId) {
+        if (this._progressOverlayInfo?.overlay === overlay) {
+          this._progressOverlayInfo.paneId = currentPaneId
+        }
+        // Re-key the overlay into its target pane, mirroring `overrideIndicator`.
+        const prevPaneOverlays = this.getOverlaysByPaneId(prevPaneId)
+        const index = prevPaneOverlays.findIndex((o) => o.id === overlay.id)
+        if (index > -1) {
+          prevPaneOverlays.splice(index, 1)
+          if (prevPaneOverlays.length === 0) {
+            this._overlays.delete(prevPaneId)
+          }
+          const currentPaneOverlays = this.getOverlaysByPaneId(currentPaneId)
+          if (!currentPaneOverlays.some((o) => o.id === overlay.id)) {
+            currentPaneOverlays.push(overlay)
+            this._overlays.set(currentPaneId, currentPaneOverlays)
+          }
+          sortFlag = true
+        }
+        if (!updatePaneIds.includes(prevPaneId)) {
+          updatePaneIds.push(prevPaneId)
+        }
+        if (!updatePaneIds.includes(currentPaneId)) {
+          updatePaneIds.push(currentPaneId)
+        }
+      }
       const { sort, draw } = overlay.shouldUpdate()
       if (sort) {
         sortFlag = true
       }
       if (sort || draw) {
-        if (!updatePaneIds.includes(overlay.paneId)) {
-          updatePaneIds.push(overlay.paneId)
+        if (!updatePaneIds.includes(currentPaneId)) {
+          updatePaneIds.push(currentPaneId)
         }
       }
     })
