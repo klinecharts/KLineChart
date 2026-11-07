@@ -131,9 +131,28 @@ export function formatBigNumber(value: string | number): string {
 }
 
 export function formatThousands(value: string | number, sign: string): string {
-  const vl = `${value}`
+  let vl = `${value}`
   if (sign.length === 0) {
     return vl
+  }
+  // `${number}` falls back to exponential notation for magnitudes >= 1e21
+  // (e.g. `1e+21`), where the digit-grouping regex cannot apply. Expand such
+  // values back to plain decimal notation first.
+  const expMatch = /^(-?)(\d+)(?:\.(\d+))?e\+?(\d+)$/i.exec(vl)
+  if (expMatch !== null) {
+    const negative = expMatch[1]
+    const digits = expMatch[2] + (expMatch[3] ?? '')
+    const point = +expMatch[4] + expMatch[2].length
+    let expanded: string
+    if (point >= digits.length) {
+      expanded = digits.padEnd(point, '0')
+    } else {
+      expanded = `${digits.slice(0, point)}.${digits.slice(point)}`
+    }
+    const [integerPart, fractionalPart] = expanded.split('.')
+    const normalizedInteger = integerPart.replace(/^0+(?=\d)/, '')
+    expanded = fractionalPart === undefined ? normalizedInteger : `${normalizedInteger}.${fractionalPart}`
+    vl = `${negative}${expanded}`
   }
   if (vl.includes('.')) {
     const arr = vl.split('.')
