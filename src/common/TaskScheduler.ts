@@ -22,6 +22,8 @@ export default class TaskScheduler {
 
   private _running = false
 
+  private _cleared = false
+
   private readonly _callback: Nullable<TaskFinishedCallback>
 
   constructor(callback: TaskFinishedCallback) {
@@ -49,16 +51,21 @@ export default class TaskScheduler {
       await Promise.all(Object.values(tasks))
     } finally {
       this._running = false
-      this._callback?.()
-      if (isValid(this._holdingTasks)) {
-        const next = this._holdingTasks
-        void this._runTask(next)
-        this._holdingTasks = null
+      // clear() means the owner stopped caring about finished tasks, so a batch that was already
+      // in flight must not run the callback or start the tasks that were held for it.
+      if (!this._cleared) {
+        this._callback?.()
+        if (isValid(this._holdingTasks)) {
+          const next = this._holdingTasks
+          void this._runTask(next)
+          this._holdingTasks = null
+        }
       }
     }
   }
 
   clear(): void {
+    this._cleared = true
     this._holdingTasks = null
   }
 }
