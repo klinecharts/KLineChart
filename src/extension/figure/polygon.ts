@@ -17,21 +17,48 @@ import type { PolygonStyle } from '../../common/Styles'
 import { isTransparent } from '../../common/utils/color'
 import { isString } from '../../common/utils/typeChecks'
 
-import type { FigureTemplate } from '../../component/Figure'
+import { DEVIATION, type FigureTemplate } from '../../component/Figure'
 
-export function checkCoordinateOnPolygon(coordinate: Coordinate, attrs: PolygonAttrs | PolygonAttrs[]): boolean {
+function getPointToSegmentDistance(coordinate: Coordinate, coordinate1: Coordinate, coordinate2: Coordinate): number {
+  const dx = coordinate2.x - coordinate1.x
+  const dy = coordinate2.y - coordinate1.y
+  const lengthSq = dx * dx + dy * dy
+  if (lengthSq === 0) {
+    const difX = coordinate.x - coordinate1.x
+    const difY = coordinate.y - coordinate1.y
+    return Math.sqrt(difX * difX + difY * difY)
+  }
+  let t = ((coordinate.x - coordinate1.x) * dx + (coordinate.y - coordinate1.y) * dy) / lengthSq
+  t = Math.max(0, Math.min(1, t))
+  const difX = coordinate.x - (coordinate1.x + t * dx)
+  const difY = coordinate.y - (coordinate1.y + t * dy)
+  return Math.sqrt(difX * difX + difY * difY)
+}
+
+export function checkCoordinateOnPolygon(coordinate: Coordinate, attrs: PolygonAttrs | PolygonAttrs[], styles: Partial<PolygonStyle> = {}): boolean {
   let polygons: PolygonAttrs[] = []
   polygons = polygons.concat(attrs)
+  const { style = 'fill', color = 'currentColor', borderSize = 1 } = styles
+  const solid = (style === 'fill' || style === 'stroke_fill') && (!isString(color) || !isTransparent(color))
   for (const polygon of polygons) {
-    let on = false
     const { coordinates } = polygon
-    for (let i = 0, j = coordinates.length - 1; i < coordinates.length; j = i++) {
-      if (coordinates[i].y > coordinate.y !== coordinates[j].y > coordinate.y && coordinate.x < ((coordinates[j].x - coordinates[i].x) * (coordinate.y - coordinates[i].y)) / (coordinates[j].y - coordinates[i].y) + coordinates[i].x) {
-        on = !on
+    if (solid) {
+      let on = false
+      for (let i = 0, j = coordinates.length - 1; i < coordinates.length; j = i++) {
+        if (coordinates[i].y > coordinate.y !== coordinates[j].y > coordinate.y && coordinate.x < ((coordinates[j].x - coordinates[i].x) * (coordinate.y - coordinates[i].y)) / (coordinates[j].y - coordinates[i].y) + coordinates[i].x) {
+          on = !on
+        }
       }
-    }
-    if (on) {
-      return true
+      if (on) {
+        return true
+      }
+    } else {
+      const tolerance = Math.max(borderSize / 2, DEVIATION)
+      for (let i = 0, j = coordinates.length - 1; i < coordinates.length; j = i++) {
+        if (getPointToSegmentDistance(coordinate, coordinates[j], coordinates[i]) <= tolerance) {
+          return true
+        }
+      }
     }
   }
   return false

@@ -25,12 +25,20 @@ export function checkCoordinateOnRect(coordinate: Coordinate, attrs: RectAttrs |
   for (const rect of rects) {
     let x = rect.x
     let width = rect.width
+    if (width < 0) {
+      x += width
+      width = -width
+    }
     if (width < DEVIATION * 2) {
       x -= DEVIATION
       width = DEVIATION * 2
     }
     let y = rect.y
     let height = rect.height
+    if (height < 0) {
+      y += height
+      height = -height
+    }
     if (height < DEVIATION * 2) {
       y -= DEVIATION
       height = DEVIATION * 2
