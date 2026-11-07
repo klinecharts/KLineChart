@@ -56,7 +56,8 @@ export function hexToRgb(hex: string, alpha?: number): string {
     a ??= parseInt(h.slice(6, 8), 16) / 255
     h = h.slice(0, 6)
   } else if (h.length === 4) {
-    a ??= parseInt(h.slice(3, 4), 16) / 255
+    // A single alpha nibble covers 0..15, i.e. 0..1 in steps of 1/15.
+    a ??= parseInt(h.slice(3, 4), 16) / 15
     h = h.slice(0, 3)
   }
   if (h.length === 3) {
