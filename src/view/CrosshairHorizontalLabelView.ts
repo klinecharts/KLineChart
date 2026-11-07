@@ -16,7 +16,7 @@ import type Bounding from '../common/Bounding'
 import type Crosshair from '../common/Crosshair'
 import type { CrosshairDirectionStyle, CrosshairStyle, StateTextStyle } from '../common/Styles'
 import { SymbolDefaultPrecisionConstants } from '../common/SymbolInfo'
-import { createFont } from '../common/utils/canvas'
+import { createFont, measureTextWidth } from '../common/utils/canvas'
 import { isString } from '../common/utils/typeChecks'
 
 import type { Axis } from '../component/Axis'
@@ -46,7 +46,7 @@ export default class CrosshairHorizontalLabelView<C extends Axis = YAxis> extend
           ctx.font = createFont(textStyles.size, textStyles.weight, textStyles.family)
           this.createFigure({
             name: 'text',
-            attrs: this.getTextAttrs(text, ctx.measureText(text).width, crosshair, bounding, axis, textStyles),
+            attrs: this.getTextAttrs(text, measureTextWidth(ctx, text), crosshair, bounding, axis, textStyles),
             styles: textStyles
           })?.draw(ctx)
         }
