@@ -34,6 +34,15 @@ interface TooltipFeatureInfo {
   feature: TooltipFeatureStyle
 }
 
+// The legend value formatters (`thousandsSeparator.format`, `decimalFold.format`)
+// are number formatters, so they must only see text that actually is a number.
+// `Number()` is too lenient for that decision: it also accepts empty and
+// whitespace only text, hex/binary/octal integer literals and zero padded
+// integers, all of which a custom format would then mangle (e.g. `''` to `0`,
+// `0x10` to `16`, `0000` to `0,000`). A real number, as returned by most custom
+// tooltip data sources, is accepted by the first condition.
+const RE_NUMERIC_TEXT = /^[+-]?(?:(?:0|[1-9]\d*)(?:\.\d+)?|\.\d+)(?:[eE][+-]?\d+)?$/
+
 export default class IndicatorTooltipView extends View<YAxis> {
   private _activeFeatureInfo: Nullable<TooltipFeatureInfo> = null
 
@@ -363,8 +372,9 @@ export default class IndicatorTooltipView extends View<YAxis> {
           } else {
             value.text = data.value
           }
-          if (isNumber(Number(value.text))) {
-            value.text = decimalFold.format(thousandsSeparator.format(value.text))
+          const text = value.text
+          if (isNumber(text) || (isString(text) && RE_NUMERIC_TEXT.test(text))) {
+            value.text = decimalFold.format(thousandsSeparator.format(text))
           }
           optimizedLegends.push({ title, value })
         })
