@@ -13,13 +13,12 @@
  */
 
 import type BarSpace from '../common/BarSpace'
-import type { VisibleRangeData } from '../common/Data'
 import type { EventHandler } from '../common/EventHandler'
 import type Nullable from '../common/Nullable'
 import type { CandleBarColor, CandleBarColorCallback, CandleType, RectStyle } from '../common/Styles'
 import { isFunction, isValid } from '../common/utils/typeChecks'
 
-import type { FigureCreate } from '../component/Figure'
+import { DEVIATION, type FigureCreate } from '../component/Figure'
 import type { RectAttrs } from '../extension/figure/rect'
 import { PaneIdConstants } from '../pane/types'
 import ChildrenView from './ChildrenView'
@@ -31,9 +30,21 @@ export interface CandleBarOptions {
 }
 
 export default class CandleBarView extends ChildrenView {
-  private readonly _boundCandleBarClickEvent = (data: VisibleRangeData) => () => {
-    this.getWidget().getPane().getChart().getChartStore().executeAction('onCandleBarClick', data)
-    return false
+  private readonly _candleBarClickEvent: EventHandler = {
+    mouseClickEvent: (event) => {
+      const chartStore = this.getWidget().getPane().getChart().getChartStore()
+      const barSpace = chartStore.getBarSpace()
+      const visibleRangeDataList = chartStore.getVisibleRangeDataList()
+      const first = visibleRangeDataList[0]
+      if (first !== undefined) {
+        const index = Math.round((event.x - first.x) / barSpace.bar)
+        const visibleData = visibleRangeDataList[index]
+        if (visibleData !== undefined && Math.abs(event.x - visibleData.x) <= Math.max(barSpace.halfBar, DEVIATION + 1)) {
+          chartStore.executeAction('onCandleBarClick', visibleData)
+        }
+      }
+      return false
+    }
   }
 
   override drawImp(ctx: CanvasRenderingContext2D): void {
@@ -146,13 +157,7 @@ export default class CandleBarView extends ChildrenView {
             }
           }
           rects.forEach((rect) => {
-            let handler: Nullable<EventHandler> = null
-            if (isMain) {
-              handler = {
-                mouseClickEvent: this._boundCandleBarClickEvent(visibleData)
-              }
-            }
-            this.createFigure(rect, handler ?? undefined)?.draw(ctx)
+            this.createFigure(rect, isMain ? this._candleBarClickEvent : undefined)?.draw(ctx)
           })
         }
       })
