@@ -28,7 +28,7 @@ export default class IndicatorLastValueView extends View<YAxis> {
     const defaultStyles = chartStore.getStyles().indicator
     const lastValueMarkStyles = defaultStyles.lastValueMark
     const lastValueMarkTextStyles = lastValueMarkStyles.text
-    if (lastValueMarkStyles.show) {
+    if (lastValueMarkStyles.show && lastValueMarkTextStyles.show) {
       const yAxisWidget = widget as unknown as YAxisWidget
       const yAxis = yAxisWidget.getAxisComponent()
       const yAxisRange = yAxis.getRange()
