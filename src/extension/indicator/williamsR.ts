@@ -13,7 +13,7 @@
  */
 
 import type { KLineData } from '../../common/Data'
-import { getMaxMin } from '../../common/utils/number'
+import { RollingMaxMin } from '../../common/utils/number'
 import type { IndicatorTemplate } from '../../component/Indicator'
 
 interface Wr {
@@ -38,13 +38,14 @@ const williamsR: IndicatorTemplate<Wr, number> = {
   regenerateFigures: (params) => params.map((_, i) => ({ key: `wr${i + 1}`, title: `WR${i + 1}: `, type: 'line' })),
   calc: (dataList, indicator) => {
     const { calcParams: params, figures } = indicator
+    const rollingMaxMins = params.map(() => new RollingMaxMin<KLineData>(dataList, 'high', 'low'))
     return dataList.map((kLineData, i) => {
       const wr: Wr = {}
       const close = kLineData.close
       params.forEach((param, index) => {
         const p = param - 1
+        const hln = rollingMaxMins[index].getMaxMin(i, param)
         if (i >= p) {
-          const hln = getMaxMin<KLineData>(dataList.slice(i - p, i + 1), 'high', 'low')
           const hn = hln[0]
           const ln = hln[1]
           const hnSubLn = hn - ln
