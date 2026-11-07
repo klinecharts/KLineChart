@@ -207,6 +207,7 @@ export default class StoreImp implements Store {
    * Is loading data flag
    */
   private _loading = false
+  private _dataLoadGeneration = 0
 
   /**
    * Whether there are forward and backward more flag
@@ -779,12 +780,19 @@ export default class StoreImp implements Store {
   private _processDataLoad(type: DataLoadType): void {
     if (!this._loading && isValid(this._dataLoader) && isValid(this._symbol) && isValid(this._period)) {
       this._loading = true
+      // `resetData` bumps the generation, so a callback from a request issued
+      // for a previous symbol/period/loader is dropped instead of overwriting
+      // the fresh dataset and double-subscribing the current symbol.
+      const generation = this._dataLoadGeneration
       const params: DataLoaderGetBarsParams = {
         type,
         symbol: this._symbol,
         period: this._period,
         timestamp: null,
         callback: (data: KLineData[], more?: DataLoadMore) => {
+          if (generation !== this._dataLoadGeneration) {
+            return
+          }
           this._loading = false
           this._addData(data, type, more)
           if (type === 'init') {
@@ -827,6 +835,7 @@ export default class StoreImp implements Store {
   resetData(fn?: () => void): void {
     this._processDataUnsubscribe()
     fn?.()
+    this._dataLoadGeneration++
     this._loading = false
     this._processDataLoad('init')
   }
