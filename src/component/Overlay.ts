@@ -298,9 +298,16 @@ export default class OverlayImp<E = unknown> implements Overlay<E> {
       _prevOverlay: null
     })
 
-    const { id, name, currentStep: _, points, styles, ...others } = overlay
+    const { id, name, currentStep: _, points, styles, extendData, ...others } = overlay
 
     merge(this, others)
+
+    // extendData is an opaque payload owned by the caller, so it is assigned by reference: clone
+    // flattened Map/Set/Date into plain objects and dropped prototypes, while a deep merge kept
+    // stale keys of the previous payload.
+    if (extendData !== undefined) {
+      this.extendData = extendData
+    }
 
     if (!isString(this.name)) {
       this.name = name ?? ''
