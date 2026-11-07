@@ -314,19 +314,13 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
 
       const first = round(Math.ceil(displayFrom / interval) * interval, precision)
       const last = round(Math.floor(displayTo / interval) * interval, precision)
-      let n = 0
-      let f = first
 
       if (interval !== 0) {
-        while (f <= last) {
-          const v = f.toFixed(precision)
+        const tickCount = Math.round((last - first) / interval)
+        for (let n = 0; n <= tickCount; n++) {
+          const value = round(first + n * interval, precision)
+          const v = (value === 0 ? 0 : value).toFixed(precision)
           ticks[n] = { text: v, coord: 0, value: v }
-          ++n
-          const next = f + interval
-          if (next === f) {
-            break
-          }
-          f = next
         }
       }
     }
