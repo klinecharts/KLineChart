@@ -24,6 +24,9 @@ export default abstract class DrawWidget<P extends DrawPane = DrawPane> extends 
   private readonly _mainCanvas: Canvas
   private readonly _overlayCanvas: Canvas
 
+  private _appliedWidth = 0
+  private _appliedHeight = 0
+
   constructor(rootContainer: HTMLElement, pane: P) {
     super(rootContainer, pane)
     this._mainCanvas = new Canvas(
@@ -72,9 +75,13 @@ export default abstract class DrawWidget<P extends DrawPane = DrawPane> extends 
     container.style.left = `${left}px`
 
     let l = level
-    const w = container.clientWidth
-    const h = container.clientHeight
-    if (width !== w || height !== h) {
+    // This widget owns its container and is the only writer of its size, so the
+    // applied size can be tracked here instead of reading `clientWidth` /
+    // `clientHeight` back from the DOM. Reading them right after the `left`
+    // write above forces a synchronous layout on every pane update.
+    if (width !== this._appliedWidth || height !== this._appliedHeight) {
+      this._appliedWidth = width
+      this._appliedHeight = height
       container.style.width = `${width}px`
       container.style.height = `${height}px`
       l = UpdateLevel.Drawer
