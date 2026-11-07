@@ -170,7 +170,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
       if (rectWidth !== 0 && rectHeight !== 0) {
         const crosshair = chartStore.getCrosshair()
         const bounding = widget.getBounding()
-        const yAxisBounding = pane.getYAxisWidget()!.getBounding()
+        const yAxisWidth = pane.getYAxisWidget()?.getBounding().width ?? 0
         rectWidth += rectBorderSize * 2 + rectPaddingLeft + rectPaddingRight
         rectHeight += rectBorderSize * 2 + rectPaddingTop + rectPaddingBottom
         const centerX = bounding.width / 2
@@ -189,12 +189,12 @@ export default class CandleTooltipView extends IndicatorTooltipView {
           if (isLeft) {
             rectX = rectOffsetLeft + offsetLeft
             if (yAxis.inside && yAxis.position === 'left') {
-              rectX += yAxisBounding.width
+              rectX += yAxisWidth
             }
           } else {
             rectX = bounding.width - rectOffsetRight - rectWidth - offsetRight
             if (yAxis.inside && yAxis.position === 'right') {
-              rectX -= yAxisBounding.width
+              rectX -= yAxisWidth
             }
           }
         }
