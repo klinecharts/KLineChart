@@ -1136,6 +1136,9 @@ export default class ChartImp implements Chart {
   }
 
   scrollByDistance(distance: number, animationDuration?: number): void {
+    if (!isNumber(distance)) {
+      return
+    }
     this._chartEvent.stopFlingScroll()
     const duration = isNumber(animationDuration) && animationDuration > 0 ? animationDuration : 0
     this._chartStore.startScroll()
@@ -1159,6 +1162,9 @@ export default class ChartImp implements Chart {
   }
 
   scrollToDataIndex(dataIndex: number, animationDuration?: number): void {
+    if (!isNumber(dataIndex)) {
+      return
+    }
     const distance = (this._chartStore.getLastBarRightSideDiffBarCount() + (this.getDataList().length - 1 - dataIndex)) * this._chartStore.getBarSpace().bar
     this.scrollByDistance(distance, animationDuration)
   }
