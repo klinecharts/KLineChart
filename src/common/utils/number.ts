@@ -69,6 +69,9 @@ export function binarySearchNearest<T>(dataList: T[], valueKey: keyof T, targetV
  * @return {number|number}
  */
 export function nice(value: number): number {
+  if (!Number.isFinite(value) || value < 0) {
+    return value
+  }
   const exponent = Math.floor(log10(value))
   const exp10 = index10(exponent)
   const f = value / exp10 // 1 <= f < 10
