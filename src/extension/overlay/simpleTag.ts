@@ -45,7 +45,7 @@ const simpleTag: OverlayTemplate = {
       textAlign = 'right'
       x = bounding.width
     }
-    let text = ''
+    let text: string | undefined
     if (isValid(overlay.extendData)) {
       if (!isFunction(overlay.extendData)) {
         text = (overlay.extendData ?? '') as string
@@ -53,10 +53,10 @@ const simpleTag: OverlayTemplate = {
         text = overlay.extendData(overlay) as string
       }
     }
-    if (!isValid(text) && isNumber(overlay.points[0].value)) {
+    if ((!isValid(text) || text === '') && isNumber(overlay.points[0].value)) {
       text = formatPrecision(overlay.points[0].value, chart.getSymbol()?.pricePrecision ?? SymbolDefaultPrecisionConstants.PRICE)
     }
-    return { type: 'text', attrs: { x, y: coordinates[0].y, text, align: textAlign, baseline: 'middle' } }
+    return { type: 'text', attrs: { x, y: coordinates[0].y, text: text ?? '', align: textAlign, baseline: 'middle' } }
   }
 }
 
