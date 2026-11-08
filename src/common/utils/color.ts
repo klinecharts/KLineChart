@@ -25,7 +25,14 @@ export function isHsla(color: string): boolean {
 }
 
 export function isTransparent(color: string): boolean {
-  return color === 'transparent' || color === 'none' || /^[rR][gG][Bb][Aa]\(([\s]*(2[0-4][0-9]|25[0-5]|[01]?[0-9][0-9]?)[\s]*,){3}[\s]*0[\s]*\)$/.test(color) || /^[hH][Ss][Ll][Aa]\(([\s]*(360|3[0-5][0-9]|[012]?[0-9][0-9]?)[\s]*,)([\s]*((100|[0-9][0-9]?)%|0)[\s]*,){2}([\s]*0[\s]*)\)$/.test(color)
+  return (
+    color === 'transparent' ||
+    color === 'none' ||
+    /^[rR][gG][Bb][Aa]\(([\s]*(2[0-4][0-9]|25[0-5]|[01]?[0-9][0-9]?)[\s]*,){3}[\s]*0(?:\.0+)?[\s]*\)$/.test(color) ||
+    /^[rR][gG][Bb][Aa]\([\s]*(2[0-4][0-9]|25[0-5]|[01]?[0-9][0-9]?)[\s]+(2[0-4][0-9]|25[0-5]|[01]?[0-9][0-9]?)[\s]+(2[0-4][0-9]|25[0-5]|[01]?[0-9][0-9]?)[\s]*\/[\s]*0(?:\.0+)?%?[\s]*\)$/.test(color) ||
+    /^[hH][Ss][Ll][Aa]\(([\s]*(360|3[0-5][0-9]|[012]?[0-9][0-9]?)[\s]*,)([\s]*((100|[0-9][0-9]?)%|0)[\s]*,){2}[\s]*0(?:\.0+)?[\s]*\)$/.test(color) ||
+    /^#(?:[0-9A-Fa-f]{6}00|[0-9A-Fa-f]{3}0)$/.test(color)
+  )
 }
 
 export function rgbToHex(rgb: string): string {
@@ -43,11 +50,23 @@ export function rgbToHex(rgb: string): string {
 }
 
 export function hexToRgb(hex: string, alpha?: number): string {
-  const h = hex.replace(/^#/, '')
+  let h = hex.replace(/^#/, '')
+  let a = alpha
+  if (h.length === 8) {
+    a ??= parseInt(h.slice(6, 8), 16) / 255
+    h = h.slice(0, 6)
+  } else if (h.length === 4) {
+    // A single alpha nibble covers 0..15, i.e. 0..1 in steps of 1/15.
+    a ??= parseInt(h.slice(3, 4), 16) / 15
+    h = h.slice(0, 3)
+  }
+  if (h.length === 3) {
+    h = `${h[0]}${h[0]}${h[1]}${h[1]}${h[2]}${h[2]}`
+  }
   const i = parseInt(h, 16)
   const r = (i >> 16) & 255
   const g = (i >> 8) & 255
   const b = i & 255
 
-  return `rgba(${r}, ${g}, ${b}, ${alpha ?? 1})`
+  return `rgba(${r}, ${g}, ${b}, ${a ?? 1})`
 }
