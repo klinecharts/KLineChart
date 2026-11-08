@@ -22,7 +22,7 @@ export function merge(target: any, source: any): void {
     if (Object.prototype.hasOwnProperty.call(source, key) as boolean) {
       const targetProp = target[key]
       const sourceProp = source[key]
-      if (isObject(sourceProp) && isObject(targetProp)) {
+      if (isObject(sourceProp) && isObject(targetProp) && !isArray(sourceProp) && !isArray(targetProp)) {
         merge(targetProp, sourceProp)
       } else {
         target[key] = clone(sourceProp)
