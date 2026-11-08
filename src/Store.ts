@@ -30,7 +30,7 @@ import { getDefaultStyles, type Styles, type TooltipLegend } from './common/Styl
 import { SymbolDefaultPrecisionConstants, type SymbolInfo } from './common/SymbolInfo'
 import TaskScheduler from './common/TaskScheduler'
 import { UpdateLevel } from './common/Updater'
-import { formatBigNumber, formatFoldDecimal, formatThousands, formatTimestampByTemplate, formatValue } from './common/utils/format'
+import { formatBigNumber, formatFoldDecimal, formatThousands, formatTimestampByTemplate, formatTimestampToDateTime, formatValue } from './common/utils/format'
 import { createId } from './common/utils/id'
 import { logWarn } from './common/utils/logger'
 import { binarySearchNearest } from './common/utils/number'
@@ -122,6 +122,18 @@ export interface Store {
   setScrollEnabled: (enabled: boolean) => void
   isScrollEnabled: () => boolean
   resetData: () => void
+}
+
+function getTimezoneOffsetMilliseconds(dateTimeFormat: Intl.DateTimeFormat, timestamp: number): number {
+  const dateTime = formatTimestampToDateTime(dateTimeFormat, timestamp)
+  const wallClockAsUtc = Date.UTC(Number(dateTime.YYYY), Number(dateTime.MM) - 1, Number(dateTime.DD), Number(dateTime.HH), Number(dateTime.mm), Number(dateTime.ss), ((timestamp % 1000) + 1000) % 1000)
+  return wallClockAsUtc - timestamp
+}
+
+function zonedDateToTimestamp(dateTimeFormat: Intl.DateTimeFormat, year: number, month: number, day: number, hour: number, minute: number, second: number, millisecond: number): number {
+  const utcGuess = Date.UTC(year, month - 1, day, hour, minute, second, millisecond)
+  const timestamp = utcGuess - getTimezoneOffsetMilliseconds(dateTimeFormat, utcGuess)
+  return utcGuess - getTimezoneOffsetMilliseconds(dateTimeFormat, timestamp)
 }
 
 export default class StoreImp implements Store {
@@ -1000,20 +1012,17 @@ export default class StoreImp implements Store {
             return referenceTimestamp + span * 7 * 24 * 60 * 60 * 1000 * diff
           }
           case 'month': {
-            const date = new Date(referenceTimestamp)
-            const referenceDay = date.getDate()
-
-            date.setDate(1)
-
-            date.setMonth(date.getMonth() + span * diff)
-            const lastDayOfTargetMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate()
-            date.setDate(Math.min(referenceDay, lastDayOfTargetMonth))
-            return date.getTime()
+            const dateTime = formatTimestampToDateTime(this._dateTimeFormat, referenceTimestamp)
+            const referenceDay = Number(dateTime.DD)
+            const totalMonths = Number(dateTime.YYYY) * 12 + (Number(dateTime.MM) - 1) + span * diff
+            const year = Math.floor(totalMonths / 12)
+            const month = totalMonths - year * 12 + 1
+            const lastDayOfTargetMonth = new Date(Date.UTC(year, month, 0)).getUTCDate()
+            return zonedDateToTimestamp(this._dateTimeFormat, year, month, Math.min(referenceDay, lastDayOfTargetMonth), Number(dateTime.HH), Number(dateTime.mm), Number(dateTime.ss), ((referenceTimestamp % 1000) + 1000) % 1000)
           }
           case 'year': {
-            const date = new Date(referenceTimestamp)
-            date.setFullYear(date.getFullYear() + span * diff)
-            return date.getTime()
+            const dateTime = formatTimestampToDateTime(this._dateTimeFormat, referenceTimestamp)
+            return zonedDateToTimestamp(this._dateTimeFormat, Number(dateTime.YYYY) + span * diff, Number(dateTime.MM), Number(dateTime.DD), Number(dateTime.HH), Number(dateTime.mm), Number(dateTime.ss), ((referenceTimestamp % 1000) + 1000) % 1000)
           }
         }
       }
@@ -1060,17 +1069,17 @@ export default class StoreImp implements Store {
             return baseDataIndex + Math.floor((timestamp - referenceTimestamp) / (span * 7 * 24 * 60 * 60 * 1000))
           }
           case 'month': {
-            const referenceDate = new Date(referenceTimestamp)
-            const currentDate = new Date(timestamp)
-            const referenceYear = referenceDate.getFullYear()
-            const currentYear = currentDate.getFullYear()
-            const referenceMonth = referenceDate.getMonth()
-            const currentMonth = currentDate.getMonth()
+            const referenceDateTime = formatTimestampToDateTime(this._dateTimeFormat, referenceTimestamp)
+            const currentDateTime = formatTimestampToDateTime(this._dateTimeFormat, timestamp)
+            const referenceYear = Number(referenceDateTime.YYYY)
+            const currentYear = Number(currentDateTime.YYYY)
+            const referenceMonth = Number(referenceDateTime.MM)
+            const currentMonth = Number(currentDateTime.MM)
             return baseDataIndex + Math.floor(((currentYear - referenceYear) * 12 + (currentMonth - referenceMonth)) / span)
           }
           case 'year': {
-            const referenceYear = new Date(referenceTimestamp).getFullYear()
-            const currentYear = new Date(timestamp).getFullYear()
+            const referenceYear = Number(formatTimestampToDateTime(this._dateTimeFormat, referenceTimestamp).YYYY)
+            const currentYear = Number(formatTimestampToDateTime(this._dateTimeFormat, timestamp).YYYY)
             return baseDataIndex + Math.floor((currentYear - referenceYear) / span)
           }
         }
