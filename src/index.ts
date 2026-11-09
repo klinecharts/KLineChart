@@ -105,8 +105,10 @@ function dispose(dcs: HTMLElement | Chart | string): void {
     let dom: Nullable<HTMLElement> = null
     if (isString(dcs)) {
       dom = document.getElementById(dcs)
-    } else {
+    } else if (isObject(dcs) && isFunction((dcs as HTMLElement).getAttribute)) {
       dom = dcs as HTMLElement
+    } else {
+      logWarn('dispose', '', 'The parameter is neither a chart instance nor a dom element. If it is a chart created by another copy of klinecharts, dispose has to be called on that copy.')
     }
     id = dom?.getAttribute('k-line-chart-id') ?? null
   }
