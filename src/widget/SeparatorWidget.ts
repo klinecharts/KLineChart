@@ -106,6 +106,13 @@ export default class SeparatorWidget extends Widget<SeparatorPane> {
     this._bottomPane = null
     this._topPaneHeight = 0
     this._bottomPaneHeight = 0
+    // The release is always delivered to the widget that received the press, even when the drag
+    // ended somewhere else entirely, so _dragFlag cannot tell whether the pointer is still over
+    // the separator. Keep the hover highlight only while it is; a drag that ended outside, or a
+    // plain click that moved away, must drop it.
+    if (this.getContainer().matches(':hover')) {
+      return this._mouseEnterEvent()
+    }
     return this._mouseLeaveEvent()
   }
 
