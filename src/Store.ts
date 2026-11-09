@@ -1227,19 +1227,24 @@ export default class StoreImp implements Store {
     if (!this._zoomEnabled) {
       return
     }
-    const zoomCoordinate: Partial<Coordinate> = coordinate ?? { x: this._crosshair.x ?? this._totalBarSpace / 2 }
+    let x = coordinate?.x
+    if (!isNumber(x)) {
+      x = isNumber(this._crosshair.x) ? this._crosshair.x : this._totalBarSpace / 2
+    }
 
     if (position === 'xAxis') {
       if (this._zoomAnchor.xAxis === 'last_bar') {
-        zoomCoordinate.x = this.dataIndexToCoordinate(this._dataList.length - 1)
+        x = this.dataIndexToCoordinate(this._dataList.length - 1)
       }
     } else {
       if (this._zoomAnchor.main === 'last_bar') {
-        zoomCoordinate.x = this.dataIndexToCoordinate(this._dataList.length - 1)
+        x = this.dataIndexToCoordinate(this._dataList.length - 1)
       }
     }
-    const x = zoomCoordinate.x!
     const floatIndex = this.coordinateToFloatIndex(x)
+    if (!Number.isFinite(floatIndex)) {
+      return
+    }
     const prevBarSpace = this._barSpace
     const barSpace = this._barSpace + scale * (this._barSpace / SCALE_MULTIPLIER)
     this.setBarSpace(barSpace, () => {
