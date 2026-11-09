@@ -50,41 +50,49 @@ export default class IndicatorLastValueView extends View<YAxis> {
         if (isValid(data) && indicator.visible) {
           const precision = indicator.precision
           // @ts-ignore
-          eachFigures(indicator, dataIndex, barSpace, defaultStyles, (figure: IndicatorFigure, figureStyles: Required<IndicatorFigureStyle>) => {
-            const value = data[figure.key]
-            if (isNumber(value)) {
-              const y = yAxis.convertToNicePixel(value)
-              let text = yAxis.displayValueToText(yAxis.realValueToDisplayValue(yAxis.valueToRealValue(value, { range: yAxisRange }), { range: yAxisRange }), precision)
-              if (indicator.shouldFormatBigNumber) {
-                text = formatter.formatBigNumber(text)
-              }
-              text = decimalFold.format(thousandsSeparator.format(text))
-              let x = 0
-              let textAlign: CanvasTextAlign = 'left'
-              if (yAxis.isFromZero()) {
-                x = 0
-                textAlign = 'left'
-              } else {
-                x = bounding.width
-                textAlign = 'right'
-              }
-
-              this.createFigure({
-                name: 'text',
-                attrs: {
-                  x,
-                  y,
-                  text,
-                  align: textAlign,
-                  baseline: 'middle'
-                },
-                styles: {
-                  ...lastValueMarkTextStyles,
-                  backgroundColor: figureStyles.color
+          eachFigures(
+            indicator,
+            dataIndex,
+            barSpace,
+            defaultStyles,
+            (figure: IndicatorFigure, figureStyles: Required<IndicatorFigureStyle>) => {
+              const value = data[figure.key]
+              if (isNumber(value)) {
+                const y = yAxis.convertToNicePixel(value)
+                let text = yAxis.displayValueToText(yAxis.realValueToDisplayValue(yAxis.valueToRealValue(value, { range: yAxisRange }), { range: yAxisRange }), precision)
+                if (indicator.shouldFormatBigNumber) {
+                  text = formatter.formatBigNumber(text)
                 }
-              })?.draw(ctx)
-            }
-          })
+                text = decimalFold.format(thousandsSeparator.format(text))
+                let x = 0
+                let textAlign: CanvasTextAlign = 'left'
+                if (yAxis.isFromZero()) {
+                  x = 0
+                  textAlign = 'left'
+                } else {
+                  x = bounding.width
+                  textAlign = 'right'
+                }
+
+                this.createFigure({
+                  name: 'text',
+                  attrs: {
+                    x,
+                    y,
+                    text,
+                    align: textAlign,
+                    baseline: 'middle'
+                  },
+                  styles: {
+                    ...lastValueMarkTextStyles,
+                    backgroundColor: figureStyles.color
+                  }
+                })?.draw(ctx)
+              }
+            },
+            undefined,
+            chartStore.getStylesVersion()
+          )
         }
       })
     }

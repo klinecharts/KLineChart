@@ -54,6 +54,8 @@ export default class CandleBarView extends ChildrenView {
         halfOhlcSize = Math.floor(ohlcSize / 2)
       }
       const yAxis = pane.getYAxisComponentById(candleBarOptions.yAxisId)
+      // Per-candle click handlers are only needed when someone listens.
+      const dispatchClick = isMain && chartStore.hasAction('onCandleBarClick')
       this.eachChildren((visibleData, barSpace) => {
         const {
           x,
@@ -85,8 +87,13 @@ export default class CandleBarView extends ChildrenView {
           }
           const openY = yAxis.convertToPixel(open)
           const closeY = yAxis.convertToPixel(close)
-          const priceY = [openY, closeY, yAxis.convertToPixel(high), yAxis.convertToPixel(low)]
-          priceY.sort((a, b) => a - b)
+          const highY = yAxis.convertToPixel(high)
+          const lowY = yAxis.convertToPixel(low)
+          // Min/max compares replace a per-candle sort: for valid OHLC data high is never
+          // above open/close and low is never below them, so this yields the same order.
+          const bodyTopY = Math.min(openY, closeY)
+          const bodyBottomY = Math.max(openY, closeY)
+          const priceY = [Math.min(highY, bodyTopY), bodyTopY, bodyBottomY, Math.max(lowY, bodyBottomY)]
 
           const correction = barSpace.gapBar % 2 === 0 ? 1 : 0
           let rects: Array<FigureCreate<RectAttrs | RectAttrs[], Partial<RectStyle>>> = []
@@ -147,7 +154,7 @@ export default class CandleBarView extends ChildrenView {
           }
           rects.forEach((rect) => {
             let handler: Nullable<EventHandler> = null
-            if (isMain) {
+            if (dispatchClick) {
               handler = {
                 mouseClickEvent: this._boundCandleBarClickEvent(visibleData)
               }

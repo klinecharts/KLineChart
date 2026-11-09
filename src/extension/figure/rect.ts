@@ -15,13 +15,12 @@
 import type Coordinate from '../../common/Coordinate'
 import type { RectStyle } from '../../common/Styles'
 import { isTransparent } from '../../common/utils/color'
-import { isString } from '../../common/utils/typeChecks'
+import { isArray, isString } from '../../common/utils/typeChecks'
 
 import { DEVIATION, type FigureTemplate } from '../../component/Figure'
 
 export function checkCoordinateOnRect(coordinate: Coordinate, attrs: RectAttrs | RectAttrs[]): boolean {
-  let rects: RectAttrs[] = []
-  rects = rects.concat(attrs)
+  const rects = isArray(attrs) ? attrs : [attrs]
   for (const rect of rects) {
     let x = rect.x
     let width = rect.width
@@ -43,8 +42,7 @@ export function checkCoordinateOnRect(coordinate: Coordinate, attrs: RectAttrs |
 }
 
 export function drawRect(ctx: CanvasRenderingContext2D, attrs: RectAttrs | RectAttrs[], styles: Partial<RectStyle>): void {
-  let rects: RectAttrs[] = []
-  rects = rects.concat(attrs)
+  const rects = isArray(attrs) ? attrs : [attrs]
   const { style = 'fill', color = 'transparent', borderSize = 1, borderColor = 'transparent', borderStyle = 'solid', borderRadius: r = 0, borderDashedValue = [2, 2] } = styles
   const draw = ctx.roundRect ?? ctx.rect
   const solid = (style === 'fill' || styles.style === 'stroke_fill') && (!isString(color) || !isTransparent(color))
