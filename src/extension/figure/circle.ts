@@ -17,17 +17,23 @@ import type { PolygonStyle } from '../../common/Styles'
 import { isTransparent } from '../../common/utils/color'
 import { isString } from '../../common/utils/typeChecks'
 
-import type { FigureTemplate } from '../../component/Figure'
+import { DEVIATION, type FigureTemplate } from '../../component/Figure'
 
-export function checkCoordinateOnCircle(coordinate: Coordinate, attrs: CircleAttrs | CircleAttrs[]): boolean {
+export function checkCoordinateOnCircle(coordinate: Coordinate, attrs: CircleAttrs | CircleAttrs[], styles: Partial<PolygonStyle> = {}): boolean {
   let circles: CircleAttrs[] = []
   circles = circles.concat(attrs)
 
+  const { style = 'fill', color = 'currentColor', borderSize = 1 } = styles
+  const solid = (style === 'fill' || style === 'stroke_fill') && (!isString(color) || !isTransparent(color))
   for (const circle of circles) {
     const { x, y, r } = circle
     const difX = coordinate.x - x
     const difY = coordinate.y - y
-    if (!(difX * difX + difY * difY > r * r)) {
+    if (solid) {
+      if (!(difX * difX + difY * difY > r * r)) {
+        return true
+      }
+    } else if (Math.abs(Math.sqrt(difX * difX + difY * difY) - r) <= Math.max(borderSize / 2, DEVIATION)) {
       return true
     }
   }
