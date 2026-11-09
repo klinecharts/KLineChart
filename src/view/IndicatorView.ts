@@ -79,6 +79,7 @@ export default class IndicatorView extends CandleBarView {
     const chartStore = chart.getChartStore()
     const indicators = chartStore.getIndicatorsByPaneId(pane.getId())
     const defaultStyles = chartStore.getStyles().indicator
+    const { realFrom } = chartStore.getVisibleRange()
     ctx.save()
     indicators.forEach((indicator) => {
       const yAxis = pane.getYAxisComponentById(indicator.yAxisId)
@@ -106,31 +107,36 @@ export default class IndicatorView extends CandleBarView {
           const preparedFigures = prepareIndicatorFigures(indicator, defaultStyles)
           const lines: Array<Array<{ coordinates: Coordinate[]; styles: Partial<SmoothLineStyle> }>> = []
 
+          const buildCoordinate = (dataIndex: number, x: number): Record<string, number> & { x: number } => {
+            const coordinate: Record<string, number> & { x: number } = { x }
+            const data = result[dataIndex]
+            indicator.figures.forEach(({ key }) => {
+              const value = data?.[key]
+              if (isNumber(value)) {
+                coordinate[key] = yAxis.convertToPixel(value)
+              }
+            })
+            return coordinate
+          }
+          // The children list starts at `realFrom` and steps one bar at a time, so the
+          // previous and current coordinates can be carried forward from the last
+          // iteration and only the next bar has to be converted ahead.
+          let windowDataIndex = realFrom
+          let prevCoordinate = buildCoordinate(windowDataIndex - 1, xAxis.convertToPixel(windowDataIndex - 1))
+          let currentCoordinate = buildCoordinate(windowDataIndex, xAxis.convertToPixel(windowDataIndex))
+
           this.eachChildren((data, barSpace) => {
             const { halfGapBar } = barSpace
             const { dataIndex, x } = data
-            const prevX = xAxis.convertToPixel(dataIndex - 1)
-            const nextX = xAxis.convertToPixel(dataIndex + 1)
+            if (dataIndex !== windowDataIndex) {
+              windowDataIndex = dataIndex
+              prevCoordinate = buildCoordinate(dataIndex - 1, xAxis.convertToPixel(dataIndex - 1))
+              currentCoordinate = buildCoordinate(dataIndex, x)
+            }
+            const nextCoordinate = buildCoordinate(dataIndex + 1, xAxis.convertToPixel(dataIndex + 1))
             const prevData = result[dataIndex - 1] ?? null
             const currentData = result[dataIndex] ?? null
             const nextData = result[dataIndex + 1] ?? null
-            const prevCoordinate = { x: prevX }
-            const currentCoordinate = { x }
-            const nextCoordinate = { x: nextX }
-            indicator.figures.forEach(({ key }) => {
-              const prevValue = prevData?.[key]
-              if (isNumber(prevValue)) {
-                prevCoordinate[key] = yAxis.convertToPixel(prevValue)
-              }
-              const currentValue = currentData?.[key]
-              if (isNumber(currentValue)) {
-                currentCoordinate[key] = yAxis.convertToPixel(currentValue)
-              }
-              const nextValue = nextData?.[key]
-              if (isNumber(nextValue)) {
-                nextCoordinate[key] = yAxis.convertToPixel(nextValue)
-              }
-            })
             eachFigures(
               indicator,
               dataIndex,
@@ -218,6 +224,9 @@ export default class IndicatorView extends CandleBarView {
               },
               preparedFigures
             )
+            prevCoordinate = currentCoordinate
+            currentCoordinate = nextCoordinate
+            windowDataIndex = dataIndex + 1
           })
 
           // merge line and render
