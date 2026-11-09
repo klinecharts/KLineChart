@@ -118,6 +118,7 @@ export function formatBigNumber(value: string | number): string {
     const sign = v < 0 ? '-' : ''
     const a = Math.abs(v)
     const units: Array<[number, string]> = [
+      [1000000000000, 'T'],
       [1000000000, 'B'],
       [1000000, 'M'],
       [1000, 'K']
