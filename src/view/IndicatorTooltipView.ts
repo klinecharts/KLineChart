@@ -17,7 +17,7 @@ import type Coordinate from '../common/Coordinate'
 import type Crosshair from '../common/Crosshair'
 import type Nullable from '../common/Nullable'
 import type { FeatureIconFontStyle, FeaturePathStyle, TooltipFeatureStyle, TooltipLegend, TooltipLegendChild, TooltipStyle, TooltipTextStyle } from '../common/Styles'
-import { createFont } from '../common/utils/canvas'
+import { createFont, measureTextWidth } from '../common/utils/canvas'
 import { formatPrecision } from '../common/utils/format'
 import { isFunction, isNumber, isObject, isString, isValid } from '../common/utils/typeChecks'
 import type { Indicator, IndicatorFigure, IndicatorFigureStyle, IndicatorTooltipData } from '../component/Indicator'
@@ -134,7 +134,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
         if (type === 'icon_font') {
           const iconFont = content as FeatureIconFontStyle
           ctx.font = createFont(size, 'normal', iconFont.family)
-          contentWidth = ctx.measureText(iconFont.code).width
+          contentWidth = measureTextWidth(ctx, iconFont.code)
         } else {
           contentWidth = size
         }
@@ -194,7 +194,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
             },
             eventHandler
           )?.draw(ctx)
-          contentWidth = ctx.measureText(iconFont.code).width
+          contentWidth = measureTextWidth(ctx, iconFont.code)
         } else {
           this.createFigure(
             {
@@ -235,8 +235,8 @@ export default class IndicatorTooltipView extends View<YAxis> {
       legends.forEach((data) => {
         const title = data.title as TooltipLegendChild
         const value = data.value as TooltipLegendChild
-        const titleTextWidth = ctx.measureText(title.text).width
-        const valueTextWidth = ctx.measureText(value.text).width
+        const titleTextWidth = measureTextWidth(ctx, title.text)
+        const valueTextWidth = measureTextWidth(ctx, value.text)
         const totalTextWidth = titleTextWidth + valueTextWidth
         const h = marginTop + size + marginBottom
         if (coordinate.x + marginLeft + totalTextWidth + marginRight > maxWidth) {

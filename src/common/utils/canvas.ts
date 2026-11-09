@@ -17,6 +17,45 @@ import { isValid } from './typeChecks'
 
 let measureCtx: Nullable<CanvasRenderingContext2D> = null
 
+const TEXT_WIDTH_CACHE_SIZE = 2048
+
+const textWidthCache = new Map<string, number>()
+
+let fontLoadClearSubscribed = false
+
+function ensureFontLoadClear(): void {
+  if (!fontLoadClearSubscribed) {
+    fontLoadClearSubscribed = true
+    document.fonts.ready.then(() => {
+      textWidthCache.clear()
+    })
+  }
+}
+
+/**
+ * Measure the width of text with the font currently set on the ctx, cached by font and text
+ * @param ctx
+ * @param text
+ * @returns {number}
+ */
+export function measureTextWidth(ctx: CanvasRenderingContext2D, text: string): number {
+  const key = `${ctx.font}\u0000${text}`
+  const cached = textWidthCache.get(key)
+  if (cached !== undefined) {
+    return cached
+  }
+  ensureFontLoadClear()
+  const width = ctx.measureText(text).width
+  if (textWidthCache.size >= TEXT_WIDTH_CACHE_SIZE) {
+    const oldestKey = textWidthCache.keys().next().value
+    if (oldestKey !== undefined) {
+      textWidthCache.delete(oldestKey)
+    }
+  }
+  textWidthCache.set(key, width)
+  return width
+}
+
 /**
  * Get pixel ratio
  * @param canvas
@@ -43,5 +82,5 @@ export function calcTextWidth(text: string, size?: number, weight?: string | num
     measureCtx.scale(pixelRatio, pixelRatio)
   }
   measureCtx.font = createFont(size, weight, family)
-  return Math.round(measureCtx.measureText(text).width)
+  return Math.round(measureTextWidth(measureCtx, text))
 }
