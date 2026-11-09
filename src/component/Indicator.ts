@@ -383,6 +383,7 @@ export default class IndicatorImp<D = unknown, C = unknown, E = unknown> impleme
 
   private _prevIndicator: Indicator<D, C, E>
   private _lockSeriesPrecision = false
+  private _calcGeneration = 0
 
   constructor(indicator: IndicatorTemplate<D, C, E>) {
     this.override(indicator)
@@ -439,8 +440,12 @@ export default class IndicatorImp<D = unknown, C = unknown, E = unknown> impleme
   }
 
   async calcImp(dataList: KLineData[]): Promise<boolean> {
+    const generation = ++this._calcGeneration
     try {
       const result = await this.calc(dataList, this)
+      if (generation !== this._calcGeneration) {
+        return false
+      }
       this.result = result
       return true
     } catch {
