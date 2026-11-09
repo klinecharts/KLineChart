@@ -392,7 +392,7 @@ export default class IndicatorImp<D = unknown, C = unknown, E = unknown> impleme
   override(indicator: Partial<Indicator<D, C, E>>): void {
     const { result, _prevIndicator, ...currentOthers } = this
     this._prevIndicator = { ...clone(currentOthers), result }
-    const { id, name, shortName, precision, styles, figures, calcParams, ...others } = indicator
+    const { id, name, shortName, precision, styles, figures, calcParams, extendData, ...others } = indicator
     if (!isString(this.id) && isString(id)) {
       this.id = id
     }
@@ -412,6 +412,12 @@ export default class IndicatorImp<D = unknown, C = unknown, E = unknown> impleme
       merge(this.styles, pickDefined(styles))
     }
     merge(this, pickDefined(others))
+    // extendData is an opaque payload owned by the caller, so it is assigned by reference: clone
+    // flattened Map/Set/Date into plain objects and dropped prototypes, while a deep merge kept
+    // stale keys of the previous payload.
+    if (extendData !== undefined) {
+      this.extendData = extendData
+    }
     if (isValid(calcParams)) {
       this.calcParams = clone(calcParams)
       if (isFunction(this.regenerateFigures)) {
