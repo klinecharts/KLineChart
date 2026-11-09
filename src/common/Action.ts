@@ -39,8 +39,13 @@ export default class Action {
   }
 
   execute(data?: unknown): void {
-    this._callbacks.forEach((callback) => {
-      callback(data)
+    // Iterate a snapshot so a callback that unsubscribes during the dispatch cannot shift the
+    // array under the loop and make the next callback be skipped.
+    const callbacks = this._callbacks.slice()
+    callbacks.forEach((callback) => {
+      if (this._callbacks.includes(callback)) {
+        callback(data)
+      }
     })
   }
 
