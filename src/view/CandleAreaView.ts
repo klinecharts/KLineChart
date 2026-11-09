@@ -37,10 +37,12 @@ export default class CandleAreaView extends ChildrenView {
 
   private _animationFrameTime = 0
 
+  private _ripplePointCoordinate: Nullable<Coordinate> = null
+
   private readonly _animation = new Animation({ iterationCount: Infinity }).doFrame((time) => {
     this._animationFrameTime = time
     const pane = this.getWidget().getPane()
-    pane.getChart().updatePane(UpdateLevel.Main, pane.getId())
+    pane.getChart().updatePane(UpdateLevel.Overlay, pane.getId())
   })
 
   override drawImp(ctx: CanvasRenderingContext2D): void {
@@ -112,6 +114,7 @@ export default class CandleAreaView extends ChildrenView {
 
     const pointStyles = styles.point
     if (pointStyles.show && isValid(ripplePointCoordinate)) {
+      this._ripplePointCoordinate = ripplePointCoordinate
       this.createFigure({
         name: 'circle',
         attrs: {
@@ -124,25 +127,36 @@ export default class CandleAreaView extends ChildrenView {
           color: pointStyles.color
         }
       })?.draw(ctx)
-      let rippleRadius = pointStyles.rippleRadius
       if (pointStyles.animation && isNumber(pointStyles.animationDuration) && pointStyles.animationDuration > 0) {
-        const progress = Math.min(this._animationFrameTime / pointStyles.animationDuration, 1)
-        rippleRadius = pointStyles.radius + progress * (pointStyles.rippleRadius - pointStyles.radius)
         this._animation.setDuration(pointStyles.animationDuration).start()
       } else {
         this.stopAnimation()
       }
-      this._ripplePoint
-        ?.setAttrs({
-          x: ripplePointCoordinate!.x,
-          y: ripplePointCoordinate!.y,
-          r: rippleRadius
-        })
-        .setStyles({ style: 'fill', color: pointStyles.rippleColor })
-        .draw(ctx)
     } else {
+      this._ripplePointCoordinate = null
       this.stopAnimation()
     }
+  }
+
+  drawOverlayImp(ctx: CanvasRenderingContext2D): void {
+    const pointStyles = this.getWidget().getPane().getChart().getStyles().candle.area.point
+    const ripplePointCoordinate = this._ripplePointCoordinate
+    if (!pointStyles.show || !isValid(ripplePointCoordinate)) {
+      return
+    }
+    let rippleRadius = pointStyles.rippleRadius
+    if (pointStyles.animation && isNumber(pointStyles.animationDuration) && pointStyles.animationDuration > 0) {
+      const progress = Math.min(this._animationFrameTime / pointStyles.animationDuration, 1)
+      rippleRadius = pointStyles.radius + progress * (pointStyles.rippleRadius - pointStyles.radius)
+    }
+    this._ripplePoint
+      ?.setAttrs({
+        x: ripplePointCoordinate!.x,
+        y: ripplePointCoordinate!.y,
+        r: rippleRadius
+      })
+      .setStyles({ style: 'fill', color: pointStyles.rippleColor })
+      .draw(ctx)
   }
 
   stopAnimation(): void {
