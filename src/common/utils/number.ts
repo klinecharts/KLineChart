@@ -134,6 +134,82 @@ export function getMaxMin<D>(dataList: D[], maxKey: keyof D, minKey: keyof D): n
 }
 
 /**
+ * Sliding window that tracks the max of `maxKey` and the min of `minKey` over
+ * the last `window` items, advancing one item at a time. Two monotonic lists
+ * keep the candidates, so each `getMaxMin` call is amortised O(1) instead of
+ * rescanning (and slicing) the whole window on every item.
+ *
+ * The selection is exact: it returns the same items `getMaxMin` picks, including
+ * its `null` / `undefined` fallbacks and the `NaN` behaviour of Math.max/Math.min.
+ */
+export class RollingMaxMin<D> {
+  private readonly _dataList: D[]
+  private readonly _maxKey: keyof D
+  private readonly _minKey: keyof D
+  private readonly _maxIndexList: number[] = []
+  private readonly _minIndexList: number[] = []
+  private _maxHead = 0
+  private _minHead = 0
+  private _maxNanCount = 0
+  private _minNanCount = 0
+
+  constructor(dataList: D[], maxKey: keyof D, minKey: keyof D) {
+    this._dataList = dataList
+    this._maxKey = maxKey
+    this._minKey = minKey
+  }
+
+  /**
+   * Append the item at `index` to the window and return the `[max, min]` of the
+   * `window` items ending at `index`.
+   */
+  getMaxMin(index: number, window: number): number[] {
+    const dataList = this._dataList
+    const maxKey = this._maxKey
+    const minKey = this._minKey
+    const maxIndexList = this._maxIndexList
+    const minIndexList = this._minIndexList
+    const maxValue = (dataList[index][maxKey] ?? Number.MIN_SAFE_INTEGER) as number
+    const minValue = (dataList[index][minKey] ?? Number.MAX_SAFE_INTEGER) as number
+    // A NaN anywhere in the window makes Math.max/Math.min return NaN, so such
+    // items stay out of the monotonic lists and are tracked by count instead.
+    if (Number.isNaN(maxValue)) {
+      this._maxNanCount += 1
+    } else {
+      while (maxIndexList.length > this._maxHead && ((dataList[maxIndexList[maxIndexList.length - 1]][maxKey] ?? Number.MIN_SAFE_INTEGER) as number) <= maxValue) {
+        maxIndexList.pop()
+      }
+      maxIndexList.push(index)
+    }
+    if (Number.isNaN(minValue)) {
+      this._minNanCount += 1
+    } else {
+      while (minIndexList.length > this._minHead && ((dataList[minIndexList[minIndexList.length - 1]][minKey] ?? Number.MAX_SAFE_INTEGER) as number) >= minValue) {
+        minIndexList.pop()
+      }
+      minIndexList.push(index)
+    }
+    const expired = index - window
+    if (expired >= 0) {
+      if (Number.isNaN((dataList[expired][maxKey] ?? Number.MIN_SAFE_INTEGER) as number)) {
+        this._maxNanCount -= 1
+      }
+      if (Number.isNaN((dataList[expired][minKey] ?? Number.MAX_SAFE_INTEGER) as number)) {
+        this._minNanCount -= 1
+      }
+    }
+    const first = expired + 1
+    while (maxIndexList[this._maxHead] < first) {
+      this._maxHead += 1
+    }
+    while (minIndexList[this._minHead] < first) {
+      this._minHead += 1
+    }
+    return [this._maxNanCount > 0 ? NaN : ((dataList[maxIndexList[this._maxHead]][maxKey] ?? Number.MIN_SAFE_INTEGER) as number), this._minNanCount > 0 ? NaN : ((dataList[minIndexList[this._minHead]][minKey] ?? Number.MAX_SAFE_INTEGER) as number)]
+  }
+}
+
+/**
  * log10
  * @param value
  * @return {number}
