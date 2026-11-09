@@ -369,7 +369,8 @@ export default class IndicatorImp<D = unknown, C = unknown, E = unknown> impleme
       prev.extendData !== current.extendData ||
       prev.regenerateFigures !== current.regenerateFigures ||
       prev.createTooltipDataSource !== current.createTooltipDataSource ||
-      prev.draw !== current.draw
+      prev.draw !== current.draw ||
+      JSON.stringify(prev.styles) !== JSON.stringify(current.styles)
 
     return { calc, draw }
   }
