@@ -475,7 +475,19 @@ export default class StoreImp implements Store {
   }
 
   setLayoutOptions(layout: DeepPartial<Layout>): void {
+    if (isValid(layout.barSpaceLimit)) {
+      const { barSpaceLimit } = this._layoutOptions
+      const min = isNumber(layout.barSpaceLimit.min) ? Math.max(layout.barSpaceLimit.min, 1) : barSpaceLimit.min
+      const max = isNumber(layout.barSpaceLimit.max) ? Math.max(layout.barSpaceLimit.max, min) : Math.max(barSpaceLimit.max, min)
+      layout = { ...layout, barSpaceLimit: { min, max } }
+    }
     merge(this._layoutOptions, layout)
+    const { min, max } = this._layoutOptions.barSpaceLimit
+    if (this._barSpace < min) {
+      this.setBarSpace(min)
+    } else if (this._barSpace > max) {
+      this.setBarSpace(max)
+    }
   }
 
   setFormatter(formatter: Partial<Formatter>): void {
@@ -844,7 +856,7 @@ export default class StoreImp implements Store {
   }
 
   setBarSpace(barSpace: number, adjustBeforeFunc?: () => void): void {
-    if (barSpace < this._layoutOptions.barSpaceLimit.min || barSpace > this._layoutOptions.barSpaceLimit.max || this._barSpace === barSpace) {
+    if (!isNumber(barSpace) || barSpace < this._layoutOptions.barSpaceLimit.min || barSpace > this._layoutOptions.barSpaceLimit.max || this._barSpace === barSpace) {
       return
     }
     this._barSpace = barSpace
