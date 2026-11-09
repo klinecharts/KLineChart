@@ -189,7 +189,9 @@ export default class ChartImp implements Chart {
   }
 
   private _initResizeListener(): void {
-    if (isValid(ResizeObserver)) {
+    // Reference the global with typeof: reading an undeclared ResizeObserver throws a
+    // ReferenceError, which made the fallback below unreachable in environments without it.
+    if (typeof ResizeObserver !== 'undefined') {
       this._resizeObserver = new ResizeObserver(() => {
         this._scheduleResize()
       })
