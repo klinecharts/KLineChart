@@ -738,8 +738,11 @@ export default class StoreImp implements Store {
       from = 0
     }
     const realFrom = this._lastBarRightSideDiffBarCount > 0 ? Math.round(totalBarCount + this._lastBarRightSideDiffBarCount - visibleBarCount) - 1 : from
-    this._visibleRange = { from, to, realFrom, realTo }
-    this.executeAction('onVisibleRangeChange', this._visibleRange)
+    const prevVisibleRange = this._visibleRange
+    if (prevVisibleRange.from !== from || prevVisibleRange.to !== to || prevVisibleRange.realFrom !== realFrom || prevVisibleRange.realTo !== realTo) {
+      this._visibleRange = { from, to, realFrom, realTo }
+      this.executeAction('onVisibleRangeChange', this._visibleRange)
+    }
     this._visibleRangeDataList = []
     this._visibleRangeHighLowPrice = [
       { x: 0, price: Number.MIN_SAFE_INTEGER },

@@ -521,8 +521,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
       return coordinate
     })
     if (coordinates.length > 0) {
-      let figures: OverlayFigure[] = []
-      figures = figures.concat(this.getFigures(overlay, coordinates))
+      const figures = ([] as OverlayFigure[]).concat(this.getFigures(overlay, coordinates))
       this.drawFigures(ctx, overlay, figures)
     }
     this.drawDefaultFigures(ctx, overlay, coordinates)
@@ -532,12 +531,12 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     const defaultStyles = this.getWidget().getPane().getChart().getStyles().overlay
     figures.forEach((figure, figureIndex) => {
       const { type, styles, attrs } = figure
+      const events = this._createFigureEvents(overlay, 'other', figureIndex, figure)
+      // @ts-ignore
+      const ss = { ...defaultStyles[type], ...overlay.styles?.[type], ...styles }
       // @ts-ignore
       const attrsArray = [].concat(attrs)
       attrsArray.forEach((ats) => {
-        const events = this._createFigureEvents(overlay, 'other', figureIndex, figure)
-        // @ts-ignore
-        const ss = { ...defaultStyles[type], ...overlay.styles?.[type], ...styles }
         this.createFigure(
           {
             name: type,
@@ -595,17 +594,19 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
             borderSize = pointStyles.activeBorderSize
           }
 
+          const attrs = { x, y, r: radius + borderSize }
+          const styles = { color: borderColor }
           this.createFigure(
             {
               name: 'circle',
-              attrs: { x, y, r: radius + borderSize },
-              styles: { color: borderColor }
+              attrs,
+              styles
             },
             this._createFigureEvents(overlay, 'point', index, {
               key: `${OVERLAY_FIGURE_KEY_PREFIX}point_${index}`,
               type: 'circle',
-              attrs: { x, y, r: radius + borderSize },
-              styles: { color: borderColor }
+              attrs,
+              styles
             }) ?? undefined
           )?.draw(ctx)
           this.createFigure({

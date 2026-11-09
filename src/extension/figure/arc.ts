@@ -26,11 +26,22 @@ export function checkCoordinateOnArc(coordinate: Coordinate, attrs: ArcAttrs | A
   for (const arc of arcs) {
     if (Math.abs(getDistance(coordinate, arc) - arc.r) < DEVIATION) {
       const { r, startAngle, endAngle } = arc
-      const startCoordinateX = r * Math.cos(startAngle) + arc.x
-      const startCoordinateY = r * Math.sin(startAngle) + arc.y
-      const endCoordinateX = r * Math.cos(endAngle) + arc.x
-      const endCoordinateY = r * Math.sin(endAngle) + arc.y
-      if (coordinate.x <= Math.max(startCoordinateX, endCoordinateX) + DEVIATION && coordinate.x >= Math.min(startCoordinateX, endCoordinateX) - DEVIATION && coordinate.y <= Math.max(startCoordinateY, endCoordinateY) + DEVIATION && coordinate.y >= Math.min(startCoordinateY, endCoordinateY) - DEVIATION) {
+      // drawArc strokes clockwise (increasing angle), so test the angular sweep from startAngle to endAngle
+      const fullTurn = Math.PI * 2
+      const sweep = endAngle - startAngle
+      if (Math.abs(sweep) >= fullTurn) {
+        return true
+      }
+      const angle = Math.atan2(coordinate.y - arc.y, coordinate.x - arc.x)
+      const offset = (((angle - startAngle) % fullTurn) + fullTurn) % fullTurn
+      const span = ((sweep % fullTurn) + fullTurn) % fullTurn
+      if (offset <= span) {
+        return true
+      }
+      // Allow the line width tolerance around both ends of the arc
+      const startCoordinate = { x: r * Math.cos(startAngle) + arc.x, y: r * Math.sin(startAngle) + arc.y }
+      const endCoordinate = { x: r * Math.cos(endAngle) + arc.x, y: r * Math.sin(endAngle) + arc.y }
+      if (getDistance(coordinate, startCoordinate) < DEVIATION || getDistance(coordinate, endCoordinate) < DEVIATION) {
         return true
       }
     }
