@@ -89,6 +89,15 @@ export interface Layout {
   barSpaceLimit: BarSpaceLimit
   pane: Omit<PaneOptions, 'id'>
   yAxis: DeepRequired<Omit<YAxisOverride, 'id' | 'name' | 'paneId' | 'createRange' | 'createTicks'>>
+  /**
+   * Upper bound for the device pixel ratio used by the display canvases.
+   * The effective ratio is `min(devicePixelRatio, pixelRatioCap)`.
+   * Canvas backing-store memory scales quadratically with the ratio
+   * (capping 2 → 1 cuts it ~4×) at the cost of rendering sharpness.
+   * Does not affect image export, which always uses the full device pixel ratio.
+   * @default Number.POSITIVE_INFINITY (no cap)
+   */
+  pixelRatioCap: number
 }
 
 export interface Hotkey {

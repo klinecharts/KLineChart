@@ -396,7 +396,8 @@ export default class StoreImp implements Store {
         top: 0.2,
         bottom: 0.1
       }
-    }
+    },
+    pixelRatioCap: Number.POSITIVE_INFINITY
   }
 
   constructor(chart: Chart, options?: Options) {
