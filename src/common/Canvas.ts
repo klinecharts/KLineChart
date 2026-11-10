@@ -172,5 +172,9 @@ export default class Canvas {
       this._mediaQueryList.removeListener(this._mediaQueryListener)
       this._mediaQueryList = null
     }
+    // Release the backing-store pixel buffer deterministically instead of
+    // waiting for GC of the (possibly detached) canvas element.
+    this._element.width = 0
+    this._element.height = 0
   }
 }

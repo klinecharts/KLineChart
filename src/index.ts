@@ -111,8 +111,12 @@ function dispose(dcs: HTMLElement | Chart | string): void {
     id = dom?.getAttribute('k-line-chart-id') ?? null
   }
   if (id !== null) {
-    charts.get(id)?.destroy()
-    charts.delete(id)
+    const chart = charts.get(id)
+    try {
+      chart?.destroy()
+    } finally {
+      charts.delete(id)
+    }
   }
 }
 
