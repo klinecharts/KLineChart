@@ -17,6 +17,7 @@ import type Nullable from '../common/Nullable'
 import { SymbolDefaultPrecisionConstants } from '../common/SymbolInfo'
 import { formatPrecision } from '../common/utils/format'
 import { isNumber } from '../common/utils/typeChecks'
+import { logError } from '../common/utils/logger'
 
 import type { Axis } from '../component/Axis'
 import type OverlayImp from '../component/Overlay'
@@ -80,6 +81,12 @@ export default class OverlayYAxisView<C extends Axis = YAxis> extends OverlayVie
     const yAxis = pane.getYAxisComponentById() as unknown as Nullable<YAxis>
     const xAxis = chart.getXAxisPane().getXAxisComponent()
     const bounding = widget.getBounding()
-    return overlay.createYAxisFigures?.({ chart, overlay, coordinates, bounding, xAxis, yAxis }) ?? []
+    try {
+      return overlay.createYAxisFigures?.({ chart, overlay, coordinates, bounding, xAxis, yAxis }) ?? []
+    } catch (error) {
+      // A failing user callback must not break the draw path; surface it in dev builds.
+      logError('createYAxisFigures', overlay.name, String(error))
+      return []
+    }
   }
 }
