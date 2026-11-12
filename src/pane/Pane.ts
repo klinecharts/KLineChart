@@ -15,6 +15,7 @@
 import type Chart from '../Chart'
 import type Bounding from '../common/Bounding'
 import { createDefaultBounding } from '../common/Bounding'
+import type Nullable from '../common/Nullable'
 import type Updater from '../common/Updater'
 import { UpdateLevel } from '../common/Updater'
 import { createDom } from '../common/utils/dom'
@@ -25,6 +26,8 @@ export default abstract class Pane implements Updater {
   private readonly _chart: Chart
 
   private readonly _bounding = createDefaultBounding()
+
+  private _appliedHeight: Nullable<number> = null
 
   constructor(chart: Chart, id: string) {
     this._chart = chart
@@ -56,8 +59,12 @@ export default abstract class Pane implements Updater {
   }
 
   update(level?: UpdateLevel): void {
-    if (this._bounding.height !== this._container.clientHeight) {
+    // Height is only written when the bounding actually changed, so steady-state
+    // updates (e.g. overlay-only crosshair moves) do not read layout properties
+    // back from the DOM.
+    if (this._bounding.height !== this._appliedHeight) {
       this._container.style.height = `${this._bounding.height}px`
+      this._appliedHeight = this._bounding.height
     }
     this.updateImp(level ?? UpdateLevel.Drawer, this._container, this._bounding)
   }
