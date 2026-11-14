@@ -22,7 +22,7 @@
 export function binarySearchNearest<T>(dataList: T[], valueKey: keyof T, targetValue: T[keyof T]): number {
   let left = 0
   let right = 0
-  for (right = dataList.length - 1; left !== right;) {
+  for (right = dataList.length - 1; left !== right; ) {
     const midIndex = Math.floor((right + left) / 2)
     const mid = right - left
     const midValue = dataList[midIndex][valueKey]
@@ -46,7 +46,7 @@ export function binarySearchNearest<T>(dataList: T[], valueKey: keyof T, targetV
       break
     }
   }
-  return left  
+  return left
 }
 
 /**
