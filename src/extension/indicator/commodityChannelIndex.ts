@@ -35,23 +35,22 @@ const commodityChannelIndex: IndicatorTemplate<Cci, number> = {
     const params = indicator.calcParams
     const p = params[0] - 1
     let tpSum = 0
-    const tpList: number[] = []
     return dataList.map((kLineData, i) => {
       const cci: Cci = {}
       const tp = (kLineData.high + kLineData.low + kLineData.close) / 3
       tpSum += tp
-      tpList.push(tp)
       if (i >= p) {
         const maTp = tpSum / params[0]
-        const sliceTpList = tpList.slice(i - p, i + 1)
         let sum = 0
-        sliceTpList.forEach((tp) => {
-          sum += Math.abs(tp - maTp)
-        })
+        for (let j = i - p; j <= i; j++) {
+          const data = dataList[j]
+          const windowTp = (data.high + data.low + data.close) / 3
+          sum += Math.abs(windowTp - maTp)
+        }
         const md = sum / params[0]
         cci.cci = md !== 0 ? (tp - maTp) / md / 0.015 : 0
-        const agoTp = (dataList[i - p].high + dataList[i - p].low + dataList[i - p].close) / 3
-        tpSum -= agoTp
+        const agoData = dataList[i - p]
+        tpSum -= (agoData.high + agoData.low + agoData.close) / 3
       }
       return cci
     })

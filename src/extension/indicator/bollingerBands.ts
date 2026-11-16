@@ -24,18 +24,19 @@ interface Boll {
 /**
  * 计算布林指标中的标准差
  * @param dataList
+ * @param from
+ * @param to
  * @param ma
  * @return {number}
  */
-function getBollMd(dataList: KLineData[], ma: number): number {
-  const dataSize = dataList.length
+function getBollMd(dataList: KLineData[], from: number, to: number, ma: number): number {
   let sum = 0
-  dataList.forEach((data) => {
-    const closeMa = data.close - ma
+  for (let i = from; i <= to; i++) {
+    const closeMa = dataList[i].close - ma
     sum += closeMa * closeMa
-  })
+  }
   sum = Math.abs(sum)
-  return Math.sqrt(sum / dataSize)
+  return Math.sqrt(sum / (to - from + 1))
 }
 
 /**
@@ -63,7 +64,7 @@ const bollingerBands: IndicatorTemplate<Boll, number> = {
       closeSum += close
       if (i >= p) {
         boll.mid = closeSum / params[0]
-        const md = getBollMd(dataList.slice(i - p, i + 1), boll.mid)
+        const md = getBollMd(dataList, i - p, i, boll.mid)
         boll.up = boll.mid + params[1] * md
         boll.dn = boll.mid - params[1] * md
         closeSum -= dataList[i - p].close

@@ -13,7 +13,7 @@
  */
 
 import type { KLineData } from '../../common/Data'
-import { getMaxMin } from '../../common/utils/number'
+import { RollingMaxMin } from '../../common/utils/number'
 import type { IndicatorTemplate } from '../../component/Indicator'
 
 interface Kdj {
@@ -42,11 +42,12 @@ const stoch: IndicatorTemplate<Kdj, number> = {
   calc: (dataList, indicator) => {
     const params = indicator.calcParams
     const result: Kdj[] = []
+    const rollingMaxMin = new RollingMaxMin<KLineData>(dataList, 'high', 'low')
     dataList.forEach((kLineData, i) => {
       const kdj: Kdj = {}
       const close = kLineData.close
+      const lhn = rollingMaxMin.getMaxMin(i, params[0])
       if (i >= params[0] - 1) {
-        const lhn = getMaxMin<KLineData>(dataList.slice(i - (params[0] - 1), i + 1), 'high', 'low')
         const hn = lhn[0]
         const ln = lhn[1]
         const hnSubLn = hn - ln
