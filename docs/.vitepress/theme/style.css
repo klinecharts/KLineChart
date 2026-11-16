@@ -86,17 +86,6 @@ body {
   font-variation-settings: normal;
   line-height: 1.6;
   overflow-x: clip;
-  overflow-y: auto;
-}
-
-html {
-  overflow-x: clip;
-}
-
-@media (min-width: 960px) {
-  .VPSidebar .curtain {
-    top: calc(var(--vp-nav-height)* -1);
-  }
 }
 
 .VPSidebar {

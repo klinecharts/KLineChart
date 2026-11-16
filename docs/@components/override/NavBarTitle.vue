@@ -76,10 +76,6 @@ const target = computed(() => (typeof theme.value.logoLink === 'string' ? undefi
   .VPNavBarTitle.has-sidebar {
     max-width: calc(var(--vp-sidebar-width) - 4rem);
   }
-
-  .VPNavBarTitle.has-sidebar .title {
-    border-bottom-color: var(--vp-c-divider);
-  }
 }
 
 :deep(.logo) {
