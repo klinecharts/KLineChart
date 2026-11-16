@@ -70,20 +70,18 @@ const tripleExponentiallySmoothedAverage: IndicatorTemplate<Trix, number> = {
           ema2Sum += ema2
           if (i >= params[0] * 3 - 3) {
             let tr = 0
-            let trixValue = 0
             if (i > params[0] * 3 - 3) {
               tr = (2 * ema2 + (params[0] - 1) * oldTr) / (params[0] + 1)
-              trixValue = ((tr - oldTr) / oldTr) * 100
+              trix.trix = ((tr - oldTr) / oldTr) * 100
+              trixSum += trix.trix
+              if (i >= params[0] * 3 + params[1] - 3) {
+                trix.maTrix = trixSum / params[1]
+                trixSum -= result[i - (params[1] - 1)].trix ?? 0
+              }
             } else {
               tr = ema2Sum / params[0]
             }
             oldTr = tr
-            trix.trix = trixValue
-            trixSum += trixValue
-            if (i >= params[0] * 3 + params[1] - 4) {
-              trix.maTrix = trixSum / params[1]
-              trixSum -= result[i - (params[1] - 1)].trix ?? 0
-            }
           }
         }
       }
