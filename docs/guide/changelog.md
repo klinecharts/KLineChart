@@ -1,5 +1,17 @@
 # 📠 更新日志
 
+## 10.1.1
+`2026-11-17`
++ 💄 优化覆盖物图形绘制，避免在属性循环中重复创建事件处理器和合并样式。[@NemeZZiZZ](https://github.com/NemeZZiZZ)
++ 💄 优化可见范围变更通知，相同范围不再重复分发事件和创建对象。[@NemeZZiZZ](https://github.com/NemeZZiZZ)
++ 🐞 修复 `binarySearchNearest` 在目标值不存在时返回错误索引的问题。[@liihuu](https://github.com/liihuu)
++ 🐞 修复 `formatBigNumber` 无法正确处理万亿及以上数值的问题。[@NemeZZiZZ](https://github.com/NemeZZiZZ)
++ 🐞 修复 `formatPrecision` 将空字符串格式化为 `0.00` 的问题。[@NemeZZiZZ](https://github.com/NemeZZiZZ)
++ 🐞 修复颜色工具对透明色和 3/4/8 位十六进制颜色解析不正确的问题。[@NemeZZiZZ](https://github.com/NemeZZiZZ)
++ 🐞 修复指标最新值标签未遵循 `lastValueMark.text.show` 配置的问题。[@NemeZZiZZ](https://github.com/NemeZZiZZ)
++ 🐞 修复弧线图形命中测试仅覆盖端点包围盒、导致长弧和整圆判断错误的问题。[@hakarrr](https://github.com/hakarrr)
+
+
 ## 10.1.0
 `2026-10-15`
 + 🆕 新增实例方法 `setLayoutOptions(options)` 和 `getLayoutOptions()`，支持在初始化后修改和获取默认布局配置。[@NemeZZiZZ](https://github.com/NemeZZiZZ) [@liihuu](https://github.com/liihuu)

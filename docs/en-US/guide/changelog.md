@@ -1,5 +1,17 @@
 # 📠 Change Log
 
+## 10.1.1
+`2026-11-17`
++ 💄 Optimize overlay figure drawing by avoiding repeated event-handler creation and style merging inside the attribute loop. [@NemeZZiZZ](https://github.com/NemeZZiZZ)
++ 💄 Optimize visible-range change notifications by skipping duplicate dispatches and range allocations when the range is unchanged. [@NemeZZiZZ](https://github.com/NemeZZiZZ)
++ 🐞 Fix `binarySearchNearest` returning an incorrect index when the target value does not exist. [@liihuu](https://github.com/liihuu)
++ 🐞 Fix `formatBigNumber` not handling values in the trillions and above correctly. [@NemeZZiZZ](https://github.com/NemeZZiZZ)
++ 🐞 Fix `formatPrecision` converting an empty string to `0.00`. [@NemeZZiZZ](https://github.com/NemeZZiZZ)
++ 🐞 Fix color utilities incorrectly recognizing transparent colors and parsing 3-, 4-, and 8-digit hexadecimal colors. [@NemeZZiZZ](https://github.com/NemeZZiZZ)
++ 🐞 Fix indicator last-value labels ignoring the `lastValueMark.text.show` option. [@NemeZZiZZ](https://github.com/NemeZZiZZ)
++ 🐞 Fix arc hit testing using only the bounding box of the endpoints, causing incorrect results for long arcs and full circles. [@hakarrr](https://github.com/hakarrr)
+
+
 ## 10.1.0
 `2026-10-15`
 + 🆕 Add the `setLayoutOptions(options)` and `getLayoutOptions()` instance methods to update and retrieve default layout options after initialization. [@NemeZZiZZ](https://github.com/NemeZZiZZ) [@liihuu](https://github.com/liihuu)
