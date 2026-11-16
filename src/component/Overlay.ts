@@ -21,7 +21,7 @@ import type ExcludePickPartial from '../common/ExcludePickPartial'
 import type Nullable from '../common/Nullable'
 import type Point from '../common/Point'
 import type { OverlayStyle } from '../common/Styles'
-import { clone, isArray, isBoolean, isNumber, isString, isValid, merge } from '../common/utils/typeChecks'
+import { clone, isArray, isBoolean, isNumber, isString, isValid, merge, pickDefined } from '../common/utils/typeChecks'
 import type ChartStore from '../Store'
 import type { XAxis } from './XAxis'
 import type { YAxis } from './YAxis'
@@ -300,7 +300,8 @@ export default class OverlayImp<E = unknown> implements Overlay<E> {
 
     const { id, name, currentStep: _, points, styles, ...others } = overlay
 
-    merge(this, others)
+    // Explicit undefined values are ignored so that they don't wipe defaults (same as indicator overrides).
+    merge(this, pickDefined(others))
 
     if (!isString(this.name)) {
       this.name = name ?? ''
@@ -312,7 +313,7 @@ export default class OverlayImp<E = unknown> implements Overlay<E> {
 
     if (isValid(styles)) {
       this.styles ??= {}
-      merge(this.styles, styles)
+      merge(this.styles, pickDefined(styles))
     }
 
     if (isArray(points) && points.length > 0) {
