@@ -38,7 +38,7 @@ function onBlur() {
         <span v-if="!hiddenArrow" class="vpi-chevron-down text-icon" />
       </span>
 
-      <span v-else class="vpi-more-horizontal icon" />
+      <span v-else class="vpi-ellipsis icon" aria-hidden="true" />
     </button>
 
     <div class="menu">
@@ -81,7 +81,7 @@ function onBlur() {
   transform: translateY(0);
 }
 
-.VPFlyout:hover .menu,
+.Flyout:hover .menu,
 .button[aria-expanded="true"] + .menu {
   opacity: 1;
   visibility: visible;

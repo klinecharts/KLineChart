@@ -46,7 +46,7 @@ function config() {
             replacement: fileURLToPath(new URL('../../@components/override/NavBarTitle.vue', import.meta.url))
           },
           {
-            find: /^.*\/Badge\.vue$/,
+            find: /^.*\/VPBadge\.vue$/,
             replacement: fileURLToPath(new URL('../../@components/Badge.vue', import.meta.url))
           },
           {
@@ -54,12 +54,8 @@ function config() {
             replacement: fileURLToPath(new URL('../../@components/override/NavBarExtra.vue', import.meta.url))
           },
           {
-            find: /^.*\/VPNavBarAppearance\.vue$/,
-            replacement: fileURLToPath(new URL('../../@components/override/NavBarAppearance.vue', import.meta.url))
-          },
-          {
-            find: /^.*\/VPNavScreenAppearance\.vue$/,
-            replacement: fileURLToPath(new URL('../../@components/override/NavScreenAppearance.vue', import.meta.url))
+            find: /^.*\/VPNavAppearance\.vue$/,
+            replacement: fileURLToPath(new URL('../../@components/override/NavAppearance.vue', import.meta.url))
           },
           {
             find: /^.*\/VPFlyout\.vue$/,

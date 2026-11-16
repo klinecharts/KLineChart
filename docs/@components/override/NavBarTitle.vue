@@ -17,7 +17,7 @@ const target = computed(() => (typeof theme.value.logoLink === 'string' ? undefi
 </script>
 
 <template>
-  <div class="NavBarTitle" :class="{ 'has-sidebar': hasSidebar }">
+  <div class="VPNavBarTitle" :class="{ 'has-sidebar': hasSidebar }">
     <a
       class="title"
       :href="link ?? normalizeLink(currentLang.link)"
@@ -63,12 +63,21 @@ const target = computed(() => (typeof theme.value.logoLink === 'string' ? undefi
   transition: opacity 0.25s;
 }
 
-@media (min-width: 960px) {
+.title > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (min-width: 60rem) {
   .title {
     flex-shrink: 0;
   }
 
-  .NavBarTitle.has-sidebar .title {
+  .VPNavBarTitle.has-sidebar {
+    max-width: calc(var(--vp-sidebar-width) - 4rem);
+  }
+
+  .VPNavBarTitle.has-sidebar .title {
     border-bottom-color: var(--vp-c-divider);
   }
 }

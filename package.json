@@ -67,7 +67,7 @@
     "docs:deploy": "pnpm docs:build && gh-pages -d website",
     "debug": "vite --host 0.0.0.0 debug"
   },
-  "packageManager": "pnpm@12.4.1",
+  "packageManager": "pnpm@12.21.0",
   "devDependencies": {
     "@babel/generator": "^7.26.9",
     "@babel/parser": "^7.26.9",
@@ -98,6 +98,6 @@
     "tslib": "^2.8.1",
     "typescript": "^5.8.3",
     "vite": "^8.2.0",
-    "vitepress": "2.0.0-alpha.19"
+    "vitepress": "2.0.0-alpha.21"
   }
 }

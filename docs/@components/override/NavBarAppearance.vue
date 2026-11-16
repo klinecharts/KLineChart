@@ -1,12 +1,15 @@
 <script setup>
 import { useData } from 'vitepress'
 import VPFlyout from 'vitepress/dist/client/theme-default/components/VPFlyout.vue'
-import { computed, ref } from 'vue'
+import { useNavOverflow } from 'vitepress/dist/client/theme-default/composables/nav-overflow'
+import { computed } from 'vue'
 
 import AppearanceSetting from './AppearanceSetting.vue'
 import { APPEARANCE_ICON } from './appearance-icon'
 
 const { site } = useData()
+const overflow = useNavOverflow()
+const isCollapsed = computed(() => !!overflow && !overflow.state.appearance)
 const icon = APPEARANCE_ICON
 </script>
 
@@ -19,7 +22,10 @@ const icon = APPEARANCE_ICON
     "
     :button="icon"
     :hiddenArrow="true"
-    class="NavBarAppearance">
+    class="NavBarAppearance"
+    :class="{ collapsed: isCollapsed }"
+    :ref="(el) => overflow?.setClusterEl('appearance', el?.$el ?? el)"
+  >
     <AppearanceSetting/>
   </VPFlyout>
 </template>
@@ -38,7 +44,7 @@ const icon = APPEARANCE_ICON
   padding: 14px;
 }
 
-@media (min-width: 1280px) {
+@media (min-width: 48rem) {
   .NavBarAppearance {
     display: flex;
     align-items: center;
