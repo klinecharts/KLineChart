@@ -1164,7 +1164,11 @@ export default class ChartImp implements Chart {
   }
 
   scrollToTimestamp(timestamp: number, animationDuration?: number): void {
-    const dataIndex = binarySearchNearest(this.getDataList(), 'timestamp', timestamp)
+    const dataList = this.getDataList()
+    if (dataList.length === 0) {
+      return
+    }
+    const dataIndex = binarySearchNearest(dataList, 'timestamp', timestamp)
     this.scrollToDataIndex(dataIndex, animationDuration)
   }
 
@@ -1194,7 +1198,11 @@ export default class ChartImp implements Chart {
   }
 
   zoomAtTimestamp(scale: number, timestamp: number, animationDuration?: number): void {
-    const dataIndex = binarySearchNearest(this.getDataList(), 'timestamp', timestamp)
+    const dataList = this.getDataList()
+    if (dataList.length === 0) {
+      return
+    }
+    const dataIndex = binarySearchNearest(dataList, 'timestamp', timestamp)
     this.zoomAtDataIndex(scale, dataIndex, animationDuration)
   }
 

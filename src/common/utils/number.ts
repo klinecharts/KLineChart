@@ -17,9 +17,12 @@
  * @param dataList
  * @param valueKey
  * @param targetValue
- * @return {number}
+ * @return {number} nearest index, or -1 when the list is empty
  */
 export function binarySearchNearest<T>(dataList: T[], valueKey: keyof T, targetValue: T[keyof T]): number {
+  if (dataList.length === 0) {
+    return -1
+  }
   let left = 0
   let right = 0
   for (right = dataList.length - 1; left !== right; ) {
