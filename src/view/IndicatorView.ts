@@ -41,11 +41,12 @@ export default class IndicatorView extends CandleBarView {
             return { color, borderColor: color, wickColor: color }
           }) satisfies CandleBarColorCallback
         } else {
-          const defaultOhlcStyles = isFunction(defaultStyles.ohlc) ? null : defaultStyles.ohlc
-          const compareRule = formatValue(ohlcStyles, 'compareRule', defaultOhlcStyles?.compareRule) as 'current_open' | 'previous_close'
-          const upColor = formatValue(ohlcStyles, 'upColor', defaultOhlcStyles?.upColor) as string
-          const downColor = formatValue(ohlcStyles, 'downColor', defaultOhlcStyles?.downColor) as string
-          const noChangeColor = formatValue(ohlcStyles, 'noChangeColor', defaultOhlcStyles?.noChangeColor) as string
+          const ohlcStyleObject = ohlcStyles as Exclude<typeof ohlcStyles, CompareColorCallback>
+          const defaultOhlcStyles = isFunction(defaultStyles.ohlc) ? null : (defaultStyles.ohlc as Exclude<typeof defaultStyles.ohlc, CompareColorCallback>)
+          const compareRule = formatValue(ohlcStyleObject, 'compareRule', defaultOhlcStyles?.compareRule) as 'current_open' | 'previous_close'
+          const upColor = formatValue(ohlcStyleObject, 'upColor', defaultOhlcStyles?.upColor) as string
+          const downColor = formatValue(ohlcStyleObject, 'downColor', defaultOhlcStyles?.downColor) as string
+          const noChangeColor = formatValue(ohlcStyleObject, 'noChangeColor', defaultOhlcStyles?.noChangeColor) as string
           styles = {
             compareRule,
             upColor,
