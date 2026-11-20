@@ -341,10 +341,21 @@ export default class OverlayImp<E = unknown> implements Overlay<E> {
   }
 
   shouldUpdate(): { draw: boolean; sort: boolean } {
-    const sort = this._prevOverlay.zLevel !== this.zLevel
-    const draw = sort || JSON.stringify(this._prevOverlay.points) !== JSON.stringify(this.points) || this._prevOverlay.visible !== this.visible || this._prevOverlay.extendData !== this.extendData || this._prevOverlay.styles !== this.styles
+    const prev = this._prevOverlay
+    const sort = prev.zLevel !== this.zLevel
+    const draw =
+      sort ||
+      JSON.stringify(prev.points) !== JSON.stringify(this.points) ||
+      prev.visible !== this.visible ||
+      prev.extendData !== this.extendData ||
+      // `styles` is merged in place by `override`, so the previous value can only
+      // be recovered from the snapshot; compare by value to detect a real change.
+      JSON.stringify(prev.styles) !== JSON.stringify(this.styles) ||
+      prev.needDefaultPointFigure !== this.needDefaultPointFigure ||
+      prev.needDefaultXAxisFigure !== this.needDefaultXAxisFigure ||
+      prev.needDefaultYAxisFigure !== this.needDefaultYAxisFigure
 
-    return { sort, draw }
+    return { draw, sort }
   }
 
   nextStep(): void {
