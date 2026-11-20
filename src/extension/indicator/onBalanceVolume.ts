@@ -47,7 +47,7 @@ const onBalanceVolume: IndicatorTemplate<Obv, number> = {
       obvSum += oldObv
       if (i >= params[0] - 1) {
         obv.maObv = obvSum / params[0]
-        obvSum -= result[i - (params[0] - 1)].obv ?? 0
+        obvSum -= (result[i - (params[0] - 1)] ?? obv).obv ?? 0
       }
       result.push(obv)
     })

@@ -115,7 +115,7 @@ const directionalMovementIndex: IndicatorTemplate<Dmi, number> = {
           }
           dmi.adx = adx
           if (i >= params[0] * 2 + params[1] - 3) {
-            dmi.adxr = ((result[i - (params[1] - 1)].adx ?? 0) + adx) / 2
+            dmi.adxr = (((result[i - (params[1] - 1)] ?? dmi).adx ?? 0) + adx) / 2
           }
         }
       }

@@ -48,7 +48,7 @@ const rateOfChange: IndicatorTemplate<Roc, number> = {
         rocSum += roc.roc
         if (i >= params[0] + params[1] - 1) {
           roc.maRoc = rocSum / params[1]
-          rocSum -= result[i - (params[1] - 1)].roc ?? 0
+          rocSum -= (result[i - (params[1] - 1)] ?? roc).roc ?? 0
         }
       }
       result.push(roc)
