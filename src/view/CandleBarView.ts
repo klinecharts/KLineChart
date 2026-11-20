@@ -128,13 +128,13 @@ export default class CandleBarView extends ChildrenView {
                     },
                     {
                       x: x - barSpace.halfGapBar,
-                      y: openY + ohlcSize > priceY[3] ? priceY[3] - ohlcSize : openY,
+                      y: Math.max(priceY[0], Math.min(openY, priceY[3] - ohlcSize)),
                       width: barSpace.halfGapBar - halfOhlcSize,
                       height: ohlcSize
                     },
                     {
                       x: x + halfOhlcSize,
-                      y: closeY + ohlcSize > priceY[3] ? priceY[3] - ohlcSize : closeY,
+                      y: Math.max(priceY[0], Math.min(closeY, priceY[3] - ohlcSize)),
                       width: barSpace.halfGapBar - halfOhlcSize,
                       height: ohlcSize
                     }
