@@ -1213,7 +1213,7 @@ export default class ChartImp implements Chart {
           const coordinate: Partial<Coordinate> = {}
           let dataIndex = point.dataIndex
           if (isNumber(point.timestamp)) {
-            dataIndex = this._chartStore.timestampToDataIndex(point.timestamp)
+            dataIndex = this._chartStore.timestampToFloatIndex(point.timestamp)
           }
           if (isNumber(dataIndex)) {
             coordinate.x = xAxis.convertToPixel(dataIndex)
